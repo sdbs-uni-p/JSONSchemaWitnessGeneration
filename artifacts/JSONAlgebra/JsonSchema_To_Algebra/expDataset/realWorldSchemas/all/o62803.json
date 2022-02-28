@@ -1,0 +1,309 @@
+{
+    "definitions": {
+        "batch": {
+            "additionalItems": false,
+            "description": "Represents the burst detection result for one batch range.",
+            "items": [
+                {
+                    "description": "Number of total documents in this batch.",
+                    "title": "all_data_count",
+                    "type": "integer"
+                },
+                {
+                    "description": "Number of documents that contains the keyword in this batch.",
+                    "title": "relevant_data_count",
+                    "type": "integer"
+                },
+                {
+                    "description": "Burst level of this batch. Burst level is a relative value that cannot be compared between keywords.",
+                    "title": "burst_weight",
+                    "type": "number"
+                }
+            ],
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "batch",
+            "type": "array"
+        },
+        "document": {
+            "additionalItems": false,
+            "description": "Represents the document used for burst detection.",
+            "items": [
+                {
+                    "description": "Position (time in many cases) of this document.",
+                    "title": "pos",
+                    "type": "number"
+                },
+                {
+                    "description": "Contents of this document. Keyword matching runs against this data using partial match.",
+                    "title": "text",
+                    "type": "string"
+                }
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "document",
+            "type": "array"
+        },
+        "keyword_with_params": {
+            "additionalItems": false,
+            "description": "Represents the keyword and its parameters to be detected as burst.",
+            "items": [
+                {
+                    "description": "The keyword to be burst-detected.",
+                    "title": "keyword",
+                    "type": "string"
+                },
+                {
+                    "description": "A scaling parameter applied for this keyword.",
+                    "title": "scaling_param",
+                    "type": "number"
+                },
+                {
+                    "description": "A \u03b3 value applied for this keyword. The higher value reduces the burst detection sensitivity.",
+                    "title": "gamma",
+                    "type": "number"
+                }
+            ],
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "keyword_with_params",
+            "type": "array"
+        },
+        "window": {
+            "additionalItems": false,
+            "description": "Represents the burst detection result.",
+            "items": [
+                {
+                    "description": "Starting position of this window.",
+                    "title": "start_pos",
+                    "type": "number"
+                },
+                {
+                    "description": "Batches that composes this window.",
+                    "items": {
+                        "$ref": "#/definitions/batch"
+                    },
+                    "title": "batches",
+                    "type": "array"
+                }
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "window",
+            "type": "array"
+        }
+    },
+    "properties": {
+        "add_documents": {
+            "description": "Register the document for burst detection. This This API is designed to accept bulk update with list of document. You need to register the keyword via add_keyword method before adding documents. A document whose location (pos) is out of range of the current window cannot be registered.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "description": "list of documents to be added",
+                            "items": {
+                                "$ref": "#/definitions/document"
+                            },
+                            "title": "data",
+                            "type": "array"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "description": "number of documents successfully registered (will be the length of data if all documents are registered successfully)",
+                    "type": "integer"
+                }
+            },
+            "title": "add_documents"
+        },
+        "add_keyword": {
+            "description": "Registers the keyword keyword for burst detection.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "$ref": "#/definitions/keyword_with_params",
+                            "description": "keyword and parameters to be added",
+                            "title": "keyword_with_params"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "description": "True if Jubatus succeed to add the keyword",
+                    "type": "boolean"
+                }
+            },
+            "title": "add_keyword"
+        },
+        "get_all_bursted_results": {
+            "description": "Returns the burst detection result of the current window for all pre-registered keywords.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "maxItems": 0,
+                    "minItems": 0,
+                    "type": "array"
+                },
+                "return": {
+                    "additionalProperties": false,
+                    "description": "pairs of keyword and its burst detection result",
+                    "patternProperties": {
+                        ".*": {
+                            "$ref": "#/definitions/window"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "title": "get_all_bursted_results"
+        },
+        "get_all_bursted_results_at": {
+            "description": "Returns the burst detection result at the specified position pos for all pre-registered keywords.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "description": "position",
+                            "title": "pos",
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "additionalProperties": false,
+                    "description": "pairs of keyword and its burst detection result",
+                    "patternProperties": {
+                        ".*": {
+                            "$ref": "#/definitions/window"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "title": "get_all_bursted_results_at"
+        },
+        "get_all_keywords": {
+            "description": "Returns the list of keywords registered for burst detection.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "maxItems": 0,
+                    "minItems": 0,
+                    "type": "array"
+                },
+                "return": {
+                    "description": "list of keyword and its parameters",
+                    "items": {
+                        "$ref": "#/definitions/keyword_with_params"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "get_all_keywords"
+        },
+        "get_result": {
+            "description": "Returns the burst detection result of the current window for pre-registered keyword keyword.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "description": "keyword to get burst detection result",
+                            "title": "keyword",
+                            "type": "string"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "$ref": "#/definitions/window",
+                    "description": "burst detection result"
+                }
+            },
+            "title": "get_result"
+        },
+        "get_result_at": {
+            "description": "Returns the burst detection result at the specified position pos for pre-registered keyword keyword.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "description": "keyword to get burst detection result",
+                            "title": "keyword",
+                            "type": "string"
+                        },
+                        {
+                            "description": "position",
+                            "title": "pos",
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                },
+                "return": {
+                    "$ref": "#/definitions/window",
+                    "description": "burst detection result"
+                }
+            },
+            "title": "get_result_at"
+        },
+        "remove_all_keywords": {
+            "description": "Removes all the keywords from burst detection.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "maxItems": 0,
+                    "minItems": 0,
+                    "type": "array"
+                },
+                "return": {
+                    "description": "True if Jubatus succeed to delete keywords",
+                    "type": "boolean"
+                }
+            },
+            "title": "remove_all_keywords"
+        },
+        "remove_keyword": {
+            "description": "Removes the keyword keyword from burst detection.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "description": "keyword to be removed",
+                            "title": "keyword",
+                            "type": "string"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "description": "True if Jubatus succeed to delete the keyword",
+                    "type": "boolean"
+                }
+            },
+            "title": "remove_keyword"
+        }
+    },
+    "title": "burst"
+}

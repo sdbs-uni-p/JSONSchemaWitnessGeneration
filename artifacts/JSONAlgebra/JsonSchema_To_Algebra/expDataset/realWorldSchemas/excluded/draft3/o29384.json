@@ -1,0 +1,147 @@
+{
+    "kinds": [
+        {
+            "term": "compute",
+            "scheme": "http://schemas.ogf.org/occi/infrastructure#",
+            "title": "ComputeResource",
+            "parent": "http://schemas.ogf.org/occi/core#resource",
+            "attributes": {
+                "occi.compute.hostname": {
+                    "mutable": true,
+                    "required": false,
+                    "type": "string",
+                    "description": "Hostname of the compute resource",
+                    "pattern": {
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "type": "string",
+                        "pattern": "\\S+"
+                    }
+                },
+                "occi.compute.state": {
+                    "mutable": false,
+                    "required": false,
+                    "type": "string",
+                    "default": "inactive",
+                    "description": "State the compute resource is in"
+                }
+            },
+            "actions": [
+                "http://schemas.ogf.org/occi/infrastructure/compute/action#start",
+                "http://schemas.ogf.org/occi/infrastructure/compute/action#stop",
+                "http://schemas.ogf.org/occi/infrastructure/compute/action#restart",
+                "http://schemas.ogf.org/occi/infrastructure/compute/action#suspend"
+            ],
+            "location": "/compute/"
+        }
+    ],
+    "mixins": [
+        {
+            "term": "medium",
+            "scheme": "http://example.com/template/resource#",
+            "depends": [
+                "http://schemas.ogf.org/occi/infrastructure#resourcetpl"
+            ],
+            "applies": [
+                "http://schemas.ogf.org/occi/infrastructure#compute"
+            ],
+            "attributes": {
+                "occi.compute.speed": {
+                    "type": "number",
+                    "default": 2.8
+                }
+            },
+            "title": "MediumVM",
+            "location": "/template/resource/medium/"
+        }
+    ],
+    "actions": [
+        {
+            "term": "stop",
+            "scheme": "http://schemas.ogf.org/occi/infrastructure/compute/action#",
+            "title": "StopComputeinstance",
+            "attributes": {
+                "method": {
+                    "mutable": true,
+                    "required": false,
+                    "type": "string",
+                    "default": "poweroff"
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "kind": "http://schemas.ogf.org/occi/infrastructure#compute",
+            "mixins": [
+                "http://example.com/occi/infrastructure/os_tpl#debian9",
+                "http://example.com/occi/infrastructure/resource_tpl#medium"
+            ],
+            "attributes": {
+                "occi.compute.speed": 2,
+                "occi.compute.memory": 4,
+                "occi.compute.cores": 2,
+                "com.example.occi.templates.myosmixin": {
+                    "mykey": "myvalue"
+                }
+            },
+            "actions": [
+                "http://schemas.ogf.org/occi/infrastructure/compute/action#start"
+            ],
+            "id": "urn:uuid:996ad860-2a9a-504f-8861-aeafd0b2ae29",
+            "links": [
+                {
+                    "kind": "http://schemas.ogf.org/occi/infrastructure#networkinterface",
+                    "mixins": [
+                        "http://schemas.ogf.org/occi/infrastructure/networkinterface#ipnetworkinterface"
+                    ],
+                    "attributes": {
+                        "occi.infrastructure.networkinterface.interface": "eth0",
+                        "occi.infrastructure.networkinterface.mac": "00:80:41:ae:fd:7e",
+                        "occi.infrastructure.networkinterface.address": "192.168.0.100",
+                        "occi.infrastructure.networkinterface.gateway": "192.168.0.1",
+                        "occi.infrastructure.networkinterface.allocation": "dynamic"
+                    },
+                    "actions": [
+                        "http://schemas.ogf.org/occi/infrastructure/networkinterface/action#up",
+                        "http://schemas.ogf.org/occi/infrastructure/networkinterface/action#down"
+                    ],
+                    "id": "urn:uuid:22fe83ae-a20f-54fc-b436-cec85c94c5e8",
+                    "target": {
+                        "location": "/network/b7d55bf4-7057-5113-85c8-141871bf7635",
+                        "kind": "http://schemas.ogf.org/occi/infrastructure#network"
+                    },
+                    "source": {
+                        "location": "/compute/996ad860-2a9a-504f-8861-aeafd0b2ae29"
+                    }
+                }
+            ]
+        }
+    ],
+    "links": [
+        {
+            "kind": "http://schemas.ogf.org/occi/infrastructure#networkinterface",
+            "mixins": [
+                "http://schemas.ogf.org/occi/infrastructure/networkinterface#ipnetworkinterface"
+            ],
+            "attributes": {
+                "occi.infrastructure.networkinterface.interface": "eth0",
+                "occi.infrastructure.networkinterface.mac": "00:80:41:ae:fd:7e",
+                "occi.infrastructure.networkinterface.address": "192.168.0.100",
+                "occi.infrastructure.networkinterface.gateway": "192.168.0.1",
+                "occi.infrastructure.networkinterface.allocation": "dynamic"
+            },
+            "actions": [
+                "http://schemas.ogf.org/occi/infrastructure/networkinterface/action#up",
+                "http://schemas.ogf.org/occi/infrastructure/networkinterface/action#down"
+            ],
+            "id": "urn:uuid:22fe83ae-a20f-54fc-b436-cec85c94c5e8",
+            "target": {
+                "location": "/network/b7d55bf4-7057-5113-85c8-141871bf7635",
+                "kind": "http://schemas.ogf.org/occi/infrastructure#network"
+            },
+            "source": {
+                "location": "/compute/996ad860-2a9a-504f-8861-aeafd0b2ae29"
+            }
+        }
+    ]
+}

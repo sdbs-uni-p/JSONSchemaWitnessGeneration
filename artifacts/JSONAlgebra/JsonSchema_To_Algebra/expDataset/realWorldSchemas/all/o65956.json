@@ -1,0 +1,374 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "CDIF device root schema",
+    "description": "Schema specification for CDIF device model",
+    "properties": {
+        "configId": {
+            "type": "integer",
+            "maximum": 16777216,
+            "minimum": 0
+        },
+        "specVersion": {
+            "type": "object",
+            "properties": {
+                "major": {
+                    "type": "integer",
+                    "enum": [
+                        1
+                    ]
+                },
+                "minor": {
+                    "type": "integer",
+                    "enum": [
+                        0
+                    ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "major",
+                "minor"
+            ]
+        },
+        "device": {
+            "description": "Schema for device object",
+            "type": "object",
+            "properties": {
+                "deviceType": {
+                    "type": "string",
+                    "pattern": "^urn\\:[ \\S]{1,64}\\:device\\:[ \\S]{1,64}\\:[0-9]{1,8}$"
+                },
+                "friendlyName": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 0
+                },
+                "manufacturer": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 0
+                },
+                "manufacturerURL": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "modelDescription": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "minLength": 0
+                },
+                "rateLimit": {
+                    "description": "the total api requests to this device allowed in one second, must be a positive integer",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "modelName": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 0
+                },
+                "modelNumber": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 0
+                },
+                "serialNumber": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 0
+                },
+                "price": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "minLength": 1
+                },
+                "UDN": {
+                    "title": "Schema for device UUID",
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 36,
+                    "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+                },
+                "UPC": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 0
+                },
+                "userAuth": {
+                    "type": "boolean"
+                },
+                "devicePresentation": {
+                    "type": "boolean"
+                },
+                "powerIndex": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "iconList": {
+                    "type": "array",
+                    "maxItems": 5,
+                    "minItems": 1,
+                    "_uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "mimetype": {
+                                "type": "string",
+                                "maxLength": 18,
+                                "minLength": 7,
+                                "pattern": "^image/[a-zA-Z0-9\\+\\.]{1,12}$"
+                            },
+                            "width": {
+                                "type": "integer",
+                                "maximum": 9999,
+                                "minimum": 1
+                            },
+                            "height": {
+                                "type": "integer",
+                                "maximum": 9999,
+                                "minimum": 1
+                            },
+                            "depth": {
+                                "type": "integer",
+                                "maximum": 99,
+                                "minimum": 1
+                            },
+                            "url": {
+                                "type": "string",
+                                "format": "uri"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "mimetype",
+                            "width",
+                            "height",
+                            "depth",
+                            "url"
+                        ]
+                    }
+                },
+                "serviceList": {
+                    "type": "object",
+                    "maxProperties": 32,
+                    "minProperties": 0,
+                    "patternProperties": {
+                        "^urn\\:[\\S]{1,64}\\:serviceID\\:[\\S]{1,64}$": {
+                            "type": "object",
+                            "properties": {
+                                "serviceType": {
+                                    "type": "string",
+                                    "pattern": "^urn\\:[ \\S]{1,64}\\:service\\:[ \\S]{1,64}\\:[0-9]{1,8}$"
+                                },
+                                "actionList": {
+                                    "type": "object",
+                                    "maxProperties": 64,
+                                    "minProperties": 0,
+                                    "patternProperties": {
+                                        "^[\\S]{1,128}$": {
+                                            "type": "object",
+                                            "properties": {
+                                                "argumentList": {
+                                                    "type": "object",
+                                                    "maxProperties": 32,
+                                                    "minProperties": 1,
+                                                    "patternProperties": {
+                                                        "^[\\S]{1,128}$": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "direction": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "in",
+                                                                        "out"
+                                                                    ]
+                                                                },
+                                                                "retval": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "relatedStateVariable": {
+                                                                    "type": "string",
+                                                                    "maxLength": 128,
+                                                                    "minLength": 1
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "direction",
+                                                                "relatedStateVariable"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                },
+                                                "realPrice": {
+                                                    "type": "number"
+                                                },
+                                                "priceInfo": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "price": {
+                                                                "type": "number"
+                                                            },
+                                                            "count": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "price",
+                                                            "count"
+                                                        ]
+                                                    }
+                                                },
+                                                "freeCount": {
+                                                    "type": "integer"
+                                                },
+                                                "apiCache": {
+                                                    "type": "number"
+                                                },
+                                                "apiLog": {
+                                                    "type": "boolean"
+                                                },
+                                                "fault": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "schema": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "schema"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "argumentList"
+                                            ]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "serviceStateTable": {
+                                    "type": "object",
+                                    "maxProperties": 256,
+                                    "minProperties": 1,
+                                    "patternProperties": {
+                                        "^[\\S]{1,128}$": {
+                                            "type": "object",
+                                            "properties": {
+                                                "sendEvents": {
+                                                    "type": "boolean"
+                                                },
+                                                "dataType": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "string",
+                                                        "boolean",
+                                                        "integer",
+                                                        "number",
+                                                        "object"
+                                                    ]
+                                                },
+                                                "schema": {
+                                                    "type": "string"
+                                                },
+                                                "defaultValue": {
+                                                    "type": [
+                                                        "boolean",
+                                                        "integer",
+                                                        "number",
+                                                        "string"
+                                                    ],
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "string",
+                                                            "maxLength": 1024,
+                                                            "minLength": 1
+                                                        },
+                                                        {
+                                                            "type": "boolean"
+                                                        },
+                                                        {
+                                                            "type": "integer"
+                                                        },
+                                                        {
+                                                            "type": "number"
+                                                        }
+                                                    ]
+                                                },
+                                                "allowedValueRange": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "minimum": {
+                                                            "type": "number"
+                                                        },
+                                                        "maximum": {
+                                                            "type": "number"
+                                                        },
+                                                        "step": {
+                                                            "type": "number"
+                                                        }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                        "minimum",
+                                                        "maximum"
+                                                    ]
+                                                },
+                                                "allowedValueList": {
+                                                    "type": "array",
+                                                    "maxItems": 256,
+                                                    "minItems": 1,
+                                                    "_uniqueItems": true,
+                                                    "items": {
+                                                        "oneOf": [
+                                                            {
+                                                                "type": "string"
+                                                            },
+                                                            {
+                                                                "type": "number"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "dataType"
+                                            ]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "required": [
+                                "actionList",
+                                "serviceStateTable"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "deviceList": {
+                    "type": "array",
+                    "minItems": 1,
+                    "_uniqueItems": true,
+                    "items": {
+                        "$ref": "#/properties/device"
+                    }
+                }
+            },
+            "required": [
+                "friendlyName",
+                "manufacturer",
+                "modelDescription"
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "specVersion",
+        "device"
+    ]
+}

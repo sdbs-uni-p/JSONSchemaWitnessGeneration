@@ -1,0 +1,133 @@
+{
+    "contentVersion": "1.0.0.0",
+    "outputs": {
+        "triggerURI": {
+            "type": "string",
+            "value": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('logicAppName')), '/triggers/manual'), '2016-06-01').value]"
+        }
+    },
+    "parameters": {
+        "logicAppName": {
+            "metadata": {
+                "description": "The name for the logic app."
+            },
+            "type": "string"
+        },
+        "sendgridApiKey": {
+            "metadata": {
+                "description": "The SendGrid API key from the SendGrid service."
+            },
+            "type": "securestring"
+        },
+        "sendgridName": {
+            "metadata": {
+                "description": "The name for the SendGrid connection."
+            },
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('sendgridName')]",
+            "properties": {
+                "api": {
+                    "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/sendgrid')]"
+                },
+                "displayName": "sendgrid",
+                "parameterValues": {
+                    "apiKey": "[parameters('sendgridApiKey')]"
+                }
+            },
+            "type": "Microsoft.Web/connections"
+        },
+        {
+            "apiVersion": "2016-06-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('sendgridName'))]"
+            ],
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('logicAppName')]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "actions": {
+                        "Send_email": {
+                            "inputs": {
+                                "body": {
+                                    "body": "@{triggerBody()['emailbody']}",
+                                    "from": "@{triggerBody()['from']}",
+                                    "ishtml": false,
+                                    "subject": "@{triggerBody()['subject']}",
+                                    "to": "@{triggerBody()['to']}"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['sendgrid']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/api/mail.send.json"
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                        }
+                    },
+                    "contentVersion": "1.0.0.0",
+                    "outputs": {},
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "inputs": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema#",
+                                    "properties": {
+                                        "emailbody": {
+                                            "type": "string"
+                                        },
+                                        "from": {
+                                            "type": "string"
+                                        },
+                                        "subject": {
+                                            "type": "string"
+                                        },
+                                        "to": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "from",
+                                        "to",
+                                        "subject",
+                                        "emailbody"
+                                    ],
+                                    "type": "object"
+                                }
+                            },
+                            "kind": "http",
+                            "type": "request"
+                        }
+                    }
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "sendgrid": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('sendgridName'))]",
+                                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/sendgrid')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "type": "Microsoft.Logic/workflows"
+        }
+    ],
+    "variables": {}
+}

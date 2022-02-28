@@ -1,0 +1,351 @@
+{
+    "id": "http://schemas.triniti.io/json-schema/triniti/news/mixin/article/1-0-3.json#",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "_id": {
+            "type": "string",
+            "pattern": "^[\\w\\/\\.:-]+$",
+            "pbj": {
+                "type": "identifier",
+                "rule": "single",
+                "overridable": true
+            }
+        },
+        "status": {
+            "type": "string",
+            "default": "draft",
+            "enum": [
+                "unknown",
+                "published",
+                "scheduled",
+                "pending",
+                "draft",
+                "expired",
+                "archived",
+                "deleted"
+            ],
+            "pbj": {
+                "type": "string-enum",
+                "rule": "single"
+            }
+        },
+        "etag": {
+            "type": "string",
+            "pattern": "^[\\w\\.:-]+$",
+            "pbj": {
+                "type": "string",
+                "rule": "single"
+            }
+        },
+        "created_at": {
+            "type": "string",
+            "pattern": "^[1-9]{1}[0-9]{12,15}$",
+            "pbj": {
+                "type": "microtime",
+                "rule": "single"
+            }
+        },
+        "creator_ref": {
+            "type": "object",
+            "properties": {
+                "curie": {
+                    "type": "string",
+                    "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                    "minLength": 0,
+                    "maxLength": 146
+                },
+                "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9:_\\-]+$",
+                    "minLength": 0,
+                    "maxLength": 255
+                },
+                "tag": {
+                    "type": "string",
+                    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                    "minLength": 0,
+                    "maxLength": 255
+                }
+            },
+            "required": [
+                "curie",
+                "id"
+            ],
+            "additionalProperties": false,
+            "description": "A fully qualified reference to what created this node. This is intentionally a message-ref and not a user id because it is often a program that creates nodes, not a user.",
+            "pbj": {
+                "type": "message-ref",
+                "rule": "single"
+            }
+        },
+        "updated_at": {
+            "type": "string",
+            "pattern": "^[1-9]{1}[0-9]{12,15}$",
+            "pbj": {
+                "type": "microtime",
+                "rule": "single",
+                "useTypeDefault": false
+            }
+        },
+        "updater_ref": {
+            "type": "object",
+            "properties": {
+                "curie": {
+                    "type": "string",
+                    "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                    "minLength": 0,
+                    "maxLength": 146
+                },
+                "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9:_\\-]+$",
+                    "minLength": 0,
+                    "maxLength": 255
+                },
+                "tag": {
+                    "type": "string",
+                    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                    "minLength": 0,
+                    "maxLength": 255
+                }
+            },
+            "required": [
+                "curie",
+                "id"
+            ],
+            "additionalProperties": false,
+            "description": "A fully qualified reference to what updated this node. This is intentionally a message-ref and not a user id because it is often a program that updates nodes, not a user. E.g. \"acme:iam:node:app:cli-scheduler\" or \"acme:iam:node:user:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+            "pbj": {
+                "type": "message-ref",
+                "rule": "single"
+            }
+        },
+        "last_event_ref": {
+            "type": "object",
+            "properties": {
+                "curie": {
+                    "type": "string",
+                    "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                    "minLength": 0,
+                    "maxLength": 146
+                },
+                "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9:_\\-]+$",
+                    "minLength": 0,
+                    "maxLength": 255
+                },
+                "tag": {
+                    "type": "string",
+                    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                    "minLength": 0,
+                    "maxLength": 255
+                }
+            },
+            "required": [
+                "curie",
+                "id"
+            ],
+            "additionalProperties": false,
+            "description": "A reference to the last event that changed the state of this node. E.g. \"acme:blog:event:article-published:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+            "pbj": {
+                "type": "message-ref",
+                "rule": "single"
+            }
+        },
+        "title": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "pbj": {
+                "type": "string",
+                "rule": "single"
+            }
+        },
+        "is_homepage_news": {
+            "type": "boolean",
+            "default": true,
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "slotting": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 255
+                }
+            },
+            "additionalProperties": false,
+            "description": "A map of integers, e.g. {home: 1, sports: 5, tv: 9}, that determine where articles will render in lists that use slotting. We call it slotting vs sticky or pinning as that is generally just one at a time.",
+            "pbj": {
+                "type": "tiny-int",
+                "rule": "map"
+            }
+        },
+        "allow_comments": {
+            "type": "boolean",
+            "default": true,
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "author_ref": {
+            "type": "string",
+            "pattern": "^[\\w\\/\\.:-]+$",
+            "description": "A reference to the author of the article.",
+            "pbj": {
+                "type": "identifier",
+                "rule": "single"
+            }
+        },
+        "image_ref": {
+            "type": "string",
+            "pattern": "^[\\w\\/\\.:-]+$",
+            "description": "A reference to the image asset to use for widgets, sharing, seo.",
+            "pbj": {
+                "type": "identifier",
+                "rule": "single"
+            }
+        },
+        "classification": {
+            "type": "string",
+            "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+            "minLength": 0,
+            "maxLength": 255,
+            "description": "An arbitrary classification that can be used to establish importance/rank/weight/etc. with a human friendly label. e.g. \"super-hero\", \"hero\", \"chud\".",
+            "pbj": {
+                "type": "string",
+                "rule": "single",
+                "format": "slug"
+            }
+        },
+        "word_count": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 65535,
+            "pbj": {
+                "type": "small-int",
+                "rule": "single"
+            }
+        },
+        "amp_enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Determines if AMP (Accelerated Mobile Pages) should be enabled for this article.",
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "smartnews_enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Determines if SmartNews should be enabled for this article.",
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "apple_news_enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Determines if Apple News should be enabled for this article.",
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "apple_news_id": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+            "description": "The unique identifier of the Apple News article.",
+            "pbj": {
+                "type": "uuid",
+                "rule": "single",
+                "useTypeDefault": false
+            }
+        },
+        "apple_news_revision": {
+            "type": "string",
+            "pattern": "^[\\w\\/\\.\\\\\\:=+-]+$",
+            "description": "The current revision token for the Apple News article. e.g. AAAAAAAAAAAAAAAAAAAAAQ==",
+            "pbj": {
+                "type": "string",
+                "rule": "single"
+            }
+        },
+        "apple_news_share_url": {
+            "type": "string",
+            "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
+            "pbj": {
+                "type": "text",
+                "rule": "single",
+                "format": "url"
+            }
+        },
+        "apple_news_updated_at": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647,
+            "description": "Timestamp when Apple News was last updated at.",
+            "pbj": {
+                "type": "timestamp",
+                "rule": "single",
+                "useTypeDefault": false
+            }
+        },
+        "facebook_instant_articles_enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Determines if Facebook Instant Articles should be enabled for this article.",
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "show_related_articles": {
+            "type": "boolean",
+            "default": true,
+            "description": "Determines if the related articles should render. This is intended as a flag on blogroll/lists, not the permalink of an article where you'd always expect to see the related articles.",
+            "pbj": {
+                "type": "boolean",
+                "rule": "single"
+            }
+        },
+        "related_articles_heading": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "pbj": {
+                "type": "string",
+                "rule": "single"
+            }
+        },
+        "related_article_refs": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "string",
+                    "pattern": "^[\\w\\/\\.:-]+$"
+                }
+            ],
+            "additionalProperties": false,
+            "pbj": {
+                "type": "identifier",
+                "rule": "list"
+            }
+        }
+    },
+    "required": [
+        "_id"
+    ],
+    "additionalProperties": true
+}

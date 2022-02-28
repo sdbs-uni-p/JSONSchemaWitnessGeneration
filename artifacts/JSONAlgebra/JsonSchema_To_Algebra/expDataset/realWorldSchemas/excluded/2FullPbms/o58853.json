@@ -1,0 +1,116 @@
+{
+    "id": "https://github.com/martin-helmich/graphpizer-cli/blob/master/res/config-schema.json",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "GraPHPizer configuration schema",
+    "type": "object",
+    "properties": {
+        "config": {
+            "$ref": "#/definitions/configuration"
+        },
+        "subConfigs": {
+            "type": "object",
+            "patternProperties": {
+                "^(.*+\\/)+$": {
+                    "$ref": "#/definitions/configuration"
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "config"
+    ],
+    "definitions": {
+        "configuration": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "matchPatterns": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "excludePatterns": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "package": {
+                    "type": [
+                        "string",
+                        "object"
+                    ],
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/packageManual"
+                        }
+                    ]
+                },
+                "project": {
+                    "$ref": "#/definitions/project"
+                }
+            }
+        },
+        "project": {
+            "type": "object",
+            "required": [
+                "slug",
+                "name"
+            ],
+            "properties": {
+                "slug": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "additionalTransformations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/transformation"
+                    }
+                }
+            }
+        },
+        "transformation": {
+            "type": "object",
+            "required": [
+                "when",
+                "cypher"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "when": {
+                    "type": "string",
+                    "enum": [
+                        "preTypeInference"
+                    ]
+                },
+                "cypher": {
+                    "type": "string"
+                }
+            }
+        },
+        "packageManual": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "name",
+                "description"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_\\\\]+$"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

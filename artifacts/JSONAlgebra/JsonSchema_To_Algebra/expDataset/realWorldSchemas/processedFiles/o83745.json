@@ -1,0 +1,169 @@
+{
+    "language": {
+        "commands": {
+            "moveTo": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "Animation program, moveTo command",
+                "description": "Moves a graphics resource to a given (x, y) position in the viewport. (0, 0) is on the viewport's top left corner.",
+                "type": "object",
+                "required": [
+                    "cmd",
+                    "args"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "cmd": {
+                        "type": "string",
+                        "pattern": "^moveTo$"
+                    },
+                    "args": {
+                        "type": "object",
+                        "required": [
+                            "subject",
+                            "x",
+                            "y",
+                            "time"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "subject": {
+                                "description": "The subject (e.g. an image resource) we move",
+                                "type": "string"
+                            },
+                            "x": {
+                                "description": "Target coordinate, x part.",
+                                "type": "number"
+                            },
+                            "y": {
+                                "description": "Target coordinate, y part.",
+                                "type": "number"
+                            },
+                            "time": {
+                                "description": "Time to reach target coordinate [ms]. No anim if 0 (zero)",
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "setTransparency": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "Animation program, setTransparency command",
+                "description": "Sets the transparency of a graphics resource",
+                "type": "object",
+                "required": [
+                    "cmd",
+                    "args"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "cmd": {
+                        "type": "string",
+                        "pattern": "^setTransparency$"
+                    },
+                    "args": {
+                        "type": "object",
+                        "required": [
+                            "subject",
+                            "alpha",
+                            "time"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "subject": {
+                                "description": "The subject (e.g. an image resource) we set the transparency of",
+                                "type": "string"
+                            },
+                            "alpha": {
+                                "description": "The target transparency. A floating point number in the range [0.0, 1.0]. 0.0: Opaque; 1.0: Transparent.",
+                                "type": "number"
+                            },
+                            "time": {
+                                "description": "Time to reach target transparency [ms]. No anim if 0 (zero)",
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "program": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Animation program",
+        "description": "A program describing an animation run",
+        "type": "object",
+        "required": [
+            "resources",
+            "program"
+        ],
+        "additionalProperties": false,
+        "properties": {
+            "resources": {
+                "description": "The resources used by this program",
+                "type": "object",
+                "required": [
+                    "images"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "images": {
+                        "description": "A list of image resources to load",
+                        "type": "array",
+                        "items": {
+                            "description": "A particular image",
+                            "type": "object",
+                            "required": [
+                                "key",
+                                "uri",
+                                "targetLayer"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "key": {
+                                    "description": "The unique ID of this image",
+                                    "type": "string"
+                                },
+                                "uri": {
+                                    "description": "The location where to find this image",
+                                    "type": "string"
+                                },
+                                "targetLayer": {
+                                    "description": "The ID of the layer in the view port onto which to draw this image",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "program": {
+                "description": "The program steps",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "description": "A particular step within the program",
+                    "required": [
+                        "cmd",
+                        "args"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "cmd": {
+                            "description": "The command to be executed",
+                            "type": "string",
+                            "enum": [
+                                "moveTo",
+                                "setTransparency"
+                            ]
+                        },
+                        "args": {
+                            "description": "A map of arguments for the command",
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

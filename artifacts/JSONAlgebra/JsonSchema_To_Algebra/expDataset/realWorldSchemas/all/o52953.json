@@ -1,0 +1,128 @@
+{
+    "features": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "auth": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    },
+                    "flag": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            },
+            "repos": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            },
+            "search": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            },
+            "details": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    },
+                    "action": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            }
+        }
+    },
+    "areas": {
+        "activities": [
+            {
+                "widget": "amd:laxar-github/events-activity",
+                "features": {
+                    "auth": "${features.auth}",
+                    "events": {
+                        "resource": "${topic:events}",
+                        "sources": {
+                            "resource": "${features.repos.resource}"
+                        }
+                    }
+                }
+            }
+        ],
+        ".": [
+            {
+                "widget": "release-station/headline-selector-widget",
+                "features": {
+                    "headline": {
+                        "level": 1,
+                        "i18nHtmlFormat": {
+                            "en-US": "Activity in [0]"
+                        }
+                    },
+                    "selections": [
+                        {
+                            "parameter": "date",
+                            "options": {
+                                "resource": "${topic:navigation}",
+                                "i18nHtmlFormat": "[0:%MMMMm]",
+                                "parameterFormat": "[0:%YYYY-MM-DDm]",
+                                "fields": "date"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "widget": "release-station/activity-calendar-widget",
+                "features": {
+                    "events": {
+                        "resource": "${topic:events}"
+                    },
+                    "search": {
+                        "resource": "${features.search.resource}",
+                        "fields": [
+                            "repo.name",
+                            "actor.login",
+                            "org.login",
+                            "payload.message",
+                            "payload.ref"
+                        ],
+                        "match": {
+                            "@([\\w-]+)": [
+                                "actor.login"
+                            ],
+                            "#(\\d+)": [
+                                "payload.issue.id"
+                            ],
+                            "([\\w-]+/[\\w.-]+)": [
+                                "repo.name"
+                            ]
+                        }
+                    },
+                    "details": {
+                        "resource": "${features.details.resource}",
+                        "action": "${features.details.action}"
+                    },
+                    "navigation": {
+                        "resource": "${topic:navigation}"
+                    }
+                }
+            }
+        ]
+    }
+}

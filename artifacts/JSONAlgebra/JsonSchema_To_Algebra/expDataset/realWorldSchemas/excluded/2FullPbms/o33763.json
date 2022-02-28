@@ -1,0 +1,367 @@
+{
+    "additionalProperties": false,
+    "definitions": {
+        "command_map": {
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[0-9A-Za-z]([0-9A-Za-z_.-]*[0-9A-Za-z])?$": {
+                    "$ref": "#/definitions/export_specifier",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "commands": {
+            "additionalProperties": false,
+            "properties": {
+                "prebuilt": {
+                    "items": {
+                        "$ref": "#/definitions/relative_path",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "wrap_console": {
+                    "$ref": "#/definitions/command_map",
+                    "type": "object"
+                },
+                "wrap_gui": {
+                    "$ref": "#/definitions/command_map",
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "contact": {
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "dependencies": {
+            "items": {
+                "$ref": "#/definitions/dependency",
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "dependency": {
+            "additionalProperties": false,
+            "properties": {
+                "environment": {
+                    "$ref": "#/definitions/environment_marker",
+                    "type": "string"
+                },
+                "extra": {
+                    "$ref": "#/definitions/extra_name",
+                    "type": "string"
+                },
+                "requires": {
+                    "items": {
+                        "$ref": "#/definitions/requirement",
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "requires"
+            ],
+            "type": "object"
+        },
+        "distribution_name": {
+            "pattern": "^[0-9A-Za-z]([0-9A-Za-z_.-]*[0-9A-Za-z])?$",
+            "type": "string"
+        },
+        "document_name": {
+            "type": "string"
+        },
+        "environment_marker": {
+            "type": "string"
+        },
+        "export_specifier": {
+            "pattern": "^([A-Za-z_][A-Za-z_0-9]*([.][A-Za-z_][A-Za-z_0-9]*)*)(:[A-Za-z_][A-Za-z_0-9]*([.][A-Za-z_][A-Za-z_0-9]*)*)?(\\[[0-9A-Za-z]([0-9A-Za-z_.-]*[0-9A-Za-z])?\\])?$",
+            "type": "string"
+        },
+        "exports": {
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[A-Za-z][0-9A-Za-z_]*([.][0-9A-Za-z_]*)*$": {
+                    "additionalProperties": false,
+                    "patternProperties": {
+                        ".": {
+                            "$ref": "#/definitions/export_specifier",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "extensions": {
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[A-Za-z][0-9A-Za-z_]*([.][0-9A-Za-z_]*)*$": {}
+            },
+            "properties": {
+                "python.commands": {
+                    "$ref": "#/definitions/commands",
+                    "description": "Command line interfaces provided by this distribution",
+                    "type": "object"
+                },
+                "python.details": {
+                    "description": "More information regarding the distribution.",
+                    "properties": {
+                        "classifiers": {
+                            "description": "A list of strings, with each giving a single classification value for the distribution.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "document_names": {
+                            "additionalProperties": false,
+                            "description": "Names of supporting metadata documents",
+                            "properties": {
+                                "changelog": {
+                                    "$ref": "#/definitions/document_name",
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "$ref": "#/definitions/document_name",
+                                    "type": "string"
+                                },
+                                "license": {
+                                    "$ref": "#/definitions/document_name",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "keywords": {
+                            "description": "A list of additional keywords to be used to assist searching for the distribution in a larger catalog.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "license": {
+                            "description": "A string indicating the license covering the distribution.",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "python.exports": {
+                    "$ref": "#/definitions/exports",
+                    "description": "Other exported interfaces provided by this distribution",
+                    "type": "object"
+                },
+                "python.integrator": {
+                    "$ref": "#/definitions/project_or_integrator",
+                    "description": "More information regarding the downstream redistributor of the distribution."
+                },
+                "python.project": {
+                    "$ref": "#/definitions/project_or_integrator",
+                    "description": "More information regarding the creation and maintenance of the distribution."
+                }
+            },
+            "type": "object"
+        },
+        "extra_name": {
+            "pattern": "^[0-9A-Za-z]([0-9A-Za-z_.-]*[0-9A-Za-z])?$",
+            "type": "string"
+        },
+        "prefixed_name": {
+            "pattern": "^[A-Za-z_][A-Za-z_0-9]*([.][A-Za-z_0-9]*)*$",
+            "type": "string"
+        },
+        "project_or_integrator": {
+            "properties": {
+                "contacts": {
+                    "description": "A list of contributor entries giving the recommended contact points for getting more information about the project.",
+                    "items": {
+                        "$ref": "#/definitions/contact",
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "contributors": {
+                    "description": "A list of contributor entries for other contributors not already listed as current project points of contact.",
+                    "items": {
+                        "$ref": "#/definitions/contact",
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "project_urls": {
+                    "description": "A mapping of arbitrary text labels to additional URLs relevant to the project.",
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "provides_declaration": {
+            "type": "string"
+        },
+        "qualified_name": {
+            "pattern": "^[A-Za-z_][A-Za-z_0-9]*([.][A-Za-z_][A-Za-z_0-9]*)*$",
+            "type": "string"
+        },
+        "relative_path": {
+            "type": "string"
+        },
+        "requirement": {
+            "type": "string"
+        }
+    },
+    "properties": {
+        "build_requires": {
+            "$ref": "#/definitions/dependencies",
+            "description": "A list of other distributions needed when this distribution is built.",
+            "type": "array"
+        },
+        "dev_requires": {
+            "$ref": "#/definitions/dependencies",
+            "description": "A list of other distributions needed when this distribution is developed.",
+            "type": "array"
+        },
+        "extensions": {
+            "$ref": "#/definitions/extensions",
+            "description": "Extensions to the metadata may be present in a mapping under the 'extensions' key.",
+            "type": "object"
+        },
+        "extras": {
+            "description": "A list of optional sets of dependencies that may be used to define conditional dependencies in \"may_require\" and similar fields.",
+            "items": {
+                "$ref": "#/definitions/extra_name",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "generator": {
+            "description": "Name and version of the program that produced this file.",
+            "pattern": "^[0-9A-Za-z]([0-9A-Za-z_.-]*[0-9A-Za-z])( \\(.*\\))?$",
+            "type": "string"
+        },
+        "install_hooks": {
+            "description": "The install_hooks field is used to define various operations that may be invoked on a distribution in a platform independent manner.",
+            "properties": {
+                "preuninstall": {
+                    "$ref": "#/definitions/export_specifier",
+                    "type": "string"
+                },
+                "questioninstall": {
+                    "$ref": "#/definitions/export_specifier",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "meta_requires": {
+            "$ref": "#/definitions/dependencies",
+            "description": "A list of subdistributions made available through this metadistribution.",
+            "type": "array"
+        },
+        "metadata_version": {
+            "description": "Version of the file format",
+            "pattern": "^(\\d+(\\.\\d+)*)$",
+            "type": "string"
+        },
+        "modules": {
+            "description": "A list of modules and/or packages available for import after installing this distribution.",
+            "items": {
+                "$ref": "#/definitions/qualified_name",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "name": {
+            "$ref": "#/definitions/distribution_name",
+            "description": "The name of the distribution.",
+            "type": "string"
+        },
+        "namespaces": {
+            "description": "A list of namespace packages this distribution contributes to",
+            "items": {
+                "$ref": "#/definitions/qualified_name",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "obsoleted_by": {
+            "$ref": "#/definitions/requirement",
+            "description": "A string that indicates that this project is no longer being developed. The named project provides a substitute or replacement.",
+            "type": "string"
+        },
+        "provides": {
+            "description": "A list of strings naming additional dependency requirements that are satisfied by installing this distribution. These strings must be of the form Name or Name (Version)",
+            "items": {
+                "$ref": "#/definitions/provides_declaration",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "run_requires": {
+            "$ref": "#/definitions/dependencies",
+            "description": "A list of other distributions needed to run this distribution.",
+            "type": "array"
+        },
+        "source_label": {
+            "description": "A constrained identifying text string",
+            "pattern": "^[0-9a-z_.-+]+$",
+            "type": "string"
+        },
+        "source_url": {
+            "_format": "uri",
+            "description": "A string containing a full URL where the source for this specific version of the distribution can be downloaded.",
+            "type": "string"
+        },
+        "summary": {
+            "description": "A one-line summary of what the distribution does.",
+            "type": "string"
+        },
+        "supports_environments": {
+            "description": "A list of strings specifying the environments that the distribution explicitly supports.",
+            "items": {
+                "$ref": "#/definitions/environment_marker",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "test_requires": {
+            "$ref": "#/definitions/dependencies",
+            "description": "A list of other distributions needed when this distribution is tested.",
+            "type": "array"
+        },
+        "version": {
+            "description": "The distribution's public version identifier",
+            "pattern": "^(\\d+(\\.\\d+)*)((a|b|c|rc)(\\d+))?(\\.(question)(\\d+))?(\\.(dev)(\\d+))?$",
+            "type": "string"
+        }
+    },
+    "required": [
+        "metadata_version",
+        "name",
+        "version",
+        "summary"
+    ],
+    "title": "Metadata for Python Software Packages 2.0",
+    "type": "object"
+}

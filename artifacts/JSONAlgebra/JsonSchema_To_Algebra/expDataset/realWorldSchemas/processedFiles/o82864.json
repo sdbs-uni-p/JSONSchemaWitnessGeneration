@@ -1,0 +1,255 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "additionalProperties": true,
+    "id": "http://schemas.triniti.io/json-schema/triniti/dam/mixin/asset/1-0-0.json#",
+    "properties": {
+        "_id": {
+            "pattern": "^[\\w\\/\\.:-]+$",
+            "pbj": {
+                "rule": "single",
+                "type": "identifier"
+            },
+            "type": "string"
+        },
+        "created_at": {
+            "pattern": "^[1-9]{1}[0-9]{12,15}$",
+            "pbj": {
+                "rule": "single",
+                "type": "microtime"
+            },
+            "type": "string"
+        },
+        "creator_ref": {
+            "additionalProperties": false,
+            "description": "A fully qualified reference to what created this node. This is intentionally a message-ref and not a user id because it is often a program that creates nodes, not a user.",
+            "pbj": {
+                "rule": "single",
+                "type": "message-ref"
+            },
+            "properties": {
+                "curie": {
+                    "maxLength": 146,
+                    "minLength": 0,
+                    "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                    "type": "string"
+                },
+                "id": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "pattern": "^[A-Za-z0-9:_\\-]+$",
+                    "type": "string"
+                },
+                "tag": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "curie",
+                "id"
+            ],
+            "type": "object"
+        },
+        "credit": {
+            "description": "A credit is a short string used to publicly acknowledge the source/creator of the asset. e.g. \"Fox News\", \"CNN\".",
+            "maxLength": 255,
+            "minLength": 0,
+            "pbj": {
+                "rule": "single",
+                "type": "string"
+            },
+            "type": "string"
+        },
+        "description": {
+            "description": "A description of the asset (usually a few sentences). It should typically not have HTML as it is used in metadata, feeds, SERP and social.",
+            "maxLength": 5000,
+            "minLength": 0,
+            "pbj": {
+                "rule": "single",
+                "type": "text"
+            },
+            "type": "string"
+        },
+        "etag": {
+            "pattern": "^[\\w\\.:-]+$",
+            "pbj": {
+                "rule": "single",
+                "type": "string"
+            },
+            "type": "string"
+        },
+        "file_etag": {
+            "description": "An etag created from the file itself. The file etag is different from the node's etag because the node tracks metadata, which can be updated without the file being changed.",
+            "pattern": "^[\\w\\.:-]+$",
+            "pbj": {
+                "rule": "single",
+                "type": "string"
+            },
+            "type": "string"
+        },
+        "file_size": {
+            "default": 0,
+            "description": "The file size in bytes.",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "pbj": {
+                "rule": "single",
+                "type": "big-int"
+            },
+            "type": "integer"
+        },
+        "gallery_ref": {
+            "description": "A node ref referencing the gallery where the asset is used.",
+            "pattern": "^[\\w\\/\\.:-]+$",
+            "pbj": {
+                "rule": "single",
+                "type": "identifier"
+            },
+            "type": "string"
+        },
+        "gallery_seq": {
+            "default": 0,
+            "description": "An integer value representing the order in which this asset will appear in a gallery.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "pbj": {
+                "rule": "single",
+                "type": "int"
+            },
+            "type": "integer"
+        },
+        "last_event_ref": {
+            "additionalProperties": false,
+            "description": "A reference to the last event that changed the state of this node. E.g. \"acme:blog:event:article-published:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+            "pbj": {
+                "rule": "single",
+                "type": "message-ref"
+            },
+            "properties": {
+                "curie": {
+                    "maxLength": 146,
+                    "minLength": 0,
+                    "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                    "type": "string"
+                },
+                "id": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "pattern": "^[A-Za-z0-9:_\\-]+$",
+                    "type": "string"
+                },
+                "tag": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "curie",
+                "id"
+            ],
+            "type": "object"
+        },
+        "linked_refs": {
+            "additionalProperties": false,
+            "description": "A set of node refs which have been linked to this asset.",
+            "items": [
+                {
+                    "pattern": "^[\\w\\/\\.:-]+$",
+                    "type": "string"
+                }
+            ],
+            "pbj": {
+                "rule": "set",
+                "type": "identifier"
+            },
+            "type": "array",
+            "_uniqueItems": true
+        },
+        "mime_type": {
+            "pattern": "^[\\w-]+\\/[\\w\\+\\.-]+$",
+            "pbj": {
+                "rule": "single",
+                "type": "string"
+            },
+            "type": "string"
+        },
+        "status": {
+            "default": "draft",
+            "enum": [
+                "unknown",
+                "published",
+                "scheduled",
+                "pending",
+                "draft",
+                "expired",
+                "archived",
+                "deleted"
+            ],
+            "pbj": {
+                "rule": "single",
+                "type": "string-enum"
+            },
+            "type": "string"
+        },
+        "title": {
+            "maxLength": 255,
+            "minLength": 0,
+            "pbj": {
+                "rule": "single",
+                "type": "string"
+            },
+            "type": "string"
+        },
+        "updated_at": {
+            "pattern": "^[1-9]{1}[0-9]{12,15}$",
+            "pbj": {
+                "rule": "single",
+                "type": "microtime",
+                "useTypeDefault": false
+            },
+            "type": "string"
+        },
+        "updater_ref": {
+            "additionalProperties": false,
+            "description": "A fully qualified reference to what updated this node. This is intentionally a message-ref and not a user id because it is often a program that updates nodes, not a user. E.g. \"acme:iam:node:app:cli-scheduler\" or \"acme:iam:node:user:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+            "pbj": {
+                "rule": "single",
+                "type": "message-ref"
+            },
+            "properties": {
+                "curie": {
+                    "maxLength": 146,
+                    "minLength": 0,
+                    "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                    "type": "string"
+                },
+                "id": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "pattern": "^[A-Za-z0-9:_\\-]+$",
+                    "type": "string"
+                },
+                "tag": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "curie",
+                "id"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "_id",
+        "mime_type"
+    ],
+    "type": "object"
+}

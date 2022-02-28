@@ -1,0 +1,247 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Format of the geometrical surface description.",
+    "description": "Description of the surfaces that form the boundaries of the object through which the sound waves travel.\nSchema on github: https://github.com/Engineer2B/PowerCalculator-Schemas",
+    "type": "object",
+    "anyOf": [
+        {
+            "required": [
+                "Singulars"
+            ]
+        },
+        {
+            "required": [
+                "Meshes"
+            ]
+        }
+    ],
+    "properties": {
+        "Singulars": {
+            "description": "Surfaces which are composed of (a) collection(s) of singular shapes.",
+            "type": "object",
+            "required": [
+                "Shapes",
+                "Collections"
+            ],
+            "properties": {
+                "Shapes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Collection of singular shapes.",
+                    "items": {
+                        "required": [
+                            "Id",
+                            "Type"
+                        ],
+                        "type": "object",
+                        "properties": {
+                            "Id": {
+                                "$ref": "#Id",
+                                "exclusiveMinimum": 0
+                            },
+                            "Type": {
+                                "type": "string"
+                            }
+                        },
+                        "anyOf": [
+                            {
+                                "required": [
+                                    "Radius",
+                                    "ShaftDirection",
+                                    "Center"
+                                ],
+                                "description": "Infinitely tall and cylindrical surface.",
+                                "properties": {
+                                    "Center": {
+                                        "description": "Center of the cylinder in [m, m, m] (if ScaleFactor is 1).",
+                                        "$ref": "#Vector"
+                                    },
+                                    "Type": {
+                                        "const": "InfiniteCylinder"
+                                    },
+                                    "Radius": {
+                                        "description": "Radius of the cylinder in [m] (if ScaleFactor is 1).",
+                                        "type": "number",
+                                        "exclusiveMinimum": 0
+                                    },
+                                    "ShaftDirection": {
+                                        "description": "The direction the shaft is pointed towards, i.e. the direction that is perpendicular to the base plane of the cylinder",
+                                        "$ref": "#NormalVector"
+                                    }
+                                }
+                            },
+                            {
+                                "required": [
+                                    "Normal",
+                                    "Center"
+                                ],
+                                "description": "Infinite planar surface (IPS) that is required to be parallel to other IPS objects, i.e. if all IPS objects have the same normal vector, they will intersect yielding an incorrect topology.",
+                                "properties": {
+                                    "Center": {
+                                        "description": "Location of the center of the plane",
+                                        "$ref": "#Vector"
+                                    },
+                                    "Normal": {
+                                        "$ref": "#NormalVector",
+                                        "description": "Direction of the normal vector to the plane."
+                                    },
+                                    "Type": {
+                                        "const": "InfinitePlane"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "Collections": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Each collection should form a 2-D manifold.",
+                    "items": {
+                        "required": [
+                            "Id",
+                            "ShapeIndices",
+                            "MediumName"
+                        ],
+                        "properties": {
+                            "Id": {
+                                "$ref": "#Id"
+                            },
+                            "ShapeIndices": {
+                                "type": "array",
+                                "minItems": 1,
+                                "description": "The shapes that form the inner or outer shell of the volume.\nA minus sign indicates that the outward pointing normal vectors of the shape should be inverted to point outward of the manifold.",
+                                "items": {
+                                    "type": "integer"
+                                }
+                            },
+                            "MediumName": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "The unique name of the medium."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Meshes": {
+            "type": "object",
+            "required": [
+                "Nodes",
+                "Elements",
+                "Values"
+            ],
+            "description": "Surfaces which are composed of (a) collection(s) of polygonal meshes.",
+            "properties": {
+                "Nodes": {
+                    "description": "The coordinates in space where the vertices/nodes of the mesh are located.",
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "Elements": {
+                    "description": "The three node indices which together make up a triangle of a mesh of a material.",
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "items": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0
+                        }
+                    }
+                },
+                "Values": {
+                    "description": "The individual mesh objects.",
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "ElementIndices",
+                            "MediumName",
+                            "Id",
+                            "IsUnbounded",
+                            "Neighbors"
+                        ],
+                        "properties": {
+                            "ElementIndices": {
+                                "description": "Array of the id of the element.",
+                                "type": "array",
+                                "minItems": 1,
+                                "items": {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                }
+                            },
+                            "MediumName": {
+                                "$ref": "#MediumName"
+                            },
+                            "Id": {
+                                "$ref": "#Id"
+                            },
+                            "IsUnbounded": {
+                                "$ref": "#IsUnbounded"
+                            },
+                            "Neighbors": {
+                                "description": "Array of the ids of the neighboring meshes.",
+                                "type": "array",
+                                "minItems": 1,
+                                "items": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "Id": {
+        "$id": "#Id",
+        "description": "Identifier for this surface. This identifier should be unique amongst all other objects.",
+        "type": "integer",
+        "minimum": 0
+    },
+    "IsUnbounded": {
+        "$id": "#IsUnbounded",
+        "description": "Whether the volume the surface describe reaches into infinity.",
+        "type": "boolean",
+        "default": false
+    },
+    "Vector": {
+        "$id": "#Vector",
+        "type": "array",
+        "maxItems": 3,
+        "minItems": 3,
+        "items": {
+            "type": "number"
+        }
+    },
+    "MediumName": {
+        "$id": "#MediumName",
+        "type": "string",
+        "minLength": 1,
+        "description": "The unique name of the medium."
+    },
+    "NormalVector": {
+        "$id": "#NormalVector",
+        "type": "array",
+        "maxItems": 3,
+        "minItems": 3,
+        "items": {
+            "type": "number",
+            "Minimum": -1,
+            "Maximum": 1
+        }
+    }
+}

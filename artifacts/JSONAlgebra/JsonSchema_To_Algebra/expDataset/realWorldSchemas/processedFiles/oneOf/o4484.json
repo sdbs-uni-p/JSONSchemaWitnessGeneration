@@ -1,0 +1,293 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "env_var": {
+            "items": [
+                {
+                    "regex": "^[A-Z][A-Z0-9]*$",
+                    "type": "string"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            "type": "array"
+        },
+        "port": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "minLength": 3,
+                    "type": "string"
+                },
+                "port_number": {
+                    "exclusiveMaximum": true,
+                    "exclusiveMinimum": true,
+                    "maximum": 65536,
+                    "minimum": 0,
+                    "multipleOf": 1.0,
+                    "type": "number"
+                },
+                "protocol": {
+                    "enum": [
+                        "tcp",
+                        "udp"
+                    ],
+                    "type": "string"
+                },
+                "proxy": {
+                    "type": "boolean"
+                },
+                "url_template": {
+                    "regex": "^[a-z]?://HOST:PORT/[a-zA-Z0-9./\\-_]$",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "port_number",
+                "protocol",
+                "url_template"
+            ],
+            "type": "object"
+        },
+        "service": {
+            "additionalProperties": false,
+            "properties": {
+                "command": {
+                    "oneOf": [
+                        {
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "environment": {
+                    "items": {
+                        "$ref": "#/definitions/env_var"
+                    },
+                    "minItems": 0,
+                    "type": "array",
+                    "_uniqueItems": true
+                },
+                "essential_count": {
+                    "minimum": 1,
+                    "multipleOf": 1.0,
+                    "type": "number"
+                },
+                "image": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "labels": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 0,
+                    "type": "array",
+                    "_uniqueItems": true
+                },
+                "monitor": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "maxLength": 16,
+                    "minLength": 3,
+                    "pattern": "^[a-zA-Z0-9\\-]*$",
+                    "type": "string"
+                },
+                "network": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "ports": {
+                    "items": {
+                        "$ref": "#/definitions/port"
+                    },
+                    "minItems": 0,
+                    "type": "array",
+                    "_uniqueItems": true
+                },
+                "replicas": {
+                    "minimum": 1,
+                    "multipleOf": 1.0,
+                    "type": "number"
+                },
+                "resources": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "cores": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "max": {
+                                    "oneOf": [
+                                        {
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                },
+                                "min": {
+                                    "oneOf": [
+                                        {
+                                            "exclusiveMinimum": true,
+                                            "minimum": 0,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "min",
+                                "max"
+                            ],
+                            "type": "object"
+                        },
+                        "memory": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "max": {
+                                    "oneOf": [
+                                        {
+                                            "multipleOf": 1.0,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                },
+                                "min": {
+                                    "oneOf": [
+                                        {
+                                            "minimum": 1024,
+                                            "multipleOf": 1.0,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "min",
+                                "max"
+                            ],
+                            "type": "object"
+                        },
+                        "shm": {
+                            "minimum": 0,
+                            "multipleOf": 1.0,
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "memory",
+                        "cores"
+                    ],
+                    "type": "object"
+                },
+                "startup_order": {
+                    "multipleOf": 1.0,
+                    "type": "number"
+                },
+                "total_count": {
+                    "minimum": 1,
+                    "multipleOf": 1.0,
+                    "type": "number"
+                },
+                "volumes": {
+                    "items": {
+                        "$ref": "#/definitions/volume"
+                    },
+                    "minItems": 0,
+                    "type": "array",
+                    "_uniqueItems": true
+                },
+                "work_dir": {
+                    "minLength": 1,
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "image",
+                "ports",
+                "environment",
+                "volumes",
+                "monitor",
+                "startup_order",
+                "essential_count",
+                "total_count",
+                "resources",
+                "command"
+            ],
+            "type": "object"
+        },
+        "volume": {
+            "properties": {
+                "name": {
+                    "minLength": 3,
+                    "regex": "^[a-zA-Z0-9.]?$",
+                    "type": "string"
+                },
+                "path": {
+                    "minLength": 2,
+                    "regex": "^/[a-zA-Z0-9]?[a-zA-Z0-9./]*$",
+                    "type": "string"
+                },
+                "read_only": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "name": {
+            "maxLength": 128,
+            "minLength": 3,
+            "pattern": "^[@a-zA-Z0-9\\-]*$",
+            "type": "string"
+        },
+        "services": {
+            "items": {
+                "$ref": "#/definitions/service"
+            },
+            "minItems": 1,
+            "type": "array",
+            "_uniqueItems": true
+        },
+        "size": {
+            "minimum": 0,
+            "type": "integer"
+        },
+        "version": {
+            "minimum": 3,
+            "multipleOf": 1.0,
+            "type": "number"
+        },
+        "will_end": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "name",
+        "will_end",
+        "size",
+        "version",
+        "services"
+    ],
+    "title": "Zoe application description schema",
+    "type": "object"
+}

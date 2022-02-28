@@ -1,0 +1,423 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "additionalProperties": false,
+    "properties": {
+        "can-modify": {
+            "additionalProperties": false,
+            "properties": {
+                "filesystem": {
+                    "description": "Could the command modify the filesystem? Examples: `rm`, `mv`.",
+                    "type": "boolean"
+                },
+                "other-processes": {
+                    "description": "Could the command modify other processes? Examples: `kill`, `disown`.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "component-command-info": {
+            "additionalProperties": {
+                "additionalProperties": false,
+                "description": "The component command.",
+                "properties": {
+                    "bash-type": {
+                        "description": "The output of `type -t $COMMAND` in bash; one of `alias`, `keyword`, `function`, `builtin`, or `file`. May be different in other shells, e.g. `which` is a `builtin` in zsh but a `file` in bash.",
+                        "enum": [
+                            "builtin",
+                            "file",
+                            "keyword"
+                        ],
+                        "type": "string"
+                    },
+                    "debian": {
+                        "additionalProperties": false,
+                        "description": "Information specific to the Debian Linux distribution.",
+                        "properties": {
+                            "executable-path": {
+                                "description": "The full path to the binary. Often in e.g. `/bin/` or `/usr/bin/`.",
+                                "type": "string"
+                            },
+                            "required-packages": {
+                                "additionalItems": false,
+                                "description": "the Debian package(s) required to install the relevant command.",
+                                "items": {
+                                    "description": "Name of the Debian package.",
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "requirements-in-general": {
+                        "additionalProperties": false,
+                        "description": "Requirements for a command in all possible uses. Useful for figuring out why a command doesn't work as expected.",
+                        "properties": {
+                            "authentication": {
+                                "description": "Could the command require the user to enter their password? Examples: `chsh`, `passwd`.",
+                                "enum": [
+                                    "always",
+                                    "never",
+                                    "sometimes"
+                                ],
+                                "type": "string"
+                            },
+                            "internet-connection": {
+                                "description": "Could the command require an active internet connection? Examples: `wget`, `whois`, `dig`.",
+                                "enum": [
+                                    "always",
+                                    "never",
+                                    "sometimes"
+                                ],
+                                "type": "string"
+                            },
+                            "sudo": {
+                                "description": "Could the command require superuser priveleges? Examples: `shutdown`, `rtcwake`.",
+                                "enum": [
+                                    "always",
+                                    "never",
+                                    "sometimes"
+                                ],
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "description": "Additional metadata for the component commands.",
+            "type": "object"
+        },
+        "component-commands": {
+            "description": "List of the individual commands that make up the composite command. Required field.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "_uniqueItems": true
+        },
+        "copying": {
+            "additionalProperties": false,
+            "description": "Information on licensing and copyright.",
+            "properties": {
+                "authors": {
+                    "description": "List of the people who wrote the CmdOyster, not necessarily the command itself.",
+                    "items": {
+                        "description": "Full name of person.",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "license-name": {
+                    "description": "Usually a free software license, such as GPL, BSD, or MIT.",
+                    "type": "string"
+                },
+                "license-url": {
+                    "description": "Link to the text of the license, usually HTTP.",
+                    "format": "uri",
+                    "type": "string"
+                },
+                "year": {
+                    "description": "Year the CmdOyster was first written.",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "authors",
+                "license-name",
+                "year"
+            ],
+            "type": "object"
+        },
+        "description": {
+            "additionalProperties": false,
+            "description": "Textual description of what the command does. Required field.",
+            "properties": {
+                "terse-description": {
+                    "description": "Description text that is 80 characters or less.",
+                    "maxLength": 80,
+                    "type": "string"
+                },
+                "verbose-description": {
+                    "description": "The full text of the description. Don't add hard linebreaks; let the output formatter decide how to do that. Required field.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "verbose-description"
+            ],
+            "type": "object"
+        },
+        "invocations": {
+            "description": "The possible forms a command can have. All invocations must have the same component commands. There must be at least one invocation.",
+            "items": {
+                "additionalProperties": false,
+                "description": "The invocation object.",
+                "properties": {
+                    "changeable-arguments": {
+                        "additionalProperties": {
+                            "additionalProperties": false,
+                            "description": "The actual text of the argument; a subset of the invocation string.",
+                            "properties": {
+                                "argument-description": {
+                                    "description": "Description of the argument.",
+                                    "type": "string"
+                                },
+                                "component-command": {
+                                    "description": "The argument is passed to this command.",
+                                    "type": "string"
+                                },
+                                "component-command-flag": {
+                                    "description": "The argument is passed via this flag.",
+                                    "type": "string"
+                                },
+                                "invocation-slice": {
+                                    "additionalItems": false,
+                                    "description": "Position of the argument in the invocation string that can be accessed by slice notation.",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ],
+                                    "maxItems": 2,
+                                    "minItems": 2,
+                                    "type": "array"
+                                },
+                                "subtype": {
+                                    "description": "More refined type, e.g. type is string, subtype is absolute path.",
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "description": "The base type of the argument. Useful since e.g. JSON does not distinguish floats and integers.",
+                                    "enum": [
+                                        "boolean",
+                                        "float",
+                                        "integer",
+                                        "string"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "description": "Adjustable parameters of the command or commands.",
+                        "type": "object"
+                    },
+                    "command-requirements-as-invoked": {
+                        "additionalProperties": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "authentication": {
+                                    "description": "As used in this invocation, does the command require the user to enter their password?",
+                                    "enum": [
+                                        "yes",
+                                        "no",
+                                        "maybe"
+                                    ],
+                                    "type": "string"
+                                },
+                                "internet-connection": {
+                                    "description": "As used in this invocation, does the command require an active internet connection?",
+                                    "enum": [
+                                        "yes",
+                                        "no",
+                                        "maybe"
+                                    ],
+                                    "type": "string"
+                                },
+                                "sha1s-tested": {
+                                    "additionalItems": false,
+                                    "description": "For this invocation, what are some sha1sums of the binaries for the component command that are known to work?",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "sudo": {
+                                    "description": "As used in this invocation, does the command require superuser priveleges?",
+                                    "enum": [
+                                        "yes",
+                                        "no",
+                                        "maybe"
+                                    ],
+                                    "type": "string"
+                                },
+                                "version-specifier": {
+                                    "description": "For this invocation, what version is required? ",
+                                    "type": "string"
+                                },
+                                "versions-tested": {
+                                    "additionalItems": false,
+                                    "description": "What versions is this invocation known to work for?",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "description": "Requirements for a component command as its used in the invocation.",
+                        "type": "object"
+                    },
+                    "comment": {
+                        "description": "Explanation of what makes this invocation different from others.",
+                        "type": "string"
+                    },
+                    "example-outputs": {
+                        "additionalItems": false,
+                        "description": "Example outputs of the command. Only include these if they are is short and provide insight into what the command does.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "invocation-string": {
+                        "description": "Actual string that could be passed to the shell and executed. Required field.",
+                        "type": "string"
+                    },
+                    "shell-compatibility": {
+                        "additionalProperties": {
+                            "additionalProperties": false,
+                            "description": "Name of the shell.",
+                            "properties": {
+                                "compatible-sha1s-tested": {
+                                    "additionalItems": false,
+                                    "description": "List of SHA1 hashes for the binary executable of the shell that are known to work with this invocation.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "compatible-version-specifier": {
+                                    "description": "Specify the version(s) that the shell is compatible with for this invocation. Expected to be human-readable, not machine-readable.",
+                                    "type": "string"
+                                },
+                                "compatible-versions-tested": {
+                                    "additionalItems": false,
+                                    "description": "List of versions for the shell that are known to work with this invocation.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "incompatible-sha1s-tested": {
+                                    "additionalItems": false,
+                                    "description": "List of SHA1 hashes for the binary executable of the shell that are known to fail or not work as expected with this invocation.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "incompatible-version-specifier": {
+                                    "description": "Specify the version(s) that the shell is not compatible with for this invocation. Expected to be human-readable, not machine-readable.",
+                                    "type": "string"
+                                },
+                                "incompatible-versions-tested": {
+                                    "additionalItems": false,
+                                    "description": "List of versions for the shell that are known to fail or not work as expected for this invocation.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "description": "Explains which shells are/aren't compatible with this invocation.",
+                        "type": "object"
+                    },
+                    "shibboleths": {
+                        "description": "",
+                        "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "comment": {
+                                    "type": "string"
+                                },
+                                "shibboleth-invocation": {
+                                    "type": "string"
+                                },
+                                "exit-status": {
+                                    "type": "integer"
+                                }
+                            },
+                            "required": [
+                                "shibboleth-invocation",
+                                "exit-status"
+                            ],
+                            "type": "object"
+                        },
+                        "minItems": 1,
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "invocation-string"
+                ],
+                "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+        },
+        "related-commands": {
+            "description": "UUIDs of other commands that are related to this one. For example, a command that accomplishes the same thing with different component commands.",
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "uuid": {
+                        "description": "Universally unique identifier of related command.",
+                        "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "uuid"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "relevant-urls": {
+            "description": "A list of URLs that discuss the command or an equivalent command with the same component commands.",
+            "items": {
+                "additionalProperties": false,
+                "minItems": 1,
+                "properties": {
+                    "date-known-good": {
+                        "description": "Date when the link to the page worked. Useful if the page changes or link is broken and searching for an archival copy.",
+                        "format": "date",
+                        "type": "string"
+                    },
+                    "url": {
+                        "format": "uri",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "uuid": {
+            "description": "Universally Unique Identifier for this CmdOyster.",
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+            "type": "string"
+        }
+    },
+    "required": [
+        "component-commands",
+        "description",
+        "invocations",
+        "uuid"
+    ],
+    "type": "object"
+}

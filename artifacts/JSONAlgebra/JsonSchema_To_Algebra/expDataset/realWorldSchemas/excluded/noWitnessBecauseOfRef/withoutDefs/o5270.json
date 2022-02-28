@@ -1,0 +1,130 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Properties of the HIFU transducer",
+    "description": "Properties and capabilities of an High Intensity Focused Ultrasound transducer.\nSchema on github: https://github.com/Engineer2B/PowerCalculator-Schemas",
+    "type": "object",
+    "required": [
+        "Powers",
+        "Frequencies",
+        "FocusDiameters",
+        "ElementCoordinates",
+        "ElementRadius",
+        "Direction",
+        "ImmersionSurfaceId",
+        "Transformation"
+    ],
+    "properties": {
+        "Powers": {
+            "type": "object",
+            "description": "The supported range of the power in [W].",
+            "$ref": "#PositiveRange"
+        },
+        "Frequencies": {
+            "type": "object",
+            "description": "The supported range of the frequency in [Hz].",
+            "$ref": "#PositiveRange"
+        },
+        "ElementCoordinates": {
+            "type": "array",
+            "description": "The coordinates of the transducer elements in [m].",
+            "items": {
+                "$ref": "#Vector"
+            }
+        },
+        "ElementRadius": {
+            "type": "number",
+            "exclusiveMinimum": 0
+        },
+        "Direction": {
+            "description": "Normalized direction towards which the transducer is focused.",
+            "$ref": "#NormalVector"
+        },
+        "ImmersionSurfaceId": {
+            "type": "integer",
+            "description": "The id of the surface in which the transducer is immersed.",
+            "minimum": 0,
+            "default": 0
+        },
+        "NaturalFocus": {
+            "description": "Unshifted focus of the transducer in [m, m, m] (if ScaleFactor is 1).",
+            "$ref": "#Vector"
+        },
+        "Transformation": {
+            "description": "Transformation applied to the transducer positions and natural focus.",
+            "$ref": "#Transformation"
+        }
+    },
+    "PositiveRange": {
+        "$id": "#PositiveRange",
+        "type": "object",
+        "required": [
+            "Minimum",
+            "Maximum",
+            "MultipleOf"
+        ],
+        "properties": {
+            "Minimum": {
+                "type": "number",
+                "description": "The minimal value.",
+                "exclusiveMinimum": 0
+            },
+            "Maximum": {
+                "type": "number",
+                "description": "The maximal value.",
+                "exclusiveMinimum": 0
+            },
+            "MultipleOf": {
+                "type": "number",
+                "description": "The step size of the range.",
+                "exclusiveMinimum": 0
+            }
+        }
+    },
+    "Transformation": {
+        "$id": "#Transformation",
+        "required": [
+            "Inclination",
+            "Azimuth",
+            "ScaleFactor",
+            "Translation"
+        ],
+        "properties": {
+            "Inclination": {
+                "type": "number",
+                "description": "X or Y axis rotation angle in radians."
+            },
+            "Azimuth": {
+                "type": "number",
+                "description": "Z axis rotation angle in radians."
+            },
+            "ScaleFactor": {
+                "type": "number",
+                "description": "Scalar multiplier."
+            },
+            "Translation": {
+                "description": "Vector of translation in [m, m, m] (if ScaleFactor is 1).",
+                "$ref": "#Vector"
+            }
+        }
+    },
+    "Vector": {
+        "$id": "#Vector",
+        "type": "array",
+        "maxItems": 3,
+        "minItems": 3,
+        "items": {
+            "type": "number"
+        }
+    },
+    "NormalVector": {
+        "$id": "#NormalVector",
+        "type": "array",
+        "maxItems": 3,
+        "minItems": 3,
+        "items": {
+            "type": "number",
+            "Minimum": -1,
+            "Maximum": 1
+        }
+    }
+}

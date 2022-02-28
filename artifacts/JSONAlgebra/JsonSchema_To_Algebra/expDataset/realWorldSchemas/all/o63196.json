@@ -1,0 +1,306 @@
+{
+  "description": "",
+  "title": "AARM database data document schema",
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "sample",
+    "data_source",
+    "measurement",
+    "type",
+    "specification",
+    "grouping"
+  ],
+  "properties": {
+    "sample": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "m_name"
+      ],
+      "properties": {
+        "u_extra": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".+": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "m_id": {
+          "type": "string",
+          "title": "Identification number"
+        },
+        "m_owner": {
+          "type": "object",
+          "required": [
+            "contact",
+            "name"
+          ],
+          "properties": {
+            "contact": {
+              "type": "string",
+              "title": "Institution or email/postal address"
+            },
+            "name": {
+              "type": "string",
+              "title": "the owner's name"
+            }
+          }
+        },
+        "m_description": {
+          "type": "string",
+          "title": "detailed description"
+        },
+        "m_source": {
+          "type": "string",
+          "title": "where the source came from"
+        },
+        "m_name": {
+          "type": "string",
+          "title": "short description"
+        }
+      }
+    },
+    "data_source": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "m_input",
+        "m_reference"
+      ],
+      "properties": {
+        "u_extra": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".+": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "m_notes": {
+          "type": "string",
+          "title": "Comments on issues with data entry"
+        },
+        "m_input": {
+          "type": "object",
+          "required": [
+            "date",
+            "contact",
+            "name"
+          ],
+          "properties": {
+            "date": {
+              "pattern": "^(18|19|20)[0-9]{2}-[0-9]{1,2}-[0-9]{1,2}$",
+              "type": "string",
+              "description": "must be in the form of YYYY-MM-DD",
+              "title": "creation date of this document"
+            },
+            "contact": {
+              "type": "string",
+              "title": "Institution or email/postal address"
+            },
+            "name": {
+              "type": "string",
+              "title": "The name of the creator of this document"
+            }
+          }
+        },
+        "m_reference": {
+          "type": "string",
+          "title": "A reference to data source, such as a publication"
+        }
+      }
+    },
+    "measurement": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "u_extra": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".+": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "m_requestor": {
+          "type": "object",
+          "required": [
+            "contact",
+            "name"
+          ],
+          "properties": {
+            "contact": {
+              "type": "string",
+              "title": "Institution or email/postal address"
+            },
+            "name": {
+              "type": "string",
+              "title": "The person's name"
+            }
+          },
+          "title": "Responsible for commissioning/managing/funding of measurement"
+        },
+        "m_results": {
+          "_uniqueItems": true,
+          "additionalItems": false,
+          "title": "A list of results",
+          "minItems": 0,
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "value",
+                  "error",
+                  "unit",
+                  "isotope"
+                ],
+                "properties": {
+                  "value": {
+                    "minimum": 0,
+                    "type": "number",
+                    "exclusiveMinimum": true
+                  },
+                  "error": {
+                    "title": "68% confidence level on measurement",
+                    "minItems": 1,
+                    "items": {
+                      "exclusiveMinimum": true,
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "_uniqueItems": false,
+                    "type": "array"
+                  },
+                  "unit": {
+                    "pattern": "pct|ppm|ppb|ppt|ppq|mBq/kg|uBq/kg|nBq/kg",
+                    "type": "string"
+                  },
+                  "isotope": {
+                    "pattern": "[A-Z][a-z]{0,1}-[0-9]{0,3}|[A-Z][a-z]{0,1}",
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "limit",
+                  "cl",
+                  "unit",
+                  "isotope"
+                ],
+                "properties": {
+                  "limit": {
+                    "minimum": 0,
+                    "type": "number",
+                    "exclusiveMinimum": true
+                  },
+                  "cl": {
+                    "exclusiveMaximum": true,
+                    "exclusiveMinimum": true,
+                    "maximum": 100,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "unit": {
+                    "pattern": "pct|ppm|ppb|ppt|ppq|mBq/kg|uBq/kg|nBq/kg",
+                    "type": "string"
+                  },
+                  "isotope": {
+                    "pattern": "[A-Z][a-z]{0,1}-[0-9]{0,3}|[A-Z][a-z]{0,1}",
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "m_practitioner": {
+          "type": "object",
+          "required": [
+            "contact",
+            "name"
+          ],
+          "properties": {
+            "contact": {
+              "type": "string",
+              "title": "Institution or email/postal address"
+            },
+            "name": {
+              "type": "string",
+              "title": "The person's name"
+            }
+          },
+          "title": "Person responsible for the measurement"
+        },
+        "m_technique": {
+          "type": "string"
+        },
+        "m_date": {
+          "minItems": 1,
+          "items": {
+            "pattern": "^(18|19|20)[0-9]{2}-[0-9]{1,2}-[0-9]{1,2}$",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "_uniqueItems": false,
+          "type": "array"
+        },
+        "m_institution": {
+          "type": "string",
+          "title": "Name of Institution where measurement was made"
+        },
+        "m_description": {
+          "type": "string",
+          "title": "Detailed description of the procedures for data acquisition and analysis"
+        }
+      }
+    },
+    "_rev": {
+      "type": "string",
+      "description": "this is NOT required since it is not required to upload the document to couchdb",
+      "title": "couchdb _rev document revision number"
+    },
+    "_id": {
+      "type": "string",
+      "description": "this is NOT required since it is not required to upload the document to couchdb",
+      "title": "couchdb _id document identifier"
+    },
+    "type": {
+      "enum": [
+        "measurement"
+      ],
+      "title": "Must be set to measurement"
+    },
+    "specification": {
+      "enum": [
+        1.01
+      ],
+      "description": "must be set to 1.01",
+      "title": "The version number of the specification"
+    },
+    "grouping": {
+      "type": "string",
+      "description": "Usually this will be the name of the experiment or collaboration that made the measurement",
+      "title": "The group to which the document belongs"
+    }
+  }
+}

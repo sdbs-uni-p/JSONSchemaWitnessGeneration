@@ -1,0 +1,486 @@
+{
+    "definitions": {
+        "edge": {
+            "additionalItems": false,
+            "description": "Represents the edge information.",
+            "items": [
+                {
+                    "additionalProperties": false,
+                    "description": "Property information for the edge.",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "string"
+                        }
+                    },
+                    "title": "property",
+                    "type": "object"
+                },
+                {
+                    "description": "ID of the source node that the edge connects.",
+                    "title": "source",
+                    "type": "string"
+                },
+                {
+                    "description": "ID of the target node that the edge connects.",
+                    "title": "target",
+                    "type": "string"
+                }
+            ],
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "edge",
+            "type": "array"
+        },
+        "node": {
+            "additionalItems": false,
+            "description": "Represents the node information.",
+            "items": [
+                {
+                    "description": "Property information for the node.",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "string"
+                        }
+                    },
+                    "title": "property",
+                    "type": "object"
+                },
+                {
+                    "description": "List of ID of incoming edges.",
+                    "items": {
+                        "type": "number"
+                    },
+                    "title": "in_edges",
+                    "type": "array"
+                },
+                {
+                    "description": "List of ID of outgoing edges.",
+                    "items": {
+                        "type": "number"
+                    },
+                    "title": "out_edges",
+                    "type": "array"
+                }
+            ],
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "node",
+            "type": "array"
+        },
+        "preset_query": {
+            "additionalItems": false,
+            "description": "Represents a preset query. See the description below for details.",
+            "items": [
+                {
+                    "items": {
+                        "$ref": "#/definitions/query"
+                    },
+                    "title": "edge_query",
+                    "type": "array"
+                },
+                {
+                    "items": {
+                        "$ref": "#/definitions/query"
+                    },
+                    "title": "node_query",
+                    "type": "array"
+                }
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "preset_query",
+            "type": "array"
+        },
+        "query": {
+            "additionalItems": false,
+            "description": "Represents a query.",
+            "items": [
+                {
+                    "title": "from_id",
+                    "type": "string"
+                },
+                {
+                    "title": "to_id",
+                    "type": "string"
+                }
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "query",
+            "type": "array"
+        },
+        "shortest_path_query": {
+            "additionalItems": false,
+            "description": "Represents a shortest path query information. See the description of get_shortest_path method for details.",
+            "items": [
+                {
+                    "title": "source",
+                    "type": "string"
+                },
+                {
+                    "title": "target",
+                    "type": "string"
+                },
+                {
+                    "title": "max_hop",
+                    "type": "integer"
+                },
+                {
+                    "$ref": "#/definitions/preset_query",
+                    "title": "query"
+                }
+            ],
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "shortest_path_query",
+            "type": "array"
+        }
+    },
+    "properties": {
+        "add_centrality_query": {
+            "description": "Adds a preset query query to the graph for centrality calculation.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "$ref": "#/definitions/preset_query",
+                            "title": "query"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "add_centrality_query"
+        },
+        "add_shortest_path_query": {
+            "description": "Adds a preset query query to the graph for shortest path calculation.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "$ref": "#/definitions/preset_query",
+                            "title": "query"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "add_shortest_path_query"
+        },
+        "create_edge": {
+            "description": "Creates a link from e.source to e.target. Returns a edge ID as an unsigned long integer.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/definitions/edge",
+                            "title": "e"
+                        }
+                    ],
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "number"
+                }
+            },
+            "title": "create_edge"
+        },
+        "create_node": {
+            "description": "Creates a node on the graph. Returns a node ID as string.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "maxItems": 0,
+                    "minItems": 0,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "string"
+                }
+            },
+            "title": "create_node"
+        },
+        "get_centrality": {
+            "description": "Calculates (gets the computed value) the centrality over the edges that match the preset query query. The query must be registered beforehand by using add_centrality_query.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        },
+                        {
+                            "title": "centrality_type",
+                            "type": "integer"
+                        },
+                        {
+                            "$ref": "#/definitions/preset_query",
+                            "title": "query"
+                        }
+                    ],
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "number"
+                }
+            },
+            "title": "get_centrality"
+        },
+        "get_edge": {
+            "description": "Gets the edge of an edge edge_id. node_id is an ID for the source node of the edge edge_id.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        },
+                        {
+                            "title": "edge_id",
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                },
+                "return": {
+                    "$ref": "#/definitions/edge"
+                }
+            },
+            "title": "get_edge"
+        },
+        "get_node": {
+            "description": "Gets the node for a node node_id.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "$ref": "#/definitions/node"
+                }
+            },
+            "title": "get_node"
+        },
+        "get_shortest_path": {
+            "description": "Calculates (from the precomputed data) a shortest path from query.source to query.target that matches the preset query. The query must be registered beforehand by using add_shortest_path_query. Returns a list of node IDs that represents a path from query.source to query.target.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "$ref": "#/definitions/shortest_path_query",
+                            "title": "query"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "get_shortest_path"
+        },
+        "remove_centrality_query": {
+            "description": "Removes a preset query query from the graph.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "$ref": "#/definitions/preset_query",
+                            "title": "query"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "remove_centrality_query"
+        },
+        "remove_edge": {
+            "description": "Removes an edge edge_id. node_id must be an ID for the source node of the edge edge_id.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        },
+                        {
+                            "title": "edge_id",
+                            "type": "number"
+                        }
+                    ],
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "remove_edge"
+        },
+        "remove_node": {
+            "description": "Removes a node node_id from the graph.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "remove_node"
+        },
+        "remove_shortest_path_query": {
+            "description": "Removes a preset query query from the graph.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "$ref": "#/definitions/preset_query",
+                            "title": "query"
+                        }
+                    ],
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "remove_shortest_path_query"
+        },
+        "update_edge": {
+            "description": "Updates an existing edge edge_id with information e. Property will be replaced.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        },
+                        {
+                            "title": "edge_id",
+                            "type": "number"
+                        },
+                        {
+                            "$ref": "#/definitions/edge",
+                            "title": "e"
+                        }
+                    ],
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "update_edge"
+        },
+        "update_index": {
+            "description": "Runs mix locally. Do not use in distributed mode.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "maxItems": 0,
+                    "minItems": 0,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "update_index"
+        },
+        "update_node": {
+            "description": "Updates the property of the node node_id to property.",
+            "properties": {
+                "arguments": {
+                    "additionalItems": false,
+                    "items": [
+                        {
+                            "title": "node_id",
+                            "type": "string"
+                        },
+                        {
+                            "additionalProperties": false,
+                            "patternProperties": {
+                                ".*": {
+                                    "type": "string"
+                                }
+                            },
+                            "title": "property",
+                            "type": "object"
+                        }
+                    ],
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                },
+                "return": {
+                    "type": "boolean"
+                }
+            },
+            "title": "update_node"
+        }
+    },
+    "title": "graph"
+}

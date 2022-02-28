@@ -1,0 +1,359 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "http://chharvey.github.io/bangs/bangs.schema.json",
+    "title": "Bangs!",
+    "description": "JSON data used to generate Bangs! stylesheets and documentation.",
+    "definitions": {
+        "Function": {
+            "description": "Array of strings spread and then passed to `new Function()`.",
+            "type": "array",
+            "uniqueItems": false,
+            "items": {
+                "type": "string"
+            },
+            "minItems": 2,
+            "maxItems": 2
+        },
+        "CSS_Property": {
+            "title": "Property",
+            "description": "Describes a CSS property.",
+            "type": "object",
+            "required": [
+                "name",
+                "code",
+                "summary",
+                "url",
+                "inherited",
+                "initial",
+                "stability",
+                "values"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Actual CSS property name generated."
+                },
+                "code": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Code used in Bang classname."
+                },
+                "summary": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Summary of the CSS property. Used in documentation."
+                },
+                "url": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Link to an external resource."
+                },
+                "initial": {
+                    "type": "string",
+                    "description": "The specified initial value of the CSS property."
+                },
+                "inherited": {
+                    "type": "boolean",
+                    "description": "Whether the CSS property is inherited through the cascade."
+                },
+                "stability": {
+                    "description": "Stability level of the entire CSS property, and any values thereof unless explicitly overridden.",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4
+                },
+                "values": {
+                    "description": "List of CSS values this CSS property supports.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/CSS_Value"
+                            }
+                        ]
+                    }
+                },
+                "generators": {
+                    "description": "List of functions generating CSS values.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "title": "Generator",
+                        "description": "Describes a generator function.",
+                        "type": "object",
+                        "required": [
+                            "name"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the generator function to be called.",
+                                "enum": [
+                                    "generateFracs",
+                                    "generateCounts",
+                                    "generateSpaces",
+                                    "importValueType"
+                                ]
+                            },
+                            "transforms": {
+                                "description": "Defines functions that transform a pure data value into a CSS_Value type.",
+                                "type": "object",
+                                "additionalProperties": false,
+                                "properties": {
+                                    "namefn": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/definitions/Function"
+                                            }
+                                        ],
+                                        "description": "Determines how to compute the `name` JSON property of a CSS value."
+                                    },
+                                    "codefn": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/definitions/Function"
+                                            }
+                                        ],
+                                        "description": "Determines how to compute the `code` JSON property of a CSS value."
+                                    },
+                                    "usefn": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/definitions/Function"
+                                            }
+                                        ],
+                                        "description": "Determines how to compute the `use`  JSON property of a CSS value."
+                                    }
+                                }
+                            },
+                            "options": {
+                                "type": "object",
+                                "description": "A set of possible auxiliary options when calling the generator function."
+                            }
+                        }
+                    }
+                },
+                "non_media": {
+                    "description": "Lists exceptions to supported media at-rules.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pseudo": {
+                    "description": "List of pseudo-classes this CSS property supports.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "CSS_Value": {
+            "title": "Value",
+            "description": "Describes a CSS value.",
+            "type": "object",
+            "required": [
+                "name",
+                "code"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Actual CSS value generated."
+                },
+                "use": {
+                    "type": "string",
+                    "description": "Overrides any generated CSS code for this value."
+                },
+                "alt": {
+                    "type": "string",
+                    "description": "Alternative CSS code, overridden by generated code and by 'use'."
+                },
+                "stability": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/CSS_Property/properties/stability"
+                        }
+                    ],
+                    "description": "Stability level of the CSS value. Overrides that of the property it belongs to."
+                },
+                "code": {
+                    "description": "Code(s) used in Bang classname.",
+                    "type": [
+                        "string",
+                        "array"
+                    ],
+                    "minLength": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            }
+        }
+    },
+    "type": "object",
+    "required": [
+        "global",
+        "properties"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "global": {
+            "description": "Describes JSON data reused throughout the project.",
+            "properties": {
+                "values": {
+                    "description": "List of global CSS values supported throughout the project.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/CSS_Value"
+                            }
+                        ]
+                    }
+                },
+                "types": {
+                    "description": "Value types that different valuesets may share.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "title": "Value Type",
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "values"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the value type."
+                            },
+                            "url": {
+                                "type": "string",
+                                "description": "Link to an external resource."
+                            },
+                            "values": {
+                                "description": "List of enumerated, verbatim values for this type.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/CSS_Property/properties/values"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "common_data": {
+                    "description": "Common values or valuesets used in many CSS properties. Eliminates duplicate code.",
+                    "type": "object"
+                },
+                "media": {
+                    "description": "List of media at-rules supported throughout the project.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "title": "Media At-Rule",
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "code",
+                            "query"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Identifier/keyword for the at-rule."
+                            },
+                            "code": {
+                                "type": "string",
+                                "description": "Code used in Bang classname."
+                            },
+                            "query": {
+                                "type": "string",
+                                "description": "The query for the at-rule."
+                            }
+                        }
+                    }
+                },
+                "pseudo": {
+                    "description": "List of pseudo-classes supported throughout the project.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "code",
+                            "selectors"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Identifier/keyword for the pseudo-class."
+                            },
+                            "code": {
+                                "type": "string",
+                                "description": "Code used in Bang classname."
+                            },
+                            "selectors": {
+                                "description": "List of selectors supported.",
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "stability_levels": {
+                    "description": "Describes stability levels of CSS properties and values in the project.",
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "title": "Stability Level",
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "description"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Identifier/keyword for the stability level."
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Description of the stability level."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "properties": {
+            "description": "List of all CSS properties supported in the project.",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "allOf": [
+                    {
+                        "$ref": "#/definitions/CSS_Property"
+                    }
+                ]
+            }
+        }
+    }
+}

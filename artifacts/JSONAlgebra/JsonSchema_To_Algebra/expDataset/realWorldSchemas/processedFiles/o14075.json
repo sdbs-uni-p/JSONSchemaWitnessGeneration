@@ -1,0 +1,420 @@
+{
+    "description": "Control logging output",
+    "properties": {
+        "configuration": {
+            "_id": "configuration",
+            "description": "",
+            "format": "grid",
+            "properties": {
+                "appenders": {
+                    "_id": "appenders",
+                    "description": "Add/edit appenders as required",
+                    "options": {
+                        "collapsed": true,
+                        "disable_collapse": false
+                    },
+                    "properties": {
+                        "Console": {
+                            "_id": "Console",
+                            "description": "Console appender writes to std out and std error, eg the console",
+                            "properties": {
+                                "name": {
+                                    "_id": "name",
+                                    "default": "STDOUT",
+                                    "minLength": 1,
+                                    "title": "Name",
+                                    "type": "string"
+                                },
+                                "patternlayout": {
+                                    "_id": "patternlayout",
+                                    "description": "Log output format",
+                                    "properties": {
+                                        "pattern": {
+                                            "_id": "pattern",
+                                            "default": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n",
+                                            "minLength": 1,
+                                            "title": "Pattern",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "pattern"
+                                    ],
+                                    "title": "Pattern layout",
+                                    "type": "object"
+                                }
+                            },
+                            "required": [
+                                "name",
+                                "patternlayout"
+                            ],
+                            "title": "Console",
+                            "type": "object"
+                        },
+                        "RollingFile": {
+                            "format": "tabs",
+                            "items": {
+                                "_id": "RollingFile",
+                                "description": "Log to file, rolling after time or size limit is reached",
+                                "properties": {
+                                    "DefaultRolloverStrategy": {
+                                        "_id": "DefaultRolloverStrategy",
+                                        "description": "Number of files to keep",
+                                        "properties": {
+                                            "max": {
+                                                "_id": "max",
+                                                "default": "10",
+                                                "minLength": 1,
+                                                "title": "Max",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "max"
+                                        ],
+                                        "title": "Default Rollover Strategy",
+                                        "type": "object"
+                                    },
+                                    "PatternLayout": {
+                                        "_id": "PatternLayout",
+                                        "description": "Log output format",
+                                        "properties": {
+                                            "pattern": {
+                                                "_id": "pattern",
+                                                "default": "%d %p %logger{36} [%t] %m%n",
+                                                "minLength": 1,
+                                                "title": "Pattern",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "pattern"
+                                        ],
+                                        "title": "Pattern Layout",
+                                        "type": "object"
+                                    },
+                                    "Policies": {
+                                        "_id": "Policies",
+                                        "description": "Roll-over policies",
+                                        "properties": {
+                                            "SizeBasedTriggeringPolicy": {
+                                                "_id": "SizeBasedTriggeringPolicy",
+                                                "description": "Roll-over the file when it reaches a certain size",
+                                                "properties": {
+                                                    "size": {
+                                                        "_id": "size",
+                                                        "default": "10 MB",
+                                                        "minLength": 1,
+                                                        "title": "Size",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "size"
+                                                ],
+                                                "title": "Size Based Triggering Policy",
+                                                "type": "object"
+                                            }
+                                        },
+                                        "required": [
+                                            "SizeBasedTriggeringPolicy"
+                                        ],
+                                        "title": "Policies",
+                                        "type": "object"
+                                    },
+                                    "fileName": {
+                                        "_id": "fileName",
+                                        "default": "${Directory}/${FileName}",
+                                        "description": "Fully qualified or relative (to server install) file name",
+                                        "minLength": 1,
+                                        "title": "FileName",
+                                        "type": "string"
+                                    },
+                                    "filePattern": {
+                                        "_id": "filePattern",
+                                        "default": "${Directory}/${date:yyyy-MM}/myfile-%d{MM-dd-yyyy}-%i.log",
+                                        "description": "Pattern to rename the files as they roll over",
+                                        "minLength": 1,
+                                        "title": "File Pattern",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "_id": "name",
+                                        "default": "MyFile",
+                                        "description": "Appender name",
+                                        "minLength": 1,
+                                        "title": "Name",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "fileName",
+                                    "filePattern",
+                                    "PatternLayout",
+                                    "Policies",
+                                    "DefaultRolloverStrategy"
+                                ],
+                                "title": "Rolling File",
+                                "type": "object"
+                            },
+                            "title": " ",
+                            "type": "array",
+                            "_uniqueItems": false
+                        }
+                    },
+                    "required": [
+                        "Console",
+                        "RollingFile"
+                    ],
+                    "title": "Log4j2 Appenders",
+                    "type": "object"
+                },
+                "loggers": {
+                    "_id": "loggers",
+                    "description": "Define the individual loggers",
+                    "options": {
+                        "remove_empty_properties": true
+                    },
+                    "properties": {
+                        "logger": {
+                            "_id": "logger",
+                            "description": "Name: The package name of the logger, eg nz.co.fortytwo.signalk.server,<br/>Level: select from list",
+                            "format": "table",
+                            "items": {
+                                "_id": "1",
+                                "description": "A logger instance.",
+                                "format": "grid",
+                                "properties": {
+                                    "additivity": {
+                                        "_id": "additivity",
+                                        "default": true,
+                                        "options": {
+                                            "hidden": true
+                                        },
+                                        "title": "Additivity",
+                                        "type": "boolean"
+                                    },
+                                    "appender-ref": {
+                                        "_id": "appender-ref",
+                                        "description": "Log to these appenders",
+                                        "format": "table",
+                                        "items": {
+                                            "_id": "1",
+                                            "properties": {
+                                                "ref": {
+                                                    "_id": "ref",
+                                                    "default": "File",
+                                                    "minLength": 1,
+                                                    "title": "Name",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "ref"
+                                            ],
+                                            "title": "Appender",
+                                            "type": "object"
+                                        },
+                                        "options": {
+                                            "disable_array_add": true,
+                                            "disable_array_delete": true,
+                                            "hidden": true,
+                                            "input_width": "100px",
+                                            "remove_empty_properties": true
+                                        },
+                                        "title": "Appenders",
+                                        "type": "array",
+                                        "_uniqueItems": false
+                                    },
+                                    "level": {
+                                        "_id": "level",
+                                        "default": "ERROR",
+                                        "enum": [
+                                            "FATAL",
+                                            "ERROR",
+                                            "WARN",
+                                            "INFO",
+                                            "DEBUG",
+                                            "TRACE"
+                                        ],
+                                        "options": {
+                                            "input_width": "100px"
+                                        },
+                                        "title": "Level",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "_id": "name",
+                                        "default": "nz.co.fortytwo.signalk",
+                                        "minLength": 1,
+                                        "options": {
+                                            "input_width": "500px"
+                                        },
+                                        "title": "Name",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "level"
+                                ],
+                                "title": "Logger",
+                                "type": "object"
+                            },
+                            "title": "Loggers",
+                            "type": "array",
+                            "_uniqueItems": false
+                        },
+                        "root": {
+                            "_id": "root",
+                            "description": "The root logger",
+                            "options": {
+                                "collapsed": true,
+                                "disable_collapse": false
+                            },
+                            "properties": {
+                                "appender-ref": {
+                                    "_id": "appender-ref",
+                                    "description": "Log to these appenders",
+                                    "format": "table",
+                                    "items": {
+                                        "_id": "1",
+                                        "properties": {
+                                            "ref": {
+                                                "_id": "ref",
+                                                "default": "File",
+                                                "description": "The name of this appender",
+                                                "minLength": 1,
+                                                "title": "Appender Name",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "ref"
+                                        ],
+                                        "title": "Appender",
+                                        "type": "object"
+                                    },
+                                    "options": {
+                                        "remove_empty_properties": true
+                                    },
+                                    "title": "Target Appenders",
+                                    "type": "array",
+                                    "_uniqueItems": false
+                                },
+                                "level": {
+                                    "_id": "level",
+                                    "default": "ERROR",
+                                    "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
+                                    "enum": [
+                                        "FATAL",
+                                        "ERROR",
+                                        "WARN",
+                                        "INFO",
+                                        "DEBUG",
+                                        "TRACE"
+                                    ],
+                                    "minLength": 1,
+                                    "title": "Level",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "level"
+                            ],
+                            "title": "Root Logger",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "root",
+                        "logger"
+                    ],
+                    "title": "Loggers",
+                    "type": "object"
+                },
+                "monitorInterval": {
+                    "_id": "monitorInterval",
+                    "default": "30",
+                    "description": "The configuration is reloaded every n seconds to allow dynamic changes to apply",
+                    "minLength": 1,
+                    "title": "Reload Config Interval",
+                    "type": "string"
+                },
+                "properties": {
+                    "_id": "properties",
+                    "description": "Add/edit properties as required",
+                    "properties": {
+                        "property": {
+                            "_id": "property",
+                            "format": "table",
+                            "items": {
+                                "_id": "1",
+                                "description": "The property key",
+                                "properties": {
+                                    "name": {
+                                        "_id": "name",
+                                        "minLength": 1,
+                                        "title": "Key",
+                                        "type": "string"
+                                    },
+                                    "value": {
+                                        "_id": "value",
+                                        "minLength": 1,
+                                        "title": "Value",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "value"
+                                ],
+                                "title": "Property",
+                                "type": "object"
+                            },
+                            "title": " ",
+                            "type": "array",
+                            "_uniqueItems": false
+                        }
+                    },
+                    "required": [
+                        "property"
+                    ],
+                    "title": "Properties",
+                    "type": "object"
+                },
+                "status": {
+                    "_id": "status",
+                    "default": "ERROR",
+                    "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
+                    "enum": [
+                        "FATAL",
+                        "ERROR",
+                        "WARN",
+                        "INFO",
+                        "DEBUG",
+                        "TRACE"
+                    ],
+                    "minLength": 1,
+                    "title": "Root logger level",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status",
+                "monitorInterval",
+                "properties",
+                "appenders",
+                "loggers"
+            ],
+            "title": "Configuration",
+            "type": "object"
+        }
+    },
+    "required": [
+        "configuration"
+    ],
+    "title": "Log4j Configuration",
+    "type": "object"
+}

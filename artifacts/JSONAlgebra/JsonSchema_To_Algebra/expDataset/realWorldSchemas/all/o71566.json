@@ -1,0 +1,194 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Chigraph",
+    "description": "The code specification for the Chigraph language. https://github.com/chigraph/chigraph",
+    "type": "object",
+    "properties": {
+        "dependencies": {
+            "description": "The modules this module depends on",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "\\w+"
+            }
+        },
+        "graphs": {
+            "description": "The definitions of the graphs",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The type of the graph. For now only function is accepted.",
+                        "type": "string",
+                        "pattern": "function"
+                    },
+                    "local_variables": {
+                        "description": "The local variables for the function",
+                        "type": "object",
+                        "patternProperties": {
+                            "\\w*": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "data_inputs": {
+                        "description": "The input data types",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "patternProperties": {
+                                "\\w*": {
+                                    "type": "string"
+                                }
+                            },
+                            "maxProperties": 1,
+                            "minProperties": 1
+                        }
+                    },
+                    "data_outputs": {
+                        "description": "The output data types",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "patternProperties": {
+                                "\\w*": {
+                                    "type": "string"
+                                }
+                            },
+                            "maxProperties": 1,
+                            "minProperties": 1
+                        }
+                    },
+                    "exec_inputs": {
+                        "description": "The input exec names",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "exec_outputs": {
+                        "description": "The input exec names",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name": {
+                        "description": "The name of the graph.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the graph (more user facing)",
+                        "type": "string"
+                    },
+                    "nodes": {
+                        "description": "The nodes",
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "description": "The type of the node, in the format module:name",
+                                        "type": "string",
+                                        "pattern": "\\w+:\\w+"
+                                    },
+                                    "location": {
+                                        "description": "the location on the graph. For cosmetic purposes only.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "number"
+                                        },
+                                        "minItems": 2,
+                                        "maxItems": 2
+                                    },
+                                    "data": {}
+                                },
+                                "required": [
+                                    "type",
+                                    "location",
+                                    "data"
+                                ]
+                            }
+                        }
+                    },
+                    "connections": {
+                        "description": "The connections between the nodes",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "description": "The type of the connection (data or exec)",
+                                    "enum": [
+                                        "data",
+                                        "exec"
+                                    ]
+                                },
+                                "input": {
+                                    "description": "The location of the input to the conneciton. First is node ID, second is connection ID in that node.",
+                                    "type": "array",
+                                    "items": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "maxItems": 2
+                                },
+                                "output": {
+                                    "description": "The location of the output to the connection. First is the node ID, second is the connection ID in that node.",
+                                    "type": "array",
+                                    "items": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "maxItems": 2
+                                }
+                            },
+                            "required": [
+                                "type",
+                                "input",
+                                "output"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "types": {
+            "type": "object",
+            "description": "The custom structures this module defines",
+            "patternProperties": {
+                ".*": {
+                    "type": "array",
+                    "description": "A custom data type",
+                    "items": {
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": {
+                                "type": "string"
+                            }
+                        },
+                        "maxProperties": 1,
+                        "minProperties": 1
+                    }
+                }
+            }
+        }
+    },
+    "required": [
+        "graphs",
+        "dependencies"
+    ]
+}

@@ -1,0 +1,454 @@
+"root" defs [
+    "root": {allOf[
+  type[obj],
+  props["^.*a" : mof(2); true],
+  pro(1, +inf)
+]}
+]
+
+"root" defs [
+    "root": {allOf[bet(10, 30),bet(20, +inf),pattern("a")]}
+]
+
+"root" defs [ "root": {
+type[num] }
+]
+
+
+"root" defs [ "root": {
+          type[num],
+          mof(6),
+          mof(13),
+          notMof(4),
+          notMof(5),
+          bet(1,200)
+} ]
+
+allOf[bet(10, 30),bet(20, +inf),pattern("a")]
+
+"root" defs [
+             "root": {
+                 type[num],
+                 mof(3),
+                 bet(10,20),
+                 notMof(6)
+} ]
+
+
+"root" defs [
+             "root": {
+                 type[str],
+                 length(5,10),
+                 pattern("^.*abc")
+} ]
+
+
+"root" defs [
+    "root": {
+        type[obj]
+           }
+        ]
+
+
+=============Arrays=============
+//Array 1
+ "root" defs [
+     "root": {
+         type[arr],
+         items[ref("x");true]},
+             "x": {mof(2)}
+         ]
+//Array 2
+"root" defs [
+    "root": {
+        type[arr],
+        items[ref("x");true],
+                contains(1,1;ref("y"))
+                                   },
+            "x": {mof(2)},
+            "y": {pattern(".a")}
+
+        ]
+//Array 3
+"root" defs [
+    "root": {
+        type[arr],
+        items[ref("x");true],
+                contains(1,1;ref("y")),
+                contains(1,1;ref("z"))
+                                   },
+            "x": {type[num], mof(2)},
+            "y": {type[num], mof(4)},
+            "z": {type[str], pattern(".a")}
+        ]
+
+=======================================
+
+"root" defs [
+    "root": {
+           type[obj],
+           pro(1,2),
+           pattReq["a":type[num]]
+          }
+          ]
+
+"root" defs [
+    "root": {
+           anyOf[
+            {type[obj], props["^.*a" : ref("x"); true] },
+            {type[arr], items[ref("x");true] }
+           ]
+          },
+          "x": {mof(2)}
+          ]
+
+
+"root" defs [
+    "root": {allOf[
+  type[obj],
+  props["^.*a" : ref("x"); ref("x")]
+]},
+"x": {mof(2)}
+]
+
+
+
+
+
+
+
+
+"root" defs [
+	"root" : {
+		type[obj],
+		props[
+			"^z$": ref("z"),
+			"^x$": ref("x"),
+			"^k$": ref("k"),
+			"^y$": ref("y"),
+			"^l$": ref("l"),
+			"^m$": ref("m")
+		],
+		req[
+			"x",
+			"y",
+			"k",
+			"l",
+			"z",
+			"m"
+		]
+	},
+	"x" : {
+		anyOf[
+			props[
+				"^a": ref("l")
+			],
+			props[
+				"^b": ref("y")
+			]
+		],
+		type[obj]
+	},
+	"y" : {
+		anyOf[
+			props[
+				"^a": ref("z")
+			],
+			props[
+				"^b": ref("k")
+			]
+		],
+		type[obj],
+		props[
+			"^c": ref("m")
+		]
+	},
+	"z" : anyOf[
+		{
+			type[obj],
+			props[
+				"^a": ref("x")
+			]
+		},
+		type[null]
+	],
+	"k" : {
+		type[obj],
+		props[
+			"^a": ref("l")
+		]
+	},
+	"l" : {
+		type[obj],
+		props[
+			"^a": ref("x")
+		],
+		pro(0,0)
+	},
+	"m" : type[num]
+]
+
+"root" defs [
+    "root": {
+        type[arr],
+        items[ref("x");true],
+                contains(1,1;ref("y"))
+                                   },
+            "x": {type[num], mof(2)},
+            "y": {type[str], pattern(".a")}
+
+        ]
+
+"root" defs [
+	"root" : items[
+		true;
+		type[int]
+	]
+]
+
+"root" defs [
+    "root": {
+        type[arr],
+        items[ref("x");true],
+                contains(1,1;ref("y")),
+                contains(1,1;ref("z"))
+                                   },
+            "x": {type[num], mof(2)},
+            "y": {type[obj]},
+            "z": {type[str], pattern(".a")}
+        ]
+
+"root" defs [
+	"root" : {
+		not({
+				type[obj],
+				props[
+					"^x$": type[int]
+				],
+				req[
+					"x"
+				]
+			}),
+		{
+			not(req[
+					"x"
+				]),
+			type[obj],
+			props[
+				"^x$": type[int]
+			]
+		}
+	}
+]
+
+"root" defs [
+  "root" : { type[obj], allOf[ ref("x0") ]  },
+  "x0" : { props["a" : ref("x0");], pro(1,+inf), req["a"] }
+]
+
+"root" defs [
+  "root" : { type[obj], allOf[ ref("x0") ]  },
+  "x0" : { props["a" : ref("x0");], pro(1,+inf), req["a"] }
+]
+
+"root" defs [
+    "root" : allOf[type[obj],ref("root1")],
+    "root1" : { not(pro(0,0)) }
+]
+
+
+//Bugs in pro(x,x)
+
+"a" defs [
+      "a"  : { type[obj], req["a"],
+               pro(1,1) }
+  ]
+
+"a" defs [
+      "a"  : { type[obj], req["a"],
+               pro(2,2) }
+  ]
+
+"a" defs [
+      "a"  : { type[obj], req["a"] }
+  ]
+
+
+  "root" defs [
+      "root" : not(anyOf[ { not(pro(0,0)) } ,
+                            ref("b")
+                      ]),
+        "b"  : { req["bbbbb"]}
+      ]
+
+//binary tree
+"root" defs [
+  "root" : allOf[ref("binary"),                                  // binary a-b tree
+                 not(props[".*": props[".*":pro(0,0)]]) // depth at least 3
+                 ],
+  "binary" : { type[obj],
+                props["^(a|b)$" : ref("binary");false],
+                anyOf[ pro(2,2), pro(0,0) ]
+              }
+ ]
+
+
+ "root" defs [
+   "root" : allOf[ref("binary"),       // binary foo-bar tree
+                  pro(2,inf),             // with two children
+                  props[; ref("tc1")],     // every prop has two children
+                  props[; ref("tc2")]   // every prop has two granchildren
+                 ],
+   "binary" : { type[obj], props["^(foo|bar)$" : ref("binary");false] },
+   "tc1" : pro(2,inf),
+   "tc2" : props[; ref("tc1")],
+   "tc3" : props[; ref("tc2") ]
+ ]
+
+not(props[;mof(1)])
+
+//
+orPattReq[
+			pNot(".*"):not(mof(1))
+		]
+
+		allOf [ not(props[".*" : mof(2)]),
+                      not(props[".*" : mof(3)])
+            ]
+
+//Three bugs
+"roo" defs [
+     "roo" : { props["a": pro(0,inf);] }
+]
+
+"root" defs [
+    "root" : allOf[ref ("y")],
+    "y" : true
+]
+
+allOf[
+    type[num], not(const(0))
+    ]
+
+//hitting set
+    "root" defs [
+    "root" : allOf[
+    			type[obj],
+    			orPattReq[
+    				"^a$":true,
+    				"^b$":true
+    			],
+    			orPattReq[
+    				"^b$":true,
+    				"^c$":true,
+    				"^d$":true
+    			],
+    			orPattReq[
+    				"^d$":true,
+    				"^e$":true
+    			]
+    	]
+    ,
+    		"WitnessAnd_1" : {
+        		type[num],
+        		mof(1.0)
+        	}
+     ]
+
+//hitting set
+    "root" defs [
+    "root" : allOf[
+    			type[obj],
+    			orPattReq[
+    				"^a$":true
+    			],
+    			orPattReq[
+    				"^b$":true,
+    				"^c$":true,
+    				"^d$":true
+    			],
+    			orPattReq[
+    				"^d$":true,
+    				"^e$":true
+    			]
+    	]
+    ,
+    		"WitnessAnd_1" : {
+        		type[num],
+        		mof(1.0)
+        	}
+     ]
+
+     //hitting set v2
+         "root" defs [
+         "root" : allOf[
+         			type[obj],
+         			orPattReq[
+         				"^a$":true,
+                         "^b$":true,
+                         "^c$":true,
+                         "^d$":true
+         			],
+         			orPattReq[
+         				"^b$":true,
+         				"^d$":true
+         			],
+         			orPattReq[
+         				"^e$":true,
+         				"^f$":true
+         			],
+         			orPattReq[
+                         "^f$":true
+                         			],
+                     orPattReq[
+                         "^c$":true,
+                         "^d$":true
+                                     ]
+         	]
+         ,
+         		"WitnessAnd_1" : {
+             		type[num],
+             		mof(1.0)
+             	}
+          ]
+
+ //integer generation test1
+ //allOf [  { type[num], mof(1) } , not( { type[int] })]
+ //integer generation test2
+ //allOf [  not ({ type[num], mof(1) } ) , { type[int] }  ]
+ //not( { type[int] } )
+ //not ({ type[num], mof(1) } )
+ { type[int] }
+
+//==
+// x0: the word has a length l with l mod 2 =  (2-1)
+// y0: the word has a length l with l mod 3 =  (3-1)
+// hence, l mod 6 = 5-1
+
+"root" defs [
+   "root" : allOf[ref("word"),
+                  ref("x0"),
+                  ref("y0"),
+                  not(ref("witness")),
+                  not(ref("bad")),
+                  not(ref("good"))
+                  ],
+   "word" : { type[obj], props["^a$" : ref("word");false] },
+   "x0" :   { props [ ; ref("x1") ], pro(1,inf) } ,
+   "x1" :   { props [ ; ref("x0") ] },
+   "y0" :   { props [ ; ref("y1") ], pro(1,inf) } ,
+   "y1" :   { props [ ; ref("y2") ], pro(1,inf) } ,
+   "y2" :   { props [ ; ref("y0") ] },
+   "witness" : { const({"a":{"a":{"a":{"a":{"a":{}}}}}}) },
+   "good" : const({ }),
+   "bad" : const({ "a":{} })
+ ]
+
+"root" defs [
+              "root" : {allOf[
+                           not( const([null, 2, 3, "foo"]))
+                           ,
+                           not( items[true;type[num]] )
+                           ]
+                           }
+            ]

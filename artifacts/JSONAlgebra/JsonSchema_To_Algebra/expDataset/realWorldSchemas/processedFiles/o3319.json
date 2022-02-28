@@ -1,0 +1,230 @@
+{
+    "name": "lolita",
+    "authors": "Eugenia Kelbert & Sasha Mile Rudan",
+    "version": "0.1",
+    "description": "Joining datasets",
+    "data": [
+        {
+            "type": "dataset",
+            "namespace": "<NAMESPACE_DATA>",
+            "name": "pos-joined",
+            "dataParams": {
+                "type": "bukvik.structure.word.Distribution",
+                "structure": "array",
+                "schema": {
+                    "$schema": "http://json-schema.org/schema#",
+                    "type": "object",
+                    "properties": {
+                        "iAmId": {
+                            "type": "number"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "content": {
+                            "type": "object",
+                            "properties": {
+                                "type": "array",
+                                "properties": {
+                                    "type": "array",
+                                    "properties": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "number"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "shouldInvalidate": false,
+            "cacheAsJson": true
+        },
+        {
+            "type": "task",
+            "namespace": "<NAMESPACE_TASK>.join",
+            "name": "joining-datasets",
+            "comment": "Joining datasets",
+            "processorNsN": "comparative.JoinDatasets.JoinDatasets",
+            "execution": 0,
+            "paramsProcess": {
+                "inDatasets": "E"
+            },
+            "isPower": true,
+            "params": {
+                "mergingEndings": [],
+                "merging": [],
+                "dataParams": {
+                    "type": "bukvik.structure.pos.Distribution",
+                    "structure": "array"
+                }
+            },
+            "forceExecute": true,
+            "ports": {
+                "out": {
+                    "direction": "out",
+                    "datasets": [
+                        {
+                            "namespace": "<NAMESPACE_DATA>",
+                            "name": "pos-joined"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "task",
+            "namespace": "<NAMESPACE_TASK>.join",
+            "name": "joints-out-unigrams",
+            "comment": "Exporting joined datasets",
+            "processorNsN": "comparative.JointExports.JointExports",
+            "execution": 3,
+            "paramsProcess": {
+                "fileOut.name": "E"
+            },
+            "params": {
+                "fileOut.name": "<FOLDER_OUT>/<SUB_PROJECT_NAME> - pos-distributions-unigrams",
+                "fileOut.type": [
+                    "json"
+                ]
+            },
+            "forceExecute": true,
+            "ports": {
+                "in": {
+                    "direction": "in",
+                    "datasets": [
+                        {
+                            "namespace": "<NAMESPACE_DATA>",
+                            "name": "pos-joined"
+                        }
+                    ],
+                    "filters": [
+                        {
+                            "name": "Reducing unnecessary columns",
+                            "filterNsN": "FilterColumns.FilterColumns",
+                            "params": {
+                                "columnIds": [
+                                    {
+                                        "select": [
+                                            "pos.distribution",
+                                            "1"
+                                        ],
+                                        "filter": [
+                                            "1",
+                                            "2"
+                                        ]
+                                    }
+                                ],
+                                "maxRows": "10"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "task",
+            "namespace": "<NAMESPACE_TASK>.join",
+            "name": "joints-out-bigrams",
+            "comment": "Exporting joined datasets",
+            "processorNsN": "comparative.JointExports.JointExports",
+            "execution": 3,
+            "paramsProcess": {
+                "fileOut.name": "E"
+            },
+            "params": {
+                "fileOut.name": "<FOLDER_OUT>/<SUB_PROJECT_NAME> - pos-distributions-bigrams",
+                "fileOut.type": [
+                    "json"
+                ]
+            },
+            "forceExecute": true,
+            "ports": {
+                "in": {
+                    "direction": "in",
+                    "datasets": [
+                        {
+                            "namespace": "<NAMESPACE_DATA>",
+                            "name": "pos-joined"
+                        }
+                    ],
+                    "filters": [
+                        {
+                            "name": "Reducing unecessary columns",
+                            "filterNsN": "FilterColumns.FilterColumns",
+                            "params": {
+                                "columnIds": [
+                                    {
+                                        "select": [
+                                            "pos.distribution",
+                                            "2"
+                                        ],
+                                        "filter": [
+                                            "1",
+                                            "2"
+                                        ]
+                                    }
+                                ],
+                                "maxRows": "100"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "task",
+            "namespace": "<NAMESPACE_TASK>.join",
+            "name": "joints-out-trigrams",
+            "comment": "Exporting joined datasets",
+            "processorNsN": "comparative.JointExports.JointExports",
+            "execution": 3,
+            "paramsProcess": {
+                "fileOut.name": "E"
+            },
+            "params": {
+                "fileOut.name": "<FOLDER_OUT>/<SUB_PROJECT_NAME> - pos-distributions-trigrams",
+                "fileOut.type": [
+                    "json"
+                ]
+            },
+            "forceExecute": true,
+            "ports": {
+                "in": {
+                    "direction": "in",
+                    "datasets": [
+                        {
+                            "namespace": "<NAMESPACE_DATA>",
+                            "name": "pos-joined"
+                        }
+                    ],
+                    "filters": [
+                        {
+                            "name": "Reducing unecessary columns",
+                            "filterNsN": "FilterColumns.FilterColumns",
+                            "params": {
+                                "columnIds": [
+                                    {
+                                        "select": [
+                                            "pos.distribution",
+                                            "3"
+                                        ],
+                                        "filter": [
+                                            "1",
+                                            "2"
+                                        ]
+                                    }
+                                ],
+                                "maxRows": "100"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

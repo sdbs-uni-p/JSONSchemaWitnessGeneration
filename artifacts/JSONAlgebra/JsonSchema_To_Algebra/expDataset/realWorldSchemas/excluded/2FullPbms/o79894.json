@@ -1,0 +1,317 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "definitions": {
+        "simple_support_statement": {
+            "type": "object",
+            "properties": {
+                "prefix": {
+                    "type": "string"
+                },
+                "alternative_name": {
+                    "type": "string"
+                },
+                "flags": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "preference",
+                                    "compile_flag",
+                                    "runtime_flag"
+                                ]
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "value_to_set": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "type",
+                            "name"
+                        ]
+                    }
+                },
+                "partial_implementation": {
+                    "type": "boolean"
+                },
+                "version_added": {
+                    "$ref": "#/definitions/version_value"
+                },
+                "version_removed": {
+                    "$ref": "#/definitions/version_value"
+                },
+                "notes": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "version_added"
+            ],
+            "anyOf": [
+                {
+                    "not": {
+                        "required": [
+                            "prefix",
+                            "alternative_name"
+                        ]
+                    }
+                },
+                {
+                    "oneOf": [
+                        {
+                            "required": [
+                                "prefix"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "alternative_name"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "additionalProperties": false
+        },
+        "array_support_statement": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+                "$ref": "#/definitions/simple_support_statement"
+            }
+        },
+        "support_statement": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/simple_support_statement"
+                },
+                {
+                    "$ref": "#/definitions/array_support_statement"
+                }
+            ]
+        },
+        "status_block": {
+            "type": "object",
+            "properties": {
+                "experimental": {
+                    "type": "boolean"
+                },
+                "standard_track": {
+                    "type": "boolean"
+                },
+                "deprecated": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "experimental",
+                "standard_track",
+                "deprecated"
+            ],
+            "additionalProperties": false
+        },
+        "support_block": {
+            "type": "object",
+            "properties": {
+                "webview_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "chrome": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "chrome_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "edge": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "edge_mobile": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "firefox": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "firefox_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "ie": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "nodejs": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "opera": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "opera_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "qq_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "safari": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "safari_ios": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "samsunginternet_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "uc_android": {
+                    "$ref": "#/definitions/support_statement"
+                },
+                "uc_chinese_android": {
+                    "$ref": "#/definitions/support_statement"
+                }
+            },
+            "additionalProperties": false
+        },
+        "compat_statement": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "mdn_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^https://developer\\.mozilla\\.org/docs/"
+                },
+                "support": {
+                    "$ref": "#/definitions/support_block"
+                },
+                "status": {
+                    "$ref": "#/definitions/status_block"
+                }
+            },
+            "required": [
+                "support",
+                "status"
+            ],
+            "additionalProperties": false
+        },
+        "webextensions_compat_statement": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "mdn_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^https://developer\\.mozilla\\.org/docs/"
+                },
+                "support": {
+                    "$ref": "#/definitions/support_block"
+                },
+                "status": {
+                    "$ref": "#/definitions/status_block"
+                }
+            },
+            "required": [
+                "support"
+            ],
+            "additionalProperties": false
+        },
+        "primary_identifier": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/identifier"
+                },
+                {
+                    "maxProperties": 1,
+                    "minProperties": 1
+                }
+            ]
+        },
+        "primary_webextensions_identifier": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/webextensions_identifier"
+                },
+                {
+                    "maxProperties": 1,
+                    "minProperties": 1
+                }
+            ]
+        },
+        "identifier": {
+            "type": "object",
+            "properties": {
+                "__compat": {
+                    "$ref": "#/definitions/compat_statement"
+                }
+            },
+            "patternProperties": {
+                "^(?!__compat)[a-zA-Z_0-9-$@]*$": {
+                    "$ref": "#/definitions/identifier"
+                }
+            },
+            "additionalProperties": false
+        },
+        "webextensions_identifier": {
+            "type": "object",
+            "properties": {
+                "__compat": {
+                    "$ref": "#/definitions/webextensions_compat_statement"
+                }
+            },
+            "patternProperties": {
+                "^(?!__compat)[a-zA-Z_0-9-$@]*$": {
+                    "$ref": "#/definitions/webextensions_identifier"
+                }
+            },
+            "additionalProperties": false
+        },
+        "version_value": {
+            "allOf": [
+                {
+                    "type": [
+                        "string",
+                        "boolean",
+                        "null"
+                    ]
+                },
+                {
+                    "not": {
+                        "enum": [
+                            "true",
+                            "false",
+                            "null"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "type": "object",
+    "patternProperties": {
+        "^(?!__compat)(?!webextensions)[a-zA-Z_0-9-$@]*$": {
+            "$ref": "#/definitions/primary_identifier"
+        },
+        "^webextensions*$": {
+            "$ref": "#/definitions/primary_webextensions_identifier"
+        }
+    },
+    "additionalProperties": false,
+    "maxProperties": 1,
+    "minProperties": 1
+}

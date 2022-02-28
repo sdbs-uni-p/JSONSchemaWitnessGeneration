@@ -1,0 +1,191 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "http://luciozambon.altervista.org/egiga2m/schemas/plot.json",
+    "definitions": {
+        "firstpoint": {
+            "type": "object",
+            "properties": {
+                "x": {
+                    "type": "number",
+                    "description": "requested start timestamp*1000"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "marker": {
+                    "type": "object",
+                    "properties": {
+                        "symbol": {
+                            "type": "string",
+                            "description": "url(<actual url of prestart image>)"
+                        }
+                    }
+                },
+                "prestart": {
+                    "type": "number",
+                    "description": "data acquisition timestamp*1000"
+                }
+            }
+        },
+        "point": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "number",
+                    "description": "timestamp*1000"
+                },
+                {
+                    "oneOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            ],
+            "additionalProperties": false
+        },
+        "lastpoint": {
+            "type": "object",
+            "properties": {
+                "x": {
+                    "type": "integer",
+                    "description": "requested stop timestamp*1000"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "marker": {
+                    "type": "object",
+                    "properties": {
+                        "radius": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "poststart": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "timeseries": {
+            "type": "object",
+            "properties": {
+                "ts_id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "xaxis": {
+                    "type": "integer"
+                },
+                "yaxis": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/firstpoint"
+                            },
+                            {
+                                "$ref": "#/definitions/point"
+                            },
+                            {
+                                "$ref": "#/definitions/lastpoint"
+                            }
+                        ]
+                    }
+                },
+                "categories": {
+                    "type": "array",
+                    "description": "definition of encoded values or state",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "ts_id",
+                "label",
+                "xaxis",
+                "yaxis",
+                "data"
+            ],
+            "additionalProperties": false
+        },
+        "event": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "x": {
+                                "type": "number",
+                                "description": "requested start timestamp*1000"
+                            },
+                            "y": {
+                                "type": "number"
+                            },
+                            "message": {
+                                "type": "number"
+                            },
+                            "ts": {
+                                "type": "number"
+                            },
+                            "marker": {
+                                "type": "object",
+                                "properties": {
+                                    "symbol": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "required": [
+                            "x",
+                            "y",
+                            "message",
+                            "marker"
+                        ]
+                    }
+                }
+            },
+            "message": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "required": [
+        "ts"
+    ],
+    "properties": {
+        "ts": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/timeseries"
+            }
+        },
+        "event": {
+            "$ref": "#/definitions/event"
+        }
+    }
+}

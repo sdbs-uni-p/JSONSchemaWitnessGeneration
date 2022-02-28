@@ -1,0 +1,222 @@
+{
+    "features": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "auth": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    },
+                    "flag": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            },
+            "details": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            },
+            "commits": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic",
+                        "default": "${topic:commits}"
+                    }
+                }
+            },
+            "issues": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic",
+                        "default": "${topic:issues}"
+                    }
+                }
+            },
+            "repos": {
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "type": "string",
+                        "format": "topic"
+                    }
+                }
+            }
+        }
+    },
+    "areas": {
+        "activities": [
+            {
+                "widget": "amd:laxar-github/data-activity",
+                "features": {
+                    "auth": "${features.auth}",
+                    "data": {
+                        "resource": "${features.commits.resource}",
+                        "sources": {
+                            "resource": "${features.details.resource}",
+                            "fields": "payload.url"
+                        }
+                    }
+                }
+            },
+            {
+                "widget": "amd:laxar-github/data-activity",
+                "features": {
+                    "auth": "${features.auth}",
+                    "data": {
+                        "resource": "${features.issues.resource}",
+                        "sources": {
+                            "resource": "${features.details.resource}",
+                            "fields": "payload.issue.url"
+                        }
+                    }
+                }
+            }
+        ],
+        ".": [
+            {
+                "widget": "release-station/details-widget",
+                "features": {
+                    "details": {
+                        "resource": "${features.details.resource}"
+                    },
+                    "tabs": [
+                        {
+                            "i18nHtmlTitle": {
+                                "en-US": "Commits"
+                            },
+                            "filter": {
+                                "fields": "type",
+                                "values": "CommitEvent"
+                            },
+                            "columns": [
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Repository"
+                                    },
+                                    "fields": "repo.name",
+                                    "link": "repo.url"
+                                },
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "SHA"
+                                    },
+                                    "i18nHtmlFormat": {
+                                        "en-US": "[0:%.6s]"
+                                    },
+                                    "fields": "payload.sha",
+                                    "link": "payload.url"
+                                },
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Message"
+                                    },
+                                    "fields": "payload.message"
+                                }
+                            ]
+                        },
+                        {
+                            "i18nHtmlTitle": {
+                                "en-US": "Tags"
+                            },
+                            "filter": {
+                                "fields": "payload.ref_type",
+                                "values": "tag"
+                            },
+                            "columns": [
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Repository"
+                                    },
+                                    "fields": "repo.name",
+                                    "link": "repo.url"
+                                },
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Name"
+                                    },
+                                    "i18nHtmlFormat": {
+                                        "en-US": "<a href=\"#/history/[repo]/[ref]\">[ref]</a>"
+                                    },
+                                    "fields": {
+                                        "repo": "repo.name",
+                                        "ref": "payload.ref"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "i18nHtmlTitle": {
+                                "en-US": "Issues"
+                            },
+                            "filter": {
+                                "fields": "type",
+                                "values": "IssuesEvent"
+                            },
+                            "columns": [
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Issue"
+                                    },
+                                    "i18nHtmlFormat": {
+                                        "en-US": "[repo]#[number]"
+                                    },
+                                    "fields": {
+                                        "repo": "repo.name",
+                                        "number": "payload.issue.number"
+                                    },
+                                    "link": "payload.issue.url"
+                                },
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Action"
+                                    },
+                                    "i18nHtmlFormat": "[action] by [actor]",
+                                    "fields": {
+                                        "actor": "actor.login",
+                                        "action": "payload.action"
+                                    }
+                                },
+                                {
+                                    "i18nHtmlTitle": {
+                                        "en-US": "Summary"
+                                    },
+                                    "fields": "payload.issue.title"
+                                }
+                            ]
+                        }
+                    ],
+                    "links": [
+                        {
+                            "resource": "${features.repos.resource}",
+                            "field": "url",
+                            "i18nHtmlFormat": "<a href=\"[html_url]\" title=\"[full_name]: [description]\">[0]</a>"
+                        },
+                        {
+                            "resource": "${features.commits.resource}",
+                            "field": "url",
+                            "i18nHtmlFormat": "<a href=\"[html_url]\" title=\"[sha]\">[0]</a>"
+                        },
+                        {
+                            "resource": "${features.issues.resource}",
+                            "field": "url",
+                            "i18nHtmlFormat": "<a href=\"[html_url]\" title=\"#[number] ([state] [updated_at])\">[0]</a>"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

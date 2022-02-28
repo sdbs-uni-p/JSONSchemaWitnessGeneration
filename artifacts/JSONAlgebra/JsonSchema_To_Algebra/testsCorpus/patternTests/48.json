@@ -1,0 +1,161 @@
+{
+  "self": {
+    "vendor": "io.exercism",
+    "name": "canonical-data",
+    "format": "jsonschema",
+    "version": "1-1-0"
+  },
+  "$ref": "#/definitions/canonicalData",
+  "definitions": {
+    "canonicalData": {
+      "description": "This is the top-level file structure",
+      "type": "object",
+      "required": [
+        "exercise",
+        "version",
+        "cases"
+      ],
+      "properties": {
+        "exercise": {
+          "$ref": "#/definitions/exercise"
+        },
+        "version": {
+          "$ref": "#/definitions/version"
+        },
+        "comments": {
+          "$ref": "#/definitions/comments"
+        },
+        "cases": {
+          "$ref": "#/definitions/testGroup"
+        }
+      },
+      "additionalProperties": false
+    },
+    "exercise": {
+      "description": "Exercise's slug (kebab-case)",
+      "type": "string",
+      "pattern": "^[a-z]+(-[a-z]+)*$"
+    },
+    "version": {
+      "description": "Semantic versioning: MAJOR.MINOR.PATCH",
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*)){2}$"
+    },
+    "comments": {
+      "description": "An array of strings to fake multi-line comments",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "testGroup": {
+      "description": "An array of labeled test items",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/labeledTestItem"
+      },
+      "minItems": 1
+    },
+    "labeledTestItem": {
+      "description": "A single test or group of tests with a description",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/labeledTest"
+        },
+        {
+          "$ref": "#/definitions/labeledTestGroup"
+        }
+      ]
+    },
+    "labeledTest": {
+      "description": "A single test with a description",
+      "type": "object",
+      "required": [
+        "description",
+        "property",
+        "input",
+        "expected"
+      ],
+      "properties": {
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "optional": {
+          "$ref": "#/definitions/optional"
+        },
+        "comments": {
+          "$ref": "#/definitions/comments"
+        },
+        "property": {
+          "$ref": "#/definitions/property"
+        },
+        "input": {
+          "$ref": "#/definitions/input"
+        },
+        "expected": {
+          "$ref": "#/definitions/expected"
+        }
+      },
+      "additionalProperties": false
+    },
+    "labeledTestGroup": {
+      "description": "A group of tests with a description",
+      "type": "object",
+      "required": [
+        "description",
+        "cases"
+      ],
+      "properties": {
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "optional": {
+          "$ref": "#/definitions/optional"
+        },
+        "comments": {
+          "$ref": "#/definitions/comments"
+        },
+        "cases": {
+          "$ref": "#/definitions/testGroup"
+        }
+      },
+      "additionalProperties": false
+    },
+    "description": {
+      "description": "A short, clear, one-line description",
+      "type": "string"
+    },
+    "optional": {
+      "description": "An identifier for similar optional test cases (kebab-case)",
+      "type": "string",
+      "pattern": "^[a-z]+(-[a-z]+)*$"
+    },
+    "property": {
+      "description": "A letters-only, lowerCamelCase property name",
+      "type": "string",
+      "pattern": "^[a-z]+([A-Z][a-z]+)*[A-Z]?$"
+    },
+    "input": {
+      "description": "The inputs to a test case",
+      "type": "object"
+    },
+    "expected": {
+      "description": "The expected return value of a test case",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/error"
+        }
+      },
+      "dependencies": {
+        "error": {
+          "maxProperties": 1
+        }
+      }
+    },
+    "error": {
+      "description": "A message describing an error condition",
+      "type": "string"
+    }
+  }
+}

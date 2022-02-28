@@ -1,0 +1,186 @@
+[
+    {
+        "id": 1,
+        "schema1": {
+            "anyOf": [
+                {
+                    "$ref": "#foo",
+                    "$defs": {
+                        "A": {
+                            "$anchor": "foo",
+                            "type": "integer"
+                        }
+                    }
+                },
+                {
+                    "$defs": {
+                        "A": {
+                            "$anchor": "foo1",
+                            "type": "integer"
+                        }
+                    },
+                    "not": {
+                        "$ref": "#foo1"
+                    }
+                }
+            ]
+        },
+        "schema2": true,
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 2,
+        "schema1": {
+            "anyOf": [
+                {
+                    "$ref": "http://localhost:1234/bar#foo",
+                    "$defs": {
+                        "A": {
+                            "$id": "http://localhost:1234/bar",
+                            "$anchor": "foo",
+                            "type": "integer"
+                        }
+                    }
+                },
+                {
+                    "$defs": {
+                        "A": {
+                            "$id": "http://localhost:1234/bar1",
+                            "$anchor": "foo1",
+                            "type": "integer"
+                        }
+                    },
+                    "not": {
+                        "$ref": "http://localhost:1234/bar1#foo1"
+                    }
+                }
+            ]
+        },
+        "schema2": true,
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 3,
+        "schema1": {
+            "anyOf": [
+                {
+                    "$id": "http://localhost:1234/root",
+                    "$ref": "http://localhost:1234/nested.json#foo",
+                    "$defs": {
+                        "A": {
+                            "$id": "nested.json",
+                            "$defs": {
+                                "B": {
+                                    "$anchor": "foo",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "$id": "http://localhost:1234/root1",
+                    "$defs": {
+                        "A": {
+                            "$id": "nested1.json",
+                            "$defs": {
+                                "B": {
+                                    "$anchor": "foo1",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    },
+                    "not": {
+                        "$ref": "http://localhost:1234/nested1.json#foo1"
+                    }
+                }
+            ]
+        },
+        "schema2": true,
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 4,
+        "schema1": {
+            "anyOf": [
+                {
+                    "$defs": {
+                        "anchor_in_enum": {
+                            "enum": [
+                                {
+                                    "$anchor": "my_anchor",
+                                    "type": "null"
+                                }
+                            ]
+                        },
+                        "real_identifier_in_schema": {
+                            "$anchor": "my_anchor",
+                            "type": "string"
+                        },
+                        "zzz_anchor_in_const": {
+                            "const": {
+                                "$anchor": "my_anchor",
+                                "type": "null"
+                            }
+                        }
+                    },
+                    "anyOf": [
+                        {
+                            "$ref": "#/anyOf/0/$defs/anchor_in_enum"
+                        },
+                        {
+                            "$ref": "#my_anchor"
+                        }
+                    ]
+                },
+                {
+                    "$defs": {
+                        "anchor_in_enum": {
+                            "enum": [
+                                {
+                                    "$anchor": "my_anchor1",
+                                    "type": "null"
+                                }
+                            ]
+                        },
+                        "real_identifier_in_schema": {
+                            "$anchor": "my_anchor1",
+                            "type": "string"
+                        },
+                        "zzz_anchor_in_const": {
+                            "const": {
+                                "$anchor": "my_anchor1",
+                                "type": "null"
+                            }
+                        }
+                    },
+                    "not": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/anyOf/1/$defs/anchor_in_enum"
+                            },
+                            {
+                                "$ref": "#my_anchor1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "schema2": true,
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    }
+]

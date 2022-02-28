@@ -1,0 +1,208 @@
+{
+    "contentVersion": "1.0.0.0",
+    "outputs": {
+        "WebHookURI": {
+            "type": "string",
+            "value": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('logicAppName')), '/triggers/manual'), '2016-06-01').value]"
+        }
+    },
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            },
+            "type": "string"
+        },
+        "logicAppName": {
+            "metadata": {
+                "description": "The name for the logic app."
+            },
+            "type": "string"
+        },
+        "sku": {
+            "allowedValues": [
+                "Free",
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "The pricing tier for the App Service plan."
+            },
+            "type": "string"
+        },
+        "slackChannel": {
+            "defaultValue": "#general",
+            "metadata": {
+                "description": "The Slack channel to post to."
+            },
+            "type": "string"
+        },
+        "slackConnectionName": {
+            "defaultValue": "SlackConnection",
+            "metadata": {
+                "description": "The name for the Slack connection."
+            },
+            "type": "string"
+        },
+        "svcPlanName": {
+            "defaultValue": "SlackLogicAppsPlan",
+            "metadata": {
+                "description": "The name of the App Service plan to create for hosting the logic app."
+            },
+            "type": "string"
+        },
+        "svcPlanSize": {
+            "defaultValue": "S1",
+            "metadata": {
+                "description": "The instance size of the app."
+            },
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-08-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('svcPlanName')]",
+            "sku": {
+                "capacity": 1,
+                "name": "[parameters('svcPlanSize')]",
+                "tier": "[parameters('sku')]"
+            },
+            "type": "Microsoft.Web/serverfarms"
+        },
+        {
+            "apiVersion": "2016-06-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('slackConnectionName')]",
+            "properties": {
+                "api": {
+                    "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/slack')]"
+                },
+                "displayName": "slack",
+                "parameterValues": {}
+            },
+            "type": "Microsoft.Web/connections"
+        },
+        {
+            "apiVersion": "2015-02-01-preview",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('slackConnectionName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('svcPlanName'))]"
+            ],
+            "location": "[parameters('location')]",
+            "name": "[parameters('logicAppName')]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "actions": {
+                        "Http": {
+                            "inputs": {
+                                "body": {
+                                    "longUrl": "@{triggerBody()['context']['portalLink']}"
+                                },
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "method": "POST",
+                                "uri": "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyBkT1BRbA-uULHz8HMUAi0ywJtpNLXHShI"
+                            },
+                            "runAfter": {},
+                            "type": "Http"
+                        },
+                        "Post_Message": {
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['slack']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/chat.postMessage",
+                                "queries": {
+                                    "channel": "[parameters('slackChannel')]",
+                                    "text": "Azure Alert - '@{triggerBody()['context']['name']}' @{triggerBody()['status']} on '@{triggerBody()['context']['resourceName']}'.  Details: @{body('Http')['id']}"
+                                }
+                            },
+                            "runAfter": {
+                                "Http": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection"
+                        }
+                    },
+                    "contentVersion": "1.0.0.0",
+                    "outputs": {},
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "inputs": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-04/schema#",
+                                    "properties": {
+                                        "context": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "portalLink": {
+                                                    "type": "string"
+                                                },
+                                                "resourceName": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "name",
+                                                "portalLink",
+                                                "resourceName"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "context"
+                                    ],
+                                    "type": "object"
+                                }
+                            },
+                            "kind": "Http",
+                            "type": "request"
+                        }
+                    }
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "slack": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('slackConnectionName'))]",
+                                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/slack')]"
+                            }
+                        }
+                    }
+                },
+                "sku": {
+                    "name": "[parameters('sku')]",
+                    "plan": {
+                        "id": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/',parameters('svcPlanName'))]"
+                    }
+                }
+            },
+            "type": "Microsoft.Logic/workflows"
+        }
+    ],
+    "variables": {}
+}

@@ -1,0 +1,159 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "schema for importing reviews objects",
+    "title": "Reviews Schema",
+    "type": "object",
+    "required": [
+        "source",
+        "title",
+        "created",
+        "id",
+        "reviews"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "source": {
+            "$ref": "#/definitions/url"
+        },
+        "title": {
+            "$ref": "#/definitions/no_html_entities"
+        },
+        "created": {
+            "$ref": "#/definitions/date"
+        },
+        "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+        },
+        "dimensions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        },
+        "reviews": {
+            "type": "array",
+            "items": {
+                "required": [
+                    "id",
+                    "imported_display_name",
+                    "body_html",
+                    "created",
+                    "ratings"
+                ],
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "created": {
+                        "$ref": "#/definitions/date"
+                    },
+                    "parent_id": {
+                        "type": "string"
+                    },
+                    "imported_display_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 150
+                    },
+                    "imported_email": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/email"
+                            },
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string",
+                                "minLength": 0,
+                                "maxLength": 0
+                            }
+                        ]
+                    },
+                    "imported_url": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/url"
+                            },
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string",
+                                "minLength": 0,
+                                "maxLength": 0
+                            }
+                        ]
+                    },
+                    "body_html": {
+                        "not": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/definitions/invalid_tags"
+                                },
+                                {
+                                    "$ref": "#/definitions/newlines"
+                                },
+                                {
+                                    "$ref": "#/definitions/encoded_angle_brackets"
+                                }
+                            ]
+                        }
+                    },
+                    "author_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 150
+                    },
+                    "ratings": {
+                        "type": "array",
+                        "uniqueItems": false,
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "url": {
+            "type": "string",
+            "pattern": "^https?\\://[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,3}(/\\S*)?$"
+        },
+        "date": {
+            "type": "string",
+            "pattern": "^([0-9]{4})-([0-9]{2})-([0-9]{2})([Tt]([0-9]{2}):([0-9]{2}):([0-9]{2})(\\.[0-9]+)?)?(([Zz]|([+-])([0-9]{2}):?([0-9]{2})))?$"
+        },
+        "email": {
+            "type": "string",
+            "pattern": "^[\\w.%+-]+@[A-z0-9.-]+\\.[A-z]{2,4}$"
+        },
+        "no_html_entities": {
+            "type": "string",
+            "pattern": "^((?!&\\w+;).)*$"
+        },
+        "invalid_tags": {
+            "type": "string",
+            "pattern": "(?i)(?=<(?!/?(?:img(?:\\s+src\\s*=\\s*(?:\"[^\"]*\"|'[^']*')\\s*)|a(?:\\s+(?:href|target)\\s*=\\s*(?:\"[^\"]*\"|'[^']*')\\s*){0,2}|a|img|span|label|p|br|br/|strong|em|u|blockquote|ul|li|ol|pre|body|b|i)>))</?[^>]+>"
+        },
+        "newlines": {
+            "type": "string",
+            "pattern": "\\n"
+        },
+        "encoded_angle_brackets": {
+            "type": "string",
+            "pattern": "&lt;[^&]*&gt;"
+        },
+        "double_backslash": {
+            "type": "string",
+            "pattern": "\\\\[^\\s]*"
+        }
+    }
+}

@@ -1,0 +1,846 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Todo API | Andrew Templeton | Instant Serverless CRUD API sample template",
+    "Parameters": {
+        "DesiredTodoDBReadThroughput": {
+            "Description": "The peak Read throughput in queries per second your Todo DB will be able to handle. The API has a cache so the API will support higher numbers.",
+            "Default": "10",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "100"
+        },
+        "DesiredTodoDBWriteThroughput": {
+            "Description": "The peak Write throughput in queries per second your Todo DB will be able to handle.",
+            "Default": "10",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "100"
+        },
+        "zzS3Namespace": {
+            "Type": "String",
+            "Description": "Don't change this unless you REALLY know what you're doing!",
+            "Default": "templeton.host"
+        },
+        "zzS3ExtensionsSubspace": {
+            "Type": "String",
+            "Description": "Don't change this unless you REALLY know what you're doing!",
+            "Default": "cfn-ext"
+        },
+        "zzS3DemosSubspace": {
+            "Type": "String",
+            "Description": "Don't change this unless you REALLY know what you're doing!",
+            "Default": "cfn-demos"
+        },
+        "zzDemoVersion": {
+            "Type": "String",
+            "AllowedPattern": "\\d+\\-\\d+\\-\\d+",
+            "Description": "Don't change this unless you REALLY know what you're doing!",
+            "Default": "0-0-1"
+        },
+        "zzDemoName": {
+            "Type": "String",
+            "Description": "Don't change this unless you REALLY know what you're doing!",
+            "Default": "instant-crud-api"
+        }
+    },
+    "Conditions": {
+        "IsStandardRegion": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AWS::Region"
+                },
+                "us-east-1"
+            ]
+        }
+    },
+    "Resources": {
+        "TodoRestApi": {
+            "DependsOn": [
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayRestApi",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayRestApiCfnExtArn"
+                    ]
+                },
+                "Name": "InstantCrudApi-0-0-1"
+            }
+        },
+        "TodoCRUDLambda": {
+            "DependsOn": [
+                "TodoCRUDLambdaExecutionRole"
+            ],
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Code": {
+                    "S3Bucket": {
+                        "Fn::Join": [
+                            ".",
+                            [
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                {
+                                    "Ref": "zzS3DemosSubspace"
+                                },
+                                {
+                                    "Ref": "zzS3Namespace"
+                                }
+                            ]
+                        ]
+                    },
+                    "S3Key": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                {
+                                    "Ref": "zzDemoName"
+                                },
+                                "-",
+                                {
+                                    "Ref": "zzDemoVersion"
+                                },
+                                "/crud-lambda-0-0-1.zip"
+                            ]
+                        ]
+                    }
+                },
+                "Description": "Lambda to integrate test asset with.",
+                "Handler": "index.handler",
+                "MemorySize": 128,
+                "Role": {
+                    "Fn::GetAtt": [
+                        "TodoCRUDLambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Runtime": "nodejs",
+                "Timeout": 300
+            }
+        },
+        "TodoCRUDLambdaCredentialsRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "apigateway.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "TodoCRUDLambdaCredentialsRole",
+                                    {
+                                        "Ref": "AWS::StackName"
+                                    }
+                                ]
+                            ]
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": "lambda:InvokeFunction",
+                                    "Resource": [
+                                        {
+                                            "Fn::GetAtt": [
+                                                "TodoCRUDLambda",
+                                                "Arn"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "TodoCRUDLambdaExecutionRole": {
+            "DependsOn": [
+                "TodoTable"
+            ],
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "TodoCRUDLambdaExecutionRole",
+                                    {
+                                        "Ref": "AWS::StackName"
+                                    }
+                                ]
+                            ]
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "arn:aws:logs:*:*:*"
+                                },
+                                {
+                                    "Action": [
+                                        "dynamodb:DeleteItem",
+                                        "dynamodb:GetItem",
+                                        "dynamodb:PutItem",
+                                        "dynamodb:Query",
+                                        "dynamodb:Scan",
+                                        "dynamodb:UpdateItem"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:aws:dynamodb:",
+                                                    {
+                                                        "Ref": "AWS::Region"
+                                                    },
+                                                    ":",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":table/",
+                                                    {
+                                                        "Ref": "TodoTable"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "TodoAPIDeployment": {
+            "DependsOn": [
+                "TodoRestApi",
+                "TodoAPIItemResourceDef",
+                "TodoAPIRootResourceDef",
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayDeployment",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayDeploymentCfnExtArn"
+                    ]
+                },
+                "RestApiId": {
+                    "Ref": "TodoRestApi"
+                },
+                "StageName": "todo",
+                "CacheClusterEnabled": true,
+                "CacheClusterSize": "0.5"
+            }
+        },
+        "TodoAPIItemResourceDef": {
+            "DependsOn": [
+                "TodoCRUDLambda",
+                "TodoRestApi",
+                "TodoAPIItemResource",
+                "TodoTable",
+                "TodoModel",
+                "DefaultRequest",
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayResourceDef",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayResourceDefCfnExtArn"
+                    ]
+                },
+                "RestApiId": {
+                    "Ref": "TodoRestApi"
+                },
+                "ResourceId": {
+                    "Ref": "TodoAPIItemResource"
+                },
+                "Methods": [
+                    {
+                        "Method": "OPTIONS",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "200",
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'DELETE, GET, HEAD, OPTIONS, PUT'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "AuthorizationType": "NONE",
+                            "Type": "MOCK",
+                            "Templates": {
+                                "application/json": "{\"statusCode\": 200}"
+                            }
+                        }
+                    },
+                    {
+                        "Method": "GET",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "200",
+                                "Models": {
+                                    "application/json": "Todo"
+                                },
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'DELETE, GET, HEAD, OPTIONS, PUT'",
+                                    "method.response.header.Cache-Control": "'public, max-age=5, s-maxage=5'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "__default__": {
+                                "Fn::GetAtt": [
+                                    "DefaultRequest",
+                                    "Value"
+                                ]
+                            },
+                            "Models": {},
+                            "Parameters": {
+                                "integration.request.path.id": "method.request.path.id"
+                            },
+                            "CacheKeyParameters": [
+                                "method.request.path.id"
+                            ]
+                        }
+                    },
+                    {
+                        "Method": "PUT",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "200",
+                                "Models": {
+                                    "application/json": "Todo"
+                                },
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'DELETE, GET, HEAD, OPTIONS, PUT'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "__default__": {
+                                "Fn::GetAtt": [
+                                    "DefaultRequest",
+                                    "Value"
+                                ]
+                            },
+                            "Parameters": {
+                                "integration.request.path.id": "method.request.path.id"
+                            }
+                        }
+                    },
+                    {
+                        "Method": "DELETE",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "200",
+                                "Models": {
+                                    "application/json": "Todo"
+                                },
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'DELETE, GET, HEAD, OPTIONS, PUT'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "__default__": {
+                                "Fn::GetAtt": [
+                                    "DefaultRequest",
+                                    "Value"
+                                ]
+                            },
+                            "Parameters": {
+                                "integration.request.path.id": "method.request.path.id"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "TodoAPIItemResource": {
+            "DependsOn": [
+                "TodoRestApi",
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayResource",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayResourceCfnExtArn"
+                    ]
+                },
+                "RestApiId": {
+                    "Ref": "TodoRestApi"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "TodoRestApi",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "{id}"
+            }
+        },
+        "TodoAPIRootResourceDef": {
+            "DependsOn": [
+                "TodoCRUDLambda",
+                "TodoRestApi",
+                "TodoTable",
+                "TodoModel",
+                "TodoArrayModel",
+                "DefaultRequest",
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayResourceDef",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayResourceDefCfnExtArn"
+                    ]
+                },
+                "RestApiId": {
+                    "Ref": "TodoRestApi"
+                },
+                "ResourceId": {
+                    "Fn::GetAtt": [
+                        "TodoRestApi",
+                        "RootResourceId"
+                    ]
+                },
+                "Methods": [
+                    {
+                        "Method": "OPTIONS",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "200",
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'GET, HEAD, OPTIONS, POST'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "AuthorizationType": "NONE",
+                            "Type": "MOCK",
+                            "Templates": {
+                                "application/json": "{\"statusCode\": 200}"
+                            }
+                        }
+                    },
+                    {
+                        "Method": "POST",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "201",
+                                "Models": {
+                                    "application/json": "Todo"
+                                },
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'GET, HEAD, OPTIONS, POST'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "__default__": {
+                                "Fn::GetAtt": [
+                                    "DefaultRequest",
+                                    "Value"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Method": "GET",
+                        "Responses": [
+                            {
+                                "SelectionPattern": ".*",
+                                "StatusCode": "200",
+                                "Models": {
+                                    "application/json": "TodoArray"
+                                },
+                                "Parameters": {
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'GET, HEAD, OPTIONS, POST'"
+                                }
+                            }
+                        ],
+                        "Request": {
+                            "__default__": {
+                                "Fn::GetAtt": [
+                                    "DefaultRequest",
+                                    "Value"
+                                ]
+                            },
+                            "Models": {}
+                        }
+                    }
+                ]
+            }
+        },
+        "DefaultRequest": {
+            "DependsOn": [
+                "zzzServiceExtensions",
+                "TodoCRUDLambda",
+                "TodoCRUDLambdaCredentialsRole",
+                "TodoTable",
+                "TodoModel"
+            ],
+            "Type": "Custom::Variable",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.VariableCfnExtArn"
+                    ]
+                },
+                "VariableValue": {
+                    "AuthorizationType": "NONE",
+                    "Models": {
+                        "application/json": "Todo"
+                    },
+                    "Type": "AWS",
+                    "IntegrationHttpMethod": "POST",
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "TodoCRUDLambda",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    },
+                    "Credentials": {
+                        "Fn::GetAtt": [
+                            "TodoCRUDLambdaCredentialsRole",
+                            "Arn"
+                        ]
+                    },
+                    "Templates": {
+                        "application/json": {
+                            "Fn::Join": [
+                                "\n",
+                                [
+                                    "{",
+                                    "  \"Body\" : $input.json('$'),",
+                                    "  \"Id\": \"$input.params('id')\",",
+                                    "  \"Params\": \"$input.params()\",",
+                                    "  \"Method\": \"$context.httpMethod\",",
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "  \"Table\": \"",
+                                                {
+                                                    "Ref": "TodoTable"
+                                                },
+                                                "\","
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "  \"Schema\": ",
+                                                {
+                                                    "Fn::GetAtt": [
+                                                        "TodoModel",
+                                                        "SchemaString"
+                                                    ]
+                                                }
+                                            ]
+                                        ]
+                                    },
+                                    "}"
+                                ]
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "TodoModel": {
+            "DependsOn": [
+                "TodoSchemaVariable",
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayModel",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayModelCfnExtArn"
+                    ]
+                },
+                "ContentType": "application/json",
+                "Name": "Todo",
+                "RestApiId": {
+                    "Ref": "TodoRestApi"
+                },
+                "Schema": {
+                    "__default__": {
+                        "Fn::GetAtt": [
+                            "TodoSchemaVariable",
+                            "Value"
+                        ]
+                    }
+                }
+            }
+        },
+        "TodoArrayModel": {
+            "DependsOn": [
+                "TodoSchemaVariable",
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::ApiGatewayModel",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.ApiGatewayModelCfnExtArn"
+                    ]
+                },
+                "ContentType": "application/json",
+                "Name": "TodoArray",
+                "RestApiId": {
+                    "Ref": "TodoRestApi"
+                },
+                "Schema": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "Todo Array Schema",
+                    "type": "array",
+                    "items": {
+                        "__default__": {
+                            "Fn::GetAtt": [
+                                "TodoSchemaVariable",
+                                "Value"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "TodoSchemaVariable": {
+            "DependsOn": [
+                "zzzServiceExtensions"
+            ],
+            "Type": "Custom::Variable",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::GetAtt": [
+                        "zzzServiceExtensions",
+                        "Outputs.VariableCfnExtArn"
+                    ]
+                },
+                "VariableValue": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "Todo Schema",
+                    "type": "object",
+                    "required": [
+                        "title",
+                        "completed"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        },
+                        "completed": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "TodoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": {
+                        "Ref": "DesiredTodoDBReadThroughput"
+                    },
+                    "WriteCapacityUnits": {
+                        "Ref": "DesiredTodoDBWriteThroughput"
+                    }
+                }
+            }
+        },
+        "zzzServiceExtensions": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "S3Namespace": {
+                        "Ref": "zzS3Namespace"
+                    },
+                    "S3ExtensionsSubspace": {
+                        "Ref": "zzS3ExtensionsSubspace"
+                    },
+                    "ParentStackId": {
+                        "Ref": "AWS::StackId"
+                    },
+                    "ParentStackName": {
+                        "Ref": "AWS::StackName"
+                    }
+                },
+                "TemplateURL": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "https://s3",
+                            {
+                                "Fn::If": [
+                                    "IsStandardRegion",
+                                    "",
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "-",
+                                                {
+                                                    "Ref": "AWS::Region"
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            },
+                            ".amazonaws.com/",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ".",
+                            {
+                                "Ref": "zzS3DemosSubspace"
+                            },
+                            ".",
+                            {
+                                "Ref": "zzS3Namespace"
+                            },
+                            "/",
+                            {
+                                "Ref": "zzDemoName"
+                            },
+                            "-",
+                            {
+                                "Ref": "zzDemoVersion"
+                            },
+                            "/extensions.template"
+                        ]
+                    ]
+                },
+                "TimeoutInMinutes": 5
+            }
+        }
+    },
+    "Outputs": {
+        "MyApiDeploymentEndpoint": {
+            "Description": "The root URL of the API we just deployed",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "https://",
+                        {
+                            "Ref": "TodoRestApi"
+                        },
+                        ".execute-api.",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        ".amazonaws.com/todo/"
+                    ]
+                ]
+            }
+        }
+    }
+}

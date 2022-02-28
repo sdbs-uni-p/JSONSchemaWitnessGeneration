@@ -1,0 +1,112 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "patternProperties": {
+        ".*": {
+            "type": "object",
+            "patternProperties": {
+                "^(?!relationships).*(?<!_id)$": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/types"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "$ref": "#/definitions/types"
+                                },
+                                "nullable": {
+                                    "type": "boolean"
+                                },
+                                "primary_key": {
+                                    "type": "boolean"
+                                },
+                                "autoincrement": {
+                                    "type": "boolean"
+                                },
+                                "default": {},
+                                "unique": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                                "type"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "properties": {
+                "relationships": {
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/definitions/relationships"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "$ref": "#/definitions/relationships"
+                        }
+                    ]
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "definitions": {
+        "types": {
+            "type": "string",
+            "pattern": "^(.+_)?(boolean|integer|float|string|text)$"
+        },
+        "relationships": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "pattern": "^many-to-many|one-to-one|primary_key$"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "many-to-many": {
+                                    "type": "boolean"
+                                },
+                                "primary_key": {
+                                    "type": "boolean"
+                                },
+                                "lazy": {
+                                    "type": "string"
+                                },
+                                "innerjoin": {
+                                    "type": "boolean"
+                                },
+                                "order_by": {
+                                    "type": "string"
+                                },
+                                "remote_side": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,355 @@
+{
+    "definitions": {
+        "address": {
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street_address": {
+                    "type": "string"
+                },
+                "zip": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "street_address",
+                "city",
+                "state"
+            ],
+            "type": "object"
+        },
+        "case": {
+            "properties": {
+                "all_addresses": {
+                    "description": "An array of all the addresses associated with this proposal. The first address is used as the primary address (e.g., for display purposes).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "attributes": {
+                    "items": {
+                        "items": [
+                            {
+                                "description": "attribute name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "attribute value",
+                                "type": "string"
+                            }
+                        ],
+                        "type": "array"
+                    },
+                    "type": "array"
+                },
+                "case_number": {
+                    "description": "A case number for this case, unique within the scope of this region.",
+                    "type": "string"
+                },
+                "case_numbers": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "complete": {
+                    "description": "The date that this proposal was closed, whether for approval or denial.",
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "decision": {
+                    "dependencies": {
+                        "votes_for": [
+                            "votes_against"
+                        ]
+                    },
+                    "description": "Provides additional details about the decision from the reviewing body",
+                    "properties": {
+                        "approved": {
+                            "type": "boolean"
+                        },
+                        "comments": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "votes_against": {
+                            "type": "number"
+                        },
+                        "votes_for": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                },
+                "description": {
+                    "description": "A detailed description of the case.",
+                    "type": "string"
+                },
+                "documents": {
+                    "items": {
+                        "$ref": "#/definitions/document"
+                    },
+                    "type": "array"
+                },
+                "events": {
+                    "items": {
+                        "$ref": "#/definitions/event"
+                    },
+                    "type": "array"
+                },
+                "first_hearing_date": {
+                    "description": "The date and time of the first public hearing",
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "images": {
+                    "items": {
+                        "$ref": "#/definitions/image"
+                    },
+                    "type": "array"
+                },
+                "location": {
+                    "$ref": "#/definitions/location",
+                    "description": "The coordinates of the proposal. If omitted, Cornerwise will geocode the primary address."
+                },
+                "parcel_id": {
+                    "description": "An identifier for the corresponding parcel, unique within the scope of the region.",
+                    "type": "string"
+                },
+                "region_name": {
+                    "description": "If omitted, Cornerwise will use the region name configured for the importer.",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "A site where users can find additional information",
+                    "format": "uri",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "A descriptive label for the status of the project.",
+                    "type": "string"
+                },
+                "summary": {
+                    "description": "A brief description of the case",
+                    "type": "string"
+                },
+                "updated_date": {
+                    "description": "The last modification date and time",
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "all_addresses",
+                "case_number",
+                "updated_date"
+            ],
+            "type": "object"
+        },
+        "document": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/link"
+                },
+                {
+                    "properties": {
+                        "content_type": {
+                            "description": "MIME type of the document",
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        "event": {
+            "properties": {
+                "accessibility": {
+                    "type": "string"
+                },
+                "address": {
+                    "$ref": "#/definitions/address"
+                },
+                "cases": {
+                    "items": {
+                        "description": "Canonical case numbers for the proposals related to this event",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "cost": {
+                    "type": "string"
+                },
+                "department_code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "documents": {
+                    "items": {
+                        "$ref": "#/definitions/document"
+                    },
+                    "type": "array"
+                },
+                "duration": {
+                    "description": "Estimated duration of the event, in hours and minutes (h:mm)",
+                    "pattern": "^(\\d+:)?\\d\\d",
+                    "type": "string"
+                },
+                "region_name": {
+                    "type": "string"
+                },
+                "start": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "description": "Link to a webpage containing additional information about this event.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "title",
+                "start"
+            ],
+            "type": "object"
+        },
+        "image": {
+            "$ref": "#/definitions/link"
+        },
+        "link": {
+            "properties": {
+                "tags": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "title",
+                "url"
+            ],
+            "type": "object"
+        },
+        "location": {
+            "properties": {
+                "lat": {
+                    "type": "number"
+                },
+                "long": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "lat",
+                "long"
+            ],
+            "type": "object"
+        },
+        "project": {
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/address"
+                },
+                "approved": {
+                    "type": "boolean"
+                },
+                "budget": {
+                    "additionalProperties": false,
+                    "description": "A dictionary mapping years to budgeted cost (USD)",
+                    "patternProperties": {
+                        "^\\d{4}$": {
+                            "type": "integer"
+                        }
+                    },
+                    "type": "object"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "department": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "funding_source": {
+                    "type": "string"
+                },
+                "justification": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/location"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region_name": {
+                    "type": "string"
+                },
+                "related_cases": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "updated": {
+                    "format": "date-time",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "description",
+                "region_name"
+            ],
+            "type": "object"
+        }
+    },
+    "description": "schema for Cornerwise scrapers",
+    "properties": {
+        "cases": {
+            "description": "",
+            "items": {
+                "$ref": "#/definitions/case"
+            },
+            "type": "array"
+        },
+        "events": {
+            "items": {
+                "$ref": "#/definitions/event"
+            },
+            "type": "array"
+        },
+        "projects": {
+            "items": {
+                "$ref": "#/definitions/project"
+            },
+            "type": "array"
+        }
+    },
+    "type": "object"
+}

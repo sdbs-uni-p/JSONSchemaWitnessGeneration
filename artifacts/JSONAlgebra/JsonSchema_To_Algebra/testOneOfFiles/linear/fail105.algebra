@@ -1,0 +1,27 @@
+// OneOf x1-x2-x3-x4: mof(2,3,5) and notMof(7) or mof(2,5,7) and NotMof 3..., e.g. 105
+// O21: same as OneOf
+// oneOf[ref("O21"),ref("OneOf")] : impossible, they are the same
+// "root" : oneOf[ref("O21"),ref("OneOf"), allOf[const(1),type[obj]] ] : same as above, which I cannot write
+
+"root" defs [
+//    "root" : oneOf[ref("O21"),ref("OneOf")],
+    "root" : oneOf[ref("O21"),ref("OneOf"), allOf[const(1),type[obj]] ],
+    "OneOf" : oneOf[ref("x1"),
+                  ref("x2"),
+                  ref("x3"),
+                  ref("x4")
+                  ],
+   "x1" :   notMof(2) ,
+   "x2" :   notMof(3) ,
+   "x3" :   notMof(5),
+   "x4" :   notMof(7),
+   "N01" :   not(ref("x1")),
+   "N02" :   not(ref("x2")),
+   "N03" :   not(ref("x3")),
+   "N04" :   not(ref("x4")),
+   "N11" : { ref("N01"), ref("N02") },
+   "N12" : { ref("N03"), ref("N04") },
+   "O11" : anyOf [ { ref("N01"), ref("x2") }, { ref("x1"), ref("N02") } ],
+   "O12" : anyOf [ { ref("N03"), ref("x4") }, { ref("x3"), ref("N04") } ],
+   "O21" : anyOf [ { ref("N11"), ref("O12") }, { ref("O11"), ref("N12") } ]
+ ]

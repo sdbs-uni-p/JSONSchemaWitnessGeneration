@@ -1,0 +1,589 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "POIv1",
+    "description": "A poi instance",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The unique identifier for a poi",
+            "$ref": "#/definitions/uuid4"
+        },
+        "structure": {
+            "type": "object",
+            "properties": {
+                "shape": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "enum": [
+                                "point",
+                                "path",
+                                "polygon"
+                            ]
+                        },
+                        "elevation": {
+                            "type": "boolean"
+                        },
+                        "vertices": {
+                            "$ref": "#/definitions/floatarray",
+                            "minItems": 2
+                        }
+                    },
+                    "required": [
+                        "type",
+                        "vertices"
+                    ]
+                },
+                "bounds": {
+                    "type": "object",
+                    "properties": {
+                        "center": {
+                            "$ref": "#/definitions/vec2x"
+                        },
+                        "radius": {
+                            "type": "number",
+                            "minimum": 0
+                        },
+                        "height": {
+                            "type": "number",
+                            "minimum": 0
+                        }
+                    },
+                    "required": [
+                        "center",
+                        "radius"
+                    ]
+                },
+                "navigation_points": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "enum": [
+                                    "mainpoint",
+                                    "entrance",
+                                    "arrival",
+                                    "parking"
+                                ]
+                            },
+                            "coordinates": {
+                                "$ref": "#/definitions/vec2x"
+                            },
+                            "href": {
+                                "$ref": "#/definitions/poireference"
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
+                    }
+                },
+                "source": {
+                    "$ref": "#/datasource"
+                }
+            },
+            "required": [
+                "bounds"
+            ]
+        },
+        "features": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "transformation": {
+                        "$ref": "#/definitions/transformation"
+                    },
+                    "deviation": {
+                        "$ref": "#/definitions/vec2x"
+                    },
+                    "source": {
+                        "$ref": "#/datasource"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "$ref": "#/features/wgs84"
+                    }
+                ],
+                "required": [
+                    "method"
+                ]
+            }
+        },
+        "contents": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "lang": {
+                        "$ref": "#/definitions/language"
+                    },
+                    "source": {
+                        "$ref": "#/datasource"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "$ref": "#/contents/name"
+                    },
+                    {
+                        "$ref": "#/contents/label"
+                    },
+                    {
+                        "$ref": "#/contents/tag"
+                    },
+                    {
+                        "$ref": "#/contents/description"
+                    },
+                    {
+                        "$ref": "#/contents/icon"
+                    },
+                    {
+                        "$ref": "#/contents/category"
+                    },
+                    {
+                        "$ref": "#/contents/image"
+                    },
+                    {
+                        "$ref": "#/contents/video"
+                    },
+                    {
+                        "$ref": "#/contents/xml3d"
+                    },
+                    {
+                        "$ref": "#/contents/contact"
+                    },
+                    {
+                        "$ref": "#/contents/website"
+                    },
+                    {
+                        "$ref": "#/contents/vendor-extension"
+                    }
+                ],
+                "required": [
+                    "type"
+                ]
+            }
+        },
+        "times": {
+            "type": "array"
+        },
+        "source": {
+            "description": "The main data source of this poi",
+            "$ref": "#/maindatasource"
+        },
+        "relations": {
+            "type": "array"
+        },
+        "meta": {
+            "type": "array"
+        }
+    },
+    "required": [
+        "source"
+    ],
+    "additionalProperties": true,
+    "contents": {
+        "name": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "name"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "additionalProperties": false
+        },
+        "tag": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "tag"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "hashtag": {
+                    "type": "boolean"
+                },
+                "relevance": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "additionalProperties": false
+        },
+        "label": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "label"
+                    ]
+                },
+                "label": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "label"
+            ],
+            "additionalProperties": false
+        },
+        "description": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "description"
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "summary": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description"
+            ],
+            "additionalProperties": false
+        },
+        "icon": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "icon"
+                    ]
+                },
+                "img": {
+                    "$ref": "#/definitions/url"
+                }
+            },
+            "required": [
+                "img"
+            ],
+            "additionalProperties": false
+        },
+        "category": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "category"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ontology": {
+                    "$ref": "#/definitions/url"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "additionalProperties": false
+        },
+        "image": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "image"
+                    ]
+                },
+                "resource": {
+                    "$ref": "#/definitions/url"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "$ref": "#/definitions/url"
+                },
+                "camera": {
+                    "$ref": "#/definitions/camera"
+                },
+                "transformation": {
+                    "$ref": "#/definitions/transformation"
+                },
+                "image_set": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "resource"
+            ],
+            "additionalProperties": false
+        },
+        "video": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "video"
+                    ]
+                },
+                "resource": {
+                    "$ref": "#/definitions/url"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "$ref": "#/definitions/url"
+                },
+                "camera": {
+                    "$ref": "#/definitions/camera"
+                },
+                "transformation": {
+                    "$ref": "#/definitions/transformation"
+                },
+                "image_set": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "resource"
+            ],
+            "additionalProperties": false
+        },
+        "xml3d": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "xml3d"
+                    ]
+                },
+                "resource": {
+                    "$ref": "#/definitions/url"
+                },
+                "transformation": {
+                    "$ref": "#/definitions/transformation"
+                }
+            },
+            "required": [
+                "resource"
+            ],
+            "additionalProperties": false
+        },
+        "contact": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "contact"
+                    ]
+                },
+                "addressee": {
+                    "type": "string"
+                },
+                "email": {
+                    "$ref": "#/definitions/mailaddress"
+                },
+                "telephone": {
+                    "$ref": "#/definitions/phonenumber"
+                },
+                "formatted_address": {
+                    "type": "string"
+                },
+                "faxNumber": {
+                    "$ref": "#/definitions/phonenumber"
+                },
+                "url": {
+                    "$ref": "#/definitions/url"
+                }
+            },
+            "required": [
+                "addressee"
+            ],
+            "additionalProperties": false
+        },
+        "website": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "website"
+                    ]
+                },
+                "url": {
+                    "$ref": "#/definitions/url"
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "vendor-extension": {
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "pattern": "^vendor-[a-z][a-z0-9]*$"
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "features": {
+        "wgs84": {
+            "properties": {
+                "method": {
+                    "enum": [
+                        "wgs84"
+                    ]
+                },
+                "long": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                },
+                "lat": {
+                    "type": "number",
+                    "minimum": -90,
+                    "maximum": 90
+                }
+            },
+            "required": [
+                "method",
+                "long",
+                "lat"
+            ]
+        }
+    },
+    "maindatasource": {
+        "$ref": "#/datasource",
+        "required": [
+            "href"
+        ]
+    },
+    "datasource": {
+        "type": "object",
+        "properties": {
+            "author": {
+                "type": "string"
+            },
+            "publisher": {
+                "type": "string"
+            },
+            "license": {
+                "type": "string"
+            },
+            "href": {
+                "$ref": "#/definitions/url"
+            },
+            "created": {
+                "$ref": "#/definitions/w3c-datetime"
+            },
+            "updated": {
+                "$ref": "#/definitions/w3c-datetime"
+            },
+            "revision": {
+                "type": "integer",
+                "minimum": 0
+            },
+            "change_frequency": {
+                "enum": [
+                    "always",
+                    "hourly",
+                    "daily",
+                    "weekly",
+                    "monthly",
+                    "yearly",
+                    "never"
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "uuid4": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab]{1}[a-f0-9]{3}-[a-f0-9]{12}$"
+        },
+        "poireference": {
+            "$ref": "#/definitions/url"
+        },
+        "url": {
+            "type": "string",
+            "pattern": "^(http|https)\\://([a-zA-Z0-9\\.\\-]+(\\:[a-zA-Z0-9\\.&amp;%\\$\\-]+)?@)?([a-zA-Z0-9\\-]+\\.)*([a-zA-Z]{2,})(\\:[0-9]+)?(/($|[a-zA-Z0-9\\.\\,\\?\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$"
+        },
+        "w3c-datetime": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^[0-9]{4}(-(0[0-9]|1[0-2])(-([0-2][0-9]|3[0-1])(T([0-1][0-9]|2[0-4]):[0-5][0-9](:[0-5][0-9](\\.[0-9]+)?)?(Z|[+-](0[0-9]|1[0-2]):[0-5][0-9]))?)?)?$"
+        },
+        "mailaddress": {
+            "type": "string",
+            "pattern": "^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-z]{2,})$"
+        },
+        "phonenumber": {
+            "type": "string"
+        },
+        "camera": {
+            "type": "object",
+            "properties": {}
+        },
+        "transformation": {
+            "type": "object",
+            "properties": {
+                "translation": {
+                    "$ref": "#/definitions/vec2x"
+                },
+                "rotation": {
+                    "$ref": "#/definitions/quaternion"
+                },
+                "scaling": {
+                    "$ref": "#/definitions/vec2x"
+                },
+                "matrix": {
+                    "$ref": "#/definitions/matrix"
+                }
+            },
+            "required": [
+                "matrix"
+            ]
+        },
+        "matrix": {
+            "$ref": "#/definitions/floatarray",
+            "minItems": 16,
+            "maxItems": 16
+        },
+        "quaternion": {
+            "$ref": "#/definitions/floatarray",
+            "minItems": 4,
+            "maxItems": 4
+        },
+        "vec2": {
+            "$ref": "#/definitions/floatarray",
+            "minItems": 2,
+            "maxItems": 2
+        },
+        "vec2x": {
+            "$ref": "#/definitions/floatarray",
+            "minItems": 2,
+            "maxItems": 3
+        },
+        "vec3": {
+            "$ref": "#/definitions/floatarray",
+            "minItems": 3,
+            "maxItems": 3
+        },
+        "floatarray": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "language": {
+            "type": "string",
+            "pattern": "^[a-z]+(-[a-zA-Z0-9]+)*$"
+        }
+    }
+}

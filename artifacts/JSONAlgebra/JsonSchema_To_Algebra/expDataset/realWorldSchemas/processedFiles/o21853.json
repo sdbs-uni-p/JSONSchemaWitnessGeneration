@@ -1,0 +1,185 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Custom::ApiGatewayModel sample template",
+    "Parameters": {
+        "RestApiCustomResourceLambdaName": {
+            "Type": "String",
+            "Default": "cfn-api-gateway-restapi-0-6-1",
+            "Description": "The name of the ApiGatewayRestApi Lambda you deployed to test this stack."
+        },
+        "ModelCustomResourceLambdaName": {
+            "Type": "String",
+            "Default": "cfn-api-gateway-model-0-0-1",
+            "Description": "The name of the ApiGatewayModel Lambda you deployed to test this stack."
+        },
+        "RestApiName": {
+            "Type": "String",
+            "Description": "Name for the API (required). Must be unique across your account for this Region.",
+            "Default": "TestForModel-0-0-1"
+        },
+        "aModelName": {
+            "Description": "The name of the Model. Toggle this to demo Update with replacement.",
+            "Default": "TestModel",
+            "AllowedValues": [
+                "TestModel",
+                "AnotherTestModel"
+            ],
+            "Type": "String"
+        },
+        "ModelAsStringSchema": {
+            "Type": "String",
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ],
+            "Default": "Yes",
+            "Description": "Whether or not to make CloudFormation send a json object or a stringified object as the Schema property on the Model."
+        },
+        "aModelDescription": {
+            "Description": "The name of the Model. Toggle this to demo Update without replacement.",
+            "Default": "Some description of model",
+            "AllowedValues": [
+                "Some description of model",
+                "Different description of model"
+            ],
+            "Type": "String"
+        }
+    },
+    "Conditions": {
+        "SchemaAsString": {
+            "Fn::Equals": [
+                "Yes",
+                {
+                    "Ref": "ModelAsStringSchema"
+                }
+            ]
+        }
+    },
+    "Resources": {
+        "MyRestApi": {
+            "Type": "Custom::ApiGatewayRestApi",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::Join": [
+                        ":",
+                        [
+                            "arn",
+                            "aws",
+                            "lambda",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            "function",
+                            {
+                                "Ref": "RestApiCustomResourceLambdaName"
+                            }
+                        ]
+                    ]
+                },
+                "Name": {
+                    "Ref": "RestApiName"
+                }
+            }
+        },
+        "MyModel": {
+            "DependsOn": [
+                "MyRestApi"
+            ],
+            "Type": "Custom::ApiGatewayModel",
+            "Properties": {
+                "ServiceToken": {
+                    "Fn::Join": [
+                        ":",
+                        [
+                            "arn",
+                            "aws",
+                            "lambda",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            "function",
+                            {
+                                "Ref": "ModelCustomResourceLambdaName"
+                            }
+                        ]
+                    ]
+                },
+                "ContentType": "application/json",
+                "RestApiId": {
+                    "Ref": "MyRestApi"
+                },
+                "Name": {
+                    "Ref": "aModelName"
+                },
+                "Description": {
+                    "Ref": "aModelDescription"
+                },
+                "Schema": {
+                    "Fn::If": [
+                        "SchemaAsString",
+                        "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"title\":\"Todo Schema\",\"type\":\"object\",\"required\":[\"title\",\"completed\"],\"properties\":{\"id\":{\"type\":\"string\"},\"title\":{\"type\":\"string\"},\"completed\":{\"type\":\"boolean\"}}}",
+                        {
+                            "$schema": "http://json-schema.org/draft-04/schema#",
+                            "title": "Todo Schema",
+                            "type": "object",
+                            "required": [
+                                "title",
+                                "completed"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "completed": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "MyModelConsoleUrl": {
+            "Description": "The AWS Console URL for inspecting the created method.",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "https://console.aws.amazon.com/apigateway/home?region=",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "#/restapis/",
+                        {
+                            "Ref": "MyRestApi"
+                        },
+                        "/models/",
+                        {
+                            "Ref": "aModelName"
+                        }
+                    ]
+                ]
+            }
+        },
+        "MySchemaStringFromModel": {
+            "Description": "As a convenience, Model resources return an attribute with a JSON version of the schema.",
+            "Value": {
+                "Fn::GetAtt": [
+                    "MyModel",
+                    "SchemaString"
+                ]
+            }
+        }
+    }
+}

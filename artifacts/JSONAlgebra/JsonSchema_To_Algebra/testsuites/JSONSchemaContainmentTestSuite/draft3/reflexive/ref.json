@@ -1,0 +1,326 @@
+[
+    {
+        "id": 1,
+        "schema1": {
+            "properties": {
+                "foo": {
+                    "$ref": "#"
+                }
+            },
+            "additionalProperties": false
+        },
+        "schema2": {
+            "properties": {
+                "foo": {
+                    "$ref": "#"
+                }
+            },
+            "additionalProperties": false
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 2,
+        "schema1": {
+            "properties": {
+                "foo": {
+                    "type": "integer"
+                },
+                "bar": {
+                    "$ref": "#/properties/foo"
+                }
+            }
+        },
+        "schema2": {
+            "properties": {
+                "foo": {
+                    "type": "integer"
+                },
+                "bar": {
+                    "$ref": "#/properties/foo"
+                }
+            }
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 3,
+        "schema1": {
+            "items": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "$ref": "#/items/0"
+                }
+            ]
+        },
+        "schema2": {
+            "items": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "$ref": "#/items/0"
+                }
+            ]
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 4,
+        "schema1": {
+            "definitions": {
+                "tilde~field": {
+                    "type": "integer"
+                },
+                "slash/field": {
+                    "type": "integer"
+                },
+                "percent%field": {
+                    "type": "integer"
+                }
+            },
+            "properties": {
+                "tilde": {
+                    "$ref": "#/definitions/tilde~0field"
+                },
+                "slash": {
+                    "$ref": "#/definitions/slash~1field"
+                },
+                "percent": {
+                    "$ref": "#/definitions/percent%25field"
+                }
+            }
+        },
+        "schema2": {
+            "definitions": {
+                "tilde~field": {
+                    "type": "integer"
+                },
+                "slash/field": {
+                    "type": "integer"
+                },
+                "percent%field": {
+                    "type": "integer"
+                }
+            },
+            "properties": {
+                "tilde": {
+                    "$ref": "#/definitions/tilde~0field"
+                },
+                "slash": {
+                    "$ref": "#/definitions/slash~1field"
+                },
+                "percent": {
+                    "$ref": "#/definitions/percent%25field"
+                }
+            }
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 5,
+        "schema1": {
+            "definitions": {
+                "a": {
+                    "type": "integer"
+                },
+                "b": {
+                    "$ref": "#/definitions/a"
+                },
+                "c": {
+                    "$ref": "#/definitions/b"
+                }
+            },
+            "$ref": "#/definitions/c"
+        },
+        "schema2": {
+            "definitions": {
+                "a": {
+                    "type": "integer"
+                },
+                "b": {
+                    "$ref": "#/definitions/a"
+                },
+                "c": {
+                    "$ref": "#/definitions/b"
+                }
+            },
+            "$ref": "#/definitions/c"
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 6,
+        "schema1": {
+            "definitions": {
+                "reffed": {
+                    "type": "array"
+                }
+            },
+            "properties": {
+                "foo": {
+                    "$ref": "#/definitions/reffed",
+                    "maxItems": 2
+                }
+            }
+        },
+        "schema2": {
+            "definitions": {
+                "reffed": {
+                    "type": "array"
+                }
+            },
+            "properties": {
+                "foo": {
+                    "$ref": "#/definitions/reffed",
+                    "maxItems": 2
+                }
+            }
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 7,
+        "schema1": {
+            "properties": {
+                "$ref": {
+                    "$ref": "#/definitions/is-string"
+                }
+            },
+            "definitions": {
+                "is-string": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema2": {
+            "properties": {
+                "$ref": {
+                    "$ref": "#/definitions/is-string"
+                }
+            },
+            "definitions": {
+                "is-string": {
+                    "type": "string"
+                }
+            }
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 8,
+        "schema1": {
+            "id": "http://localhost:1234/sibling_id/base/",
+            "definitions": {
+                "foo": {
+                    "id": "http://localhost:1234/sibling_id/foo.json",
+                    "minimum": 2
+                },
+                "base_foo": {
+                    "$comment": "this canonical uri is http://localhost:1234/sibling_id/base/foo.json",
+                    "id": "foo.json",
+                    "minimum": 5
+                }
+            },
+            "allOf": [
+                {
+                    "$comment": "$ref resolves to http://localhost:1234/sibling_id/base/foo.json, not ttp://localhost:1234/sibling_id/foo.json",
+                    "id": "http://localhost:1234/sibling_id/",
+                    "$ref": "foo.json"
+                }
+            ]
+        },
+        "schema2": {
+            "id": "http://localhost:1234/sibling_id/base/",
+            "definitions": {
+                "foo": {
+                    "id": "http://localhost:1234/sibling_id/foo.json",
+                    "minimum": 2
+                },
+                "base_foo": {
+                    "$comment": "this canonical uri is http://localhost:1234/sibling_id/base/foo.json",
+                    "id": "foo.json",
+                    "minimum": 5
+                }
+            },
+            "allOf": [
+                {
+                    "$comment": "$ref resolves to http://localhost:1234/sibling_id/base/foo.json, not ttp://localhost:1234/sibling_id/foo.json",
+                    "id": "http://localhost:1234/sibling_id/",
+                    "$ref": "foo.json"
+                }
+            ]
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 9,
+        "schema1": {
+            "$ref": "http://json-schema.org/draft-03/schema#"
+        },
+        "schema2": {
+            "$ref": "http://json-schema.org/draft-03/schema#"
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    },
+    {
+        "id": 10,
+        "schema1": {
+            "definitions": {
+                "a_string": {
+                    "type": "string"
+                }
+            },
+            "enum": [
+                {
+                    "$ref": "#/definitions/a_string"
+                }
+            ]
+        },
+        "schema2": {
+            "definitions": {
+                "a_string": {
+                    "type": "string"
+                }
+            },
+            "enum": [
+                {
+                    "$ref": "#/definitions/a_string"
+                }
+            ]
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true,
+            "s2SubsetEqOfs1": true
+        }
+    }
+]

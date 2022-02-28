@@ -1,0 +1,271 @@
+{
+    "id": "#",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "Schema for spreadsheet configuration description",
+    "type": "object",
+    "required": [
+        "orientation",
+        "headers_index_config",
+        "data_index_config",
+        "data_type_config"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "sheet_config": {
+            "type": [
+                "integer",
+                "string"
+            ],
+            "minimum": 1,
+            "pattern": "^active|name:.+|first|last$"
+        },
+        "orientation": {
+            "type": "string",
+            "pattern": "^column_based|row_based$"
+        },
+        "headers_index_config": {
+            "type": "object",
+            "required": [
+                "row_index",
+                "column_index"
+            ],
+            "properties": {
+                "row_index": {
+                    "$ref": "#/properties/definitions_index"
+                },
+                "column_index": {
+                    "$ref": "#/properties/definitions_index"
+                }
+            }
+        },
+        "data_index_config": {
+            "type": "object",
+            "required": [
+                "row_index",
+                "column_index"
+            ],
+            "properties": {
+                "row_index": {
+                    "$ref": "#/properties/definitions_index"
+                },
+                "column_index": {
+                    "$ref": "#/properties/definitions_index"
+                }
+            }
+        },
+        "definitions_index": {
+            "type": "object",
+            "required": [
+                "first",
+                "last"
+            ],
+            "properties": {
+                "first": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "minimum": 1,
+                    "pattern": "^automatic$"
+                },
+                "last": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "minimum": 1,
+                    "pattern": "^automatic|severalEmptyCells:[0-9]+$"
+                }
+            }
+        },
+        "data_type_config": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "required": [
+                    "header"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "header": {
+                        "type": "string"
+                    },
+                    "fail_on_type_error": {
+                        "type": "boolean"
+                    },
+                    "fail_on_empty_cell": {
+                        "type": "boolean"
+                    },
+                    "fail_on_header_not_found": {
+                        "type": "boolean"
+                    },
+                    "type": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/properties/data_type_config/definitions_type/automatic"
+                            },
+                            {
+                                "$ref": "#/properties/data_type_config/definitions_type/date"
+                            },
+                            {
+                                "$ref": "#/properties/data_type_config/definitions_type/enum"
+                            },
+                            {
+                                "$ref": "#/properties/data_type_config/definitions_type/float"
+                            },
+                            {
+                                "$ref": "#/properties/data_type_config/definitions_type/integer"
+                            },
+                            {
+                                "$ref": "#/properties/data_type_config/definitions_type/string"
+                            }
+                        ]
+                    }
+                }
+            },
+            "definitions_type": {
+                "automatic": {
+                    "properties": {
+                        "base": {
+                            "enum": [
+                                "automatic"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "base"
+                    ],
+                    "additionalProperties": false
+                },
+                "date": {
+                    "properties": {
+                        "base": {
+                            "enum": [
+                                "date"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "base"
+                    ],
+                    "additionalProperties": false
+                },
+                "enum": {
+                    "properties": {
+                        "base": {
+                            "enum": [
+                                "enum"
+                            ]
+                        },
+                        "enum_values": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "string"
+                            },
+                            "uniqueItems": true
+                        },
+                        "filter": {
+                            "type": "object",
+                            "required": [
+                                "whitelist_values"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "whitelist_values": {
+                                    "type": "array",
+                                    "minItems": 1,
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "uniqueItems": true
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "base",
+                        "enum_values"
+                    ],
+                    "additionalProperties": false
+                },
+                "float": {
+                    "properties": {
+                        "base": {
+                            "enum": [
+                                "float"
+                            ]
+                        },
+                        "minimum": {
+                            "type": "number"
+                        },
+                        "maximum": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "base"
+                    ],
+                    "additionalProperties": false
+                },
+                "integer": {
+                    "properties": {
+                        "base": {
+                            "enum": [
+                                "integer"
+                            ]
+                        },
+                        "minimum": {
+                            "type": "integer"
+                        },
+                        "maximum": {
+                            "type": "integer"
+                        }
+                    },
+                    "required": [
+                        "base"
+                    ],
+                    "additionalProperties": false
+                },
+                "string": {
+                    "properties": {
+                        "base": {
+                            "enum": [
+                                "string"
+                            ]
+                        },
+                        "convert_numbers": {
+                            "type": "boolean"
+                        },
+                        "pattern": {
+                            "type": "string"
+                        },
+                        "filter_pattern": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "base"
+                    ],
+                    "additionalProperties": false
+                }
+            }
+        },
+        "filter_properties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "excluded_enable_logging": {
+                    "type": "boolean"
+                },
+                "excluded_fail_on_type_error": {
+                    "type": "boolean"
+                },
+                "excluded_fail_on_empty_cell": {
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

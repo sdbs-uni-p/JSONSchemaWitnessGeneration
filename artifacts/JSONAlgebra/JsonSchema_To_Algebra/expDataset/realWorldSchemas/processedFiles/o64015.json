@@ -1,0 +1,101 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "buckets": {
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/$types/bucket",
+                    "description": "Each of these should be keyed by the name of the bucket"
+                }
+            ]
+        },
+        "bulkUpdateLogDirectory": {
+            "type": "string",
+            "description": "The directory you would like logs to be placed when doing a bulk update."
+        },
+        "elasticsearch": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$types/credentials"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "connectionString": {
+                            "type": "string",
+                            "description": "How to connect to the index we wish to use for elastic search.  For example: http://localhost:9200/metadata"
+                        },
+                        "region": {
+                            "type": "string",
+                            "enum": [
+                                "ap-northeast-1",
+                                "ap-northeast-2",
+                                "ap-southeast-1",
+                                "ap-southeast-2",
+                                "eu-central-1",
+                                "eu-west-1",
+                                "sa-east-1",
+                                "us-east-1",
+                                "us-west-1",
+                                "us-west-2"
+                            ]
+                        }
+                    }
+                }
+            ],
+            "required": [
+                "connectionString"
+            ]
+        },
+        "hookCommand": {
+            "type": "string",
+            "description": "The command to run when an artifact is uploaded or metadata for that artifact has been updated. The command will be run relative to the config file. The file must have executable permissions."
+        }
+    },
+    "required": [
+        "buckets",
+        "elasticsearch"
+    ],
+    "$types": {
+        "credentials": {
+            "type": "object",
+            "properties": {
+                "accessKey": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
+                }
+            }
+        },
+        "bucket": {
+            "allOf": [
+                {
+                    "$ref": "#/$types/credentials"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "referenceName": {
+                            "type": "string",
+                            "description": "Name to reference the  bucket by."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "S3 bucket name."
+                        }
+                    }
+                }
+            ],
+            "required": [
+                "accessKey",
+                "secretKey",
+                "name"
+            ]
+        }
+    },
+    "$schema": "http://json-schema.org/draft-04/schema#"
+}

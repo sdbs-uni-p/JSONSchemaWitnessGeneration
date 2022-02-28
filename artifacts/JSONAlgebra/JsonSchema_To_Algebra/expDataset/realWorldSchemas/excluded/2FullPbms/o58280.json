@@ -1,0 +1,322 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "object",
+    "title": "Playlist",
+    "description": "A playlist object",
+    "required": [
+        "id",
+        "name",
+        "tracks"
+    ],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "The ID of the playlist."
+        },
+        "name": {
+            "type": "string",
+            "description": "The name of the playlist."
+        },
+        "description": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "description": "The playlist description."
+        },
+        "href": {
+            "type": "string",
+            "format": "uri",
+            "description": "A Web link to this playlist."
+        },
+        "tracks": {
+            "type": "array",
+            "description": "Playlist tracks.",
+            "default": [],
+            "items": {
+                "$ref": "#/definitions/Track"
+            }
+        },
+        "playback": {
+            "type": "object",
+            "description": "Playlist playback settings",
+            "properties": {
+                "qa": {
+                    "type": "array",
+                    "description": "Frequency adjustments",
+                    "items": {
+                        "type": "number",
+                        "maximum": 1,
+                        "minimum": 0,
+                        "default": 0,
+                        "description": "Frequency band adjustment"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Artist": {
+            "type": "object",
+            "description": "Artist object.",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The id for the artist."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the artist."
+                },
+                "genres": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "description": "A list of the genres the artist is associated with. For example: 'Prog Rock', 'Post-Grunge'. (If not yet classified, the array is empty.)",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URI for the artist."
+                }
+            }
+        },
+        "Thumbnail": {
+            "type": "object",
+            "description": "A thumbnail is an image representing a YouTube resource.",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "height": {
+                    "type": "integer",
+                    "description": "(Optional) Height of the thumbnail image."
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The thumbnail image's URL."
+                },
+                "width": {
+                    "type": "integer",
+                    "description": "(Optional) Width of the thumbnail image."
+                }
+            }
+        },
+        "Thumbnails": {
+            "type": "object",
+            "description": "Internal representation of thumbnails for a resource.",
+            "required": [
+                "default"
+            ],
+            "properties": {
+                "default": {
+                    "$ref": "#/definitions/Thumbnail",
+                    "description": "The default image for this resource."
+                },
+                "high": {
+                    "$ref": "#/definitions/Thumbnail",
+                    "description": "The high quality image for this resource."
+                },
+                "maxres": {
+                    "$ref": "#/definitions/Thumbnail",
+                    "description": "The maximum resolution quality image for this resource."
+                },
+                "medium": {
+                    "$ref": "#/definitions/Thumbnail",
+                    "description": "The medium quality image for this resource."
+                },
+                "standard": {
+                    "$ref": "#/definitions/Thumbnail",
+                    "description": "The standard quality image for this resource."
+                }
+            }
+        },
+        "Album": {
+            "type": "object",
+            "description": "Album details",
+            "required": [
+                "id",
+                "name",
+                "genres"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The id for the album."
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "album",
+                        "single",
+                        "compilation"
+                    ],
+                    "description": "The type of the album: one of 'album', 'single', or 'compilation'."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the album."
+                },
+                "artists": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "The artists of the album. Each artist object includes a link in href to more detailed information about the artist.",
+                    "items": {
+                        "$ref": "#/definitions/Artist"
+                    }
+                },
+                "genres": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "A list of the genres used to classify the album. For example: 'Prog Rock', 'Post-Grunge'. (If not yet classified, the array is empty.)",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "copyrights": {
+                    "type": "array",
+                    "description": "The copyright statements of the album.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "text": {
+                                "type": "string",
+                                "description": "The copyright text for this album."
+                            },
+                            "type": {
+                                "type": "string",
+                                "description": "The type of copyright: C = the copyright, P = the sound recording (performance) copyright."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Track": {
+            "type": "object",
+            "description": "Playlist track item.",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The ID of the track."
+                },
+                "artists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Artist"
+                    },
+                    "description": "The artists who performed the track. Each artist object includes a link in href to more detailed information about the artist."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the track."
+                },
+                "album": {
+                    "$ref": "#/definitions/Album",
+                    "description": "The album details."
+                },
+                "year": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The album release year."
+                },
+                "comment": {
+                    "type": "string",
+                    "description": "Track comments."
+                },
+                "thumbnails": {
+                    "$ref": "#/definitions/Thumbnails",
+                    "description": "The cover art for the album in various sizes, widest first."
+                },
+                "genre": {
+                    "type": "string",
+                    "description": "The genre of the album."
+                },
+                "lyrics": {
+                    "type": "string",
+                    "description": "The track lyrics."
+                },
+                "duration": {
+                    "oneOf": [
+                        {
+                            "type": "integer",
+                            "default": 0,
+                            "minimum": 0,
+                            "description": "The track length in milliseconds."
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "^P(?=\\w*\\d)(?:\\d+Y|Y)?(?:\\d+M|M)?(?:\\d+W|W)?(?:\\d+D|D)?(?:T(?:\\d+H|H)?(?:\\d+M|M)?(?:\\d+(?:\\\u00ad.\\d{1,2})?S|S)?)?$",
+                            "description": "The track length. The tag value is an ISO 8601 duration in the format PT#M#S, in which the letters PT indicate that the value specifies a period of time, and the letters M and S refer to length in minutes and seconds, respectively. The # characters preceding the M and S letters are both integers that specify the number of minutes (or seconds) of the video. For example, a value of PT15M51S indicates that the video is 15 minutes and 51 seconds long."
+                        }
+                    ]
+                },
+                "file": {
+                    "type": "string",
+                    "description": "A file path."
+                },
+                "url": {
+                    "type": "string",
+                    "description": "The url of the audio file."
+                },
+                "playing": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "The track playback status."
+                },
+                "progress": {
+                    "type": "number",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Track playback progress"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "The status of the track."
+                },
+                "stars": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 5,
+                    "description": "Track star classification"
+                },
+                "rating": {
+                    "type": "number",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "Public track rating"
+                },
+                "keywords": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of keyword tags associated with the track"
+                },
+                "related": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "object"
+                    },
+                    "description": "A list of related tracks"
+                }
+            }
+        }
+    }
+}

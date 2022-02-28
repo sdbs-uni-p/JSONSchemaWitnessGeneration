@@ -1,0 +1,147 @@
+[
+    {
+        "id": 1,
+        "schema1": {
+            "anyOf": [
+                {
+                    "const": {
+                        "$ref": "http://localhost:1234/bar",
+                        "$defs": {
+                            "A": {
+                                "$id": "http://localhost:1234/bar#",
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                {
+                    "const": {
+                        "$id": "http://localhost:1234/root",
+                        "$ref": "http://localhost:1234/nested.json#/$defs/B",
+                        "$defs": {
+                            "A": {
+                                "$id": "nested.json",
+                                "$defs": {
+                                    "B": {
+                                        "$id": "#",
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "schema2": {
+            "$ref": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true
+        }
+    },
+    {
+        "id": 2,
+        "schema1": {
+            "anyOf": [
+                {
+                    "const": {
+                        "$ref": "http://localhost:1234/foo/baz",
+                        "$defs": {
+                            "A": {
+                                "$id": "http://localhost:1234/foo/bar/../baz",
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                {
+                    "const": {
+                        "$defs": {
+                            "A": {
+                                "$id": "http://localhost:1234/foo/bar/../baz",
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                {
+                    "const": {
+                        "$ref": "http://localhost:1234/foo/baz",
+                        "$defs": {
+                            "A": {
+                                "$id": "http://localhost:1234/foo/bar/../baz#",
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                {
+                    "const": {
+                        "$defs": {
+                            "A": {
+                                "$id": "http://localhost:1234/foo/bar/../baz#",
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "schema2": {
+            "$ref": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true
+        }
+    },
+    {
+        "id": 3,
+        "schema1": {
+            "anyOf": [
+                {
+                    "const": {
+                        "$id": "https://localhost:1234/id/my_identifier.json",
+                        "type": "null"
+                    }
+                },
+                {
+                    "const": "a string to match #/$defs/id_in_enum"
+                }
+            ]
+        },
+        "schema2": {
+            "$defs": {
+                "id_in_enum": {
+                    "enum": [
+                        {
+                            "$id": "https://localhost:1234/id/my_identifier.json",
+                            "type": "null"
+                        }
+                    ]
+                },
+                "real_id_in_schema": {
+                    "$id": "https://localhost:1234/id/my_identifier.json",
+                    "type": "string"
+                },
+                "zzz_id_in_const": {
+                    "const": {
+                        "$id": "https://localhost:1234/id/my_identifier.json",
+                        "type": "null"
+                    }
+                }
+            },
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/id_in_enum"
+                },
+                {
+                    "$ref": "https://localhost:1234/id/my_identifier.json"
+                }
+            ]
+        },
+        "tests": {
+            "s1SubsetEqOfs2": true
+        }
+    }
+]

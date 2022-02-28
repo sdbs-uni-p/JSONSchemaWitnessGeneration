@@ -1,0 +1,181 @@
+{
+    "name": "Custom Action With ngrok",
+    "integrationType": "custom-rest-actions",
+    "actionType": "custom",
+    "config": {
+        "request": {
+            "requestUrlTemplate": "https://your-domain-name-here.ngrok.io/searchContactsByName",
+            "requestType": "POST",
+            "headers": {},
+            "requestTemplate": "{\n  \"firstName\": \"${input.firstName}\",\n  \"lastName\": \"${input.lastName}\",\n  \"searchFullName\": ${input.searchFullName}\n}"
+        },
+        "response": {
+            "translationMap": {},
+            "translationMapDefaults": {},
+            "successTemplate": "${rawResult}"
+        }
+    },
+    "contract": {
+        "input": {
+            "inputSchema": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "SearchRequest",
+                "description": "A search request body",
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "description": "The first name for which to search",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "The last name for which to search",
+                        "type": "string"
+                    },
+                    "searchFullName": {
+                        "default": false,
+                        "description": "[true] to search in the contact's FullName field",
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": true
+            }
+        },
+        "output": {
+            "successSchema": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "type": "object",
+                "required": [
+                    "Contact"
+                ],
+                "properties": {
+                    "Contact": {
+                        "type": "object",
+                        "properties": {
+                            "PhoneNumbers": {
+                                "type": "object",
+                                "properties": {
+                                    "PhoneNumber": {
+                                        "type": "array",
+                                        "items": [
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Number": {
+                                                        "type": "string"
+                                                    },
+                                                    "PhoneType": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "Number",
+                                                    "PhoneType"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "PhoneNumber"
+                                ]
+                            },
+                            "Address": {
+                                "type": "object",
+                                "properties": {
+                                    "Type": {
+                                        "type": "integer"
+                                    },
+                                    "State": {
+                                        "type": "string"
+                                    },
+                                    "Country": {
+                                        "type": "string"
+                                    },
+                                    "PostalCode": {
+                                        "type": "string"
+                                    },
+                                    "City": {
+                                        "type": "string"
+                                    },
+                                    "Line1": {
+                                        "type": "string"
+                                    },
+                                    "Line2": {
+                                        "type": "string"
+                                    },
+                                    "Line3": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "City",
+                                    "Country",
+                                    "Line1",
+                                    "Line2",
+                                    "Line3",
+                                    "PostalCode",
+                                    "State",
+                                    "Type"
+                                ]
+                            },
+                            "FirstName": {
+                                "type": "string"
+                            },
+                            "CustomAttribute": {
+                                "type": "string"
+                            },
+                            "FullName": {
+                                "type": "string"
+                            },
+                            "EmailAddresses": {
+                                "type": "object",
+                                "properties": {
+                                    "EmailAddress": {
+                                        "type": "array",
+                                        "items": [
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "EmailType": {
+                                                        "type": "integer"
+                                                    },
+                                                    "EmailAddress": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "EmailAddress",
+                                                    "EmailType"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "EmailAddress"
+                                ]
+                            },
+                            "LastName": {
+                                "type": "string"
+                            },
+                            "Id": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "EmailAddresses",
+                            "FirstName",
+                            "LastName",
+                            "FullName",
+                            "Id",
+                            "PhoneNumbers",
+                            "Address",
+                            "CustomAttribute"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "secure": false
+}

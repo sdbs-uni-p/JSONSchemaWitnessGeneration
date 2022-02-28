@@ -1,0 +1,36 @@
+// quadratic encoding of not props [ "^(a1|a2|a3|a4|a5|a6|a7)$" : true; false ]
+// it should be correct but DNF takes too long
+
+"root" defs [
+   "root" : items[ {type[obj], ref("onlya123z"), ref("oneIsOut")},pro(1,1)
+                 ],
+   "onlya123z" : props [ "^(a1|a2|a3|z)$" : true; false ],
+   "oneIsOut" : anyOf [ { ref("U210"), pro(1,inf) },     //satisfied by anything that is not
+                        { ref("U211"), pro(2,inf) },     //an object
+                        { ref("U212"), pro(3,inf) },
+                        { ref("U213"), pro(4,inf) }
+                      ],
+   "U010" :  props[ "^a1$" : false ],
+   "U020" :  props[ "^a2$" : false ],
+   "U030" :  props[ "^a3$" : false ],
+   "U040" :  true,
+   "U110" :  allOf[ref("U010"),ref("U020")],
+   "U120" :  allOf[ref("U030"),ref("U040")],
+   "U111" :  anyOf [ allOf[ref("U010"),true] ,
+                     allOf[true,ref("U020")]
+             ],
+   "U121" :  anyOf [ allOf[ref("U030"),true] ,
+                     allOf[true,ref("U040")]
+             ],
+   "U210"  : allOf[ref("U110"),ref("U120")],
+   "U211"  : anyOf [ allOf[ref("U110"),ref("U121")] ,
+                     allOf[ref("U111"),ref("U120")]
+             ],
+   "U212"  : anyOf [ allOf[ref("U110"),true] ,
+                     allOf[ref("U111"),ref("U121")],
+                     allOf[true,ref("U120")]
+             ],
+   "U213"  : anyOf [ allOf[ref("U111"),true] ,
+                     allOf[true,ref("U121")]
+             ]
+ ]

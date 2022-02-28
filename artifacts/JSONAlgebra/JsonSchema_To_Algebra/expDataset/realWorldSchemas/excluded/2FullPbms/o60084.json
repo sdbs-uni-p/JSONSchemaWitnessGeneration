@@ -1,0 +1,505 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Spacebox request API",
+    "description": "Schema for spacebox server request validation",
+    "type": "object",
+    "required": [
+        "request"
+    ],
+    "properties": {
+        "request": {
+            "type": "object",
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/mobile/login"
+                },
+                {
+                    "$ref": "#/definitions/mobile/getLoginStatus"
+                },
+                {
+                    "$ref": "#/definitions/users.get"
+                },
+                {
+                    "$ref": "#/definitions/login"
+                },
+                {
+                    "$ref": "#/definitions/logout"
+                },
+                {
+                    "$ref": "#/definitions/changeLikeStatus"
+                },
+                {
+                    "$ref": "#/definitions/friends.get"
+                },
+                {
+                    "$ref": "#/definitions/friends.delete"
+                },
+                {
+                    "$ref": "#/definitions/status.set"
+                },
+                {
+                    "$ref": "#/definitions/status.get"
+                },
+                {
+                    "$ref": "#/definitions/account.destroy"
+                },
+                {
+                    "$ref": "#/definitions/messages.get"
+                },
+                {
+                    "$ref": "#/definitions/messages.getDialogs"
+                },
+                {
+                    "$ref": "#/definitions/messages.getHistory"
+                },
+                {
+                    "$ref": "#/definitions/messages.markAsRead"
+                }
+            ]
+        }
+    },
+    "definitions": {
+        "mobile": {
+            "login": {
+                "description": "Mobile login request",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "enum": [
+                            "/mobile/login"
+                        ]
+                    },
+                    "code": {
+                        "title": "VK API access code",
+                        "type": "string"
+                    },
+                    "standalone": {
+                        "title": "standalone",
+                        "description": "",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url",
+                    "code"
+                ],
+                "additionalProperties": false
+            },
+            "getLoginStatus": {
+                "description": "Mobile login status request",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "enum": [
+                            "/mobile/getLoginStatus"
+                        ]
+                    }
+                },
+                "required": [
+                    "url"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "messages.get": {
+            "title": "messages.get",
+            "description": "Returns a list of incoming or outgoing personal messages of the current user",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/messages.get",
+                        "/mobile/messages.get"
+                    ]
+                },
+                "out": {
+                    "title": "out",
+                    "description": "If this parameter is 1, the server returns the outgoing messages",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                },
+                "offset": {
+                    "title": "offset",
+                    "description": "Offset required for sampling a subset of messages",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "count": {
+                    "title": "count",
+                    "description": "The number of messages to retrieve",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 200
+                },
+                "last_message_id": {
+                    "title": "last_message_id",
+                    "description": "ID of a message received before that you need to return the last",
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "messages.getDialogs": {
+            "title": "messages.getDialogs",
+            "description": "Returns a list of the currents user dialogs",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/messages.getDialogs",
+                        "/mobile/messages.getDialogs"
+                    ]
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "messages.markAsRead": {
+            "title": "messages.markAsRead",
+            "description": "To mark a message as read",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/messages.markAsRead",
+                        "/mobile/messages.markAsRead"
+                    ]
+                },
+                "message_ids": {
+                    "title": "message_ids",
+                    "description": "message IDs",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                },
+                "start_message_id": {
+                    "title": "start_message_id",
+                    "description": "When transferring this parameter will be marked as read all messages since this",
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "messages.getHistory": {
+            "title": "messages.getHistory",
+            "description": "Returns the message history for the specified user",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/messages.getHistory",
+                        "/mobile/messages.getHistory"
+                    ]
+                },
+                "user_id": {
+                    "title": "user_id",
+                    "description": "User ID, history of correspondence which should be returned",
+                    "type": "string"
+                },
+                "offset": {
+                    "title": "offset",
+                    "description": "Offset required for sampling a subset of messages",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "count": {
+                    "title": "count",
+                    "description": "The number of messages to retrieve",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 200
+                },
+                "start_message_id": {
+                    "title": "start_message_id",
+                    "description": "Message ID from which you want to return the history of correspondence",
+                    "type": "number",
+                    "minimum": 1
+                }
+            },
+            "required": [
+                "url",
+                "user_id"
+            ],
+            "additionalProperties": false
+        },
+        "status.set": {
+            "title": "status.set",
+            "description": "sets a new status to the current user",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/status.set",
+                        "/mobile/status.set"
+                    ]
+                },
+                "text": {
+                    "title": "text",
+                    "description": "the text of the new status",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url",
+                "text"
+            ],
+            "additionalProperties": false
+        },
+        "status.get": {
+            "title": "status.get",
+            "description": "gets the status text user",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/status.get",
+                        "/mobile/status.get"
+                    ]
+                },
+                "user_id": {
+                    "title": "user_id",
+                    "description": "user ID, information on the status of which you want to receive",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "users.get": {
+            "title": "users.get",
+            "description": "returns detailed information about users",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/users.get",
+                        "/mobile/users.get"
+                    ]
+                },
+                "latitude": {
+                    "title": "latitude",
+                    "type": "number"
+                },
+                "longitude": {
+                    "title": "longitude",
+                    "type": "number"
+                },
+                "options": {
+                    "description": "Search option",
+                    "type": "object",
+                    "properties": {
+                        "ageInterval": {
+                            "description": "Age interval",
+                            "type": "object",
+                            "properties": {
+                                "top": {
+                                    "title": "Top age",
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 99
+                                },
+                                "bottom": {
+                                    "title": "Bottom age",
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 99
+                                }
+                            },
+                            "required": [
+                                "top",
+                                "bottom"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "sex": {
+                            "title": "Sex: 1 - female, 2 - male, 0 - both",
+                            "enum": [
+                                0,
+                                1,
+                                2
+                            ]
+                        },
+                        "radius": {
+                            "title": "Search radius",
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "radius"
+                    ],
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "url",
+                "latitude",
+                "longitude",
+                "options"
+            ],
+            "additionalProperties": false
+        },
+        "login": {
+            "description": "Login request",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/login"
+                    ]
+                },
+                "secret": {
+                    "title": "Secret",
+                    "type": "string"
+                },
+                "mid": {
+                    "title": "VK user id",
+                    "type": "string"
+                },
+                "sig": {
+                    "title": "Signature",
+                    "description": "md5 from the concatenation of the expire, mid, secret, sid",
+                    "type": "string"
+                },
+                "sid": {
+                    "title": "Sid",
+                    "type": "string"
+                },
+                "expire": {
+                    "title": "Expire session time",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "url",
+                "secret",
+                "mid",
+                "expire",
+                "sid",
+                "sig"
+            ],
+            "additionalProperties": true
+        },
+        "logout": {
+            "description": "Logout request",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/logout",
+                        "/mobile/logout"
+                    ]
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "changeLikeStatus": {
+            "description": "Like request",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/changeLikeStatus",
+                        "/mobile/changeLikeStatus"
+                    ]
+                },
+                "id": {
+                    "title": "VK user id",
+                    "description": "liked by user",
+                    "type": "string"
+                },
+                "status": {
+                    "title": "like status",
+                    "description": "relationship between users",
+                    "enum": [
+                        "1",
+                        "-1"
+                    ]
+                }
+            },
+            "required": [
+                "url",
+                "id",
+                "status"
+            ],
+            "additionalProperties": false
+        },
+        "friends.get": {
+            "title": "friends.get",
+            "description": "returns a list of ID of the user's friends",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/friends.get",
+                        "/mobile/friends.get"
+                    ]
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "friends.delete": {
+            "title": "friends.delete",
+            "description": "remove user from your friends list",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/friends.delete",
+                        "/mobile/friends.delete"
+                    ]
+                },
+                "user_id": {
+                    "title": "user_id",
+                    "description": "ID of the user you want to remove from your friends list",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "url",
+                "user_id"
+            ],
+            "additionalProperties": false
+        },
+        "account.destroy": {
+            "title": "account.destroy",
+            "description": "delete account for current user",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "enum": [
+                        "/account.destroy",
+                        "/mobile/account.destroy"
+                    ]
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

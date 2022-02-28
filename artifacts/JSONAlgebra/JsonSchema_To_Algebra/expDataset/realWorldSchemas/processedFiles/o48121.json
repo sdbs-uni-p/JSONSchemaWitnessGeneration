@@ -1,0 +1,410 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/definitions/pleiades_item"
+        },
+        {
+            "properties": {
+                "@context": {
+                    "properties": {
+                        "Feature": {
+                            "enum": [
+                                "geojson:Feature"
+                            ]
+                        },
+                        "FeatureCollection": {
+                            "enum": [
+                                "geojson:FeatureCollection"
+                            ]
+                        },
+                        "GeometryCollection": {
+                            "enum": [
+                                "geojson:GeometryCollection"
+                            ]
+                        },
+                        "LineString": {
+                            "enum": [
+                                "geojson:LineString"
+                            ]
+                        },
+                        "MultiLineString": {
+                            "enum": [
+                                "geojson:MultiLineString"
+                            ]
+                        },
+                        "MultiPoint": {
+                            "enum": [
+                                "geojson:MultiPoint"
+                            ]
+                        },
+                        "MultiPolygon": {
+                            "enum": [
+                                "geojson:MultiPolygon"
+                            ]
+                        },
+                        "Point": {
+                            "enum": [
+                                "geojson:Point"
+                            ]
+                        },
+                        "Polygon": {
+                            "enum": [
+                                "geojson:Polygon"
+                            ]
+                        },
+                        "bbox": {
+                            "properties": {
+                                "@container": {
+                                    "enum": [
+                                        "@list"
+                                    ]
+                                },
+                                "@id": {
+                                    "enum": [
+                                        "geojson:bbox"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "geojson": {
+                            "enum": [
+                                "http://ld.geojson.org/vocab#"
+                            ]
+                        }
+                    },
+                    "type": "object"
+                },
+                "bbox": {
+                    "description": "southwest longitude, southwest latitude, northeast longitude, northeast latitude",
+                    "items": [
+                        {
+                            "$ref": "#/definitions/longitude"
+                        },
+                        {
+                            "$ref": "#/definitions/latitude"
+                        },
+                        {
+                            "$ref": "#/definitions/longitude"
+                        },
+                        {
+                            "$ref": "#/definitions/latitude"
+                        }
+                    ],
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "title": "bounding box",
+                    "type": "array"
+                },
+                "connectsWith": {
+                    "items": [
+                        {
+                            "$ref": "#/definitions/numeric-string"
+                        }
+                    ],
+                    "type": "array"
+                },
+                "features": {
+                    "items": [
+                        {
+                            "$ref": "#/definitions/location"
+                        }
+                    ],
+                    "type": "array"
+                },
+                "id": {
+                    "$ref": "#/definitions/numeric-string"
+                },
+                "names": {
+                    "items": [
+                        {
+                            "$ref": "#/definitions/placename"
+                        }
+                    ],
+                    "type": "array"
+                },
+                "place_types": {
+                    "type": "array"
+                },
+                "reprPoint": {
+                    "description": "centroid or other generalized representation of features: longitude, latitude",
+                    "items": [
+                        {
+                            "$ref": "#/definitions/longitude"
+                        },
+                        {
+                            "$ref": "#/definitions/latitude"
+                        }
+                    ],
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "title": "representative point",
+                    "type": "array"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "FeatureCollection"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connectsWith",
+                "features",
+                "names",
+                "place_types",
+                "title",
+                "type"
+            ]
+        }
+    ],
+    "definitions": {
+        "actor": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "orcid": {
+                    "$ref": "#/definitions/isni-string"
+                },
+                "uri": {
+                    "_format": "uri",
+                    "type": "string"
+                },
+                "username": {
+                    "$ref": "#/definitions/ascii-string-lc-no-ws"
+                },
+                "viaf": {
+                    "$ref": "#/definitions/numeric-string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "actors": {
+            "items": [
+                {
+                    "$ref": "#/definitions/actor"
+                }
+            ],
+            "type": "array"
+        },
+        "ascii-string-lc-no-ws": {
+            "description": "any non-zero-length string containing only a combination of the characters 'a' - 'z'",
+            "pattern": "^[a-z]+$",
+            "title": "ASCII String (lower-case, no whitespace)",
+            "type": "string"
+        },
+        "history": {
+            "items": [
+                {
+                    "$ref": "#/definitions/history_event"
+                }
+            ],
+            "type": "array"
+        },
+        "history_event": {
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "modified": {
+                    "_format": "date-time",
+                    "type": "string"
+                },
+                "principal": {
+                    "$ref": "#/definitions/actor"
+                }
+            },
+            "type": "object"
+        },
+        "isni-string": {
+            "description": "String whose contents conform to ISO 27729.",
+            "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$",
+            "title": "ISNI String",
+            "type": "string"
+        },
+        "latitude": {
+            "description": "latitude in signed decimal degrees; WGS84 spheroid assumed",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "type": "number"
+        },
+        "location": {
+            "description": "JSON serialization of a Pleiades 'location' object as a GeoJSON Feature.",
+            "properties": {
+                "geometry": {
+                    "type": "object"
+                },
+                "id": {
+                    "$ref": "#/definitions/pleiades_id_nld"
+                },
+                "properties": {
+                    "type": "object"
+                },
+                "type": {
+                    "enum": [
+                        "Feature"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "longitude": {
+            "description": "longitude in signed decimal degrees; WGS84 spheroid assumed",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "type": "number"
+        },
+        "numeric-string": {
+            "description": "any non-zero-length string containing only a combination of the numeric characters '1' - '9'",
+            "pattern": "^[0-9]+$",
+            "title": "Numeric String",
+            "type": "string"
+        },
+        "placename": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/pleiades_item"
+                },
+                {
+                    "properties": {
+                        "association_certainty": {
+                            "enum": [
+                                "certain",
+                                "less-certain",
+                                "uncertain"
+                            ],
+                            "type": "string"
+                        },
+                        "attested": {
+                            "type": "string"
+                        },
+                        "during": {
+                            "type": "array"
+                        },
+                        "end_date": {
+                            "$ref": "#/definitions/year-string"
+                        },
+                        "id": {
+                            "$ref": "#/definitions/pleiades_id_nld"
+                        },
+                        "language": {
+                            "pattern": "^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$",
+                            "type": "string"
+                        },
+                        "name_type": {
+                            "enum": [
+                                "unknown",
+                                "undefined",
+                                "geographic",
+                                "ethnic"
+                            ],
+                            "type": "string"
+                        },
+                        "romanized": {
+                            "type": "string"
+                        },
+                        "start_date": {
+                            "$ref": "#/definitions/year-string"
+                        },
+                        "transcription_accuracy": {
+                            "enum": [
+                                "accurate",
+                                "false",
+                                "inaccurate"
+                            ],
+                            "type": "string"
+                        },
+                        "transcription_completeness": {
+                            "enum": [
+                                "reconstructable",
+                                "non-reconstructable",
+                                "complete"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "association_certainty",
+                        "attested",
+                        "during",
+                        "end_date",
+                        "language",
+                        "name_type",
+                        "romanized",
+                        "start_date",
+                        "transcription_accuracy",
+                        "transcription_completeness"
+                    ]
+                }
+            ],
+            "description": "JSON serialization of a Pleiades 'name' object.",
+            "type": "object"
+        },
+        "pleiades_id_nld": {
+            "pattern": "^[0-9]+/[a-z0-9A-Z\\-]+$",
+            "title": "Pleiades name and location ID format.",
+            "type": "string"
+        },
+        "pleiades_item": {
+            "description": "A class definition that comprises all the fields common to Pleiades places, names, and locations.",
+            "properties": {
+                "citation": {
+                    "type": "string"
+                },
+                "contributors": {
+                    "$ref": "#/definitions/actors"
+                },
+                "creators": {
+                    "$ref": "#/definitions/actors"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "history": {
+                    "$ref": "#/definitions/history"
+                },
+                "provenance": {
+                    "type": "string"
+                },
+                "references": {
+                    "type": "array"
+                },
+                "uri": {
+                    "_format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "citation",
+                "contributors",
+                "creators",
+                "description",
+                "history",
+                "id",
+                "provenance",
+                "references",
+                "uri"
+            ],
+            "title": "Pleiades Item",
+            "type": "object"
+        },
+        "year-string": {
+            "pattern": "^-?[1-9]\\d*$",
+            "type": "string"
+        }
+    },
+    "description": "JSON serialization of a Pleiades 'place' object.",
+    "title": "Pleiades Project JSON Export Schema",
+    "type": "object"
+}

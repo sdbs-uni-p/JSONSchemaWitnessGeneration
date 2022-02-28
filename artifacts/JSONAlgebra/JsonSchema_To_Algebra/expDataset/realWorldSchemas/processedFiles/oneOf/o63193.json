@@ -1,0 +1,730 @@
+{
+    "additionalProperties": false,
+    "definitions": {
+        "AmountType": {
+            "exclusiveMaximum": true,
+            "exclusiveMinimum": true,
+            "maximum": 100000000000000,
+            "minimum": -100000000000000,
+            "multipleOf": 0.01,
+            "type": "number"
+        },
+        "BusinessPremiseType": {
+            "additionalProperties": false,
+            "properties": {
+                "BPIdentifier": {
+                    "additionalProperties": false,
+                    "oneOf": [
+                        {
+                            "required": [
+                                "RealEstateBP"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "PremiseType"
+                            ]
+                        }
+                    ],
+                    "properties": {
+                        "PremiseType": {
+                            "enum": [
+                                "A",
+                                "B",
+                                "C"
+                            ],
+                            "id": "PremiseType",
+                            "type": "string"
+                        },
+                        "RealEstateBP": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "Address": {
+                                    "additionalProperties": false,
+                                    "id": "Address",
+                                    "properties": {
+                                        "City": {
+                                            "id": "City",
+                                            "maxLength": 100,
+                                            "minLength": 1,
+                                            "type": "string"
+                                        },
+                                        "Community": {
+                                            "id": "Community",
+                                            "maxLength": 100,
+                                            "minLength": 1,
+                                            "type": "string"
+                                        },
+                                        "HouseNumber": {
+                                            "id": "HouseNumber",
+                                            "maxLength": 10,
+                                            "minLength": 1,
+                                            "type": "string"
+                                        },
+                                        "HouseNumberAdditional": {
+                                            "id": "HouseNumberAdditional",
+                                            "maxLength": 10,
+                                            "minLength": 1,
+                                            "type": "string"
+                                        },
+                                        "PostalCode": {
+                                            "id": "PostalCode",
+                                            "maxLength": 4,
+                                            "minLength": 4,
+                                            "type": "string"
+                                        },
+                                        "Street": {
+                                            "id": "Street",
+                                            "maxLength": 100,
+                                            "minLength": 1,
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "Street",
+                                        "HouseNumber",
+                                        "Community",
+                                        "City",
+                                        "PostalCode"
+                                    ],
+                                    "type": "object"
+                                },
+                                "PropertyID": {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "BuildingNumber": {
+                                            "maximum": 99999,
+                                            "minimum": 0,
+                                            "type": "number"
+                                        },
+                                        "BuildingSectionNumber": {
+                                            "maximum": 9999,
+                                            "minimum": 0,
+                                            "type": "number"
+                                        },
+                                        "CadastralNumber": {
+                                            "maximum": 9999,
+                                            "minimum": 0,
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": [
+                                        "CadastralNumber",
+                                        "BuildingNumber",
+                                        "BuildingSectionNumber"
+                                    ],
+                                    "type": "object"
+                                }
+                            },
+                            "required": [
+                                "PropertyID",
+                                "Address"
+                            ],
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "BusinessPremiseID": {
+                    "id": "BusinessPremiseID",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z]*$",
+                    "type": "string"
+                },
+                "ClosingTag": {
+                    "enum": [
+                        "Z"
+                    ],
+                    "id": "ClosingTag",
+                    "type": "string"
+                },
+                "SoftwareSupplier": {
+                    "items": {
+                        "additionalProperties": false,
+                        "oneOf": [
+                            {
+                                "required": [
+                                    "TaxNumber"
+                                ]
+                            },
+                            {
+                                "required": [
+                                    "NameForeign"
+                                ]
+                            }
+                        ],
+                        "properties": {
+                            "NameForeign": {
+                                "id": "NameForeign",
+                                "maxLength": 1000,
+                                "minLength": 1,
+                                "type": "string"
+                            },
+                            "TaxNumber": {
+                                "$ref": "#/definitions/TaxNumberType"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "SpecialNotes": {
+                    "id": "SpecialNotes",
+                    "maxLength": 1000,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "TaxNumber": {
+                    "$ref": "#/definitions/TaxNumberType"
+                },
+                "ValidityDate": {
+                    "_format": "date-time",
+                    "id": "ValidityDate",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "TaxNumber",
+                "BusinessPremiseID",
+                "BPIdentifier",
+                "ValidityDate",
+                "SoftwareSupplier"
+            ],
+            "type": "object"
+        },
+        "ErrorType": {
+            "additionalProperties": false,
+            "properties": {
+                "ErrorCode": {
+                    "id": "ErrorCode",
+                    "type": "string"
+                },
+                "ErrorMessage": {
+                    "id": "ErrorMessage",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "FlatRateCompensationType": {
+            "items": {
+                "additionalProperties": false,
+                "maxProperties": 3,
+                "minProperties": 3,
+                "properties": {
+                    "FlatRateAmount": {
+                        "$ref": "#/definitions/AmountType"
+                    },
+                    "FlatRateRate": {
+                        "$ref": "#/definitions/TaxRateType"
+                    },
+                    "FlatRateTaxableAmount": {
+                        "$ref": "#/definitions/AmountType"
+                    }
+                },
+                "required": [
+                    "FlatRateRate",
+                    "FlatRateTaxableAmount",
+                    "FlatRateAmount"
+                ],
+                "type": "object"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array"
+        },
+        "Header": {
+            "additionalProperties": false,
+            "id": "Header",
+            "properties": {
+                "DateTime": {
+                    "_format": "date-time",
+                    "id": "DateTime",
+                    "type": "string"
+                },
+                "MessageID": {
+                    "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "MessageID",
+                "DateTime"
+            ],
+            "type": "object"
+        },
+        "IdentifierType": {
+            "additionalProperties": false,
+            "maxProperties": 3,
+            "minProperties": 3,
+            "properties": {
+                "BusinessPremiseID": {
+                    "id": "BusinessPremiseID",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z]*$",
+                    "type": "string"
+                },
+                "ElectronicDeviceID": {
+                    "id": "ElectronicDeviceID",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z]*$",
+                    "type": "string"
+                },
+                "InvoiceNumber": {
+                    "id": "InvoiceNumber",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "type": "string"
+                }
+            },
+            "required": [
+                "BusinessPremiseID",
+                "ElectronicDeviceID",
+                "InvoiceNumber"
+            ],
+            "type": "object"
+        },
+        "InvoiceType": {
+            "additionalProperties": false,
+            "properties": {
+                "CustomerVATNumber": {
+                    "id": "CustomerVATNumber",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "ForeignOperator": {
+                    "type": "boolean"
+                },
+                "InvoiceAmount": {
+                    "$ref": "#/definitions/AmountType"
+                },
+                "InvoiceIdentifier": {
+                    "$ref": "#/definitions/IdentifierType"
+                },
+                "IssueDateTime": {
+                    "_format": "date-time",
+                    "id": "IssueDateTime",
+                    "type": "string"
+                },
+                "NumberingStructure": {
+                    "enum": [
+                        "B",
+                        "C"
+                    ],
+                    "id": "NumberingStructure",
+                    "type": "string"
+                },
+                "OperatorTaxNumber": {
+                    "$ref": "#/definitions/TaxNumberType"
+                },
+                "PaymentAmount": {
+                    "$ref": "#/definitions/AmountType"
+                },
+                "ProtectedID": {
+                    "id": "ProtectedID",
+                    "maxLength": 32,
+                    "minLength": 32,
+                    "type": "string"
+                },
+                "ReferenceInvoice": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "ReferenceInvoiceIdentifier": {
+                                "$ref": "#/definitions/IdentifierType"
+                            },
+                            "ReferenceInvoiceIssueDateTime": {
+                                "_format": "date-time",
+                                "id": "ReferenceInvoiceIssueDateTime",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "ReferenceInvoiceIdentifier",
+                            "ReferenceInvoiceIssueDateTime"
+                        ],
+                        "type": "object"
+                    },
+                    "maxItems": 1000,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "ReferenceSalesBook": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "ReferenceSalesBookIdentifier": {
+                                "$ref": "#/definitions/SalesBookIdentifierType"
+                            },
+                            "ReferenceSalesBookIssueDate": {
+                                "_format": "date-time",
+                                "id": "ReferenceInvoiceIssueDateTime",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "ReferenceSalesBookIdentifier",
+                            "ReferenceSalesBookIssueDate"
+                        ],
+                        "type": "object"
+                    },
+                    "maxItems": 1000,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "ReturnsAmount": {
+                    "$ref": "#/definitions/AmountType"
+                },
+                "SpecialNotes": {
+                    "id": "SpecialNotes",
+                    "maxLength": 1000,
+                    "minLength": 0,
+                    "type": "string"
+                },
+                "SubsequentSubmit": {
+                    "id": "SubsequentSubmit",
+                    "type": "boolean"
+                },
+                "TaxNumber": {
+                    "$ref": "#/definitions/TaxNumberType"
+                },
+                "TaxesPerSeller": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "ExemptVATTaxableAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "FlatRateCompensation": {
+                                "$ref": "#/definitions/FlatRateCompensationType"
+                            },
+                            "NontaxableAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "OtherTaxesAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "ReverseVATTaxableAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "SellerTaxNumber": {
+                                "$ref": "#/definitions/TaxNumberType"
+                            },
+                            "SpecialTaxRulesAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "VAT": {
+                                "$ref": "#/definitions/VATType"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "maxItems": 1000,
+                    "minItems": 1,
+                    "type": "array"
+                }
+            },
+            "required": [
+                "TaxNumber",
+                "IssueDateTime",
+                "NumberingStructure",
+                "InvoiceIdentifier",
+                "InvoiceAmount",
+                "PaymentAmount",
+                "TaxesPerSeller",
+                "ProtectedID"
+            ],
+            "type": "object"
+        },
+        "PremNumberType": {
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+        },
+        "SalesBookIdentifierType": {
+            "additionalProperties": false,
+            "maxProperties": 3,
+            "minProperties": 3,
+            "properties": {
+                "InvoiceNumber": {
+                    "id": "InvoiceNumber",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "SerialNumber": {
+                    "id": "SerialNumber",
+                    "maxLength": 12,
+                    "minLength": 12,
+                    "type": "string"
+                },
+                "SetNumber": {
+                    "id": "SetNumber",
+                    "maxLength": 2,
+                    "minLength": 2,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "SalesBookInvoiceType": {
+            "additionalProperties": false,
+            "properties": {
+                "BusinessPremiseID": {
+                    "id": "BusinessPremiseID",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z]*$",
+                    "type": "string"
+                },
+                "CustomerVATNumber": {
+                    "id": "CustomerVATNumber",
+                    "maxLength": 20,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "InvoiceAmount": {
+                    "$ref": "#/definitions/AmountType"
+                },
+                "IssueDate": {
+                    "_format": "date-time",
+                    "id": "IssueDate",
+                    "type": "string"
+                },
+                "PaymentAmount": {
+                    "$ref": "#/definitions/AmountType"
+                },
+                "ReferenceInvoice": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "ReferenceInvoiceIdentifier": {
+                                "$ref": "#/definitions/IdentifierType"
+                            },
+                            "ReferenceInvoiceIssueDateTime": {
+                                "_format": "date-time",
+                                "id": "ReferenceInvoiceIssueDateTime",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "ReferenceInvoiceIdentifier",
+                            "ReferenceInvoiceIssueDateTime"
+                        ],
+                        "type": "object"
+                    },
+                    "maxItems": 1000,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "ReferenceSalesBook": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "ReferenceSalesBookIdentifier": {
+                                "$ref": "#/definitions/SalesBookIdentifierType"
+                            },
+                            "ReferenceSalesBookIssueDate": {
+                                "_format": "date-time",
+                                "id": "ReferenceInvoiceIssueDateTime",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "ReferenceSalesBookIdentifier",
+                            "ReferenceSalesBookIssueDate"
+                        ],
+                        "type": "object"
+                    },
+                    "maxItems": 1000,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "ReturnsAmount": {
+                    "$ref": "#/definitions/AmountType"
+                },
+                "SalesBookIdentifier": {
+                    "$ref": "#/definitions/SalesBookIdentifierType"
+                },
+                "SpecialNotes": {
+                    "id": "SpecialNotes",
+                    "maxLength": 1000,
+                    "minLength": 0,
+                    "type": "string"
+                },
+                "TaxNumber": {
+                    "$ref": "#/definitions/TaxNumberType"
+                },
+                "TaxesPerSeller": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "ExemptVATTaxableAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "FlatRateCompensation": {
+                                "$ref": "#/definitions/FlatRateCompensationType"
+                            },
+                            "NontaxableAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "OtherTaxesAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "ReverseVATTaxableAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "SellerTaxNumber": {
+                                "$ref": "#/definitions/TaxNumberType"
+                            },
+                            "SpecialTaxRulesAmount": {
+                                "$ref": "#/definitions/AmountType"
+                            },
+                            "VAT": {
+                                "$ref": "#/definitions/VATType"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "maxItems": 1000,
+                    "minItems": 1,
+                    "type": "array"
+                }
+            },
+            "required": [
+                "TaxNumber",
+                "IssueDate",
+                "BusinessPremiseID",
+                "InvoiceAmount",
+                "PaymentAmount",
+                "TaxesPerSeller"
+            ],
+            "type": "object"
+        },
+        "TaxNumberType": {
+            "maximum": 99999999,
+            "minimum": 10000000,
+            "type": "integer"
+        },
+        "TaxRateType": {
+            "maximum": 99999,
+            "minimum": -99999,
+            "multipleOf": 0.01,
+            "type": "number"
+        },
+        "VATType": {
+            "items": {
+                "additionalProperties": false,
+                "maxProperties": 3,
+                "minProperties": 3,
+                "properties": {
+                    "TaxAmount": {
+                        "$ref": "#/definitions/AmountType"
+                    },
+                    "TaxRate": {
+                        "$ref": "#/definitions/TaxRateType"
+                    },
+                    "TaxableAmount": {
+                        "$ref": "#/definitions/AmountType"
+                    }
+                },
+                "required": [
+                    "TaxRate",
+                    "TaxableAmount",
+                    "TaxAmount"
+                ],
+                "type": "object"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array"
+        }
+    },
+    "properties": {
+        "BusinessPremiseRequest": {
+            "additionalProperties": false,
+            "properties": {
+                "BusinessPremise": {
+                    "$ref": "#/definitions/BusinessPremiseType"
+                },
+                "Header": {
+                    "$ref": "#/definitions/Header"
+                }
+            },
+            "required": [
+                "Header",
+                "BusinessPremise"
+            ],
+            "type": "object"
+        },
+        "BusinessPremiseResponse": {
+            "additionalProperties": false,
+            "properties": {
+                "Error": {
+                    "$ref": "#/definitions/ErrorType"
+                },
+                "Header": {
+                    "$ref": "#/definitions/Header"
+                }
+            },
+            "required": [
+                "Header"
+            ],
+            "type": "object"
+        },
+        "InvoiceRequest": {
+            "additionalProperties": false,
+            "oneOf": [
+                {
+                    "required": [
+                        "Invoice"
+                    ]
+                },
+                {
+                    "required": [
+                        "SalesBookInvoice"
+                    ]
+                }
+            ],
+            "properties": {
+                "Header": {
+                    "$ref": "#/definitions/Header"
+                },
+                "Invoice": {
+                    "$ref": "#/definitions/InvoiceType"
+                },
+                "SalesBookInvoice": {
+                    "$ref": "#/definitions/SalesBookInvoiceType"
+                }
+            },
+            "required": [
+                "Header"
+            ],
+            "type": "object"
+        },
+        "InvoiceResponse": {
+            "additionalProperties": false,
+            "properties": {
+                "Error": {
+                    "$ref": "#/definitions/ErrorType"
+                },
+                "Header": {
+                    "$ref": "#/definitions/Header"
+                },
+                "UniqueInvoiceID": {
+                    "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Header"
+            ],
+            "type": "object"
+        }
+    },
+    "type": "object"
+}
