@@ -35,6 +35,8 @@ There are several scripts in [scripts](artifacts/scripts) with the following fun
 ## Comparing the Results
 To compare the computed results with the results stated in the paper, inspect the file evaluation.txt in the directory [results](artifacts/results) after running ``./doAll.sh``. Evaluation.txt also contains comments on a few selected manual changes that we had to make, e.g., due to wrong results produced by the third-party schmema validator.
 
+The values of average and median times for DG, as well as the values for "Success" and "Logical Errors unsatisfiable" differ from Table 2 in the submitted paper. However, caluclations in this reproduction package are actually correct.
+
 ## Generating Charts
 To generate charts, execute ``./create-charts.sh`` at [Charts/](artifacts/Charts) inside the docker container. The generated charts are stored in [Charts/charts](artifacts/Charts/charts)
 
