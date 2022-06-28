@@ -415,6 +415,11 @@ public class GenObject implements GenAssertion {
     }
 
     public void setRPart(List<WitnessOrPattReq> orPattReqList, GenEnv env) {
+        /*List<WitnessPattReq> fragments = orPattReqList.stream().
+                flatMap(e->e.getReqList().stream()).
+                collect(Collectors.toList());
+        HashMap<WitnessPattReq,GPattReq>  reqMap = fragments.stream().
+             collect(Collectors.toMap(w -> w, w -> new GOrPattReq(w, env)));*/
         this.RPart = orPattReqList.stream().map(p -> new GOrPattReq(p, env))
                 .collect(Collectors.toList());
     }
@@ -442,8 +447,17 @@ public class GenObject implements GenAssertion {
     public void setORPList() {
         for (GPattReq gPattReq : objectReqList)
             for (GOrPattReq gOrPattReq : RPart)
-                if (gOrPattReq.reqList.contains(gPattReq))
+                // "contains" means that gOrPattReq contain an element that "equals" gPattReq, but it may well
+                // be the case that it is not the same object, while we need that every object in the reqList of
+                // every gOrPattReq is actually in the objectReqList. Hence, we remove the "equal" object using
+                // remove and we reinsert the exact object using add; notice that all of this is very inefficient
+                // since it relies on comparison among patterns which are extremely expemsive - this code whould
+                // be optimized
+                if (gOrPattReq.reqList.contains(gPattReq)) {
+                    gOrPattReq.reqList.remove(gPattReq);
+                    gOrPattReq.reqList.add(gPattReq);
                     gPattReq.addOrpList(gOrPattReq);
+                }
     }
 
     public void setMinMaxPro(WitnessPro minMaxPro) {
@@ -471,15 +485,32 @@ public class GenObject implements GenAssertion {
      * removes ORPs that are  pointed by headReq
      * @param orpList
      * @param headReq
-     * @return
+     * @return returns a copy of those orpLists that remain to satisfy
      */
     private  List<GOrPattReq> removeOrps(List<GOrPattReq> orpList, GPattReq headReq){
+        //for (GOrPattReq headOrp: headReq.orpList) {
+        //    headOrp.reqList.remove(headReq);
+        //}
         List<GOrPattReq> result = new LinkedList<>();
         result.addAll(orpList);
         result.removeAll(headReq.orpList);
         return result;
     }
 
+    /**
+     * removes  requests that are pointed by an ORP of headReq
+     * @param requests
+     * @param headReq
+     * @return
+     */
+    private List<GPattReq> reduceRequests(List<GPattReq> exploredRequests, List<GOrPattReq> tailOrpList){
+        HashSet<GPattReq> result = new HashSet<>();
+        for(GOrPattReq orp: tailOrpList)
+            result.addAll(orp.reqList);
+        result.removeAll(exploredRequests);
+        List<GPattReq> listResult = new ArrayList<>(result);
+        return listResult;
+    }
     /**
      * removes  requests that are pointed by an ORP of headReq
      * @param requests
@@ -497,11 +528,15 @@ public class GenObject implements GenAssertion {
 
     /**
      *
-     * @param requests
-     * @param orpList
-     * @return
+     * @param requests all requests that appear in orpList minus some that have already been explored
+     * @param exploredRequests requiests that we do not want to use in the solution
+     * @param orpList the orpList that we want to hit
+     * @return all different sets of requests that are found in requests minus exploredRequests
+     *         that hit all elements of orpList
      */
-    private List<List<GPattReq>> hittingSet(List<GPattReq> requests, List<GOrPattReq> orpList){
+    private List<List<GPattReq>> hittingSet(List<GPattReq> requests,
+                                            List<GPattReq> exploredRequests,
+                                            List<GOrPattReq> orpList){
 
         if(orpList.isEmpty()){
             List<GPattReq> emptyList = new ArrayList<>();
@@ -510,17 +545,26 @@ public class GenObject implements GenAssertion {
             return trivialResult;
         }
 
-        if(requests.isEmpty())
+        List<GPattReq> unexploredRequests = new ArrayList<>();
+        unexploredRequests.addAll(requests);
+        unexploredRequests.removeAll(exploredRequests);
+        if(unexploredRequests.isEmpty())
             return new LinkedList<>();
 
-        GPattReq headReq = requests.get(0);
+        GPattReq headReq = unexploredRequests.get(0);
 
-        //advance in both lists
+        //remove the orps that are satisfied by headReq
         List<GOrPattReq> tailOrp = removeOrps(orpList, headReq);
-        List<GPattReq> tailRequests = removeRequests(requests, headReq);
+        //List<GPattReq> tailRequests = removeRequests(requests, headReq);
+        //We eliminate those requests that only appear in those orpLists
+        //that have been eliminated
+        List<GPattReq> tailRequests = reduceRequests(exploredRequests, tailOrp);
+        //We have removed all orps where headReq did appear, hence headReq
+        //does not appear in tailRequests any more
 
         List<List<GPattReq>> solWithFirst = new LinkedList<>();
         List<GPattReq> current = new ArrayList<>();
+        exploredRequests.add(headReq);
 
         if(tailRequests.isEmpty()&&tailOrp.isEmpty()){
             current.add(headReq);
@@ -531,15 +575,17 @@ public class GenObject implements GenAssertion {
 //            current.add(headReq);
 //            solWithFirst.add(current);
 //        }
-        for(List<GPattReq> solutionOfRest: hittingSet(tailRequests, tailOrp)){
+        else for(List<GPattReq> solutionOfRest: hittingSet(tailRequests, exploredRequests, tailOrp)){
             solutionOfRest.add(headReq);
             solWithFirst.add(solutionOfRest);
         }
-        requests.remove(headReq);
-        List<List<GPattReq>> solWithoutFirst = hittingSet(requests, orpList);
+        //requests.remove(headReq);
+        List<List<GPattReq>> solWithoutFirst = hittingSet(requests, exploredRequests, orpList);
 
         solWithFirst.addAll(solWithoutFirst);
 
+        // the caller may use again this parameter, I must restore its value
+        exploredRequests.remove(headReq);
         return solWithFirst;
     }
     private boolean isMinimal(List<GPattReq> sol, List<GOrPattReq> orpList){
@@ -575,7 +621,7 @@ public class GenObject implements GenAssertion {
         List<GPattReq> remainingRequests = objectReqList.stream().collect(Collectors.toList());
         remainingRequests.removeAll(simpleResult);
 
-        result = hittingSet(remainingRequests,remainingOrpsList)//hittingSetTer(remainingRequests,0,remainingOrpsList)
+        result = hittingSet(remainingRequests,new ArrayList<>(),remainingOrpsList)//hittingSetTer(remainingRequests,0,remainingOrpsList)
                 .stream().filter(l->isMinimal(l,remainingOrpsList))
                 .collect(Collectors.toList());
 

@@ -295,6 +295,10 @@ public class Pattern {
 
 		Pattern pattern = (Pattern) o;
 		return this.isEquivalent(pattern);
+		//here follows an alternative approach
+		// if (this.originalBricksPattern != null && pattern.originalBricksPattern != null)
+		//	return this.originalBricksPattern.equals(pattern.originalBricksPattern);
+		// return false;
 	}
 
 }

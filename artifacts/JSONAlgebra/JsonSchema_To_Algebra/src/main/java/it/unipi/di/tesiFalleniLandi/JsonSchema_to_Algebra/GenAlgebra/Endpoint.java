@@ -72,7 +72,7 @@ public class Endpoint {
         // "NPproblems/";//"demopaper/";// "oneTypeSchemas/object/";//
         //"schemastore/";//"oneTypeSchemas/enum/"; //
         //"jsonSchemaTestSuiteDraft6/";//"jsonSchemaOrg/";//
-        String path = "/expDataset/handwritten/failures/"; //"/expDataset/testing/"; //"/expDataset/realWorldSchemas/processedFiles/"; // "/expDataset/realWorldSchemas/processedFiles/"; //"/expDataset/containment/sat/nonValid/"; //"/expDataset/unprocessedFiles/ok/"; // gitcleanfiles+"containment/unsat/witness/";//userPath+witnessGenTestFiles+subdir; //
+        String path = "/expDataset/handwritten/testtrickynew/"; //"/expDataset/failures/"; //"/expDataset/realWorldSchemas/processedFiles/"; // "/expDataset/realWorldSchemas/processedFiles/"; //"/expDataset/containment/sat/nonValid/"; //"/expDataset/unprocessedFiles/ok/"; // gitcleanfiles+"containment/unsat/witness/";//userPath+witnessGenTestFiles+subdir; //
         //"containment/sat/noWitness/";//"unsat-pb/";//containment/sat/nonValid/";//"containment/sat/noWitness/";//"unsat-pb/test";//"unsat-pb/o"+"24470";//"unsat-pb/o"+"25731";//"o4413";//"o48024";//"47";//"o69888";//"weka_j48";//31//"hittingset";//"1Another";//"2Another3";//"2bis";//"BizTalkServerApplicationSchema";//
         String file = "test";//"problem_minItems";//"c_problem_items";//"o79743";//"o"+"46176";//"o"+"13707";//"uplimit";//"test";//""+"13707";//"draft6_reflexive_contains_id5_subschema1_not_2";//"tmp"; //"draft6_reflexive_items_id7_subschema1_not_2";//
         String extension = ".json";

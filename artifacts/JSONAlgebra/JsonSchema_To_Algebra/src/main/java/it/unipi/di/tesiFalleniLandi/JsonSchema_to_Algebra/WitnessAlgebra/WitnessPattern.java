@@ -88,6 +88,10 @@ public class WitnessPattern implements WitnessAssertion{
         WitnessPattern that = (WitnessPattern) o;
 
         return pattern.isEquivalent(that.pattern);
+        // Computing equivalence every time we need equality may be far too expensive
+        // we may go for a faster way, but then we must do the same also in unipassau/sds/patterns/Pattern
+        // and in Commons/complexPattern
+        // return pattern.equals(that.pattern);
     }
 
     @Override

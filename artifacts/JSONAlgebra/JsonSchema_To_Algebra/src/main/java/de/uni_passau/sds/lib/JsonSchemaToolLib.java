@@ -203,15 +203,15 @@ class JsonSchemaToolLib implements IJsonSchemaLib {
         String schemaTwo = generateSchemaDifference(rightSchema, leftSchema);
 
         //get rid of the generated escape characters
-        String prepedSchemaOne = toString_withoutEscape(schemaOne);
-        String prepedSchemaTwo = toString_withoutEscape(schemaTwo);
+        schemaOne = toString_withoutEscape(schemaOne);
+        schemaTwo = toString_withoutEscape(schemaTwo);
 
         //check if it is necessary to normalize the schema, if so then normalize it
-        if (containsIdRef(prepedSchemaOne)){
-            schemaOne = normalizeSchema(prepedSchemaOne);
+        if (containsIdRef(schemaOne)){
+            schemaOne = normalizeSchema(schemaOne);
         }
-        if (containsIdRef(prepedSchemaTwo)){
-            schemaTwo = normalizeSchema(prepedSchemaTwo);
+        if (containsIdRef(schemaTwo)){
+            schemaTwo = normalizeSchema(schemaTwo);
         }
 
         // Generate witness for 1st schema

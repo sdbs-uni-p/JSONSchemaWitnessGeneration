@@ -166,7 +166,7 @@ public class GenNum implements GenAssertion {
      *
      * @param number
      * @param mof
-     * @return
+     * @return the biggest mof such that mof <= number
      */
     private Double nextMof(Double number, Double mof){
         int v = (int) (number/mof);
@@ -227,6 +227,17 @@ public class GenNum implements GenAssertion {
 
 //        double epsilon = 0.000001d;
 
+        if (mof!=null && mof==0) {
+            result = 0.0;
+            if (result < min) return statuses.Empty;
+            else if (result > max) return statuses.Empty;
+            else if (isMultipleOfANotMof(result,notMofs)) return statuses.Empty;
+            else {
+                setWitness(result);
+                return statuses.Populated;
+            }
+        }
+
         if(min>max)
 //        if (min > max+epsilon) //GG: this is a patch!!!
             return statuses.Empty;
@@ -258,7 +269,8 @@ public class GenNum implements GenAssertion {
                             result = 0d;
 
                             //TODO result already % 0 redundancy elimination needed
-                            while((mof!=null && ((result.floatValue()/mof.floatValue())%1)!=0) ||  isMultipleOfANotMof(result,notMofs)){
+                            while((mof!=null && ((result.floatValue()/mof.floatValue())%1)!=0)
+                                    ||  isMultipleOfANotMof(result,notMofs)){
                                 result += step;
                             }
 //                            if(isInteger)
@@ -290,7 +302,12 @@ public class GenNum implements GenAssertion {
                         result = nextMof(min, step);
                         logger.debug(" result {} step {}",  result , step);
 
-                        while(result<=max && ((mof!=null && ((result.floatValue()/mof.floatValue())%1)!=0) ||  isMultipleOfANotMof(result,notMofs) || result<min) ){
+                        // exit condition 1: result > max
+                        // exit cond 2: either mof null or result is mof AND isnot multiple of a not mof
+                        // and result >= min. Is multiple of: res/mof is an integere, i.e. (res/mof) mod 1 = 0
+                        while(result<=max && ((mof!=null && ( (result.floatValue()/mof.floatValue() )%1)!=0 )
+                                               || isMultipleOfANotMof(result,notMofs)
+                                               || result<min) ){
                             result += step;
                         }
 
@@ -304,6 +321,7 @@ public class GenNum implements GenAssertion {
                         }
                         else {
                             //TODO check whether we really have no witness
+                            //why do we throw here an exception???
                             try {
                                 throw new Exception("failure");
                             } catch (Exception e) {

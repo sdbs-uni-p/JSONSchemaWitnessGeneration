@@ -236,6 +236,10 @@ public class ComplexPattern implements ComplexPatternElement {
 
         ComplexPattern pattern = (ComplexPattern) o;
         return this.isEquivalent(pattern);
+        // Computing equivalence every time we need equality may be far too expensive
+        // we may go for a faster way, but then we must do the same also in unipassau/sds/patterns/Pattern
+        // and in WItnessAlgebra/WitnessPattern
+        // return this.stefaniePattern.equals(pattern.stefaniePattern);
     }
 
 
