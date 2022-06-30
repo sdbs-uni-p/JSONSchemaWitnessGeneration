@@ -67,15 +67,16 @@ public class GenNum implements GenAssertion {
      * @throws Exception
      */
     private void invariant1() throws Exception{
-        List<Double> notMofsGreater = notMofs.stream().filter(n->n <= mof).collect(Collectors.toList()); //TODO check with negative numbers
-        notMofsGreater.sort(Comparator.naturalOrder());
+        List<Double> notMofsSmaller = notMofs.stream().filter(n->n <= mof)
+                                                      .collect(Collectors.toList()); //TODO check with negative numbers
+        notMofsSmaller.sort(Comparator.naturalOrder());
 
-        if(notMofsGreater.size()>0){
-            Double mofTest = containsMultiple(notMofsGreater,this.mof);
+        if(notMofsSmaller.size()>0){
+            Double mofTest = containsDivisor(notMofsSmaller,this.mof);
             if(mofTest>0)
             {
-                logger.trace("The number {} in the NotMof List is multiple of {}", mofTest, mof);
-                throw new Exception("NotMof List contains a multiple of Mof");
+                logger.trace("The number {} in the NotMof List is divisor of {}", mofTest, mof);
+                throw new Exception("NotMof List contains a divisor of Mof");
             }
         }
     }
@@ -88,7 +89,7 @@ public class GenNum implements GenAssertion {
     public void setMof(WitnessMof mof) throws Exception {
         this.mof = mof.getValue();
         //check invariant1
-//        invariant1();
+              invariant1();
         logger.debug("Set mof to {}", this.mof);
     }
 
@@ -97,10 +98,10 @@ public class GenNum implements GenAssertion {
                 .map(e->e.getValue()).collect(Collectors.toList());
         this.notMofs.sort(Comparator.naturalOrder());
         //check invariants
-//        if(this.mof!=null)
-//            invariant1();
+        if(this.mof!=null)
+                invariant1();
         //invariant2
-        if(containsPairMultiple(this.notMofs))
+       if(containsPairMultiple(this.notMofs))
             throw new Exception("NotMof List contains a pair of multiples");
         logger.debug("Set NotMofs to {}", this.notMofs);
 
@@ -112,18 +113,30 @@ public class GenNum implements GenAssertion {
 
     /**
      *
-     * @param list must be sorted
-     * @param num
-     * @return
+     * @param divisor number which msy be a factor (divisor) of dividend
+     * @param dividend
+     * @return returns true iff divisor divides the dividend, i.e. whether divisor is a factor of dividend
      */
-    private Double containsMultiple(List<Double> list, Double num){
+    private Boolean isMutipleOf(Double multiple, Double factor){
+        return multiple%factor==0;
+    }
+
+    /**
+     *
+     * @param list must be sorted - every element of list is expected to be smaller than num
+     * @param num
+     * @return 0d in the normal case when list contains no divisor for num - if list contains any divisor for
+     *         num, then one such divisor is returned
+     */
+    private Double containsDivisor(List<Double> list, Double num){
         Double res = 0d;
-        for(Double el:list)
-            if(el%num==0){
+        Double remainder = 0d;
+        for(Double el:list) {
+            if (isMutipleOf(num,el)) {
                 res = el;
                 break;
             }
-
+        }
         return res;
     }
 
@@ -138,13 +151,13 @@ public class GenNum implements GenAssertion {
         arr = list.toArray(arr);
         for (int i=0; i<arr.length;i++)
             for(int j=i+1; j<arr.length; j++)
-                if(arr[j]%arr[i]==0)
+                if(isMutipleOf(arr[j],arr[i]))
                     return true;
         return false;
     }
 
     /**
-     * whether n is a multiple of a given element in notmof
+     * whether n is a multiple of a some element in notmof
      * @param n
      * @param notmof
      * @return
@@ -153,8 +166,9 @@ public class GenNum implements GenAssertion {
         boolean res = false;
         if(notmof.size()>0){
             for(Double nm:notmof)
-                if(((n.floatValue()/nm.floatValue())%1)==0){
-                    res = true;
+                if(isMutipleOf(n,nm)){
+    // old verions                if(((n.floatValue()/nm.floatValue())%1)==0){
+                        res = true;
                     break;
                 }
         }
@@ -246,7 +260,7 @@ public class GenNum implements GenAssertion {
             if(min.doubleValue()==max.doubleValue())
 //            if (Math.abs(min - max) < epsilon) //this is a patch!
             {
-              if((mof!=null && ((result.floatValue()/mof.floatValue())%1)!=0) || isMultipleOfANotMof(result,notMofs))
+              if((mof!=null && (!isMutipleOf(result,mof))) || isMultipleOfANotMof(result,notMofs))
                   return statuses.Empty;
               else
               {
@@ -269,7 +283,7 @@ public class GenNum implements GenAssertion {
                             result = 0d;
 
                             //TODO result already % 0 redundancy elimination needed
-                            while((mof!=null && ((result.floatValue()/mof.floatValue())%1)!=0)
+                            while((mof!=null && !isMutipleOf(result,mof))
                                     ||  isMultipleOfANotMof(result,notMofs)){
                                 result += step;
                             }
@@ -285,7 +299,7 @@ public class GenNum implements GenAssertion {
                             //start from Max downward
 
                             result = nextMof(max, step);
-                            while((mof!=null && ((result.floatValue()/mof.floatValue())%1)!=0) ||  isMultipleOfANotMof(result,notMofs) || result>max){
+                            while((mof!=null && !isMutipleOf(result,mof)) ||  isMultipleOfANotMof(result,notMofs) || result>max){
                                 result -= step;
                             }
 //                            if(isInteger)
@@ -305,7 +319,7 @@ public class GenNum implements GenAssertion {
                         // exit condition 1: result > max
                         // exit cond 2: either mof null or result is mof AND isnot multiple of a not mof
                         // and result >= min. Is multiple of: res/mof is an integere, i.e. (res/mof) mod 1 = 0
-                        while(result<=max && ((mof!=null && ( (result.floatValue()/mof.floatValue() )%1)!=0 )
+                        while(result<=max && ((mof!=null && !isMutipleOf(result,mof) )
                                                || isMultipleOfANotMof(result,notMofs)
                                                || result<min) ){
                             result += step;

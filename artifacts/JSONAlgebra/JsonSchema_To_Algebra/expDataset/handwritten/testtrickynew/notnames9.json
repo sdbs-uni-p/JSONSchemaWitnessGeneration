@@ -1,0 +1,34 @@
+{"type" :"object",
+ "comment" : "exactly one field, and 5 implies 7 that implies 9, and 9 implies, recursively, just 5 and 7",
+ "comment2" : "propertyNames impose two patterns",
+  "comment3" : "patternProperties impose two schemas in presence of 7 and 9",
+  "allOf" : [ {"$ref" : "#/definitions/npn1"},
+              {"$ref" : "#/definitions/npn2"},
+              {"$ref" : "#/definitions/npn3"},
+              {"$ref" : "#/definitions/pp"},
+              {"propertyNames" : {"pattern" : "^(\\w\\w\\d)+$"}},
+              {"maxProperties" : 1}],
+  "definitions" : {
+        "npn1" : {
+            "not" : {  "propertyNames" : { "not" : {"pattern" : "a5b" }}}
+         },
+        "npn2" : {
+             "not" : {  "propertyNames" : { "not" : {"pattern" : "(^[^5]*$)|7" }}}
+          },
+        "npn3" : {
+              "not" : {  "propertyNames" : { "not" : {"pattern" : "(^[^7]*$)|9" }}}
+           },
+         "pp" :  {  "patternProperties" : { "7" : {"$ref" : "#/definitions/al7"},
+                                            "9" : {"$ref" : "#/definitions/al9"}}},
+         "al7" : { "allOf" : [ {"$ref" : "#/definitions/npn1"},
+                               {"$ref" : "#/definitions/pp"},
+                               {"propertyNames" : {"pattern" : "^(\\w\\d)+$"}},
+                               {"maxProperties" : 1}]
+                  },
+         "al9" : { "allOf" : [ {"$ref" : "#/definitions/npn2"},
+                               {"$ref" : "#/definitions/pp"},
+                               {"propertyNames" : {"pattern" : "^(\\w\\d)+$"}},
+                               {"maxProperties" : 1}]
+                   }
+         }
+}
