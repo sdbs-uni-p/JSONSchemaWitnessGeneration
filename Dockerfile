@@ -51,10 +51,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends --purge \
                 r-cran-yaml \
     && R -q -e "install.packages(c('extrafont', 'ggrepel', 'ggExtra', 'forcats', 'remotes'), quiet=TRUE)" \
     && R -q -e "library(remotes); remotes::install_version('Rttf2pt1', version = '1.3.8', quiet=TRUE)" 
-#    && apt-get purge -y g++ make zlib1g-dev && apt-get autoremove -y \
-#    && apt-get clean %% \
-#    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+
 RUN apt-get update && apt-get install -y --no-install-recommends --purge \
+			dos2unix \
             libbz2-dev
 
 RUN mkdir -p /opt/python3.9/ && cd /opt/python3.9/ && \
