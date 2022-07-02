@@ -67,6 +67,14 @@ RUN usermod -a -G staff repro
 USER repro
 WORKDIR /home/repro
 
+# Clone jsongenerator and checkout the version we used
+RUN git clone https://github.com/jimblackler/jsongenerator/ \
+    && (cd jsongenerator && git checkout 324d9c1853d41fd09c0c31184ff916d75373ad83)
+
+# Clone jsonsubschema and checkout the version we used
+RUN git clone https://github.com/IBM/jsonsubschema/ \
+    && (cd jsonsubschema && git checkout 9413abe5bce2f1f94622e2ed756eaa2747f6479a)
+
 RUN python3.9 -m pip install pandas
 
 # Add artifacts directory (from host) to home directory

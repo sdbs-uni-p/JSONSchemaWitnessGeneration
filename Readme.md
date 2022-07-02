@@ -9,13 +9,12 @@ The package is provided as a Docker container.
 Our original results are provided in directory [results](artifacts/results). These files are overwritten if you calculate new results in the container. 
 
 ## Setting up the Docker container
-First off, clone this repository, including the sub-modules with 
-``git clone --recurse-submodules https://github.com/sdbs-uni-p/JSONSchemaWitnessGeneration.git``. 
-The sub-modules are provided at specific commits. Please, make sure not to update them.
+First off, clone this repository with 
+``git clone https://github.com/sdbs-uni-p/JSONSchemaWitnessGeneration.git``. 
 
 To build the container run ``docker build -t js_repro .`` inside the root directory of this repository.
 
-After building you can start the container with ``docker run -it js_repro``. 
+After building, you can start the container with ``docker run -it js_repro``. 
 
 ## Running experiments
 We provide a number of scripts for running our experiments inside the container.
@@ -33,9 +32,9 @@ There are several scripts in [scripts](artifacts/scripts) with the following fun
 * ``patch-jsongenerator.sh`` is executed when building the container and it should not be necessary to run this script.
 
 ## Comparing the Results
-To compare the computed results with the results stated in the paper, inspect the file evaluation.txt in the directory [results](artifacts/results) after running ``./doAll.sh``. Evaluation.txt also contains comments on a few selected manual changes that we had to make, e.g., due to wrong results produced by the third-party schmema validator.
+To compare the computed results with the results stated in the paper, inspect the file evaluation.txt in the directory [results](artifacts/results) after running ``./doAll.sh``. Evaluation.txt also contains comments on a few selected manual changes that we had to make, e.g., due to wrong results produced by the third-party schema validator.
 
-The values of average and median times for DG, as well as the values for "Success" and "Logical Errors unsatisfiable" differ from Table 2 in the submitted paper. However, caluclations in this reproduction package are actually correct.
+The values of average and median times for DG, as well as the values for "Success" and "Logical Errors unsatisfiable" differ from Table 2 in the submitted paper. However, calculations in this reproduction package are actually correct.
 
 ## Generating Charts
 To generate charts, execute ``./create-charts.sh`` at [Charts/](artifacts/Charts) inside the docker container. The generated charts are stored in [Charts/charts](artifacts/Charts/charts)
