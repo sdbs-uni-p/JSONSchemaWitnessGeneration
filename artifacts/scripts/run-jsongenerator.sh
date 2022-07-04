@@ -3,32 +3,42 @@ cd ${HOME}/jsongenerator
 
 gradle build
 
-rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/sat/constAsEnum/results/jsongenerator_* 2> /dev/null
-gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/sat/constAsEnum/']"
-mkdir -p ${HOME}/results/subSchema-sat-constAsEnum/
-cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/sat/constAsEnum/results/jsongenerator_*_results.csv \
-    ${HOME}/results/subSchema-sat-constAsEnum/jsongenerator_results.csv 2> /dev/null
+run_experiment() {
+    rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_* 2> /dev/null
+    gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/']"
+    mkdir -p ${HOME}/results/${1//\//-}/
+    cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_*_results.csv \
+        ${HOME}/results/${1//\//-}/jsongenerator_results.csv 2> /dev/null
+}
 
-rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/unsat/constAsEnum/results/jsongenerator_* 2> /dev/null
-gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/unsat/constAsEnum/']"
-mkdir -p ${HOME}/results/subSchema-unsat-constAsEnum/
-cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/unsat/constAsEnum/results/jsongenerator_*_results.csv \
-    ${HOME}/results/subSchema-unsat-constAsEnum/jsongenerator_results.csv 2> /dev/null
+run_experiment subSchema/sat/constAsEnum
+run_experiment subSchema/unsat/constAsEnum
 
-rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/handwritten/testtrickyDG/results/jsongenerator_* 2> /dev/null
-gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/handwritten/testtrickyDG/']"
-mkdir -p ${HOME}/results/handwritten-testtricky/
-cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/handwritten/testtrickyDG/results/jsongenerator_*_results.csv \
-    ${HOME}/results/handwritten-testtricky/jsongenerator_results.csv 2> /dev/null
+# Handwritten Data Set
+run_experiment handwritten/testtricky
+run_experiment handwritten/testtrickynew
+run_experiment handwritten/gennumber
 
-rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/realWorldSchemas/all/results/jsongenerator_* 2> /dev/null
-gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/realWorldSchemas/all/']"
-mkdir -p ${HOME}/results/realWorldSchemas-all/
-cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/realWorldSchemas/all/results/jsongenerator_*_results.csv \
-    ${HOME}/results/realWorldSchemas-all/jsongenerator_results.csv 2> /dev/null
+# Combine results
+(
+    cd ${HOME}/results
+    mkdir handwritten-all 2> /dev/null
+    awk '(NR == 1) || (FNR > 1)' handwritten-testtricky/jsongenerator_results.csv \
+        handwritten-testtrickynew/jsongenerator_results.csv \
+        handwritten-gennumber/jsongenerator_results.csv > handwritten-all/jsongenerator_results.csv
+)
 
-rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/realWorldSchemas/unsatDG/results/jsongenerator_* 2> /dev/null
-gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/realWorldSchemas/unsatDG/']"
-mkdir -p ${HOME}/results/realWorldSchemas-unsat/
-cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/realWorldSchemas/unsatDG/results/jsongenerator_*_results.csv \
-    ${HOME}/results/realWorldSchemas-unsat/jsongenerator_results.csv 2> /dev/null
+# GitHub Data Set
+run_experiment realWorldSchemas/all
+run_experiment realWorldSchemas/unsat
+
+run_experiment kubernetes
+run_experiment snowplow
+run_experiment wp
+run_experiment wp/oneOf
+(
+    cd ${HOME}/results
+    mkdir wp-all 2> /dev/null
+    awk '(NR == 1) || (FNR > 1)' wp/jsongenerator_results.csv \
+        wp-oneOf/jsongenerator_results.csv > wp-all/jsongenerator_results.csv
+)
