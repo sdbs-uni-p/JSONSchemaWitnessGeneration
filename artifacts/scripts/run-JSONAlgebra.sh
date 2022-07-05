@@ -27,13 +27,15 @@ echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/testtricky
 
 echo "Running experiments on Kubernetes dataset..."
-./run_experiment.sh kubernetes
+run_experiment kubernetes
+cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
 
 echo "Running experiments on Snowplow dataset..."
-./run_experiment.sh snowplow
+run_experiment snowplow
+cp ${HOME}/results/snowplow/results.csv ${HOME}/charts/data/snowplow/results.csv
 
 echo "Running experiments on Washington Post dataset (1/2)..."
-./run_experiment.sh wp
+run_experiment wp
 
 echo "Running experiments on GitHub dataset (1/4)..."
 run_experiment realWorldSchemas/processedFiles
@@ -55,9 +57,9 @@ echo "Running experiments on GitHub dataset (4/4)..."
 run_experiment realWorldSchemas/processedFiles/oneOf
 
 echo "Running experiments on Washington Post dataset (1/2)..."
-./run_experiment.sh wp/oneOf
+run_experiment wp/oneOf
 
-# Combine realWorldSchemas results
+# Combine GitHub results
 (
     cd ${HOME}/results
     mkdir realWorldSchemas-all 2> /dev/null
@@ -70,10 +72,15 @@ echo "Running experiments on Washington Post dataset (1/2)..."
     ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
 )
 
-# Combine WashingtonPost results
+# Copy GitHub results to charts
+cp ${HOME}/results/realWorldSchemas-all/results.csv ${HOME}/charts/data/realWorldSchemas/results.csv
+
+# Combine Washington Post results
 (
     cd ${HOME}/results
     mkdir wp-all 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' wp/results.csv \
         wp-oneOf/results.csv > wp-all/results.csv
 )
+# Copy Washington Post results to charts
+cp ${HOME}/results/wp-all/results.csv ${HOME}/charts/data/wp/results.csv

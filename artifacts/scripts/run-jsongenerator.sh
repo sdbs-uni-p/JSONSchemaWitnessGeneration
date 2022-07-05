@@ -11,6 +11,7 @@ run_experiment() {
         ${HOME}/results/${1//\//-}/jsongenerator_results.csv 2> /dev/null
 }
 
+# Containment Data Set
 run_experiment subSchema/sat/constAsEnum
 run_experiment subSchema/unsat/constAsEnum
 

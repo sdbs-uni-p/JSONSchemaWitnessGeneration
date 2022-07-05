@@ -5,7 +5,7 @@ library(tidyr)
 library(dplyr, warn.conflicts=FALSE)
 library(scales)
 source('config.r')
-df  <- read.csv('data/clean_data.csv')
+df  <- read.csv('data/realWorldSchemas/clean_data.csv')
 
 # We divide the processing steps into three groups as defined here
 grp.trans = c("parsing","extractSchema","X2Full","X2Witness","notElim","merge1",
@@ -60,4 +60,4 @@ p.base <- ggplot(df.tidy, aes(x=procStep, y=value, fill=procStep)) +
         plot.margin = margin(b=0.21, unit="cm"))
 
 p.base
-ggsave(paste("/home/repro/results/charts/boxplot",file_ending,sep=""), height=4.263, width=4.2, device=cairo_pdf)
+ggsave(paste("charts/boxplot",file_ending,sep=""), height=4.263, width=4.2, device=cairo_pdf)

@@ -14,5 +14,5 @@ echo "Running experiments with the DG-tool (jsongenerator)..."
 echo "Running evaluation..."
 ./run-evaluation.sh > ${HOME}/results/evaluation.txt
 echo "Creating charts..."
-${HOME}/Charts/create-charts.sh
+${HOME}/charts/create-charts.sh
 echo "Done: Results are in ${HOME}/results."
