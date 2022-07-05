@@ -47,7 +47,7 @@ hexplot <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", col.in
 
 plot <- hexplot(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
-ggsave(paste("charts/hexplot_and_histograms_kubernetes",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
+ggsave(paste("/home/repro/results/charts/hexplot_and_histograms_kubernetes",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
 
 hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", col.inf="red", y_title="") {
   size_median <- median(df$inSize)
@@ -87,4 +87,4 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
 
 plot <- hexplot_fix(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
-ggsave(paste("charts/hexplot_and_histograms_kubernetes_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
+ggsave(paste("/home/repro/results/charts/hexplot_and_histograms_kubernetes_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)

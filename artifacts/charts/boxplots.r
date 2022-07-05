@@ -60,4 +60,4 @@ p.base <- ggplot(df.tidy, aes(x=procStep, y=value, fill=procStep)) +
         plot.margin = margin(b=0.21, unit="cm"))
 
 p.base
-ggsave(paste("charts/boxplot",file_ending,sep=""), height=4.263, width=4.2, device=cairo_pdf)
+ggsave(paste("/home/repro/results/charts/boxplot",file_ending,sep=""), height=4.263, width=4.2, device=cairo_pdf)
