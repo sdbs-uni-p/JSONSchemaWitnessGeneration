@@ -22,6 +22,18 @@ public class GenObjTest {
 
     // type obj
     @Test
+    public void testoneOf3() throws WitnessException, IOException, REException {
+
+        String witness = genVal.genWitness("oneOf3.copy.json");
+
+        assertEquals(0,genVal.validateWitness("oneOf3.copy.json",witness));
+        assertNotEquals(noWitness,witness);
+        assertNotEquals(maxIter,witness);
+
+    }
+
+    // type obj
+    @Test
     public void test1() throws WitnessException, IOException, REException {
 
         String witness = genVal.genWitness("1.json");

@@ -118,7 +118,15 @@ public class GenNum implements GenAssertion {
      * @return returns true iff divisor divides the dividend, i.e. whether divisor is a factor of dividend
      */
     private Boolean isMutipleOf(Double multiple, Double factor){
-        return multiple%factor==0;
+        double remainder = multiple%factor;
+        // return (remainder==0);
+        if (remainder==0) return true;
+        else if (factor%1==0) return false;
+        else {
+            double epsilon = 0.0000000000001d;
+            return (Math.abs(remainder) < epsilon
+                    || Math.abs(factor)-Math.abs(remainder) < epsilon );
+        }
     }
 
     /**
