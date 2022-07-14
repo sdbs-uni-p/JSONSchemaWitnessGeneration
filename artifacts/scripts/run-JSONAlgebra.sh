@@ -67,7 +67,7 @@ run_experiment wp/oneOf
         realWorldSchemas-processedFiles-oneOf/results.csv \
         realWorldSchemas-unsat/results.csv \
         realWorldSchemas-unprocessedFiles-generationOK/results.csv > realWorldSchemas-all/results.csv
-    cp realWorldSchemas-all/results.csv ${HOME}/Charts/data/
+    cp realWorldSchemas-all/results.csv ${HOME}/charts/data/
     cd ${HOME}/scripts
     ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
 )
