@@ -10,5 +10,3 @@ gen_df('data/realWorldSchemas/results.csv', 'data/realWorldSchemas/clean_data.cs
 gen_df('data/kubernetes/results.csv', 'data/kubernetes/clean_data.csv')
 gen_df('data/snowplow/results.csv', 'data/snowplow/clean_data.csv')
 gen_df('data/wp/results.csv', 'data/wp/clean_data.csv')
-
-

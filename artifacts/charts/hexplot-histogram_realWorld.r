@@ -23,10 +23,10 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
     #         colour=col.inf, family=text_family, check_overlap = TRUE, size=7) +
     geom_hex(bins=256, binwidth = c(.15, .15)) +
     geom_vline(xintercept=size_median, size=.5, color=col.med, linetype = "dashed") +
-    geom_text(aes(x=size_median, label="Median", y=10^6), nudge_x=-0.2, nudge_y=-0.2, colour=col.med, 
+    geom_text(aes(x=size_median, label="Median", y=10^6), nudge_x=-0.3, nudge_y=-0.2, colour=col.med, 
               angle=90, family=text_family, check_overlap = TRUE, size=7) +
     geom_hline(yintercept=time_median, size=.5, color=col.med, linetype = "dashed") + 
-    geom_text(aes(x=10^5.8, label="Median", y=time_median), nudge_x=0.1, nudge_y=0.5, colour=col.med, 
+    geom_text(aes(x=10^5.8, label="Median", y=time_median), nudge_x=0.1, nudge_y=0.6, colour=col.med, 
               family=text_family, check_overlap = TRUE, size=7) +
     labs(x = "File Size [Bytes]", y = y_title) +
     scale_fill_gradient(name="Count", low=col.low, high=col.high) +
@@ -53,7 +53,7 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
 
 plot <- hexplot_fix(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
-ggsave(paste("/home/repro/results/charts/hexplot_and_histograms_realWorldSchemas_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
+ggsave(paste("charts/hexplot_and_histograms_realWorldSchemas_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
 
 hexplot <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", col.inf="red", y_title="") {
   size_median <- median(df$inSize)
@@ -95,4 +95,4 @@ hexplot <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", col.in
 
 plot <- hexplot(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
-ggsave(paste("/home/repro/results/charts/hexplot_and_histograms_realWorldSchemas",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
+ggsave(paste("charts/hexplot_and_histograms_realWorldSchemas",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
