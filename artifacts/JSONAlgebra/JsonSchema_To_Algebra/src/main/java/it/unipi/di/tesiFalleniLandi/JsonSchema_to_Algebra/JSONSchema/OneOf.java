@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 public class OneOf implements JSONSchemaElement{
 	private List<JSONSchema> oneOf;
 
-	public static Boolean asAnyOf = true;
+	public Boolean asAnyOf = false;
 
 	private static Logger logger = LogManager.getLogger(OneOf.class);
 	
@@ -68,7 +68,7 @@ public class OneOf implements JSONSchemaElement{
 
 	@Override
 	public Assertion toGrammar() {
-		if(OneOf.asAnyOf)
+		if(asAnyOf)
 			return interpretAsAnyOf();
 
 		OneOf_Assertion oneOf = new OneOf_Assertion();
