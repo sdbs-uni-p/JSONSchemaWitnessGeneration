@@ -3,11 +3,11 @@ cd ${HOME}/JSONAlgebra
 export MAVEN_OPTS="-Xmx10240m"
 
 run_experiment() {
+    mkdir -p ${HOME}/results/${1//\//-}/
     rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv 2> /dev/null
     mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClass" \
             -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} 1 false" -pl JsonSchema_To_Algebra \
             2> ${HOME}/results/${1//\//-}/${1//\//-}-err.log
-    mkdir -p ${HOME}/results/${1//\//-}/
     cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv ${HOME}/results/${1//\//-}/results.csv 2> /dev/null
 }
 
