@@ -61,7 +61,7 @@ echo "Running experiments on Washington Post dataset (1/2)..."
 run_experiment wp
 
 echo "Running experiments on GitHub dataset (1/4)..."
-run_experiment realWorldSchemas/processedFiles
+run_experiment realWorldSchemas/sat
 
 echo "Running experiments on GitHub dataset (2/4)..."
 run_experiment realWorldSchemas/unsat
@@ -73,11 +73,9 @@ run_experiment realWorldSchemas/unsat
         JsonSchema_To_Algebra/src/main/java/it/unipi/di/tesiFalleniLandi/JsonSchema_to_Algebra/JSONSchema/OneOf.java
     mvn clean install -DskipTests -pl jsonschema-refexpander,JsonSchema_To_Algebra
 )
-echo "Running experiments on GitHub dataset (3/4)..."
-run_experiment realWorldSchemas/unprocessedFiles/generationOK
 
-echo "Running experiments on GitHub dataset (4/4)..."
-run_experiment realWorldSchemas/processedFiles/oneOf
+echo "Running experiments on GitHub dataset (3/3)..."
+run_experiment realWorldSchemas/sat/oneOf
 
 echo "Running experiments on Washington Post dataset (1/2)..."
 run_experiment wp/oneOf
@@ -86,12 +84,13 @@ run_experiment wp/oneOf
 (
     cd ${HOME}/results
     mkdir realWorldSchemas-all 2> /dev/null
-    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-processedFiles/results.csv \
-        realWorldSchemas-processedFiles-oneOf/results.csv \
-        realWorldSchemas-unsat/results.csv \
-        realWorldSchemas-unprocessedFiles-generationOK/results.csv > realWorldSchemas-all/results.csv
+    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-sat/results.csv \
+        realWorldSchemas-sat-oneOf/results.csv \
+        realWorldSchemas-unsat/results.csv  > realWorldSchemas-all/results.csv
+
     cd ${HOME}/scripts
     ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
+    ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-sat/results.csv
 )
 
 # Copy GitHub results to charts
