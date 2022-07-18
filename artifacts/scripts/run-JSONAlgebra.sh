@@ -20,14 +20,37 @@ run_experiment() {
 )
 
 echo "Running experiments on Containment dataset..."
-run_experiment subSchema/allConstAsEnum
-${HOME}/scripts/apply_manual_fixes.sh ${HOME}/results/subSchema-allConstAsEnum/results.csv
+run_experiment subSchema/sat
+run_experiment subSchema/unsat
+#${HOME}/scripts/apply_manual_fixes.sh ${HOME}/results/subSchema-allConstAsEnum/results.csv
 
 echo "Running experiments on Handwritten dataset..."
-run_experiment handwritten/testtricky
+run_experiment handwritten/sat/testtricky
+run_experiment handwritten/sat/testtrickynew
+run_experiment handwritten/sat/gennumber
+run_experiment handwritten/unsat
+
+# Combine Handwritten results
+(
+    cd ${HOME}/results
+    mkdir handwritten-all 2> /dev/null
+    awk '(NR == 1) || (FNR > 1)' handwritten-sat-testtricky/results.csv \
+        handwritten-sat-testtrickynew/results.csv \
+        handwritten-sat-gennumber/results.csv > handwritten-sat/results.csv
+)
 
 echo "Running experiments on Kubernetes dataset..."
-run_experiment kubernetes
+run_experiment kubernetes/sat
+run_experiment kubernetes/unsat
+
+# Combine Kubernetes results
+(
+    cd ${HOME}/results
+    mkdir handwritten-all 2> /dev/null
+    awk '(NR == 1) || (FNR > 1)' kubernetes-sat/results.csv \
+        kubernetes-unsat/results.csv > kubernetes/results.csv
+)
+# Copy Kubernetes results to charts
 cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
 
 echo "Running experiments on Snowplow dataset..."
@@ -67,7 +90,6 @@ run_experiment wp/oneOf
         realWorldSchemas-processedFiles-oneOf/results.csv \
         realWorldSchemas-unsat/results.csv \
         realWorldSchemas-unprocessedFiles-generationOK/results.csv > realWorldSchemas-all/results.csv
-    cp realWorldSchemas-all/results.csv ${HOME}/charts/data/
     cd ${HOME}/scripts
     ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
 )

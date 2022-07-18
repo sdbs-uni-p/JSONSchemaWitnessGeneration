@@ -12,21 +12,22 @@ run_experiment() {
 }
 
 # Containment Data Set
-run_experiment subSchema/sat/constAsEnum
-run_experiment subSchema/unsat/constAsEnum
+run_experiment subSchema/sat
+run_experiment subSchema/unsat
 
 # Handwritten Data Set
-run_experiment handwritten/testtricky
-run_experiment handwritten/testtrickynew
-run_experiment handwritten/gennumber
+run_experiment handwritten/sat/testtricky
+run_experiment handwritten/sat/testtrickynew
+run_experiment handwritten/sat/gennumber
+run_experiment handwritten/unsat
 
 # Combine results
 (
     cd ${HOME}/results
     mkdir handwritten-all 2> /dev/null
-    awk '(NR == 1) || (FNR > 1)' handwritten-testtricky/jsongenerator_results.csv \
-        handwritten-testtrickynew/jsongenerator_results.csv \
-        handwritten-gennumber/jsongenerator_results.csv > handwritten-all/jsongenerator_results.csv
+    awk '(NR == 1) || (FNR > 1)' handwritten-sat-testtricky/jsongenerator_results.csv \
+        handwritten-sat-testtrickynew/jsongenerator_results.csv \
+        handwritten-sat-gennumber/jsongenerator_results.csv > handwritten-sat/jsongenerator_results.csv
 )
 
 # GitHub Data Set
