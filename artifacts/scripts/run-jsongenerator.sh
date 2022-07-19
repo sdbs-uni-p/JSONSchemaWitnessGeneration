@@ -34,8 +34,16 @@ run_experiment handwritten/unsat
 run_experiment realWorldSchemas/all
 run_experiment realWorldSchemas/unsat
 
-run_experiment kubernetes
+run_experiment kubernetes/sat
+run_experiment kubernetes/unsat
 run_experiment snowplow
+run_experiment snowplow/dg
+(
+    cd ${HOME}/results
+	mv snowplow/jsongenerator_results.csv snowplow/jsongenerator_results_1.csv
+    awk '(NR == 1) || (FNR > 1)' snowplow/jsongenerator_results_1.csv \
+        snowplow-dg/jsongenerator_results.csv > snowplow/jsongenerator_results.csv
+)
 run_experiment wp
 run_experiment wp/oneOf
 (
