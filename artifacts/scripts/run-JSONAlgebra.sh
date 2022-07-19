@@ -33,7 +33,7 @@ run_experiment handwritten/unsat
 # Combine Handwritten results
 (
     cd ${HOME}/results
-    mkdir handwritten-all 2> /dev/null
+    mkdir handwritten-sat 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' handwritten-sat-testtricky/results.csv \
         handwritten-sat-testtrickynew/results.csv \
         handwritten-sat-gennumber/results.csv > handwritten-sat/results.csv
@@ -46,7 +46,7 @@ run_experiment kubernetes/unsat
 # Combine Kubernetes results
 (
     cd ${HOME}/results
-    mkdir handwritten-all 2> /dev/null
+    mkdir kubernetes 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' kubernetes-sat/results.csv \
         kubernetes-unsat/results.csv > kubernetes/results.csv
 )
