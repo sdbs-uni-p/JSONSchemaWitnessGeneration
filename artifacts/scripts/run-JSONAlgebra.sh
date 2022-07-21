@@ -89,8 +89,8 @@ run_experiment wp/oneOf
         realWorldSchemas-unsat/results.csv  > realWorldSchemas-all/results.csv
 
     cd ${HOME}/scripts
-    ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
-    ./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-sat/results.csv
+    #./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
+    #./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-sat/results.csv
 )
 
 # Copy GitHub results to charts

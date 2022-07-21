@@ -80,5 +80,7 @@ RUN python3.9 -m pip install pandas
 # Add artifacts directory (from host) to home directory
 ADD --chown=repro:repro artifacts/ /home/repro
 
+RUN dos2unix scripts/* && dos2unix doAll.sh
+
 # Patch jsongenerator to allow testing on our datasets
 RUN scripts/patch-jsongenerator.sh
