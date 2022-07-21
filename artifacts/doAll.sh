@@ -16,6 +16,7 @@ echo "Running evaluation..."
 echo "Creating charts..."
 (
 cd ${HOME}/charts
-.//create-charts.sh
-echo "Done: Results are in ${HOME}/results."
+./create-charts.sh
+cp charts/* ../results/charts/
+printf "\nDone: Results are in ${HOME}/results.\nCharts are in ${HOME}/results/charts\n"
 )

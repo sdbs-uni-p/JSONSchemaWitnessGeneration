@@ -15,10 +15,6 @@ Rscript boxplots.r
 
 echo 'Creating hexplots ...'
 Rscript hexplot-histogram_realWorld.r
-Rscript hexplot-histogram_realWorld_timeout.r
-Rscript hexplot-histogram_realWorld_timeout_noY.r
 Rscript hexplot-histogram_kubernetes.r
 Rscript hexplot-histogram_snowplow.r
 Rscript hexplot-histogram_wp.r
-
-
