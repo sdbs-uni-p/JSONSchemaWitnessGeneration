@@ -31,8 +31,13 @@ run_experiment handwritten/unsat
 )
 
 # GitHub Data Set
-run_experiment realWorldSchemas/all
+run_experiment realWorldSchemas/sat-dg
 run_experiment realWorldSchemas/unsat
+(
+    cd ${HOME}/results
+	mv realWorldSchemas-sat-dg/jsongenerator_results.csv realWorldSchemas-sat/jsongenerator_results.csv
+    rm -r realWorldSchemas-sat-dg
+)
 
 run_experiment kubernetes/sat
 run_experiment kubernetes/unsat
@@ -43,6 +48,7 @@ run_experiment snowplow/dg
 	mv snowplow/jsongenerator_results.csv snowplow/jsongenerator_results_1.csv
     awk '(NR == 1) || (FNR > 1)' snowplow/jsongenerator_results_1.csv \
         snowplow-dg/jsongenerator_results.csv > snowplow/jsongenerator_results.csv
+	rm snowplow/jsongenerator_results_1.csv
 )
 run_experiment wp
 run_experiment wp/oneOf
