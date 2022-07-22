@@ -18,3 +18,6 @@ Rscript hexplot-histogram_realWorld.r
 Rscript hexplot-histogram_kubernetes.r
 Rscript hexplot-histogram_snowplow.r
 Rscript hexplot-histogram_wp.r
+
+cp charts/* ../results/charts/
+printf "\nCharts are in ${HOME}/results/charts\n"
