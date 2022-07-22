@@ -14,7 +14,7 @@ echo 'Creating box plots ...'
 Rscript boxplots.r
 
 echo 'Creating hexplots ...'
-Rscript hexplot-histogram_realWorld.r
+Rscript hexplot-histogram_github.r
 Rscript hexplot-histogram_kubernetes.r
 Rscript hexplot-histogram_snowplow.r
 Rscript hexplot-histogram_wp.r

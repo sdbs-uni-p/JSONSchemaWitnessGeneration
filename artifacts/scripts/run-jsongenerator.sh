@@ -12,8 +12,8 @@ run_experiment() {
 }
 
 # Containment Data Set
-run_experiment subSchema/sat
-run_experiment subSchema/unsat
+run_experiment containment/sat
+run_experiment containment/unsat
 
 # Handwritten Data Set
 run_experiment handwritten/sat/testtricky
@@ -31,12 +31,12 @@ run_experiment handwritten/unsat
 )
 
 # GitHub Data Set
-run_experiment realWorldSchemas/sat-dg
-run_experiment realWorldSchemas/unsat
+run_experiment github/sat-dg
+run_experiment github/unsat
 (
     cd ${HOME}/results
-	mv realWorldSchemas-sat-dg/jsongenerator_results.csv realWorldSchemas-sat/jsongenerator_results.csv
-    rm -r realWorldSchemas-sat-dg
+	mv github-sat-dg/jsongenerator_results.csv github-sat/jsongenerator_results.csv
+    rm -r github-sat-dg
 )
 
 run_experiment kubernetes/sat

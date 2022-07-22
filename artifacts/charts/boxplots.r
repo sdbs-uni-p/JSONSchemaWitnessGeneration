@@ -5,7 +5,7 @@ library(tidyr)
 library(dplyr, warn.conflicts=FALSE)
 library(scales)
 source('config.r')
-df  <- read.csv('data/realWorldSchemas/clean_data.csv')
+df  <- read.csv('data/github/clean_data.csv')
 
 # We divide the processing steps into three groups as defined here
 grp.trans = c("parsing","extractSchema","X2Full","X2Witness","notElim","merge1",

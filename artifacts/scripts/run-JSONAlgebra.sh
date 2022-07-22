@@ -20,9 +20,8 @@ run_experiment() {
 )
 
 echo "Running experiments on Containment dataset..."
-run_experiment subSchema/sat
-run_experiment subSchema/unsat
-#${HOME}/scripts/apply_manual_fixes.sh ${HOME}/results/subSchema-allConstAsEnum/results.csv
+run_experiment containment/sat
+run_experiment containment/unsat
 
 echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat/testtricky
@@ -61,10 +60,10 @@ echo "Running experiments on Washington Post dataset (1/2)..."
 run_experiment wp
 
 echo "Running experiments on GitHub dataset (1/4)..."
-run_experiment realWorldSchemas/sat
+run_experiment github/sat
 
 echo "Running experiments on GitHub dataset (2/4)..."
-run_experiment realWorldSchemas/unsat
+run_experiment github/unsat
 
 # The following experiments are run with interpreting OneOf as AnyOf
 (
@@ -75,7 +74,7 @@ run_experiment realWorldSchemas/unsat
 )
 
 echo "Running experiments on GitHub dataset (3/3)..."
-run_experiment realWorldSchemas/sat/oneOf
+run_experiment github/sat/oneOf
 
 echo "Running experiments on Washington Post dataset (1/2)..."
 run_experiment wp/oneOf
@@ -83,17 +82,18 @@ run_experiment wp/oneOf
 # Combine GitHub results
 (
     cd ${HOME}/results
-    mkdir realWorldSchemas-all 2> /dev/null
-    mv realWorldSchemas-sat/results.csv realWorldSchemas-sat/results_part.csv
-    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-sat/results_part.csv \
-        realWorldSchemas-sat-oneOf/results.csv > realWorldSchemas-sat/results.csv
+    mkdir github-all 2> /dev/null
+    mv github-sat/results.csv github-sat/results_part.csv
+    awk '(NR == 1) || (FNR > 1)' github-sat/results_part.csv \
+        github-sat-oneOf/results.csv > github-sat/results.csv
 
-    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-sat/results.csv \
-        realWorldSchemas-unsat/results.csv  > realWorldSchemas-all/results.csv
+    awk '(NR == 1) || (FNR > 1)' github-sat/results.csv \
+        github-unsat/results.csv  > github-all/results.csv
+	# Copy GitHub results to charts
+	cp ${HOME}/results/github-all/results.csv ${HOME}/charts/data/github/results.csv
+	rm -r github-all
 )
 
-# Copy GitHub results to charts
-cp ${HOME}/results/realWorldSchemas-all/results.csv ${HOME}/charts/data/realWorldSchemas/results.csv
 
 # Combine Washington Post results
 (
@@ -101,7 +101,8 @@ cp ${HOME}/results/realWorldSchemas-all/results.csv ${HOME}/charts/data/realWorl
     mkdir wp-all 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' wp/results.csv \
         wp-oneOf/results.csv > wp-all/results.csv
+		
+	# Copy Washington Post results to charts
+	cp ${HOME}/results/wp-all/results.csv ${HOME}/charts/data/wp/results.csv
+	rm -r wp-all
 )
-
-# Copy Washington Post results to charts
-cp ${HOME}/results/wp-all/results.csv ${HOME}/charts/data/wp/results.csv

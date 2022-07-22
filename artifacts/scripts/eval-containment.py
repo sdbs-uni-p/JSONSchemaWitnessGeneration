@@ -137,7 +137,7 @@ def evalSubschema(df):
         "\t\t => Increase Failure by 43")
 
 def runSubschemaTests():
-    schemaPairs = '/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/subSchema/schemaPairs'
+    schemaPairs = '/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/containment/schemaPairs'
     subschemaDF = extractAndCheck(schemaPairs)   
     subschemaDF = subschemaDF.sort_values(by=['subFolder', 'subSubFolder','fileName','id'])
     subschemaSatDf = subschemaDF[subschemaDF['s1SUBs2']==0]

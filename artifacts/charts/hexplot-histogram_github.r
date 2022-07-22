@@ -8,8 +8,8 @@ library(dplyr, warn.conflicts=FALSE)
 library(scales)
 
 source('config.r')
-df <- read.csv('data/realWorldSchemas/clean_data.csv')
-df_timeout <- read.csv('data/realWorldSchemas/timeout.csv')
+df <- read.csv('data/github/clean_data.csv')
+df_timeout <- read.csv('data/github/timeout.csv')
 df_timeout$totalTime=Inf
 
 hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", col.inf="red", y_title="") {
@@ -53,4 +53,4 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
 
 plot <- hexplot_fix(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
-ggsave(paste("charts/hexplot_and_histograms_realWorldSchemas_timeout_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
+ggsave(paste("charts/hexplot_and_histograms_github_timeout_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
