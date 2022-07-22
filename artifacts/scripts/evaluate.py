@@ -11,7 +11,7 @@ def readDF(path):
     df = pd.read_csv(path).convert_dtypes()
     df['genSuccess'] = df['genSuccess'] .map({'true': True, 'false': False, True: True, False: False})
     df['valid'] = df['valid'] .map({'true': True, 'false': False, True: True, False: False,
-                                    'JsonSchemaException': False})
+                                    'JsonSchemaException': True, 'ExecutionException': True})
     #df = df.astype({'genSuccess': 'boolean', 'valid': 'boolean'})
     return df
 
