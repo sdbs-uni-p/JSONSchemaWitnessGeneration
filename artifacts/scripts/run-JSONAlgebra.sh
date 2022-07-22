@@ -84,13 +84,12 @@ run_experiment wp/oneOf
 (
     cd ${HOME}/results
     mkdir realWorldSchemas-all 2> /dev/null
-    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-sat/results.csv \
-        realWorldSchemas-sat-oneOf/results.csv \
-        realWorldSchemas-unsat/results.csv  > realWorldSchemas-all/results.csv
+    mv realWorldSchemas-sat/results.csv realWorldSchemas-sat/results_part.csv
+    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-sat/results_part.csv \
+        realWorldSchemas-sat-oneOf/results.csv > realWorldSchemas-sat/results.csv
 
-    cd ${HOME}/scripts
-    #./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-all/results.csv
-    #./apply_manual_fixes.sh ${HOME}/results/realWorldSchemas-sat/results.csv
+    awk '(NR == 1) || (FNR > 1)' realWorldSchemas-sat/results.csv \
+        realWorldSchemas-unsat/results.csv  > realWorldSchemas-all/results.csv
 )
 
 # Copy GitHub results to charts
@@ -103,5 +102,6 @@ cp ${HOME}/results/realWorldSchemas-all/results.csv ${HOME}/charts/data/realWorl
     awk '(NR == 1) || (FNR > 1)' wp/results.csv \
         wp-oneOf/results.csv > wp-all/results.csv
 )
+
 # Copy Washington Post results to charts
 cp ${HOME}/results/wp-all/results.csv ${HOME}/charts/data/wp/results.csv
