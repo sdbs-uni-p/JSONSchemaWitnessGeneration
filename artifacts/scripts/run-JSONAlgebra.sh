@@ -36,6 +36,7 @@ run_experiment handwritten/unsat
     awk '(NR == 1) || (FNR > 1)' handwritten-sat-testtricky/results.csv \
         handwritten-sat-testtrickynew/results.csv \
         handwritten-sat-gennumber/results.csv > handwritten-sat/results.csv
+	rm -r handwritten-sat-*
 )
 
 echo "Running experiments on Kubernetes dataset..."
@@ -48,9 +49,10 @@ run_experiment kubernetes/unsat
     mkdir kubernetes 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' kubernetes-sat/results.csv \
         kubernetes-unsat/results.csv > kubernetes/results.csv
+	# Copy Kubernetes results to charts
+	cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
+	rm -r kubernetes
 )
-# Copy Kubernetes results to charts
-cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
 
 echo "Running experiments on Snowplow dataset..."
 run_experiment snowplow
@@ -92,6 +94,8 @@ run_experiment wp/oneOf
 	# Copy GitHub results to charts
 	cp ${HOME}/results/github-all/results.csv ${HOME}/charts/data/github/results.csv
 	rm -r github-all
+	rm -r github-sat-oneOf
+	rm github-sat/results_part.csv
 )
 
 
@@ -105,4 +109,5 @@ run_experiment wp/oneOf
 	# Copy Washington Post results to charts
 	cp ${HOME}/results/wp-all/results.csv ${HOME}/charts/data/wp/results.csv
 	rm -r wp-all
+	rm -r wp-oneOf
 )

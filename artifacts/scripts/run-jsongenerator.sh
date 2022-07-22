@@ -24,10 +24,11 @@ run_experiment handwritten/unsat
 # Combine results
 (
     cd ${HOME}/results
-    mkdir handwritten-all 2> /dev/null
+    mkdir handwritten-sat 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' handwritten-sat-testtricky/jsongenerator_results.csv \
         handwritten-sat-testtrickynew/jsongenerator_results.csv \
         handwritten-sat-gennumber/jsongenerator_results.csv > handwritten-sat/jsongenerator_results.csv
+	rm -r handwritten-sat-*
 )
 
 # GitHub Data Set
@@ -35,6 +36,7 @@ run_experiment github/sat-dg
 run_experiment github/unsat
 (
     cd ${HOME}/results
+	mkdir github-sat 2> /dev/null
 	mv github-sat-dg/jsongenerator_results.csv github-sat/jsongenerator_results.csv
     rm -r github-sat-dg
 )
@@ -45,16 +47,20 @@ run_experiment snowplow
 run_experiment snowplow/dg
 (
     cd ${HOME}/results
-	mv snowplow/jsongenerator_results.csv snowplow/jsongenerator_results_1.csv
-    awk '(NR == 1) || (FNR > 1)' snowplow/jsongenerator_results_1.csv \
+	mv snowplow/jsongenerator_results.csv snowplow/jsongenerator_results_part.csv
+    awk '(NR == 1) || (FNR > 1)' snowplow/jsongenerator_results_part.csv \
         snowplow-dg/jsongenerator_results.csv > snowplow/jsongenerator_results.csv
-	rm snowplow/jsongenerator_results_1.csv
+	rm snowplow/jsongenerator_results_part.csv
+	rm -r snowplow-dg
 )
 run_experiment wp
 run_experiment wp/oneOf
 (
     cd ${HOME}/results
-    mkdir wp-all 2> /dev/null
-    awk '(NR == 1) || (FNR > 1)' wp/jsongenerator_results.csv \
-        wp-oneOf/jsongenerator_results.csv > wp-all/jsongenerator_results.csv
+    mkdir wp 2> /dev/null
+	mv wp/jsongenerator_results.csv wp/jsongenerator_results_part.csv
+    awk '(NR == 1) || (FNR > 1)' wp/jsongenerator_results_part.csv \
+        wp-oneOf/jsongenerator_results.csv > wp/jsongenerator_results.csv*
+	rm wp/jsongenerator_results_part.csv
+	rm -r wp-oneOf
 )
