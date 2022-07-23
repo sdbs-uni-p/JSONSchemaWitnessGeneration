@@ -108,6 +108,7 @@ run_experiment wp/oneOf
 		
 	# Copy Washington Post results to charts
 	cp ${HOME}/results/wp-all/results.csv ${HOME}/charts/data/wp/results.csv
+	cp wp-all/results.csv wp/results.csv
 	rm -r wp-all
 	rm -r wp-oneOf
 )

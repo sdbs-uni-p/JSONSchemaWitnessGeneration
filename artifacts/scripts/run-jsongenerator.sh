@@ -60,7 +60,7 @@ run_experiment wp/oneOf
     mkdir wp 2> /dev/null
 	mv wp/jsongenerator_results.csv wp/jsongenerator_results_part.csv
     awk '(NR == 1) || (FNR > 1)' wp/jsongenerator_results_part.csv \
-        wp-oneOf/jsongenerator_results.csv > wp/jsongenerator_results.csv*
+        wp-oneOf/jsongenerator_results.csv > wp/jsongenerator_results.csv
 	rm wp/jsongenerator_results_part.csv
 	rm -r wp-oneOf
 )
