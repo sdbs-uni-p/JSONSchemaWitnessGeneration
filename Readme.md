@@ -36,7 +36,9 @@ There are several scripts in [scripts](artifacts/scripts) with the following fun
 ## Comparing the Results
 To compare the computed results with the results stated in the paper, inspect the file evaluation.txt in the directory [results](artifacts/results) after running ``./doAll.sh``. Evaluation.txt also contains comments on a few selected manual changes that we had to make, e.g., due to incorrect results produced by the third-party schema validator.
 
-As the algorithm of our tool is not entirely deterministic, results may vary slightly between runs for a selected few schema. However, we have only experienced deviations of no more than 3 files, which accounted for roughly 0.05% in our GitHub data set.
+As the algorithm of our tool is not entirely deterministic, results may vary slightly. However, we have only experienced deviations of no more than 3 files, which accounted for roughly 0.05% in our GitHub data set.
+
+Results for jsongenerator (DG) on the datasets GitHub, Handwritten and Containment differ slightly from those reported in the paper, as a different version of jsongenerator is used in this reproduction package.
 
 ## Generating Charts
 To generate charts, execute ``./create-charts.sh`` at [Charts/](artifacts/Charts) inside the docker container. The generated charts are stored in [Charts/charts](artifacts/Charts/charts).
