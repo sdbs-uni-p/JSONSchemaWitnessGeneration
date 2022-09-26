@@ -94,6 +94,8 @@ public class WitnessPattern implements WitnessAssertion{
         // return pattern.equals(that.pattern);
     }
 
+    // this hashCode function is not coherent with equality, that is, we may
+    // have two objects that satisfy equals but have a different hashcode
     @Override
     public int hashCode() {
         return pattern != null ? pattern.hashCode() : 0;
@@ -137,11 +139,6 @@ public class WitnessPattern implements WitnessAssertion{
     @Override
     public WitnessAssertion DNF() {
         return this.clone();
-    }
-
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        return this;
     }
 
     @Override

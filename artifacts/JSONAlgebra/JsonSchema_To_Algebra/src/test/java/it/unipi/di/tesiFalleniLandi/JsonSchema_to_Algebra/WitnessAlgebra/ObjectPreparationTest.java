@@ -27,7 +27,7 @@ public class ObjectPreparationTest {
         input = input.DNF();
         input.varNormalization_separation(null, null);
         input = input.varNormalization_expansion(null);
-        input.toOrPattReq();
+        //input.toOrPattReq();
         input.objectPrepare();
 
         assertEquals(input, output);
@@ -47,7 +47,7 @@ public class ObjectPreparationTest {
         input = input.DNF();
         input.varNormalization_separation(null, null);
         input = input.varNormalization_expansion(null);
-        input.toOrPattReq();
+        //input.toOrPattReq();
         input.objectPrepare();
 
         assertEquals(input, output);
@@ -66,7 +66,7 @@ public class ObjectPreparationTest {
         input = input.groupize();
         input = input.varNormalization_expansion(null);
         input = input.DNF();
-        input.toOrPattReq();
+        //input.toOrPattReq();
         input.objectPrepare();
 
         assertEquals(input, output);
@@ -87,7 +87,7 @@ public class ObjectPreparationTest {
         input = input.DNF();
         input.varNormalization_separation(null, null);
         input = input.varNormalization_expansion(null);
-        input.toOrPattReq();
+        //input.toOrPattReq();
         input.objectPrepare();
 
         assertEquals(input, output);
@@ -108,7 +108,7 @@ public class ObjectPreparationTest {
         input = input.DNF();
         input.varNormalization_separation(null, null);
         input = input.varNormalization_expansion(null);
-        input.toOrPattReq();
+        //input.toOrPattReq();
         input.objectPrepare();
 
         assertEquals(input, output);
@@ -129,7 +129,7 @@ public class ObjectPreparationTest {
         input = input.DNF();
         input.varNormalization_separation(null, null);
         input = input.varNormalization_expansion(null);
-        input.toOrPattReq();
+        //input.toOrPattReq();
         input.objectPrepare();
 
         System.out.println(Utils.beauty(input.getFullAlgebra().toGrammarString()));

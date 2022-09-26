@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class WitnessTypedAnd extends WitnessAnd{
     //flag useful to avoid re-preparation - works for object and array groups
-    private Boolean prepared; //null by default since relevant only for specific And expressions
-    public Boolean isPrepared(){
+    private boolean prepared; //null by default since relevant only for specific And expressions
+    public boolean isPrepared(){
         if(prepared) return prepared;
         else return false;
     }
@@ -19,7 +19,7 @@ public class WitnessTypedAnd extends WitnessAnd{
 
     //invariant: must have a type
 
-
+/*
     public void checkInvariants() throws Exception {
         //checking if it's an object group
         if (andList.get(WitnessType.class) == null) { //and without type specified
@@ -33,7 +33,7 @@ public class WitnessTypedAnd extends WitnessAnd{
             throw new Exception("WitnessTypedAnd with more than one type specified");
         }
     }
-
+*/
     @Override
     public List<Map.Entry<WitnessVar, WitnessAssertion>> objectPrepare(WitnessEnv env) throws REException, WitnessException {
         return super.objectPrepare(env);

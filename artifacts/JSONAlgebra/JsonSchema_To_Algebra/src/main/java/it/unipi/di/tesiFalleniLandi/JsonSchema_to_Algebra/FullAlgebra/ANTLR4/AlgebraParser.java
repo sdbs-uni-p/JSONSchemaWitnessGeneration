@@ -616,7 +616,7 @@ public class AlgebraParser extends GrammaticaBaseVisitor<AlgebraParserElement>{
 		return addPattReq;
 	}
 
-	@Override
+	/*@Override
 	public OrPattReq_Assertion visitParseOrPattReq(GrammaticaParser.ParseOrPattReqContext ctx) {
 		OrPattReq_Assertion orPattReq = new OrPattReq_Assertion();
 
@@ -636,12 +636,12 @@ public class AlgebraParser extends GrammaticaBaseVisitor<AlgebraParserElement>{
 		}
 
 		return orPattReq;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public OrPattReq_Assertion visitNewOrPattReq(GrammaticaParser.NewOrPattReqContext ctx) {
 		return (OrPattReq_Assertion) visit(ctx.orPattReq_assertion());
-	}
+	}*/
 
 	@Override
 	public Properties_Assertion visitNewProperties(GrammaticaParser.NewPropertiesContext ctx) {

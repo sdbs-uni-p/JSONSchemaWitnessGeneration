@@ -17,56 +17,20 @@ public class WitnessPattReq implements WitnessAssertion{
     private ComplexPattern key;
     private WitnessAssertion value;
 
-    private List<WitnessOrPattReq> orpList;
-
     protected WitnessPattReq(ComplexPattern key, WitnessAssertion assertion){
         if(assertion != null && assertion.getClass() == WitnessAnd.class && ((WitnessAnd) assertion).getIfUnitaryAnd() != null)
             assertion = ((WitnessAnd) assertion).getIfUnitaryAnd();
         logger.trace("Creating a new WitnessPattReq with key: {} and value: {}", key, assertion);
         this.key = key;
         value = assertion;
-        orpList = new LinkedList<>();
     }
 
-    public void fullConnect(WitnessOrPattReq orp){
-        //if(orpList.contains(orp)) return;
-
-        logger.debug("Connecting {} to {}", orp, this);
-
-        orpList.add(orp);
-        orp.halfConnect(this);
-    }
-
-    public void halfConnect(WitnessOrPattReq orp){
-
-        orpList.add(orp);
-    }
-
-    public void deConnect(WitnessOrPattReq orp){
-        if(!orpList.contains(orp)) return;
-
-        logger.debug("De-Connecting {} to {}", orp, this);
-
-        if(orpList.remove(orp))
-            orp.deConnect(this);
-    }
-
-    public void deConnectAll(List<WitnessOrPattReq> orp){
-        for(WitnessOrPattReq a : orp)
-            deConnect(a);
-
-    }
-
-    public List<WitnessOrPattReq> getOrpList(){
-        return orpList;
-    }
 
     public WitnessAssertion getValue() {
         return value;
     }
 
     private WitnessPattReq() {
-        orpList = new LinkedList<>();
     }
 
     public ComplexPattern getPattern() {
@@ -159,9 +123,6 @@ public class WitnessPattReq implements WitnessAssertion{
         clone.key = key.clone();
         clone.value = value.clone();
 
-        for(WitnessOrPattReq orp : orpList)
-            clone.orpList.add((WitnessOrPattReq) orp.clone());
-
         return clone;
     }
 
@@ -241,25 +202,18 @@ public class WitnessPattReq implements WitnessAssertion{
     }
 
     @Override
-    public WitnessAssertion varNormalization_expansion(WitnessEnv env) {
+    public WitnessPattReq varNormalization_expansion(WitnessEnv env) {
         return this;
     }
 
     @Override
-    public WitnessAssertion DNF() {
+    public WitnessPattReq DNF() {
         WitnessPattReq pattReq = new WitnessPattReq();
         pattReq.key = this.key;
 
         if(value != null) pattReq.value = this.value.clone();
 
         return pattReq;
-    }
-
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        WitnessOrPattReq orPattReq = new WitnessOrPattReq();
-        orPattReq.add(this);
-        return orPattReq;
     }
 
     @Override

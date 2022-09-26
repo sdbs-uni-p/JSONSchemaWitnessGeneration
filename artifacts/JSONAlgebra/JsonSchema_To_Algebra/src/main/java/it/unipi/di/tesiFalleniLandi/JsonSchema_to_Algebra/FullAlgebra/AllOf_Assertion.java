@@ -18,11 +18,17 @@ import java.util.stream.Collectors;
 
 public class AllOf_Assertion implements Assertion{
 	private List<Assertion> andList;
+	private AnyOf_Assertion choices;
+
 	private boolean duplicates, //used to replace allOf[...] keyword with { ... } when possible
 			containsFalseBoolean;
 
 	private static Logger logger = LogManager.getLogger(AllOf_Assertion.class);
-	
+
+	public void setChoices(AnyOf_Assertion choices) {
+		this.choices = choices;
+	}
+
 	public AllOf_Assertion() {
 		this.andList = new LinkedList<>();
 		duplicates = false;
@@ -66,7 +72,8 @@ public class AllOf_Assertion implements Assertion{
 	
 	@Override
 	public String toString() {
-		return "And_Assertion [" + andList + "]";
+		return "And_Assertion [" + andList +
+				(choices!=null ? ";" + choices : " - no choices") + "]";
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,6 +179,13 @@ public class AllOf_Assertion implements Assertion{
 				continue;
 			str.append(AlgebraStrings.COMMA)
 					.append(returnedValue);
+		}
+
+		str.append(AlgebraStrings.SEMICOLON);
+		if (choices!=null) {
+			str.append(choices.toGrammarString());
+		} else {
+			str.append("choices:null");
 		}
 		
 		if(str.length() == 0) return "";

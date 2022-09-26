@@ -122,11 +122,6 @@ public class WitnessBoolean implements WitnessAssertion{
     }
 
     @Override
-    public WitnessAssertion toOrPattReq(){
-        return this;
-    }
-
-    @Override
     public boolean isBooleanExp() {
         return true;
     }

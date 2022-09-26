@@ -181,11 +181,6 @@ public class WitnessBet implements WitnessAssertion{
     }
 
     @Override
-    public WitnessAssertion toOrPattReq() {
-        return this;
-    }
-
-    @Override
     public boolean isBooleanExp() {
         return false;
     }

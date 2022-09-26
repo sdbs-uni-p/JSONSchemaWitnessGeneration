@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class WitnessPattReqManager {
     private static Logger logger = LogManager.getLogger(WitnessPattReqManager.class);
 
-    private HashMap<Object, WeakReference<WitnessPattReq>> instances;
+    private HashMap<WitnessPattReq, WeakReference<WitnessPattReq>> instances;
 
     public WitnessPattReqManager(){
         instances = new HashMap<>();
@@ -21,16 +21,25 @@ public class WitnessPattReqManager {
 
         WitnessPattReq tmp = new WitnessPattReq(key, assertion);
 
-        if(instances.containsKey(tmp.toString())) {
+        /*if(instances.containsKey(tmp.toString())) {
             if (instances.get(tmp.toString()).get() != null) {
                 logger.trace("PattReq returning an OLD instance: ", instances.get(tmp.toString()).get());
 
                 return instances.get(tmp.toString()).get();
             } else
                 instances.remove(tmp.toString());
+        }*/
+
+        if(instances.containsKey(tmp)) {
+            if (instances.get(tmp).get() != null) {
+                logger.trace("PattReq returning an OLD instance: ", instances.get(tmp).get());
+
+                return instances.get(tmp).get();
+            } else
+                instances.remove(tmp);
         }
 
-        instances.put(tmp.toString(), new WeakReference<>(tmp));
+        instances.put(tmp, new WeakReference<>(tmp));
         logger.trace("PattReq returning a NEW instance: ", instances.get(tmp.toString()));
         return tmp;
     }

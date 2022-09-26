@@ -1,0 +1,237 @@
+package it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting;
+
+
+import com.networknt.schema.ValidationMessage;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.*;
+
+
+public class MainClassV2 {
+
+
+
+
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+
+
+        // Get the git version
+        Runtime runtime = Runtime.getRuntime();
+        Process process = runtime.exec("git rev-parse HEAD");
+        String revision;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream())
+        )) {
+            revision = reader.readLine();
+        }
+
+        // Get the machine's name
+        String systemName = "";
+        try {
+            systemName = InetAddress.getLocalHost().getHostName();
+        }
+        catch (Exception E) {
+            System.err.println(E.getMessage());
+        }
+
+
+
+        Utils.clean = true; // comment if we are not executing on the files cleaned by Giorgio
+
+
+//        int nbProcs = Runtime.getRuntime().availableProcessors();
+//        System.out.println(nbProcs);
+
+
+
+
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy_HHmmss");
+        Date date = new Date();
+
+
+        if (args.length < 3) {
+            System.out.println("Usage: <path>");
+            return;
+        }
+
+        String path = args[0];
+        File[] files = new File(path).listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
+        Arrays. sort(files, Comparator.comparing(f -> f.length()));
+
+        int nbProcs = Integer.parseInt(args[1]);
+
+
+        String info = formatter.format(date)+"_";
+
+        boolean withTimout = Boolean.valueOf(args[2]);
+        long timeout = 0;
+        if (withTimout) {
+            timeout = Long.parseLong(args[3]);
+            info = info+timeout+"ms_";
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(nbProcs);
+
+        ExecutorService writerExec = Executors.newSingleThreadExecutor();
+
+
+        File resultsFolder = new File(path+"/results");
+        if (!resultsFolder.exists())
+            resultsFolder.mkdir();
+
+
+
+
+        BufferedWriter csvFile = Utils.createBufferedWriter(resultsFolder.getPath(),info+"results.csv");
+        Utils.setCSVHeader(csvFile);
+
+        BufferedWriter witnessFile = Utils.createBufferedWriter(resultsFolder.getPath(), info+"witness.csv");
+        witnessFile.write("objectId,witness\n");
+
+        BufferedWriter validationErrorsFile = Utils.createBufferedWriter(resultsFolder.getPath(), info+"validation.csv");
+        validationErrorsFile.write("objectId,nbErrors,errorsTypes,errorsMessages\n");
+
+        BufferedWriter exceptionFile = Utils.createBufferedWriter(resultsFolder.getPath(), info+"exception.csv");
+        exceptionFile.write("objectId,operation,exceptionName,message,stackSize,stackTrace(class:method:line)\n");
+
+        BufferedWriter validationExceptionFile = Utils.createBufferedWriter(resultsFolder.getPath(), info+"validationException.csv");
+        validationExceptionFile.write("objectId,exceptionName,message\n");
+
+        BufferedWriter sizeFile = Utils.createBufferedWriter(resultsFolder.getPath(), info+"size.csv");
+        assert sizeFile != null;
+        sizeFile.write("objectId,inSize,2Full,2Witness,notElim,merge1,groupize,separation,expansion," +
+                //"merge2,"
+                "preparation,arrPrep,merge3,genEnv,witness\n");
+
+
+
+
+        long start = System.currentTimeMillis();
+        System.out.println(start);
+
+        LinkedHashMap<File,GenerateWitnessTaskV4> fileTaskMap = new LinkedHashMap<>();
+
+
+        for (File file : files){
+            GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(file);
+            fileTaskMap.put(file,task);
+        }
+
+        List<Future<GenerateWitnessTaskV4>> futures = new ArrayList<>();
+
+
+        for(int i=0;i< files.length;i++) {
+            GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(files[i]);
+            Future<GenerateWitnessTaskV4> future = executor.submit(new TaskManager(timeout,TimeUnit.MILLISECONDS,task));
+            futures.add(future);
+        }
+
+
+
+        for(int i=0;i<futures.size();i++) {
+            Future<GenerateWitnessTaskV4> future = futures.get(i);
+            File file = (File) fileTaskMap.keySet().toArray()[i];
+            GenerateWitnessTaskV4 task = fileTaskMap.get(file);
+
+            GenerateWitnessTaskV4 resTask = null;
+            try {
+                resTask = future.get();
+            } catch (InterruptedException | ExecutionException | CancellationException e) {
+                resTask.getResultMap().put(task.getCurrentOperation(),e.getClass().getSimpleName()); // Add to results the operation and the exception happened during this operation
+                resTask.hasException = true;
+                Utils.addExceptionInformation(resTask.id,e,resTask.exceptionMap,resTask.currentOperation);
+                resTask.getResultMap().put(Utils.cancelledAt,resTask.currentOperation);
+                e.printStackTrace();
+            }
+
+            LinkedHashMap<String, String> resultMap = resTask.getResultMap();
+
+            if (i==0) {
+                resultMap.put(Utils.dateAndTime,formatter.format(date));
+                resultMap.put(Utils.timeout,String.valueOf(timeout));
+                resultMap.put(Utils.git,revision);
+                resultMap.put(Utils.machine,systemName);
+            }
+
+
+            LinkedHashMap<String, String> witnessMap = resTask.getWitnessMap();
+
+            LinkedHashMap<String, Set<ValidationMessage>> validationErrorsMap = resTask.getErrorsMap();
+
+            LinkedHashMap<String, String> exceptionMap = resTask.getExceptionMap();
+
+            LinkedHashMap<String,String> validationException = resTask.getValidationException();
+
+            LinkedHashMap<String,String> sizeMap = resTask.getSizeMap();
+
+            Runnable writer = new WriteResults(resultMap,witnessMap,validationErrorsMap,exceptionMap,sizeMap,
+                    csvFile,witnessFile,validationErrorsFile,exceptionFile,sizeFile,resTask.witnessGenerationSuccess,
+                    resTask.hasValidationErrors(), resTask.hasException,file,i, validationException, validationExceptionFile);
+
+            writerExec.submit(writer);
+
+        }
+
+
+        executor.shutdown();
+        writerExec.shutdown();
+
+        while(!writerExec.isTerminated())
+            System.out.print("");
+
+//        try {
+//            executor.awaitTermination(60, TimeUnit.SECONDS); //Global Timeout
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
+        csvFile.flush();
+        csvFile.close();
+        witnessFile.flush();
+        witnessFile.close();
+        validationErrorsFile.flush();
+        validationErrorsFile.close();
+        exceptionFile.flush();
+        exceptionFile.close();
+        validationExceptionFile.flush();
+        validationExceptionFile.close();
+        sizeFile.flush();
+        sizeFile.close();
+
+
+
+
+        long totalTimeInMS = System.currentTimeMillis()-start;
+        long mn = (totalTimeInMS / 1000) / 60;
+        long s = (totalTimeInMS / 1000) % 60;
+        System.out.println("\n\n***************************************************");
+        System.out.println("Total time : "+mn+" minutes and "+s+ " seconds");
+        System.out.println("***************************************************\n\n");
+
+
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+
+        // Exiting the program when a thread from the previous pool is still running (when stuck in dnf for example)
+        // Didn't find any other alternative to stop the thread from running
+        for(Thread t : threadSet)
+            if(t.getName().contains("pool")) {
+//                System.out.println(t + "   " + t.getName() + "   " + t.getPriority() + "   " + t.getThreadGroup().getName());
+                System.exit(-1);
+            }
+
+
+//
+    }
+
+
+
+}

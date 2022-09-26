@@ -193,13 +193,14 @@ public class WitnessProperty implements WitnessAssertion{
         return newDefinitions;
     }
 
+    // why is it trivial? do we assume to do separation first expansion later?
     @Override
-    public WitnessAssertion varNormalization_expansion(WitnessEnv env) {
+    public WitnessProperty varNormalization_expansion(WitnessEnv env) {
         return this;
     }
 
     @Override
-    public WitnessAssertion DNF() throws WitnessException {
+    public WitnessProperty DNF() throws WitnessException {
         WitnessProperty prop = new WitnessProperty();
         prop.key = this.key;
         if(value != null)   prop.value = this.value.DNF();
@@ -207,12 +208,6 @@ public class WitnessProperty implements WitnessAssertion{
         return prop;
     }
 
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        value = value.toOrPattReq();
-
-        return this;
-    }
 
     @Override
     public boolean isBooleanExp() {

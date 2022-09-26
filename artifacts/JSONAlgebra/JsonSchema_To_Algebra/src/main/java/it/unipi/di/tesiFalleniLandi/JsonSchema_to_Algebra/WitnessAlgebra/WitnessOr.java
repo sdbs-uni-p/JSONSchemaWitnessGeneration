@@ -279,7 +279,6 @@ public class WitnessOr implements WitnessAssertion{
 
     @Override
     public boolean equals(Object o) {
-        boolean b = true;
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -300,10 +299,10 @@ public class WitnessOr implements WitnessAssertion{
                 check.removeAll(witnessOr.orList.get(entry.getKey()));
             }
 
-            b &= check.size() == 0;
+            if (check.size() != 0) return false;
         }
 
-        return b;
+        return true;
     }
 
     /**
@@ -417,23 +416,6 @@ public class WitnessOr implements WitnessAssertion{
                 or.add(assertion.DNF());
 
         return or;
-    }
-
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        WitnessOr newElem = new WitnessOr(); //to avoid ConcurrentModificationException
-
-        for (Map.Entry<Object, List<WitnessAssertion>> entry : orList.entrySet())
-            for (WitnessAssertion assertion : entry.getValue())
-                if (entry.getKey() == WitnessPattReq.class)
-                    newElem.add(assertion.toOrPattReq());
-                else
-                    assertion.toOrPattReq();
-
-        orList.remove(WitnessPattReq.class);
-        this.add(newElem);
-
-        return this;
     }
 
     @Override

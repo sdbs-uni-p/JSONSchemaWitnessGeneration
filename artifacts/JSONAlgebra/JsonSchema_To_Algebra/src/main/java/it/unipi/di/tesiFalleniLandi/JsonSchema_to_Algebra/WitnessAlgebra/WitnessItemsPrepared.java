@@ -533,11 +533,6 @@ public class WitnessItemsPrepared implements WitnessAssertion{
     }
 
     @Override
-    public WitnessAssertion toOrPattReq() {
-        return this;
-    }
-
-    @Override
     public boolean isBooleanExp() {
         return false;
     }
@@ -573,5 +568,8 @@ public class WitnessItemsPrepared implements WitnessAssertion{
             );
         return result;
     }
+
+    // should we define equals?
+
 }
 

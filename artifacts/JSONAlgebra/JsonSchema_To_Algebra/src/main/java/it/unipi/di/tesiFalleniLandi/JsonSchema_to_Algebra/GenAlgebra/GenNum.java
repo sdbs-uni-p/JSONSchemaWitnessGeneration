@@ -113,8 +113,8 @@ public class GenNum implements GenAssertion {
 
     /**
      *
-     * @param divisor number which msy be a factor (divisor) of dividend
-     * @param dividend
+     * @param factor number which msy be a factor (divisor) of multiple
+     * @param multiple
      * @return returns true iff divisor divides the dividend, i.e. whether divisor is a factor of dividend
      */
     private Boolean isMutipleOf(Double multiple, Double factor){
@@ -343,12 +343,6 @@ public class GenNum implements GenAssertion {
                         }
                         else {
                             //TODO check whether we really have no witness
-                            //why do we throw here an exception???
-                            try {
-                                throw new Exception("failure");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
                             return statuses.Empty;
                         }
                     }

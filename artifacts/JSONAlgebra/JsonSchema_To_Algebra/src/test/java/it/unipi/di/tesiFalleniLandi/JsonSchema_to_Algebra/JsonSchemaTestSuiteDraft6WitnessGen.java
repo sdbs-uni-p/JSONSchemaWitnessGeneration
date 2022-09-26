@@ -55,7 +55,7 @@ public class JsonSchemaTestSuiteDraft6WitnessGen {
 
 
 		env = (WitnessEnv) env.merge(null, null);
-		env.toOrPattReq();
+		//env.toOrPattReq();
 
 
 		env.objectPrepare();

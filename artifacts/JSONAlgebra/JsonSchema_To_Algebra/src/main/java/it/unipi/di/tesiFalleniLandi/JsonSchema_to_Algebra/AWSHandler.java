@@ -267,7 +267,7 @@ public class AWSHandler implements RequestHandler<LinkedHashMap<String, ?>, Obje
         schema = schema.varNormalization_expansion(null);
 
         schema = schema.DNF();
-        schema.toOrPattReq();
+        //schema.toOrPattReq();
         schema.objectPrepare();
 
         return Utils.beauty(schema.getFullAlgebra().toGrammarString());
@@ -282,7 +282,7 @@ public class AWSHandler implements RequestHandler<LinkedHashMap<String, ?>, Obje
         schema = schema.varNormalization_expansion(null);
 
         schema = schema.DNF();
-        schema.toOrPattReq();
+        //schema.toOrPattReq();
         schema.arrayPreparation();
 
         return Utils.beauty(schema.getFullAlgebra().toGrammarString());
@@ -297,7 +297,7 @@ public class AWSHandler implements RequestHandler<LinkedHashMap<String, ?>, Obje
         schema = schema.varNormalization_expansion(null);
 
         schema = schema.DNF();
-        schema.toOrPattReq();
+        //schema.toOrPattReq();
         schema.objectPrepare();
         schema.arrayPreparation();
 

@@ -394,12 +394,6 @@ public class WitnessContains implements WitnessAssertion{
     }
 
     @Override
-    public WitnessAssertion toOrPattReq()  {
-        contains = contains.toOrPattReq();
-        return this;
-    }
-
-    @Override
     public boolean isBooleanExp() {
         return false;
     }

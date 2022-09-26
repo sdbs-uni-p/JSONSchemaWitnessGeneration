@@ -170,17 +170,14 @@ public class WitnessVar implements WitnessAssertion{
 
     @Override
     public WitnessAssertion varNormalization_expansion(WitnessEnv env) {
-        return this;
+
+        throw new RuntimeException();
+        //return this;
     }
 
     @Override
     public WitnessAssertion DNF() {
         return this.clone();
-    }
-
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        return this;
     }
 
     @Override

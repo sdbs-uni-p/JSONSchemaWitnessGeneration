@@ -557,18 +557,6 @@ public class WitnessItems implements WitnessAssertion{
         return newItems;
     }
 
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        if(items!=null)
-            for(int i = 0; i < items.size(); i++)
-                items.set(i, items.get(i).toOrPattReq());
-
-        //TODO check if needed
-        if(additionalItems!=null)
-            additionalItems = additionalItems.toOrPattReq();
-
-        return this;
-    }
 
     @Override
     public boolean isBooleanExp() {
@@ -637,7 +625,7 @@ public class WitnessItems implements WitnessAssertion{
 
         if(that.items.size() != items.size()) return false;
 
-           for (int i=0;i < items.size();i++) {
+        for (int i=0;i < items.size();i++) {
             if (!items.get(i).equals(that.items.get(i))) return false;
         }
 

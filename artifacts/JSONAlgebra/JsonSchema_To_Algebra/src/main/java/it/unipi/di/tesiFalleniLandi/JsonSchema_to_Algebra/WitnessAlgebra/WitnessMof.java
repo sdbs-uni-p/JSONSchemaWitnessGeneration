@@ -169,11 +169,6 @@ public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge 
     }
 
     @Override
-    public WitnessAssertion toOrPattReq(){
-        return this;
-    }
-
-    @Override
     public boolean isBooleanExp() {
         return false;
     }

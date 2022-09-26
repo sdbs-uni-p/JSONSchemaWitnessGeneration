@@ -49,6 +49,10 @@ public class Utils {
     final static String totalTime = "totalTime";
     final static String dnfSize = "dnfSize";
 
+    final static String oneOfAsAnyOf = "oneOfAsAnyOf";
+
+    final static String correctTime = "correctTime";
+
     final static String dateAndTime = "dateAndTime";
     final static String timeout = "timeout";
     final static String git = "git";
@@ -59,7 +63,7 @@ public class Utils {
 
 
     final static LinkedList<String> ops = new LinkedList<>(Arrays.asList(objectId, inSize, outSize, //dnfSize,
-            totalTime, parsing, extractSchema, toFull, toWitness, notElim, merge1, groupize,
+            totalTime, correctTime, oneOfAsAnyOf, parsing, extractSchema, toFull, toWitness, notElim, merge1, groupize,
             separation, expansion, //merge2,
             prepration,
             merge3, initGEnv, genWitness, genSuccess, noWitness,
@@ -324,6 +328,10 @@ public class Utils {
 //                .append(resultMap.get(dnfSize))
 //                .append(",")
                 .append(resultMap.get(totalTime))
+                .append(",")
+                .append(resultMap.get(correctTime))
+                .append(",")
+                .append(resultMap.get(oneOfAsAnyOf))
                 .append(",")
                 .append(resultMap.get(parsing))
                 .append(",")

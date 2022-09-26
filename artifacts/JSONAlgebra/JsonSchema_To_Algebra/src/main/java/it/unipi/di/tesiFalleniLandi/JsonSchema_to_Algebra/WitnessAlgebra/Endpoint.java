@@ -122,7 +122,7 @@ public class Endpoint {
 
         env = (WitnessEnv) env.merge(null, null);
 
-        env.toOrPattReq();
+        //env.toOrPattReq();
         env.objectPrepare();
 
 //        //another round of normalization

@@ -83,8 +83,10 @@ public interface WitnessAssertion extends Cloneable{
     int countVarToBeExp(WitnessEnv env);
 
     /**
-     * Collect and save all the definition to create in the variable normalization phase,
-     * the name of the variable is: ClassName + hash of the value.
+     * Whenever we have a complex guarded expression such as items[ items [x]] this function creates
+     * a new variable it_x = items[x], side-effects the original expression to items[it_x], and adds
+     * the new pair <it_x,items[x]> to the returned list
+     * the name of the new variable is: ClassName + hash of the value.
      * @param env collection of (variableName, variableContent) where the method add all the new variables
      * @param varManager
      * @return return the list of new variable that we need to add to the env
@@ -107,7 +109,7 @@ public interface WitnessAssertion extends Cloneable{
      */
     WitnessAssertion DNF() throws WitnessException;
 
-    WitnessAssertion toOrPattReq();
+    // WitnessAssertion toOrPattReq();
 
     boolean isBooleanExp();
 

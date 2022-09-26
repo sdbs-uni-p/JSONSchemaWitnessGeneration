@@ -202,12 +202,7 @@ public class WitnessType implements WitnessAssertion{
         return this.clone();
     }
 
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        return this;
-    }
-
-    @Override
+   @Override
     public boolean isBooleanExp() {
         return false;
     }

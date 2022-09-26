@@ -22,8 +22,8 @@ public class GenObject implements GenAssertion {
 
     private Double minPro, maxPro;
     private List<GProperty> CPart;
-    private List<GOrPattReq> RPart;
-    private List<GPattReq> objectReqList;
+    private List<GPattReq> RPart;
+    private List<GChoice> choiceList;
     private boolean _randomStrategy;
 
 
@@ -47,8 +47,9 @@ public class GenObject implements GenAssertion {
         String currentName;
         int count = 0;
 
-        if (originalPattern.domainSize() < maxSize)
-            return result;
+        // commented out by GG
+        //if (originalPattern.domainSize() < maxSize)
+          //  return result;
 
         excluded.addAll(excludedNames);
 
@@ -123,7 +124,7 @@ public class GenObject implements GenAssertion {
                 ", maxPro=" + maxPro + _sep +
                 ", CPart=" + CPart + _sep +
                 ", RPart=" + RPart + _sep +
-                ", objectReqList=" + objectReqList + _sep +
+                ", choices=" + choiceList + _sep +
                 '}' + _sep;
     }
 
@@ -159,7 +160,6 @@ public class GenObject implements GenAssertion {
             return schema;
         }
 
-
         @Override
         public String toString() {
             return "GProperty{" +
@@ -169,7 +169,7 @@ public class GenObject implements GenAssertion {
         }
 
         public GProperty(WitnessProperty prop, GenEnv env) {
-            String varname;
+            /*String varname;
             WitnessAssertion value = prop.getValue();
             if (value.getClass() == WitnessBoolean.class)
                 schema = ((WitnessBoolean) value).getValue() == true ? new GenVarTrue("dummy") : new GenVarFalse("dummy");
@@ -182,7 +182,8 @@ public class GenObject implements GenAssertion {
                     throw new Exception("Properties must be normalized and map to WitnessVar or WitnessBool");
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
+            schema = env.retrieveVar(prop.getValue());
             key = prop.getPattern();
         }
 
@@ -259,12 +260,13 @@ public class GenObject implements GenAssertion {
     public class GPattReq {
         private ComplexPattern key;
         private GenVar schema;
-        private List<GOrPattReq> orpList;
+        //       private List<GPattReq> PattReqList;
 //        private boolean isSimple;
 
-        public statuses getStatus(){
+        public statuses getStatus() {
             return this.schema.getStatus();
         }
+
         public ComplexPattern getKey() {
             return key;
         }
@@ -298,10 +300,6 @@ public class GenObject implements GenAssertion {
             return result;
         }
 
-        public List<GOrPattReq> getOrpList() {
-            return orpList;
-        }
-
         public float patternDomainSize() {
             return key.domainSize();
         }
@@ -319,83 +317,21 @@ public class GenObject implements GenAssertion {
             return "GPattReq{" +
                     "key=" + key +
                     ", schema=" + schema +
-//                    ", orpList=" + orpList +
+//                    ", PattReqList=" + PattReqList +
                     '}';
         }
 
-        /**
-         * @param gOrPattReq
-         */
-        public void addOrpList(GOrPattReq gOrPattReq) {
-            this.orpList.add(gOrPattReq);
-        }
 
         /**
          * @param pattReq
-         * @param env
+         * @param env     pattReq must be normalized
          */
         public GPattReq(WitnessPattReq pattReq, GenEnv env) {
-            this.orpList = new LinkedList<>();
-            String varname;
-            WitnessAssertion value = pattReq.getValue();
-            if (value.getClass() == WitnessBoolean.class)
-                schema = ((WitnessBoolean) value).getValue() == true ? new GenVarTrue("dummy") : new GenVarFalse("dummy");
-            else if (value.getClass() == WitnessVar.class) {
-                varname = ((WitnessVar) value).getName();
-                schema = env.getByNameElseCreate(varname);
-//                schema = new GenVar( ((WitnessVar) value).getName());
-            } else
-                new Exception("Request Properties must be normalized and map to WitnessVar or WitnessBool");
+            //this.PattReqList = new LinkedList<>();
+            schema = env.retrieveVar(pattReq.getValue());
             key = pattReq.getPattern();
-//            orpList=pattReq.getOrpList()
-//                    .stream().map(e->new GOrPattReq(e)).collect(Collectors.toList());
-        }
-    }
-
-
-    /*WitnessOrPattReq counterpart*/
-    public class GOrPattReq {
-        private List<GPattReq> reqList;
-
-        public List<GenVar> usedVars() {
-            return reqList.stream().map(p -> p.usedVar()).collect(Collectors.toList());
         }
 
-        @Override
-        public String toString() {
-            return "GOrPattReq{" +
-                    "reqList=" + reqList +
-                    '}';
-        }
-
-        /**
-         * TODO duplicate elimination added as a verification and should be removed later
-         *
-         * @param witnessOrPattReq
-         * @param env
-         */
-        public GOrPattReq(WitnessOrPattReq witnessOrPattReq, GenEnv env) {
-            reqList = new LinkedList<>();
-            reqList = witnessOrPattReq.getReqList().stream().map(w -> new GPattReq(w, env))//.sorted()
-                    .distinct().collect(Collectors.toList());
-//            for(WitnessPattReq witnessPattReq: witnessOrPattReq.getReqList())
-//                reqList.add(new GPattReq(witnessPattReq));
-        }
-
-        /**
-         * returns true when all variables are empty or when the request list is empty
-         *
-         * @return
-         */
-        public boolean allVarsEmpty() {
-            Optional<Boolean> res = null;
-            res = this.reqList.stream().map(req -> req.usedVar().isEmpty())
-                    .reduce((a, b) -> a && b);
-            if (res.isPresent())
-                return res.get();
-            else
-                return true; //empty list is considered to be Empty
-        }
     }
 
 
@@ -404,60 +340,67 @@ public class GenObject implements GenAssertion {
     public GenObject() {
         this.CPart = new LinkedList<>();
         this.RPart = new LinkedList<>();
-        this.objectReqList = new LinkedList<>();
+        this.choiceList = new LinkedList<>();
         this.setDefaultMinMaxPro();
         //TODO remove after object preparation fixed
         _randomStrategy = false;
     }
 
-    public void setCPart(List<WitnessProperty> propList, GenEnv env) {
+    /*public void setCPart(List<WitnessProperty> propList, GenEnv env) {
         this.CPart = propList.stream().map(p -> new GProperty(p, env)).collect(Collectors.toList());
+    }*/
+
+    public Map<WitnessPattReq,GPattReq> setRPart(List<WitnessPattReq> pattReqList, GenEnv env) {
+        /*List<WitnessPattReq> fragments = PattReqattReqList.stream().
+                flatMap(e->e.getSubList().stream()).
+                collect(Collectors.toList());*/
+        Map<WitnessPattReq,GPattReq> reqMap = pattReqList.stream().
+                collect(Collectors.toMap(w -> w, w -> new GPattReq(w, env)));
+        //this.RPart = pattReqList.stream().map(p -> new GPattReq(p, env))
+        //      .collect(Collectors.toList());
+        this.RPart = reqMap.values().stream().
+                collect(Collectors.toList());
+        return reqMap;
     }
 
-    public void setRPart(List<WitnessOrPattReq> orPattReqList, GenEnv env) {
-        /*List<WitnessPattReq> fragments = orPattReqList.stream().
-                flatMap(e->e.getReqList().stream()).
-                collect(Collectors.toList());
-        HashMap<WitnessPattReq,GPattReq>  reqMap = fragments.stream().
-             collect(Collectors.toMap(w -> w, w -> new GOrPattReq(w, env)));*/
-        this.RPart = orPattReqList.stream().map(p -> new GOrPattReq(p, env))
-                .collect(Collectors.toList());
+    public List<GProperty> getCPartFromChoices() {
+        return choiceList.stream().map(c->c.getConstraint()).collect(toList());
+    }
+
+    public Map<WitnessProperty,GProperty > setCPart(List<WitnessProperty> propList, GenEnv env) {
+        this.CPart = propList.stream().map(p -> new GProperty(p, env)).collect(Collectors.toList());
+
+         Map<WitnessProperty,GProperty> constMap = propList.stream().
+                collect(Collectors.toMap(w -> w, w -> new GProperty(w, env)));
+        this.CPart = constMap.values().stream().
+                         collect(Collectors.toList());
+        return constMap;
     }
 
     /**
      *
      */
-    public void setObjectReqList() {
-        if (this.RPart.size() > 0) {
-            //flatten RPart
-            for (GOrPattReq gOrPattReq : RPart)
-                for (GPattReq gPattReq : gOrPattReq.reqList)
-                    this.objectReqList.add(gPattReq);
-            this.objectReqList = objectReqList.stream().distinct().collect(Collectors.toList());
+    public void setChoiceList(List<WitnessChoice> choices, Map<WitnessProperty, GProperty > constMap,
+                                                           Map<WitnessPattReq,GPattReq> reqMap, GenEnv env) {
+        choiceList = new LinkedList<>();
+        for (WitnessChoice choice : choices) {
+            List<GPattReq> gReqList = choice.getReqList().stream().
+                    map(w -> reqMap.get(w)).collect(Collectors.toList());
+            List<GPattReq> gSubList = choice.getSubList().stream().
+                    map(w -> reqMap.get(w)).collect(Collectors.toList());
+            List<GPattReq> gReqFullSet = choice.getReqFullSet().stream().
+                    map(w -> reqMap.get(w)).collect(Collectors.toList());
+            WitnessProperty wProp = choice.getConstraint();
+            GProperty gConstraint =
+                    (constMap.containsKey(wProp)
+                    ? constMap.get(wProp)
+                    : new GProperty(wProp,env));
+            GChoice newChoice = new GChoice(gConstraint,
+                    gReqList, gSubList,
+                    gReqFullSet,choice.getPattern());
+            newChoice.setSchema(choice.getSchema(),env);
+            choiceList.add(newChoice);
         }
-    }
-
-    /**
-     * E.g.
-     * orpList: el1:[Pr1, Pr2], el2:[Pr1, Pr3]
-     * assigns to Pr1.orplist [el1,el2],
-     * Pr2.orpList [el1]
-     * Pr3.orpList [el2]
-     */
-    public void setORPList() {
-        for (GPattReq gPattReq : objectReqList)
-            for (GOrPattReq gOrPattReq : RPart)
-                // "contains" means that gOrPattReq contain an element that "equals" gPattReq, but it may well
-                // be the case that it is not the same object, while we need that every object in the reqList of
-                // every gOrPattReq is actually in the objectReqList. Hence, we remove the "equal" object using
-                // remove and we reinsert the exact object using add; notice that all of this is very inefficient
-                // since it relies on comparison among patterns which are extremely expemsive - this code whould
-                // be optimized
-                if (gOrPattReq.reqList.contains(gPattReq)) {
-                    gOrPattReq.reqList.remove(gPattReq);
-                    gOrPattReq.reqList.add(gPattReq);
-                    gPattReq.addOrpList(gOrPattReq);
-                }
     }
 
     public void setMinMaxPro(WitnessPro minMaxPro) {
@@ -471,168 +414,241 @@ public class GenObject implements GenAssertion {
     }
 
     //TODO implement invariants
-
+/*
     private boolean isRPartEmpty() {
-        Optional<Boolean> opt = this.RPart.stream().map(orp -> orp.reqList.isEmpty()).reduce((a, b) -> a && b);
+        Optional<Boolean> opt = this.RPart.stream().map(PattReq -> PattReq.reqList.isEmpty()).reduce((a, b) -> a && b);
         if (opt.isPresent())
             return opt.get();
         else
             return true; //RPart is true
-    }
+    }*/
     //aux methods
 
     /**
-     * removes ORPs that are  pointed by headReq
-     * @param orpList
-     * @param headReq
-     * @return returns a copy of those orpLists that remain to satisfy
+     * removes PattReqs that are  pointed by headChoice
+     * @param PattReqList
+     * @param headChoice
+     * @return returns a copy of those PattRes that remain to satisfy
      */
-    private  List<GOrPattReq> removeOrps(List<GOrPattReq> orpList, GPattReq headReq){
-        //for (GOrPattReq headOrp: headReq.orpList) {
-        //    headOrp.reqList.remove(headReq);
+    private  List<GPattReq> removePattReqs(List<GPattReq> PattReqList, GChoice headChoice){
+        //for (GPattReq headPattReq: headChoice.PattReqList) {
+        //    headPattReq.reqList.remove(headChoice);
         //}
-        List<GOrPattReq> result = new LinkedList<>();
-        result.addAll(orpList);
-        result.removeAll(headReq.orpList);
+        List<GPattReq> result = new LinkedList<>(PattReqList);
+        result.removeAll(headChoice.getSubList());
         return result;
     }
 
     /**
-     * removes  requests that are pointed by an ORP of headReq
-     * @param requests
-     * @param headReq
+     * removes  Choices that are pointed by an PattReq of headChoice
+     * @param exploredChoices
+     * @param tailPattReqList
      * @return
      */
-    private List<GPattReq> reduceRequests(List<GPattReq> exploredRequests, List<GOrPattReq> tailOrpList){
-        HashSet<GPattReq> result = new HashSet<>();
-        for(GOrPattReq orp: tailOrpList)
-            result.addAll(orp.reqList);
-        result.removeAll(exploredRequests);
-        List<GPattReq> listResult = new ArrayList<>(result);
+    /*private List<GChoice> reduceChoices(List<GChoice> exploredChoices, List<GPattReq> tailPattReqList){
+        HashSet<GChoice> result = new HashSet<>();
+        for(GPattReq PattReq: tailPattReqList)
+            result.addAll(PattReq.reqList);
+        result.removeAll(exploredChoices);
+        List<GChoice> listResult = new ArrayList<>(result);
         return listResult;
-    }
+    }*/
+
     /**
-     * removes  requests that are pointed by an ORP of headReq
-     * @param requests
-     * @param headReq
+     * removes  Choices that are useful for at least one missing request
+     * @param choices
+     * @param tailPattReqList
      * @return
      */
-    private List<GPattReq> removeRequests(List<GPattReq> requests, GPattReq headReq){
-        List<GPattReq> toBeFiltered =  new LinkedList<>(), result = new LinkedList<>();
-        result.addAll(requests);
-        for(GOrPattReq orp: headReq.getOrpList())
-            toBeFiltered.addAll(orp.reqList);
-        result.removeAll(toBeFiltered);
+    private List<GChoice> usefulChoices(List<GChoice> choices, List<GPattReq> tailPattReqList){
+        List<GChoice> result = new ArrayList<>();
+        for(GChoice choice: choices) {
+            boolean useful = false;
+            for (GPattReq req : choice.getSubList())
+                if (tailPattReqList.contains(req))
+                    useful = true;
+            if (useful)
+                result.add(choice);
+        }
         return result;
     }
 
     /**
      *
-     * @param requests all requests that appear in orpList minus some that have already been explored
-     * @param exploredRequests requiests that we do not want to use in the solution
-     * @param orpList the orpList that we want to hit
-     * @return all different sets of requests that are found in requests minus exploredRequests
-     *         that hit all elements of orpList
+     * @param choices all choices that appear in the choice list???
+     * @param reqList the reqList that we want to hit
+     * @return all different sets of choices that are found in choices minus exploredChoices
+     *         that hit all elements of reqList
      */
-    private List<List<GPattReq>> hittingSet(List<GPattReq> requests,
-                                            List<GPattReq> exploredRequests,
-                                            List<GOrPattReq> orpList){
+    private List<List<GChoice>> hittingSet(List<GChoice> choices, List<GPattReq> reqList) {
 
-        if(orpList.isEmpty()){
-            List<GPattReq> emptyList = new ArrayList<>();
-            List<List<GPattReq>> trivialResult = new ArrayList<>();
+        if(reqList.isEmpty()) {
+            // beware: new ArrayList<>(ArrayList<>()) WOULD NOT WORK!!!!
+            // neither would new ArrayList<>(trivialSolution)
+            List<GChoice> trivialSolution = new ArrayList<>();
+            List<List<GChoice>> singletonOfTrivial = new ArrayList<>();
+            singletonOfTrivial.add(trivialSolution);
+            return singletonOfTrivial;
+        }
+
+        if(choices.isEmpty())
+            return new ArrayList<>();
+
+        GChoice headChoice = choices.get(0);
+        //choices.remove(0);
+
+        //remove the PattReqs that are already satisfied by headChoice
+        List<GPattReq> tailPattReq = removePattReqs(reqList, headChoice);
+        //focus on the choices that are still useful - of course headChoice
+        //will not be one of them
+        List<GChoice> tailChoices = usefulChoices(choices, tailPattReq);
+
+        List<List<GChoice>> solWithHead = new LinkedList<>();
+
+        List<List<GChoice>> solutionsOfRest = hittingSet(tailChoices, tailPattReq);
+        for(List<GChoice> solutionOfRest: solutionsOfRest) {
+            solutionOfRest.add(headChoice);
+            solWithHead.add(solutionOfRest);
+        }
+
+        choices.remove(0);
+        List<List<GChoice>> solWithoutHead = hittingSet(choices, reqList);
+
+        solWithHead.addAll(solWithoutHead);
+
+        return solWithHead;
+    }
+
+//    /**
+//     *
+//     * @param choices all choices that appear in the choice list???
+//     * @param exploredChoices choices that we do not want to use in the solution
+//     *                        so that we actually use choices minus exploredChoices
+//     * @param reqList the reqList that we want to hit
+//     * @return all different sets of choices that are found in choices minus exploredChoices
+//     *         that hit all elements of reqList
+//     */
+    /*private List<List<GChoice>> obsoleteHittingSet(List<GChoice> choices,
+                                           List<GChoice> exploredChoices,
+                                           List<GPattReq> reqList) {
+
+        if(reqList.isEmpty()){
+            List<GChoice> emptyList = new ArrayList<>();
+            List<List<GChoice>> trivialResult = new ArrayList<>();
             trivialResult.add(emptyList);
             return trivialResult;
         }
 
-        List<GPattReq> unexploredRequests = new ArrayList<>();
-        unexploredRequests.addAll(requests);
-        unexploredRequests.removeAll(exploredRequests);
-        if(unexploredRequests.isEmpty())
+        List<GChoice> unexploredChoices = new ArrayList<>();
+        unexploredChoices.addAll(choices);
+        unexploredChoices.removeAll(exploredChoices);
+        if(unexploredChoices.isEmpty())
             return new LinkedList<>();
 
-        GPattReq headReq = unexploredRequests.get(0);
+        GChoice headChoice = unexploredChoices.get(0);
+        unexploredChoices.remove(0);
 
-        //remove the orps that are satisfied by headReq
-        List<GOrPattReq> tailOrp = removeOrps(orpList, headReq);
-        //List<GPattReq> tailRequests = removeRequests(requests, headReq);
-        //We eliminate those requests that only appear in those orpLists
+        //remove the PattReqs that are already satisfied by headChoice
+        List<GPattReq> tailPattReq = removePattReqs(reqList, headChoice);
+        //List<GChoice> tailChoices = removeChoices(choices, headChoice);
+        //We eliminate those choices that only satisfy PattReqs
         //that have been eliminated
-        List<GPattReq> tailRequests = reduceRequests(exploredRequests, tailOrp);
-        //We have removed all orps where headReq did appear, hence headReq
-        //does not appear in tailRequests any more
+        List<GChoice> tailChoices = usefulChoices(unexploredChoices, tailPattReq);
+        //List<GChoice> tailChoices = reduceChoices(exploredChoices, tailPattReq);
+        //We have removed all PattReqs where headChoice did appear, hence headChoice
+        //does not appear in tailChoices any more
 
-        List<List<GPattReq>> solWithFirst = new LinkedList<>();
-        List<GPattReq> current = new ArrayList<>();
-        exploredRequests.add(headReq);
+        List<List<GChoice>> solWithHead = new LinkedList<>();
 
-        if(tailRequests.isEmpty()&&tailOrp.isEmpty()){
-            current.add(headReq);
-            solWithFirst.add(current);
+
+        // either { headChoice } is a solution, hence solWith
+        // if tailPattReq is empty, then the singleton "Current"
+        // ie the singleton form by headChoice is a solution
+        // when tailChoice is empty
+        if(tailChoices.isEmpty()){
+              solWithHead.add(new ArrayList<>(headChoice));
         }
-//        if(solutions.isEmpty())
-//        {
-//            current.add(headReq);
-//            solWithFirst.add(current);
-//        }
-        else for(List<GPattReq> solutionOfRest: hittingSet(tailRequests, exploredRequests, tailOrp)){
-            solutionOfRest.add(headReq);
-            solWithFirst.add(solutionOfRest);
+        else {
+            exploredChoices.add(headChoice);
+            for(List<GChoice> solutionOfRest: hittingSet(tailChoices, exploredChoices, tailPattReq)){
+                solutionOfRest.add(headChoice);
+                solWithHead.add(solutionOfRest);
+            }
+            // the caller may use again this parameter, I must restore its value
+            exploredChoices.remove(headChoice);
         }
-        //requests.remove(headReq);
-        List<List<GPattReq>> solWithoutFirst = hittingSet(requests, exploredRequests, orpList);
+        //choices.remove(headChoice);
+        List<List<GChoice>> solWithoutHead = hittingSet(choices, exploredChoices, reqList);
 
-        solWithFirst.addAll(solWithoutFirst);
+        solWithHead.addAll(solWithoutHead);
 
-        // the caller may use again this parameter, I must restore its value
-        exploredRequests.remove(headReq);
-        return solWithFirst;
+        return solWithHead;
     }
-    private boolean isMinimal(List<GPattReq> sol, List<GOrPattReq> orpList){
+    */
+
+    // for each choice in sol it is not the case that all of its PattReqs
+    // are included in the set of pattreqs of the other choices
+    private boolean isMinimal(List<GChoice> sol, List<GPattReq> PattReqList){
 //        if(sol.isEmpty())
 //            return false;
-        return true;
+        boolean result = true;
+        for (GChoice choice : sol) {
+            Set<GPattReq> satisfiedByOtherChoices = sol.stream().
+                    filter(c->c!=choice).
+                    flatMap(c->c.getSubList().stream()).
+                    collect(Collectors.toSet());
+            if (choice.getSubList().stream().allMatch(req->satisfiedByOtherChoices.contains(req)))
+                result = false;
+        }
+        return result;
     }
 
-    private List<List<GPattReq>> optimizedHittingSet() throws Exception {
-        List<List<GPattReq>> result ;
-        List<GPattReq> simpleResult, current;
+    private List<List<GChoice>> optimizedHittingSet() throws Exception {
+        List<List<GChoice>> result = new ArrayList<>();
+        List<GChoice> forcedChoices;
         //ensure variant 1
-        if(isRPartEmpty())
-            throw new Exception("invariant1 non verified!");
-        //collect all requests belonging to orp with 1 request only
-        simpleResult = RPart.stream().filter(orp->orp.reqList.size()==1)
-                .map(orp->orp.reqList.get(0))
-                .distinct().collect(Collectors.toList());
+        //if(isRPartEmpty())
+        //  throw new Exception("invariant1 non verified!");
+        //collect all requests that are only satisfied by 1 Choice 
+        forcedChoices = new ArrayList<>();
+        for (GPattReq req: RPart) {
+            List<GChoice> choicesOfReq = choiceList.stream().
+                    filter(c -> c.getSubList().contains(req)).collect(toList());
+            if (choicesOfReq.size()==1)
+                forcedChoices.add(choicesOfReq.get(0));
+        }
+        
+       if(forcedChoices.size()==RPart.size()){
+            result.add(List.copyOf(forcedChoices));
+            return result;
+        }
+       
+//        result.add(List.copyOf(forcedChoices));
 
-//        if(simpleResult.size()==RPart.size()){
-//            result.add(List.copyOf(simpleResult));
-//            return result;
-//        }
-        //TODO recover the previous lines after object preparation is fixed
-//        result.add(List.copyOf(simpleResult));
+        //proceed with the remaining Choices
+        List<GPattReq> remainingPattReqs = RPart.stream().collect(Collectors.toList());
+        remainingPattReqs.removeAll(forcedChoices.stream()
+                                    .flatMap(c->c.getSubList().stream())
+                                    .collect(Collectors.toList()));
 
-        //proceed with the remaining requests
-        List<GOrPattReq> remainingOrpsList = RPart.stream().collect(Collectors.toList());
-        remainingOrpsList.removeAll(simpleResult.stream()
-                .flatMap(e->e.getOrpList().stream())
-                .collect(Collectors.toList()));
+        // the forcedChoices only satisfy requests that do not appear in any other
+        // choice, hence any non-forced choice is useful to satisfy some of the
+        // remaining PattReq's
+        List<GChoice> remainingChoices = choiceList.stream().collect(Collectors.toList());
+        remainingChoices.removeAll(forcedChoices);
 
-        List<GPattReq> remainingRequests = objectReqList.stream().collect(Collectors.toList());
-        remainingRequests.removeAll(simpleResult);
-
-        result = hittingSet(remainingRequests,new ArrayList<>(),remainingOrpsList)//hittingSetTer(remainingRequests,0,remainingOrpsList)
-                .stream().filter(l->isMinimal(l,remainingOrpsList))
+        result = hittingSet(remainingChoices,remainingPattReqs)
+                .stream().filter(l->isMinimal(l,remainingPattReqs))
                 .collect(Collectors.toList());
 
-        if(result.isEmpty())
-            result.add(List.copyOf(simpleResult));
-        else
+        //if(result.isEmpty())
+        //    result.add(List.copyOf(forcedChoices));
+        //else
         //combine simple result with each solution
         for(int i=0; i<result.size(); i++)
         {
-            current = result.get(i);
-            current.addAll(simpleResult);
+            List<GChoice> current = result.get(i);
+            current.addAll(forcedChoices);
             result.set(i,current);
         }
 
@@ -646,22 +662,23 @@ public class GenObject implements GenAssertion {
       * @param set
      * @return
      */
-    private boolean noPatternIsRepeatedTooOften(List<GPattReq> set){
-        Map<ComplexPattern,Long> grouped = set.stream().collect(groupingBy(GPattReq::getKey, Collectors.counting()));
-        Optional<Boolean> opt = grouped.keySet().stream().map(p->grouped.get(p)<=p.domainSize())
+    private boolean noPatternIsRepeatedTooOften(List<GChoice> set){
+        Map<ComplexPattern,Long> grouped = set.stream().collect(groupingBy(GChoice::getPattern, Collectors.counting()));
+        /*Optional<Boolean> opt = grouped.keySet().stream().map(p->grouped.get(p)<=p.domainSize())
                 .reduce((a,b)->a&&b);
         if(opt.isPresent())
             return opt.get();
         else
-            return false;
-    }
+            return false;*/
+        return grouped.keySet().stream().allMatch(p->grouped.get(p)<=p.domainSize());
+     }
 
-    private boolean allVarsPop(List<GPattReq> list){
+    private boolean allVarsPop(List<GChoice> list){
         Optional<Boolean> tv = list.stream().map(p->p.usedVar().isPop()).reduce((a,b)->a&&b);
         if(tv.isPresent())
             return tv.get();
         else
-            return false;
+            return true;
     }
 
 
@@ -689,12 +706,12 @@ public class GenObject implements GenAssertion {
         //TODO (low) logging for coverage and elapsed time of optimization tests
 
         //if at least one request is not fulfilled, then the problem does not admit an instance
-        for(GOrPattReq orp: RPart)
-            if(orp.allVarsEmpty())
+        /*for(GPattReq PattReq: RPart)
+            if(PattReq.allVarsEmpty())
             {
-                logger.debug("exit due to {} has all its Vars Empty", orp.usedVars().stream().map(genVar -> genVar.getName()).collect(Collectors.toList()));
+                logger.debug("exit due to {} has all its Vars Empty", PattReq.usedVars().stream().map(genVar -> genVar.getName()).collect(Collectors.toList()));
                 return statuses.Empty;
-            }
+            }*/
 
         //if the constraining part fails to reach min, then the problem does not admit an instance
         float s = domainSize(CPart.stream().filter(p->p.usedVar().isOpen()||p.usedVar().isPop()).collect(Collectors.toList()));
@@ -704,40 +721,39 @@ public class GenObject implements GenAssertion {
             return statuses.Empty;
         }
 
-
         //deal with the case where RPart is empty. Propagate to the article
         if(RPart.size()>0)
         {
-            List<List<GPattReq>> optimizedHittingSet = null,
+            List<List<GChoice>> hittingSets = null,
                             reducedSolutionSet = null;
             try {
-                optimizedHittingSet = optimizedHittingSet();
-                reducedSolutionSet = optimizedHittingSet.stream()
+                hittingSets = optimizedHittingSet();
+                reducedSolutionSet = hittingSets.stream()
                         .filter(set->set.size()<=maxPro&&noPatternIsRepeatedTooOften(set))
-//                        .filter(set->set.size()<=maxPro)
                         .collect(Collectors.toList());
             } catch (Exception e) {
                 e.printStackTrace();
             }
             if(reducedSolutionSet.isEmpty())
             {
-                logger.debug("exit due to  reducedSolutionSet.isEmpty() optimizedHittingSet() size {}", optimizedHittingSet.size());
+                logger.debug("exit due to  reducedSolutionSet.isEmpty() optimizedHittingSet() size {}", hittingSets.size());
                 return statuses.Empty;
             }
 
-            List<List<GPattReq>> popSolutionSet = reducedSolutionSet.stream().filter(l->allVarsPop(l))
+            List<List<GChoice>> popSolutionSet = reducedSolutionSet.stream().filter(l->allVarsPop(l))
                     .collect(Collectors.toList());
             if(popSolutionSet.isEmpty())
                 return statuses.Open;
 
-            List<GPattReq> solution;
+            List<GChoice> solution;
 
 //            System.out.println("popSolutionSet "+ popSolutionSet);
             //choose the solution either randomly or by taking the one which generates the  largest set of names
             if(_randomStrategy)
                 solution = random(popSolutionSet);
             else
-                solution = maxLengthStrategy(popSolutionSet);
+                //solution = minLengthStrategy(popSolutionSet);
+               solution = maxLengthStrategy(popSolutionSet);
 
             //the following verification is an assertion
             if(solution == null)
@@ -755,11 +771,16 @@ public class GenObject implements GenAssertion {
             // solution.stream().forEach(req->properties.put(this.generateName(req.key),req.getWitness()));
             //grouped : (p, [x])  = solution group by p
             // for each (p, [x]) do properties + = mapping(generateNames(p,len([x])), [x])
+            // Still, grouping by GChoice::getKey is not sufficient for two reasons:
+            // (1) group by uses object equality, hence may fail to recognize equivalence
+            // (2) whenever two patterns intersect they may generate the same name, hence
+            // grouping by pattern equivalence solves the problem only if we are sure that every
+            // two non-equivalent patterns have ampty intersection
 
             List<String> props ;
             List<GenVar> listVars;
             Map<ComplexPattern, List<GenVar>> grouped =
-                    solution.stream().collect(groupingBy(GPattReq::getKey, mapping(GPattReq::getSchema, toList())));
+                    solution.stream().collect(groupingBy(GChoice::getPattern, mapping(GChoice::getSchema, toList())));
 
             for(Map.Entry<ComplexPattern,List<GenVar>> entry:grouped.entrySet()){
                 listVars  = entry.getValue();
@@ -771,8 +792,16 @@ public class GenObject implements GenAssertion {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                for(int i=0; i<props.size();i++)
-                    properties.put(props.get(i),listVars.get(i).getWitness());
+                for(int i=0; i<props.size();i++) {
+                    if (properties.containsKey(props.get(i))) {
+                        try {
+                            throw new Exception("Generating two properties with the same name: '" + props.get(i) + "'");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    properties.put(props.get(i), listVars.get(i).getWitness());
+                }
             }
 
            if(properties.size()>=minPro){
@@ -798,7 +827,6 @@ public class GenObject implements GenAssertion {
          * - width-first: which uses round-robin to satisfy minPro by using every pattern equally
          * - weighted width-first: assign different weights to the branches
          */
-
 
         while(properties.size()<minPro){
             for(GProperty prop:populatedCpart)
@@ -864,7 +892,7 @@ public class GenObject implements GenAssertion {
      * @param solutionSet
      * @return
      */
-    private List<GPattReq> random(List<List<GPattReq>> solutionSet){
+    private List<GChoice> random(List<List<GChoice>> solutionSet){
         Random r = new Random();
         int position = r.nextInt(solutionSet.size());
         return solutionSet.get(position);
@@ -875,16 +903,36 @@ public class GenObject implements GenAssertion {
      * @param solutionSet
      * @return
      */
-    private List<GPattReq> maxLengthStrategy(List<List<GPattReq>> solutionSet){
-        HashMap<Integer,Long> maxMap = new HashMap<>();
-        List<GPattReq> solution = null;
-        //pick solution with the max number of words
+    private List<GChoice> maxLengthStrategy(List<List<GChoice>> solutionSet){
+        HashMap<Integer,Long> map = new HashMap<>();
+        List<GChoice> solution = null;
+        //pick solution with the max number of distinct patterns
         for(int i=0; i<solutionSet.size(); i++)
-            maxMap.put(i,solutionSet.get(i).stream().map(gPattReq -> gPattReq.key).distinct().count());
-        Long max = Collections.max(maxMap.values());
+            map.put(i,solutionSet.get(i).stream().map(c -> c.getPattern()).distinct().count());
+        Long max = Collections.max(map.values());
 //        Long min = Collections.min(maxMap.values());
         for(int i=0; i<solutionSet.size(); i++)
-            if(maxMap.get(i)==max){
+            if(map.get(i)==max){
+                solution = solutionSet.get(i);
+                break;
+            }
+        return solution;
+    }
+
+    /**
+     *
+     * @param solutionSet
+     * @return
+     */
+    private List<GChoice> minLengthStrategy(List<List<GChoice>> solutionSet){
+        HashMap<Integer,Long> map = new HashMap<>();
+        List<GChoice> solution = null;
+        //pick solution with the min number of distict patterns
+        for(int i=0; i<solutionSet.size(); i++)
+            map.put(i,solutionSet.get(i).stream().map(c -> c.getPattern()).distinct().count());
+        Long min = Collections.min(map.values());
+        for(int i=0; i<solutionSet.size(); i++)
+            if(map.get(i)==min){
                 solution = solutionSet.get(i);
                 break;
             }
@@ -897,7 +945,7 @@ public class GenObject implements GenAssertion {
      * @param solution
      * @return
      */
-    private List<GPattReq> simplify(List<GPattReq> solution){
+    private List<GChoice> simplify(List<GChoice> solution){
         return solution;
     }
 
@@ -914,8 +962,9 @@ public class GenObject implements GenAssertion {
     @Override
     public List<GenVar> usedVars() {
         List<GenVar> cpart_vars = CPart.stream().map(gp->gp.usedVar()).collect(Collectors.toList());
-        List<GenVar> rpart_vars = RPart.stream().flatMap(op->op.usedVars().stream()).collect(Collectors.toList());
-        return Stream.concat(cpart_vars.stream(), rpart_vars.stream())
+        List<GenVar> choice_vars = CPart.stream().map(c->c.usedVar()).collect(Collectors.toList());
+        //List<GenVar> choice_vars = choiceList.stream().flatMap(c->c.usedVar().stream()).collect(Collectors.toList());
+        return Stream.concat(cpart_vars.stream(), choice_vars.stream())
                 .distinct()
                 .collect(Collectors.toList());
     }

@@ -10,6 +10,7 @@ import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.Commons.Utils;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.FullAlgebra.Assertion;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.FullAlgebra.Utils_FullAlgebra;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.JSONSchema.JSONSchema;
+import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.JSONSchema.OneOf;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.JSONSchema.Utils_JSONSchema;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra.Exceptions.WitnessException;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra.Utils_WitnessAlgebra;
@@ -72,9 +73,9 @@ public class Endpoint {
         // "NPproblems/";//"demopaper/";// "oneTypeSchemas/object/";//
         //"schemastore/";//"oneTypeSchemas/enum/"; //
         //"jsonSchemaTestSuiteDraft6/";//"jsonSchemaOrg/";//
-        String path = "/expDataset/handwritten/testtrickynew/"; //"/expDataset/failures/"; //"/expDataset/realWorldSchemas/processedFiles/"; // "/expDataset/realWorldSchemas/processedFiles/"; //"/expDataset/containment/sat/nonValid/"; //"/expDataset/unprocessedFiles/ok/"; // gitcleanfiles+"containment/unsat/witness/";//userPath+witnessGenTestFiles+subdir; //
+        String path = "/expdataset/handwritten/failures/"; //"/oneOfAnyOf/InvalidWitnessException/InvalidWitnessException/"; // "/expDataset/failures/"; //"/expDataset/realWorldSchemas/processedFiles/"; // "/expDataset/realWorldSchemas/processedFiles/"; //"/expDataset/containment/sat/nonValid/"; //"/expDataset/unprocessedFiles/ok/"; // gitcleanfiles+"containment/unsat/witness/";//userPath+witnessGenTestFiles+subdir; //
         //"containment/sat/noWitness/";//"unsat-pb/";//containment/sat/nonValid/";//"containment/sat/noWitness/";//"unsat-pb/test";//"unsat-pb/o"+"24470";//"unsat-pb/o"+"25731";//"o4413";//"o48024";//"47";//"o69888";//"weka_j48";//31//"hittingset";//"1Another";//"2Another3";//"2bis";//"BizTalkServerApplicationSchema";//
-        String file = "test";//"problem_minItems";//"c_problem_items";//"o79743";//"o"+"46176";//"o"+"13707";//"uplimit";//"test";//""+"13707";//"draft6_reflexive_contains_id5_subschema1_not_2";//"tmp"; //"draft6_reflexive_items_id7_subschema1_not_2";//
+        String file = "testsaved";//"problem_minItems";//"c_problem_items";//"o79743";//"o"+"46176";//"o"+"13707";//"uplimit";//"test";//""+"13707";//"draft6_reflexive_contains_id5_subschema1_not_2";//"tmp"; //"draft6_reflexive_items_id7_subschema1_not_2";//
         String extension = ".json";
 
 
@@ -102,6 +103,7 @@ public class Endpoint {
 
             root = new JSONSchema(object);
             root = Utils_JSONSchema.normalize(root);
+            //OneOf.asAnyOf = true;
             jsonSchema = root.toGrammar();
 //            jsonSchema = Utils_JSONSchema.normalize(root).toGrammar();
         } catch (IOException e) {

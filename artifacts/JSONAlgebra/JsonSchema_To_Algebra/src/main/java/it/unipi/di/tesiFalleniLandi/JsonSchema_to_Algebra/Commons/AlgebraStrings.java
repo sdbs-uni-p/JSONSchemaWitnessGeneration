@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class AlgebraStrings {
 	//LOGIC OP
+	public static final String SEMICOLON = ";\r\n";
 	public static final String COMMA = ",\r\n";
 	public static final String FLAT_COMMA = ",";
 

@@ -134,6 +134,7 @@ public class MainClass {
         validationExceptionFile.write("objectId,exceptionName,message\n");
 
         BufferedWriter sizeFile = Utils.createBufferedWriter(resultsFolder.getPath(), info+"size.csv");
+        assert sizeFile != null;
         sizeFile.write("objectId,inSize,2Full,2Witness,notElim,merge1,groupize,separation,expansion," +
                 //"merge2,"
                 "preparation,arrPrep,merge3,genEnv,witness\n");
@@ -144,7 +145,7 @@ public class MainClass {
         long start = System.currentTimeMillis();
         System.out.println(start);
 
-        LinkedHashMap<File,GenerateWitnessTaskV3> fileTaskMap = new LinkedHashMap<>();
+        LinkedHashMap<File,GenerateWitnessTaskV4> fileTaskMap = new LinkedHashMap<>();
 
 
         for (File file : files){
@@ -152,7 +153,7 @@ public class MainClass {
                 System.out.println("skipping non-json file: " + file.getName()+"\n\n");
                 continue;
             }
-            GenerateWitnessTaskV3 task = new GenerateWitnessTaskV3(file);
+            GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(file);
             fileTaskMap.put(file,task);
         }
 
@@ -177,7 +178,7 @@ public class MainClass {
 //            Boolean gotResult = null;
             Future<Boolean> future = futures.get(i);
             File file = (File) fileTaskMap.keySet().toArray()[i];
-            GenerateWitnessTaskV3 task = fileTaskMap.get(file);
+            GenerateWitnessTaskV4 task = fileTaskMap.get(file);
             if (i==0) {
                 task.getResultMap().put(Utils.dateAndTime,formatter.format(date));
                 task.getResultMap().put(Utils.timeout,String.valueOf(timeout));

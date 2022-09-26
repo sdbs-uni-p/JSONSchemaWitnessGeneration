@@ -517,5 +517,7 @@ public class WitnessGenerationProblems {
 		
 		// Schema is not satisfiable.
 		assertEquals(JsonSchemaTestSuiteDraft6WitnessGen.noWitness, witness);
+		//assertEquals(0, JsonSchemaTestSuiteDraft6WitnessGen.validateWitness(schema,witness));
+
 	}
 }	

@@ -16,24 +16,14 @@ run_experiment containment/sat
 run_experiment containment/unsat
 
 # Handwritten Data Set
-run_experiment handwritten/sat/testtricky
-run_experiment handwritten/sat/testtrickynew
-run_experiment handwritten/sat/gennumber
+run_experiment handwritten/sat
 run_experiment handwritten/unsat
-
-# Combine results
-(
-    cd ${HOME}/results
-    mkdir handwritten-sat 2> /dev/null
-    awk '(NR == 1) || (FNR > 1)' handwritten-sat-testtricky/jsongenerator_results.csv \
-        handwritten-sat-testtrickynew/jsongenerator_results.csv \
-        handwritten-sat-gennumber/jsongenerator_results.csv > handwritten-sat/jsongenerator_results.csv
-	rm -r handwritten-sat-*
-)
 
 # GitHub Data Set
 run_experiment github/sat-dg
 run_experiment github/unsat
+
+# Move results from github-sat-dg to github-sat
 (
     cd ${HOME}/results
 	mkdir github-sat 2> /dev/null
@@ -43,8 +33,10 @@ run_experiment github/unsat
 
 run_experiment kubernetes/sat
 run_experiment kubernetes/unsat
+
 run_experiment snowplow
 run_experiment snowplow/dg
+# Combine results from snowplow and snowplow-dg
 (
     cd ${HOME}/results
 	mv snowplow/jsongenerator_results.csv snowplow/jsongenerator_results_part.csv
@@ -53,14 +45,5 @@ run_experiment snowplow/dg
 	rm snowplow/jsongenerator_results_part.csv
 	rm -r snowplow-dg
 )
+
 run_experiment wp
-run_experiment wp/oneOf
-(
-    cd ${HOME}/results
-    mkdir wp 2> /dev/null
-	mv wp/jsongenerator_results.csv wp/jsongenerator_results_part.csv
-    awk '(NR == 1) || (FNR > 1)' wp/jsongenerator_results_part.csv \
-        wp-oneOf/jsongenerator_results.csv > wp/jsongenerator_results.csv
-	rm wp/jsongenerator_results_part.csv
-	rm -r wp-oneOf
-)

@@ -166,7 +166,7 @@ public class WitnessGenExperiments {
 
 				try {
 					long start = System.currentTimeMillis();
-					env.toOrPattReq();  
+					//env.toOrPattReq();
 					long end = System.currentTimeMillis();
 					resultMap.put("toOrPattReq", String.valueOf(end - start));
 				}catch (Exception e) {

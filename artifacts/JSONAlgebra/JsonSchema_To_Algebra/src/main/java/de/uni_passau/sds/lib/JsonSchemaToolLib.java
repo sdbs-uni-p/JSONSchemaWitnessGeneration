@@ -78,7 +78,7 @@ class JsonSchemaToolLib implements IJsonSchemaLib {
             env = env.varNormalization_expansion(null);
 
             env = (WitnessEnv) env.merge(null, null);
-            env.toOrPattReq();
+            //env.toOrPattReq();
 
 
             env.objectPrepare();

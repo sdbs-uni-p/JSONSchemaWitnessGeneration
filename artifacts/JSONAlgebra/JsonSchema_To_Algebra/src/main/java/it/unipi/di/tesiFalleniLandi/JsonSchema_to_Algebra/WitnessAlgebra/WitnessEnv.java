@@ -653,11 +653,15 @@ public class WitnessEnv implements WitnessAssertion {
         return 0;
     }
 
+    // This methods may generate new variables, hence it returns these variables
     @Override
     public List<Map.Entry<WitnessVar, WitnessAssertion>> varNormalization_separation(WitnessEnv env, WitnessVarManager varManager) throws WitnessException, REException {
         List<Map.Entry<WitnessVar, WitnessAssertion>> newDefinitions = new LinkedList<>();
         List<String> checkList = new LinkedList<>();
 
+        // here we iterate on the entries but we do not update env, because separation
+        // works directly inside the objects
+        // however we collect the new definitions generated
         for(Map.Entry<WitnessVar, WitnessAssertion> entry : this.varList.entrySet())
             newDefinitions.addAll(entry.getValue().varNormalization_separation(this, this.variableNamingSystem));
 
@@ -667,6 +671,7 @@ public class WitnessEnv implements WitnessAssertion {
             checkList.add(entry.getKey().getName());
         }
 
+        //why di we invoke notElimination here? is that actually not-completion of new variables?
         buildOBDD_notElimination();
 
         for(int i = newDefinitions.size() -1; i >= 0; i--){
@@ -780,7 +785,7 @@ public class WitnessEnv implements WitnessAssertion {
 ////        Collections.reverse(sortedVarList);
 //
 //        for(Map.Entry<WitnessVar, Integer> entry : sortedVarList) {
-//            newEnv.addOrUnifyAndAddToBeNotEliminated(entry.getKey(),varList.get(entry.getKey()).DNF());
+//            newEnv.addOrUnifyAndAddToBeNotEliminated(entry.getKey(),varList.get(entry.getKey()).);
 //            System.out.println(String.format("processing %1s ", entry.getKey()));
 //        }
 //
@@ -798,13 +803,6 @@ public class WitnessEnv implements WitnessAssertion {
         return newEnv;
     }
 
-    @Override
-    public WitnessAssertion toOrPattReq() {
-        for (WitnessVar key : new HashSet<>(varList.keySet()))
-            addOrUnifyAndAddToBeNotEliminated(key, varList.get(key).toOrPattReq());
-
-        return this;
-    }
 
     @Override
     public boolean isBooleanExp() {
@@ -854,14 +852,13 @@ public class WitnessEnv implements WitnessAssertion {
      */
     public void preparation() throws REException, WitnessException {
 
-        toOrPattReq();
+       //toOrPattReq();
         Queue<WitnessVar> queue = new LinkedList<WitnessVar>();
         List<WitnessVar> visited = new LinkedList<WitnessVar>();
         queue.add(rootVar);
 
         WitnessVar currentVar;
         WitnessAssertion currentAssertion;
-
 
         while(!queue.isEmpty()){
             currentVar = queue.remove();visited.add(currentVar);
@@ -887,17 +884,18 @@ public class WitnessEnv implements WitnessAssertion {
                 newDefinitions.addAll(((WitnessOr) currentAssertion).objectPrepare(this));
             }
 
-
-
             //else if(entry.getValue().getClass() == WitnessType.class && entry.getValue().equals(new WitnessType("obj"))){ //only type object
             else {
+                // GG: the following three lines seems totally useless to me, after we run them def "x" = type[arr] is not modified
+                // old comments:
                 // in case of definitions likes:
-                // def "x" = type[arr] or type[obj]
+                // def "x" = type[arr] or "x" = type[obj]
                 // we have to prepare that definition but the assertion type[arr] is not contained in boolean operator (AND, OR)
                 WitnessAnd tmp = new WitnessAnd();
                 tmp.add(currentAssertion);
                 newDefinitions.addAll(tmp.arrayPreparation(this)); // if the element is not a type[obj], the method call tmp.objectPrepare(this) have no effect
                 newDefinitions.addAll(tmp.objectPrepare(this));
+                // should we add: currentAssertion = tmp; ????
             }
 
             //TODO check
@@ -1090,16 +1088,18 @@ public class WitnessEnv implements WitnessAssertion {
 //    }
 
     public void objectPrepare() throws REException, WitnessException {
-        toOrPattReq();
+        //toOrPattReq();
 
         Collection<Map.Entry<WitnessVar, WitnessAssertion>> toBePrepared = new HashMap<>(varList).entrySet();
 
         while (!toBePrepared.isEmpty()) {
             List<Map.Entry<WitnessVar, WitnessAssertion>> newDefinitions = new LinkedList<>();
 
-
+            // each entry is a variable - schema pair
             for (Map.Entry<WitnessVar, WitnessAssertion> entry : toBePrepared) {
 
+                // if the schema is a witnessAnd or a witnessOr, we invoke objectPrepare and we collect the
+                // new definitions that are generated
                 if (entry.getValue().getClass() == WitnessAnd.class)
                     newDefinitions.addAll(((WitnessAnd) entry.getValue()).objectPrepare(this));
                 else if (entry.getValue().getClass() == WitnessOr.class)
@@ -1118,8 +1118,11 @@ public class WitnessEnv implements WitnessAssertion {
                         varList.put(entry.getKey(), tmp);*/
                 }
             }
+
+            // tmp maps each variable to the variables to be expanded
             List<Map.Entry<String, Integer>> tmp = new LinkedList<>();
 
+            //
             for(Map.Entry<WitnessVar, WitnessAssertion> newDef : newDefinitions) {
                 addOrUnifyAndAddToBeNotEliminated(newDef.getKey(), newDef.getValue());
                 tmp.add(new AbstractMap.SimpleEntry<>(new String(newDef.getKey().getName()), newDef.getValue().countVarToBeExp(this)));

@@ -28,7 +28,6 @@ public class Utils_WitnessAlgebra {
         witnessEnv = witnessEnv.DNF();
         witnessEnv = witnessEnv.varNormalization_expansion(null);
         witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
-        witnessEnv.toOrPattReq();
         witnessEnv.objectPrepare();
         witnessEnv.arrayPreparation();
 
@@ -62,15 +61,21 @@ public class Utils_WitnessAlgebra {
 
         do
         {
+            witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
+            System.out.println("\n merge\n");
+            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+
+            // expansion may destroy the groupization and merging
             witnessEnv.varNormalization_separation(null, null);
             witnessEnv = witnessEnv.varNormalization_expansion(null);
+
 //            witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
             fixpoint = (prePrepEnvSize == witnessEnv.getSize());
 
             if (!fixpoint)
-                System.out.println("before iteration "+i+", prevEnvSize "+prePrepEnvSize+", currEnvSize " + witnessEnv.getSize() +"\n");
+                System.out.println("var normalization, before iteration "+i+", prevEnvSize "+prePrepEnvSize+", currEnvSize " + witnessEnv.getSize() +"\n");
             else
-                System.out.println("after last iteration "+(i-1)+", currEnvSize " + witnessEnv.getSize() +"\n");
+                System.out.println("var normalization, after last iteration "+(i-1)+", currEnvSize " + witnessEnv.getSize() +"\n");
 
             System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
@@ -82,11 +87,15 @@ public class Utils_WitnessAlgebra {
             System.out.println("\n preparation\n");
             System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
-            witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
+            //witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
             fixpoint = (prePrepEnvSize == witnessEnv.getSize());
 
 
         }while (true);
+
+        witnessEnv.preparation();
+        System.out.println("\n extra preparation\n");
+        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         return witnessEnv;
     }

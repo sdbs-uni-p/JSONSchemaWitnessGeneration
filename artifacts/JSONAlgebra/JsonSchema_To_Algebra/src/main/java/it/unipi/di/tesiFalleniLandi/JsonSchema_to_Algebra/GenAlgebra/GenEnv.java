@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -420,7 +419,10 @@ public class GenEnv {
 				WitnessType wType = (WitnessType) wTypeList.get(0); //by default get the first element
 
 				//2- retrieve the potential constraints
-				result = fromSingletonTypeWithConstraints(wType,constraintsList);
+				if ( wType.getType().contains(TYPE_OBJECT))
+					result = fromObjectGroup((WitnessAnd) typedGroup,constraintsList);
+				else
+					result = fromSingletonTypeWithConstraints(wType,constraintsList);
 
 			}
 			else
@@ -450,6 +452,8 @@ public class GenEnv {
 	 * @param witnessType
 	 * @param constraints
 	 * @return
+	 *
+	 * This function can be used for an object group only if it has no constraint
 	 */
 	private GenAssertion fromSingletonTypeWithConstraints(WitnessType witnessType,
 			List<WitnessAssertion> constraints ) throws Exception {
@@ -503,7 +507,7 @@ public class GenEnv {
 		case TYPE_OBJECT:
 			result = new GenObject();
 			if(constraints.size()>0)
-				attachObjectConstraints((GenObject)result, constraints);
+				throw new Exception("Unexpected non trivial object group");
 			break;
 		case TYPE_ARRAY:
 			result = new GenArray();
@@ -516,6 +520,8 @@ public class GenEnv {
 		}
 		return result;
 	}
+
+
 
 
 	/**
@@ -867,11 +873,12 @@ public class GenEnv {
 	 * attaches object constraints, if any
 	 * side-effect on genObject
 	 * Remark: does not verify the presence of non-applicable constraints
-	 * @param genObject
+	 * @param object
 	 * @param constraints
 	 */
-	private void attachObjectConstraints(GenObject genObject, List<WitnessAssertion> constraints) throws Exception {
+	private GenObject fromObjectGroup(WitnessAnd object, List<WitnessAssertion> constraints) throws Exception {
 		//WitnessPro
+		GenObject genObject = new GenObject();
 		List<WitnessPro> witnessProList =  constraints.stream()
 				.filter(o->o instanceof WitnessPro)
 				.map(e->(WitnessPro)e)
@@ -885,24 +892,25 @@ public class GenEnv {
 			else
 				throw new Exception("More than one WitnessPro constraints");
 
-
-
 		//WitnessProperty
+		//List<GenProperty> gPropertyList = genObject.getCPartFromChoices();
 		List<WitnessProperty> witnessPropertyList = constraints.stream()
 				.filter(o->o instanceof WitnessProperty)
 				.map(e->(WitnessProperty)e)
 				.collect(Collectors.toList());
-		genObject.setCPart(witnessPropertyList, this);
+		Map<WitnessProperty, GenObject.GProperty > constMap = genObject.setCPart(witnessPropertyList, this);
 
-		//WitnessOrPattReq
-		List<WitnessOrPattReq> witnessOrPattReqList = constraints.stream()
-				.filter(o->o instanceof WitnessOrPattReq)
-				//.filter(o->((WitnessOrPattReq) o).getReqList().size()!=0 ) commented by GG
-				.map(e->(WitnessOrPattReq)e)
+		//WitnessPattReq
+		List<WitnessPattReq> witnessPattReqList = constraints.stream()
+				.filter(o->o instanceof WitnessPattReq)
+				.map(e->(WitnessPattReq)e)
 				.collect(Collectors.toList());
-		genObject.setRPart(witnessOrPattReqList,this);
-		genObject.setObjectReqList();
-		genObject.setORPList(); //TODO check
+		Map<WitnessPattReq, GenObject.GPattReq > reqMap = genObject.setRPart(witnessPattReqList,this);
+
+		if (object.getChoices()!=null)
+			genObject.setChoiceList(object.getChoices(), constMap, reqMap,this);
+
+		return genObject;
 	}
 
 
@@ -915,6 +923,28 @@ public class GenEnv {
 			}
 		return res;
 	}
+
+	/*
+	public WitnessAssertion varOrBoolToVar(WitnessAssertion assertion) {
+		//this.orpList = new LinkedList<>();
+		String varname;
+		GenVar var;
+		if (assertion.getClass() == WitnessBoolean.class) {
+			var = ((WitnessBoolean) assertion).getValue() == true ? new GenVarTrue("dummy") : new GenVarFalse("dummy");
+			return var;
+		} else {
+			if (assertion.getClass() == WitnessVar.class) {
+				varname = ((WitnessVar) assertion).getName();
+				var = this.getByNameElseCreate(varname);
+				return var;
+			} else {
+				new Exception("Request Properties must be normalized and map to WitnessVar or WitnessBool");
+			}
+		}
+	}
+
+
+	 */
 	/**
 	 * returns variable named name if it exists in GenEnv
 	 * otherwise creates a fresh one
