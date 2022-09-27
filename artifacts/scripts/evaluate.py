@@ -2,8 +2,12 @@
 import itertools
 import os
 import json
+import re
+import numpy as np
 import pandas as pd
 import statistics
+import evalContainment
+from pathlib import Path
 pd.set_option('display.max_columns', None)
 
 
@@ -12,7 +16,7 @@ def readDF(path):
     df['genSuccess'] = df['genSuccess'] .map({'true': True, 'false': False, True: True, False: False})
     df['valid'] = df['valid'] .map({'true': True, 'false': False, True: True, False: False,
                                     'JsonSchemaException': True, 'ExecutionException': True})
-    #df = df.astype({'genSuccess': 'boolean', 'valid': 'boolean'})
+
     return df
 
 
@@ -38,7 +42,25 @@ def eval_unsat(data):
     return success, failure, unsatLogicalErrors, time
 
 
+def print_results(type, val, total, corrections):
+    if val is None:
+       print(f'\t#{type}: na') 
+       return "NA"
+    
+    result_str = ""
+    if corrections and type in corrections:
+        val += corrections[type]["value"]
+        change_type = "Increased" if corrections[type]["value"] >= 0 else "Decreased" 
+        result_str = (f'\n\t\tCorrection: {corrections[type]["description"]}\n'
+                      f'\t\t\t=> {change_type} {type} by {abs(corrections[type]["value"])}')
+        
+    percentage = round(100*(val)/total,2)
+    print(f'\t#{type}: {val} ({percentage}%){result_str}')
+    
+    return percentage
+
 def run_evaluation(config, tool, dataset):
+    print('')
     if tool not in config["filenames"]:
         print(f"Tool {tool} not configured. Skipping")
         return
@@ -46,16 +68,16 @@ def run_evaluation(config, tool, dataset):
         print(f"Dataset {dataset} not configured. Skipping")
         return
 
-    if tool == "ours":
-        print('\n-------------------------- Ours --------------------------')
-    elif tool == "jsongenerator":
-        print('\n--------------------jsongenerator (DG)--------------------')
-    print('{:^58s}'.format(f'Dataset: {dataset}'))
-
     paths = config["datasets"][dataset]["paths"]
     if "sat"  not in paths and "unsat" not in paths:
         print(f"Paths for dataset {dataset} are not configured properly")
         return
+    
+    if tool == "DG":
+        tool_str = "jsongenerator (DG)"
+    else:
+        tool_str = tool
+    print(f'Dataset: {dataset}\nTool:\t {tool_str}')
 
     total = config["datasets"][dataset]["files"]
     sat_success, sat_failure, sat_time = 0, 0, []
@@ -87,57 +109,47 @@ def run_evaluation(config, tool, dataset):
     if "corrections" in config["datasets"][dataset] and tool in config["datasets"][dataset]["corrections"]:
         corrections = config["datasets"][dataset]["corrections"][tool]
 
-    if corrections and "Success" in corrections:
-        corr = corrections["Success"]["value"]
-        print(f'\t#Success: {success + corr} ({round(100*(success + corr)/total,2)}%)'
-              f'\n\t\tCorrection: {corrections["Success"]["description"]}')
-    else:
-        print(f'\t#Success: {success} ({round(100*success/total,2)}%)')
-
-    if corrections and "Failure" in corrections:
-        corr = corrections["Failure"]["value"]
-        print(f'\t#Failure: {failure + corr} ({round(100 * (failure + corr) / total, 2)}%)'
-              f'\n\t\tCorrection: {corrections["Failure"]["description"]}')
-    else:
-        print(f'\t#Failure: {failure} ({round(100*failure/total,2)}%)')
-
-    if sat_logical_errors is None:
-        print(f'\t#Logical Errors (sat): na')
-    else:
-        if corrections and "Logical Errors (sat)" in corrections:
-            corr = corrections["Logical Errors (sat)"]["value"]
-            print(f'\t#Logical Errors (sat): {sat_logical_errors + corr} ({round(100 * (sat_logical_errors + corr) / total, 2)}%)' 
-                  f'\n\t\tCorrection: {corrections["Logical Errors (sat)"]["description"]}')
-        else:
-            print(f'\t#Logical Errors (sat): {sat_logical_errors} ({round(100*(sat_logical_errors)/total,2)}%)')
-    if unsat_logical_errors is None:
-        print(f'\t#Logical Errors (unsat): na')
-    else:
-        if corrections and "Logical Errors (unsat)" in corrections:
-            corr =  corrections["Logical Errors (sat)"]["value"]
-            print(f'\t#"Logical Errors (unsat)": {unsat_logical_errors + corr} ({round(100 * (unsat_logical_errors + corr) / total, 2)}%)' 
-                  f'\n\t\tCorrection: {corrections["Logical Errors (unsat)"]["description"]}')
-        else:
-            print(f'\t#Logical Errors (unsat): {unsat_logical_errors} ({round(100*(unsat_logical_errors)/total,2)}%)')
-    print(f'\tAverage Time: {round(statistics.mean(map(float, time))/1000,3)}s')
-    print(f'\tMedian Time: {round(statistics.median(map(float, time))/1000,3)}s')
+    types = [("Success", success), ("Failure", failure), ("Logical Errors (sat)", sat_logical_errors),
+             ("Logical Errors (unsat)", unsat_logical_errors)]
+    results = ""
+    for t in types:
+        results += str(print_results(t[0], t[1], total, corrections)) + ","
+    results = results[:-1]
+    
+    med_time = round(statistics.median(map(float, time))/1000,3)
+    print(f'\tMedian Time: {med_time}s')
+    p95_time = round(np.percentile(time,95)/1000,3)
+    print(f'\t95th Percentile Time: {p95_time}s')
+    avg_time = round(statistics.mean(map(float, time))/1000,3)
+    print(f'\tAverage Time: {avg_time}s')
+    
+    csv = f'{dataset},{tool},{results}\n' 
+    csv_times = f'{dataset},{tool},{results},{med_time},{p95_time},{avg_time}\n'
+    return csv, csv_times
 
 
 if __name__ == '__main__':
     with open("config.json") as f:
         conf = json.load(f)
     basePath = 'dg_results/'
-    datasets = ["GitHub", "Handwritten", "WashingtonPost", "Snowplow", "Kubernetes", "Containment"]
-    #datasets = ["GitHub"]
-    tools = ["jsongenerator", "ours"]
+    datasets = ["GitHub", "Kubernetes", "Snowplow", "WashingtonPost", "Handwritten","Containment"]
+    tools = ["Ours", "DG"]
 
-    combs = itertools.product(tools, datasets)
+    combs = itertools.product(datasets, tools)
+    results_csv = "dataset,tool,success,failure,errors sat,errors unsat\n"
+    results_csv_times = "dataset,tool,success,failure,errors sat,errors unsat,median time,95 percentile,average time\n"
     for c in combs:
-        run_evaluation(conf, c[0], c[1])
-
-    exit(0)
-    # TODO: Handwritten does not match, also makes no sense in Paper - Probably needs updating
-    # Manipualted data to match old results
-    # TODO: Still off, check back with results in repo
-
-    # TODO: Containment matches Jupyter Notebook, but not Paper
+        tmp_csv, tmp_csv_times = run_evaluation(conf, c[1], c[0])
+        if tmp_csv: results_csv += tmp_csv
+        if tmp_csv_times: results_csv_times +=  tmp_csv_times
+        
+    tmp_csv, tmp_csv_times = evalContainment.runSubschemaTests()
+    if tmp_csv: results_csv += tmp_csv
+    if tmp_csv_times: results_csv_times +=  tmp_csv_times
+    
+    home = str(Path.home())
+    with open(f"{home}/results/results.csv", "w") as f:
+        f.write(results_csv)
+        
+    with open(f"{home}/results/results_with_times.csv", "w") as f:
+        f.write(results_csv_times)

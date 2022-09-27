@@ -14,17 +14,17 @@ ENV LC_ALL="C.UTF-8"
 
 # Install packages for experiments
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
+                build-essential \
 		git \
 		gradle \
-        libffi-dev \
-        libssl-dev \
-		maven \
+                libffi-dev \
+                libssl-dev \
+                maven \
 		openjdk-11-jdk \
 		openjdk-11-jre \
-        patch \
+                patch \
 		wget \
-        zlib1g-dev 
+                zlib1g-dev 
 
 # Install dev packages
 RUN apt-get install -y --no-install-recommends \
@@ -33,7 +33,7 @@ RUN apt-get install -y --no-install-recommends \
 
 # Install packages for chart generation
 RUN apt-get update && apt-get install -y --no-install-recommends --purge \
-		        fonts-linuxlibertine \
+                fonts-linuxlibertine \
                 g++ \
                 make \
                 r-base-core \
@@ -53,8 +53,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends --purge \
     && R -q -e "library(remotes); remotes::install_version('Rttf2pt1', version = '1.3.8', quiet=TRUE)" 
 
 RUN apt-get update && apt-get install -y --no-install-recommends --purge \
-			dos2unix \
-            libbz2-dev
+                bsdmainutils \
+                colordiff \
+                dos2unix \
+                libbz2-dev 
 
 RUN mkdir -p /opt/python3.9/ && cd /opt/python3.9/ && \
     wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz && \
