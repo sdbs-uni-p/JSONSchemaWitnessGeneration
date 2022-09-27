@@ -26,7 +26,7 @@ def eval_sat(data):
     failure = len(df[((df['genSuccess'] == False) | (df['genSuccess'].isnull())) |
                      ((df['genSuccess'] == True) & (df['valid'].isnull()))])
     satLogicalErrors = len(df[(df['genSuccess'] == True) & ((df['valid'] == False))])
-    time = df[df['genSuccess']==True]['totalTime'].dropna().tolist()
+    time = df['totalTime'].dropna().tolist()
 
     return success, failure, satLogicalErrors, time
 
@@ -37,7 +37,7 @@ def eval_unsat(data):
     failure = len(df[df['genSuccess'].isnull() | ((df['genSuccess'] == True) & (df['valid'].isnull()))])
     unsatLogicalErrors = len(df[((df['genSuccess'] == True) & ((df['valid']==True) | (df['valid']==False)))])
 
-    time = df[df['genSuccess'] == True]['totalTime'].dropna().tolist()
+    time = df['totalTime'].dropna().tolist()
 
     return success, failure, unsatLogicalErrors, time
 
