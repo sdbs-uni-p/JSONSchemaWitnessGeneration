@@ -19,5 +19,5 @@ Rscript hexplot-histogram_kubernetes.r > /dev/null
 Rscript hexplot-histogram_snowplow.r > /dev/null
 Rscript hexplot-histogram_wp.r > /dev/null
 
-cp charts/* ../results/charts/
+cp output/* ../results/charts/
 printf "\nCharts are in ${HOME}/results/charts\n"

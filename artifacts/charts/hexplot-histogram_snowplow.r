@@ -48,5 +48,5 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
 
 plot <- hexplot_fix(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
-ggsave(paste("charts/hexplot_and_histograms_snowplow_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
+ggsave(paste("output/hexplot_and_histograms_snowplow_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
 
