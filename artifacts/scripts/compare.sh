@@ -1,13 +1,33 @@
 #!/bin/bash
 
-f1=$(cat $HOME/results/original_results_with_times.csv | column -t -s,)
-f2=$(cat $HOME/results/results_with_times.csv | column -t -s,)
+clmns="1,2,3,4,5,6"
+diff="colordiff"
 
-printf "\nComparing new results against original results (cf. Table 1 in the Paper).
-If differences occur, new results are colored \e[32mgreen\e[0m and original results \e[31mred\e[0m\n\n"
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -t|--compare-times)
+      clmns="1,2,3,4,5,6,7,8,9"
+      shift
+      ;;
+    -c|--no-colors)
+      diff="diff"
+      shift
+      ;;
+    -*|--*|*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+  esac
+done
+
+f1=$(cat $HOME/results/original_results.csv | cut -d, -f$clmns | column -t -s,)
+f2=$(cat $HOME/results/results.csv | cut -d, -f$clmns | column -t -s,)
+
+printf "Comparing new results against original results (cf. Table 1 in the Paper).
+If differences occur, new results start with - and original results with +\n\n"
 for ((i=1; i<=14; i++))
 do
-  res=$(colordiff -U 4 <(head -$i <(echo "$f1") | tail -1) <(head -$i <(echo "$f2") | tail -1))
+  res=$(eval "$diff" -U 4 <(head -$i <(echo "$f1") | tail -1) <(head -$i <(echo "$f2") | tail -1))
   if (($?==0))
   then
     printf " "
