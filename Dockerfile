@@ -82,7 +82,26 @@ RUN python3.9 -m pip install pandas
 # Add artifacts directory (from host) to home directory
 ADD --chown=repro:repro artifacts/ /home/repro
 
-RUN dos2unix scripts/* && dos2unix doAll.sh
+# Ensure proper format and permissions of scripts
+RUN dos2unix scripts/* && dos2unix doAll.sh && \
+    chmod +x scripts/* && chmod +x doAll.sh
 
 # Patch jsongenerator to allow testing on our datasets
-RUN scripts/patch-jsongenerator.sh
+RUN cp -r patches/jsongenerator.patch jsongenerator/.
+WORKDIR /home/repro/jsongenerator
+RUN dos2unix jsongenerator.patch && git apply jsongenerator.patch
+
+# Build our tool
+WORKDIR /home/repro/JSONAlgebra
+RUN export MAVEN_OPTS="-Xmx10240m" && \
+    mvn clean install -DskipTests -pl jsonschema-refexpander,JsonSchema_To_Algebra
+
+# Build jsongenerator
+WORKDIR /home/repro/jsongenerator
+RUN gradle build
+
+# Build jsonsubschema
+WORKDIR /home/repro/jsonsubschema
+RUN python3 setup.py install --user
+
+WORKDIR /home/repro
