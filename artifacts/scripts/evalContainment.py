@@ -63,7 +63,7 @@ def extractAndCheck(pathToFolder):
     S1SUBS2 = 's1SubsetEqOfs2'
     new_dict = {'subFolder':[],'subSubFolder':[],'fileName':[],'id':[],'s1SUBs2':[], 
                 'IBM_s1SUBs2':[], 'totalTime':[]}
-    
+
     subFoldersList = [f for f in os.listdir(pathToFolder) if path.isdir(join(pathToFolder, f))]
     for subFolder in subFoldersList:
         subFolderPath = join(pathToFolder, subFolder)
@@ -111,7 +111,7 @@ def evalSubschema(df):
     notEqual_dict = notEqual[['s1SUBs2','IBM_s1SUBs2']].value_counts().to_dict()
     notEqual_list = [(k[0],k[1],v) for k,v in notEqual_dict.items()]
     notEqualDF = pd.DataFrame(notEqual_list, columns=['s1SUBs2','IBM_s1SUBs2','count'])
-    
+
     sat_logical_errors = notEqualDF[(notEqualDF['s1SUBs2']==0) & (notEqualDF['IBM_s1SUBs2']==1)]
     unsat_logical_errors = df[(df['s1SUBs2']==1)]['IBM_s1SUBs2'].value_counts(dropna=False).to_frame()
 
@@ -126,26 +126,25 @@ def evalSubschema(df):
     print(f"\tLogical errors sat: {sat_logical_errors.iloc[0]['count']} ({sat_err_perc})%")
     unsat_err_perc = round(100*unsat_logical_errors.loc[0, 'IBM_s1SUBs2']/1331, 2)
     print(f"\tLogical errors unsat: {unsat_logical_errors.loc[0, 'IBM_s1SUBs2']} ({unsat_err_perc}%)")
-    
+
     return f'{success_perc},{failure_perc},{sat_err_perc},{unsat_err_perc}'
 
 def runSubschemaTests():
     schemaPairs = '/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/containment/schemaPairs'
-    subschemaDF = extractAndCheck(schemaPairs)   
+    subschemaDF = extractAndCheck(schemaPairs)
     subschemaDF = subschemaDF.sort_values(by=['subFolder', 'subSubFolder','fileName','id'])
-    
+
     results = evalSubschema(subschemaDF)
-    
+
     med_time = round(subschemaDF.totalTime.median()/1000,3)
     print(f'\tMedian Time: {med_time}s')
     p95_time = round(subschemaDF.totalTime.quantile(0.95)/1000,3)
     print(f'\t95th Percentile Time: {p95_time}s')
     avg_time = round(subschemaDF.totalTime.mean()/1000,3)
     print(f'\tAverage Time: {avg_time}s')
-    
-    csv = f'Containment,CC,{results}\n' 
-    csv_times = f'Containment,CC,{results},{med_time},{p95_time},{avg_time}\n'
-    return csv, csv_times
-    
+
+    csv = f'Containment,CC,{results},{med_time},{p95_time},{avg_time}\n'
+    return csv
+
 if __name__ == '__main__':
     runSubschemaTests()

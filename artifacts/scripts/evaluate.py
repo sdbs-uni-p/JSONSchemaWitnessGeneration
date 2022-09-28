@@ -46,17 +46,17 @@ def print_results(type, val, total, corrections):
     if val is None:
        print(f'\t#{type}: na') 
        return "NA"
-    
+
     result_str = ""
     if corrections and type in corrections:
         val += corrections[type]["value"]
         change_type = "Increased" if corrections[type]["value"] >= 0 else "Decreased" 
         result_str = (f'\n\t\tCorrection: {corrections[type]["description"]}\n'
                       f'\t\t\t=> {change_type} {type} by {abs(corrections[type]["value"])}')
-        
+
     percentage = round(100*(val)/total,2)
     print(f'\t#{type}: {val} ({percentage}%){result_str}')
-    
+
     return percentage
 
 def run_evaluation(config, tool, dataset):
@@ -72,7 +72,7 @@ def run_evaluation(config, tool, dataset):
     if "sat"  not in paths and "unsat" not in paths:
         print(f"Paths for dataset {dataset} are not configured properly")
         return
-    
+
     if tool == "DG":
         tool_str = "jsongenerator (DG)"
     else:
@@ -115,17 +115,16 @@ def run_evaluation(config, tool, dataset):
     for t in types:
         results += str(print_results(t[0], t[1], total, corrections)) + ","
     results = results[:-1]
-    
+
     med_time = round(statistics.median(map(float, time))/1000,3)
     print(f'\tMedian Time: {med_time}s')
     p95_time = round(np.percentile(time,95)/1000,3)
     print(f'\t95th Percentile Time: {p95_time}s')
     avg_time = round(statistics.mean(map(float, time))/1000,3)
     print(f'\tAverage Time: {avg_time}s')
-    
-    csv = f'{dataset},{tool},{results}\n' 
-    csv_times = f'{dataset},{tool},{results},{med_time},{p95_time},{avg_time}\n'
-    return csv, csv_times
+
+    csv = f'{dataset},{tool},{results},{med_time},{p95_time},{avg_time}\n'
+    return csv
 
 
 if __name__ == '__main__':
@@ -136,20 +135,12 @@ if __name__ == '__main__':
     tools = ["Ours", "DG"]
 
     combs = itertools.product(datasets, tools)
-    results_csv = "dataset,tool,success,failure,errors sat,errors unsat\n"
-    results_csv_times = "dataset,tool,success,failure,errors sat,errors unsat,median time,95 percentile,average time\n"
+    results_csv = "dataset,tool,success,failure,errors sat,errors unsat,median time,95 percentile,average time\n"
     for c in combs:
-        tmp_csv, tmp_csv_times = run_evaluation(conf, c[1], c[0])
-        if tmp_csv: results_csv += tmp_csv
-        if tmp_csv_times: results_csv_times +=  tmp_csv_times
-        
-    tmp_csv, tmp_csv_times = evalContainment.runSubschemaTests()
-    if tmp_csv: results_csv += tmp_csv
-    if tmp_csv_times: results_csv_times +=  tmp_csv_times
-    
+        results_csv += run_evaluation(conf, c[1], c[0])
+
+    results_csv += evalContainment.runSubschemaTests()
+
     home = str(Path.home())
     with open(f"{home}/results/results.csv", "w") as f:
         f.write(results_csv)
-        
-    with open(f"{home}/results/results_with_times.csv", "w") as f:
-        f.write(results_csv_times)
