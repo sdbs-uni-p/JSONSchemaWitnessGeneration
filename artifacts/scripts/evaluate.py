@@ -12,7 +12,11 @@ pd.set_option('display.max_columns', None)
 
 
 def readDF(path):
-    df = pd.read_csv(path).convert_dtypes()
+    try:
+        df = pd.read_csv(path).convert_dtypes()
+    except pd.errors.EmptyDataError:
+      return
+
     df['genSuccess'] = df['genSuccess'] .map({'true': True, 'false': False, True: True, False: False})
     df['valid'] = df['valid'] .map({'true': True, 'false': False, True: True, False: False,
                                     'JsonSchemaException': True, 'ExecutionException': True})
@@ -20,8 +24,7 @@ def readDF(path):
     return df
 
 
-def eval_sat(data):
-    df = readDF(data)
+def eval_sat(df):
     success = len(df[(df['genSuccess'] == True) & (df['valid'] == True)])
     failure = len(df[((df['genSuccess'] == False) | (df['genSuccess'].isnull())) |
                      ((df['genSuccess'] == True) & (df['valid'].isnull()))])
@@ -31,8 +34,7 @@ def eval_sat(data):
     return success, failure, satLogicalErrors, time
 
 
-def eval_unsat(data):
-    df = readDF(data)
+def eval_unsat(df):
     success = len(df[df['genSuccess'] == False])
     failure = len(df[df['genSuccess'].isnull() | ((df['genSuccess'] == True) & (df['valid'].isnull()))])
     unsatLogicalErrors = len(df[((df['genSuccess'] == True) & ((df['valid']==True) | (df['valid']==False)))])
@@ -84,18 +86,33 @@ def run_evaluation(config, tool, dataset):
     unsat_success, unsat_failure, unsat_time = 0, 0, []
     sat_logical_errors, unsat_logical_errors = None, None
 
+    has_sat, has_unsat = False, False
     if "sat" in paths:
         path = f'{config["base_path"]}/{paths["sat"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
-            print(f"File at {path} not found. Skipping dataset.")
-            return
-        sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(path)
+            print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
+        else:
+            df = readDF(path)
+            if df is None or df.empty:
+                print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
+            else:
+                sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
+                has_sat = True
     if "unsat" in paths:
         path = f'{config["base_path"]}/{paths["unsat"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
-            print(f"File at {path} not found. Skipping dataset.")
-            return
-        unsat_success, unsat_failure, unsat_logical_errors, unsat_time = eval_unsat(path)
+            print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
+        else:
+            df = readDF(path)
+            if df is None or df.empty:
+                print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
+            else:
+                unsat_success, unsat_failure, unsat_logical_errors, unsat_time = eval_unsat(df)
+                has_unsat = True
+
+    # Return empty line if datasets are missing
+    if not (has_sat or has_unsat):
+        return " "
 
     success = sat_success + unsat_success
     failure = sat_failure + unsat_failure
@@ -128,7 +145,9 @@ def run_evaluation(config, tool, dataset):
 
 
 if __name__ == '__main__':
-    with open("config.json") as f:
+    home = str(Path.home())
+
+    with open(f"{home}/scripts/config.json") as f:
         conf = json.load(f)
     basePath = 'dg_results/'
     datasets = ["GitHub", "Kubernetes", "Snowplow", "WashingtonPost", "Handwritten","Containment"]
@@ -141,6 +160,5 @@ if __name__ == '__main__':
 
     results_csv += evalContainment.runSubschemaTests()
 
-    home = str(Path.home())
     with open(f"{home}/results/results.csv", "w") as f:
         f.write(results_csv)
