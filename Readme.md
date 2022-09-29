@@ -14,34 +14,46 @@ First off, clone this repository with
 
 To build the container, run ``docker build -t wg_repro .`` inside the root directory of this repository.
 
-After building, you can start the container with ``docker run -it wg_repro``. You can include the flag ``--name <name>`` (replacing ``<name>`` with a name of your choice) to easier identify the container.
+After building, you can start the container with ``docker run -it wg_repro``. You can include the flag ``--name <name>`` (replacing ``<name>`` with a name of your choice) to identify the container more easily.
 
-## Data Sets
-In this reproduciton package, our own tool, as well as competitor tools are executed on the same data sets as in the accompanying paper. The datasets are stored in [expDataset](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset). Datasets containing both, satisfiable and unsatisfibale, schemas are divided according into subdirectories ``sat``  and ``unsat``. In the GitHub dataset, we have different satisifiable datasets for jsongenerator (sat-dg) and our tool (sat), where different files are excluded as the tools had problems with processing them. These files are considered as failures in our evaluation script. Likewise, in the Snowplow dataset, two files in the subdirectory ``dg`` are excluded from our tool and only processed by jsongenerator.
+## Datasets
+In this reproduction package, our own tool, as well as competitor tools are executed on the same datasets as in the accompanying paper. The datasets are stored in [expDataset](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset). Datasets containing both, satisfiable and unsatisfibale, schemas are divided according into subdirectories ``sat``  and ``unsat``. In the GitHub dataset, we have different satisfiable datasets for jsongenerator (sat-dg) and our tool (sat), where different files are excluded as the tools had problems with processing them. These files are considered as failures in our evaluation script. Likewise, the Snowplow dataset, is divided into different datasets for jsongenerator (dg) and our tool (ours), the latter missing two schemas that caused a timeout during our experiments which are also counted as failures in our evaluation script.
 
-## Running experiments
+We also provide the schemas in the GitHub and Snowplow dataset that were excluded in the following directories (relative to [expDataset](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset)):
+* [github/excluded-ours](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/github/excluded-ours) contains 52 schemas that caused problems with our tool, grouped into subfolders by type of error.
+* [github/excluded-dg](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/github/excluded-dg) contains 10 schemas that caused problems with jsongenerator, grouped into subfolders by type of error.
+* [snowplow/excluded-ours](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/snowplow/excluded-ours) contains two schemas on which our tool surpassed the specified timeout in our experiments.
+
+These schemas are not processed by default when running our experiments. See section #TODO in case you want to run experiments on these schemas.   
+
+## Running Experiments
 We provide a number of scripts for running our experiments inside the container.
 
-To run all experiments, execute ``./doAll.sh``. Note that this can take **several hours**.
-For this reason, we also make our original results available, allowing to only replicate the evaluation.
+To run all experiments including the the generation of charts and the evaluation, execute ``./doAll.sh``. Note that this can take **several hours**.
+We also ship our original results with the reproduction package, allowing to only replicate the evaluation (see #TODO).
 
 
-There are several scripts in [scripts](artifacts/scripts) with the following functionality:
-* ``patch-jsongenerator.sh`` is executed when building the container and it should not be necessary to run this script.
-* ``./setup.sh`` builds and installs our tool, jsongenerator and jsonsubschema.
-* ``./run-JSONAlgebra`` performs experiments on the *GitHub*, *Handwritten* and *Containment-draft4* dataset with our tool. Note that the originals results we provide are overwritten by this script, as well as the results used for generating charts.
-* ``./run-jsongenerator`` performs experiments on the *GitHub*, *Handwritten* and *Containment-draft4* dataset with jsongenerator (DG). Note that the originals results we provide are overwritten by this script.
-* ``./run-evaluation.sh`` performs the evaluation on all datasets. Results from our tool and jsongenerator are taken from [results](artifacts/results) while results for jsonsubschema (CC) (which is only used on the *Containment-draft4* dataset) are calculated when running this script. Configuration, including paths and manual corrections is performed in [config.json](artifacts/scripts)
+There are additional scripts located in [scripts](artifacts/scripts) for running individual experiments:
+* ``run-JSONAlgebra.sh`` performs experiments on all datasets with our tool. Note that the originals results we provide, as well as the results used for generating charts are overwritten by the new results generated by this script.
+* ``run-jsongenerator.sh`` performs experiments on all datasets with jsongenerator (DG). Note that the originals results we provide are overwritten by this script.
+* ``evalContainment.py`` performs and evaluates experiments on the containment dataset for jsonsubschema (CC). Opposed to the other tools, these experiments are performed from scratch with each execution and not stored in results. 
 
-## Comparing the Results
-To compare the computed results with the results stated in the paper, inspect the file evaluation.txt in the directory [results](artifacts/results) after running ``./doAll.sh``. Evaluation.txt also contains comments on a few selected manual changes that we had to make, e.g., due to incorrect results produced by the third-party schema validator.
+## Executing Experiments on Specific Datasets
+To execute experiments on a specific dataset (e.g., the excluded datasets mentioned above), supply the optional parameter ``-i <dataset>`` to ``run-JSONAlgebra`` or ``run-jsongenerator``, replacing <dataset> with the datasets path, relative to [expDataset](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset). 
 
-As the algorithm of our tool is not entirely deterministic, results may vary slightly. However, we have only experienced deviations of no more than 3 files, which accounted for roughly 0.05% in our GitHub data set.
+For instance, to run experiments with our tool on [github/excluded-ours/timeout](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/github/excluded-ours/timeout), run ``./run-JSONAlgebra -i github/excluded-ours/timeout``. Results will be store in a subdirectory of [results](artifacts/results), named like the dataset with slashes (/) replaced by dashes (-). Hence, in our example, results will be stored in ``results/github-excluded-ours-timeout``.  
 
-Results for jsongenerator (DG) on the datasets GitHub, Handwritten and Containment differ slightly from those reported in the paper, as a different version of jsongenerator is used in this reproduction package.
+## Evaluating and Comparing Results
+Evaluation is performed by ``evaluate.py`` in [scripts](artifacts/scripts). This script generates a text output describing results and comments on a few selected manual fixes we had to make, e.g., due to incorrect results produced by the third-party schema validator. In addition, a csv file, results.csv, mimicking Table 1 in our paper is stored in [results](artifacts/results). As experiments for jsonsubschema (CC) are always created from scratch for each evaluation, this script automatically runs ``evalContainment.py``.
+
+You can execute ``evaluate.py`` without running any experiments (i.e., without running When running ``run-JSONAlgebra.sh``, ``run-jsongenerator.sh`` or ``./doAll.sh``). In this case, evaluation is performed on our original results for our tool and jsongenerator. When executing ``./doAll.sh``, ``evaluate.py`` is executed automatically, storing the text output in ``results/evaluation.txt``.
+
+To compare the computed results with the results stated in the paper, execute ``compare.sh`` in [scripts](artifactts/scripts). This compares ``results.csv`` generated by ``evaluate.py`` against [original_results.csv](artifacts/results/original_results.csv), generating a diff-like output. ``compare.sh`` ignores runtimes by default and takes two optional parameters:
+* ``-t`` enables comparison of runtimes
+* ``-c`` disables colored (red/green) output
 
 ## Generating Charts
-To generate charts, execute ``./create-charts.sh`` at [Charts/](artifacts/Charts) inside the docker container. The generated charts are stored in [Charts/charts](artifacts/Charts/charts).
+To generate charts, execute ``./create-charts.sh`` in [charts](artifacts/charts) inside the docker container. The generated charts are stored in [results/charts](artifacts/results/charts). When executing ``./doAll.sh``, charts are automatically generated and stored at the same location.
 
 ## Moving Output to the Host System
 All results are stored at /home/repro/results in the container. To copy the results to the host system, use ``docker cp <containerID>:/home/repro/results .`` after obtaining the containerID using ``docker ps``. If you use the ``--name`` flag, as explained above, you can replaced the containerID with the chosen name.
