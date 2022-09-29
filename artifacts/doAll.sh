@@ -3,6 +3,8 @@
 logdir=${HOME}/logs
 mkdir -p $logdir
 
+cd scripts
+
 echo "Running JSONAlgebra experiments... (this may take a few hours)"
 ./run-JSONAlgebra.sh 
 
