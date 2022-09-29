@@ -20,7 +20,10 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -*|--*|*)
-      echo "Unknown option $1"
+      printf "Unknown option $1\nPossible options are:
+      \tNo Option\tCompare without runtimes and use coloured output 
+      \t-c | --no-colors\tDisable colored output
+      \t-t | --compare-times\tEnable comparison of runtimes\n"
       exit 1
       ;;
   esac

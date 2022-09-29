@@ -8,7 +8,9 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -*|--*|*)
-      echo "Unknown option $1"
+      printf "Unknown option $1\nPossible options are:
+      \tNo Option\tExecute experiments on all datasets
+      \t-i | --input\tExecute experiments on the specified dataset (given as a path relative to ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/)\n"
       exit 1
       ;;
   esac

@@ -8,7 +8,9 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -*|--*|*)
-      echo "Unknown option $1"
+      printf "Unknown option $1\nPossible options are:
+      \tNo Option\tExecute experiments on all datasets
+      \t-i | --input\tExecute experiments on the specified dataset (given as a path relative to ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/)\n"
       exit 1
       ;;
   esac
@@ -53,7 +55,7 @@ run_experiment snowplow/ours
 (
     cd ${HOME}/results
     mkdir snowplow 2> /dev/null
-    mv snowplow-ours/jsongenerator_results snowplow/jsongenerator_results
+    mv snowplow-ours/results.csv snowplow/results.csv
     rm -r snowplow-ours
 )
 # Copy Snowplow results to charts
