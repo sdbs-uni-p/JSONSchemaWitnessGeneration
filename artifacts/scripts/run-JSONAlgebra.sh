@@ -59,11 +59,13 @@ run_experiment snowplow/ours
     rm -r snowplow-ours
 )
 # Copy Snowplow results to charts
+mkdir -p ${HOME}/charts/data/snowplow/ 2> /dev/null
 cp ${HOME}/results/snowplow/results.csv ${HOME}/charts/data/snowplow/results.csv
 
 echo "Running experiments on Washington Post dataset ..."
 run_experiment wp
 # Copy Washington Post results to charts
+mkdir -p ${HOME}/charts/data/wp/results.csv 2> /dev/null
 cp ${HOME}/results/wp/results.csv ${HOME}/charts/data/wp/results.csv
 
 echo "Running experiments on GitHub dataset ..."
@@ -76,9 +78,10 @@ run_experiment github/unsat
     mkdir github 2> /dev/null
     awk '(NR == 1) || (FNR > 1)' github-sat/results.csv \
         github-unsat/results.csv  > github/results.csv
-	# Copy GitHub results to charts
-	cp ${HOME}/results/github/results.csv ${HOME}/charts/data/github/results.csv
-	rm -r github
+    # Copy GitHub results to charts
+    mkdir -p ${HOME}/charts/data/github/results.csv 2> /dev/null 
+    cp ${HOME}/results/github/results.csv ${HOME}/charts/data/github/results.csv
+    rm -r github
 )
 
 echo "Running experiments on Kubernetes dataset..."
@@ -92,6 +95,7 @@ run_experiment kubernetes/unsat
     awk '(NR == 1) || (FNR > 1)' kubernetes-sat/results.csv \
         kubernetes-unsat/results.csv > kubernetes/results.csv
     # Copy Kubernetes results to charts
+    mkdir -p ${HOME}/charts/data/kubernetes/results.csv 2> /dev/null
     cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
     rm -r kubernetes
 )
