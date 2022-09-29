@@ -1,0 +1,251 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "padding": {
+            "properties": {
+                "alignment": {
+                    "enum": [
+                        "left",
+                        "right"
+                    ]
+                },
+                "padChar": {
+                    "maxLength": 1,
+                    "minLength": 1,
+                    "type": "string",
+                    "default": " "
+                }
+            },
+            "type": "object"
+        },
+        "typeEnum": {
+            "enum": [
+                "string",
+                "integer",
+                "numeric"
+            ]
+        }
+    },
+    "description": "A text encoded data record, formated as fixed-width or delimited text",
+    "id": "http://alexkovner.com/textrecord",
+    "oneOf": [
+        {
+            "properties": {
+                "delimiter": {
+                    "default": ",",
+                    "maxLength": 1,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "properties": {
+                    "oneOf": [
+                        {
+                            "additionalProperties": {
+                                "properties": {
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "minimum": 1,
+                                        "type": "integer"
+                                    },
+                                    "type": {
+                                        "oneOf": [
+                                            {
+                                                "$ref": "#/definitions/typeEnum"
+                                            },
+                                            {
+                                                "$ref": "#"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "type",
+                                    "location"
+                                ],
+                                "type": "object"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "items": {
+                                "properties": {
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "oneOf": [
+                                            {
+                                                "$ref": "#/definitions/typeEnum"
+                                            },
+                                            {
+                                                "$ref": "#"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "type"
+                                ],
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "stringFormat": {
+                    "anyOf": [
+                        {
+                            "default": "none",
+                            "enum": [
+                                "json",
+                                "none"
+                            ]
+                        },
+                        {
+                            "pattern": "\\(.*\\)",
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "properties",
+                "delimiter"
+            ]
+        },
+        {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "properties": {
+                    "oneOf": [
+                        {
+                            "additionalProperties": {
+                                "anyOf": [
+                                    {
+                                        "properties": {
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "end": {
+                                                "type": "integer"
+                                            },
+                                            "start": {
+                                                "type": "integer"
+                                            },
+                                            "type": {
+                                                "$ref": "#"
+                                            }
+                                        },
+                                        "required": [
+                                            "start",
+                                            "end",
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    {
+                                        "properties": {
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "end": {
+                                                "type": "integer"
+                                            },
+                                            "padding": {
+                                                "$ref": "#/definitions/padding",
+                                                "type": "object"
+                                            },
+                                            "start": {
+                                                "type": "integer"
+                                            },
+                                            "type": {
+                                                "$ref": "#/definitions/typeEnum"
+                                            }
+                                        },
+                                        "required": [
+                                            "type",
+                                            "start",
+                                            "end"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "properties": {
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "length": {
+                                                "type": "integer"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "$ref": "#"
+                                            }
+                                        },
+                                        "required": [
+                                            "name",
+                                            "type",
+                                            "length"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    {
+                                        "properties": {
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "length": {
+                                                "type": "integer"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "padding": {
+                                                "$ref": "#/definitions/padding"
+                                            },
+                                            "type": {
+                                                "$ref": "#/definitions/typeEnum"
+                                            }
+                                        },
+                                        "required": [
+                                            "name",
+                                            "type",
+                                            "length"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "properties"
+            ]
+        }
+    ],
+    "title": "Text Record",
+    "type": "object"
+}
