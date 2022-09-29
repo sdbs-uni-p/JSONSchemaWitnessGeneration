@@ -95,6 +95,8 @@ RUN dos2unix jsongenerator.patch && git apply jsongenerator.patch
 WORKDIR /home/repro/JSONAlgebra
 RUN export MAVEN_OPTS="-Xmx10240m" && \
     mvn clean install -DskipTests -pl jsonschema-refexpander,JsonSchema_To_Algebra
+# Run mvn exec once to buil
+RUN mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" -pl JsonSchema_To_Algebra || true
 
 # Build jsongenerator
 WORKDIR /home/repro/jsongenerator
