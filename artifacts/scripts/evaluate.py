@@ -112,7 +112,7 @@ def run_evaluation(config, tool, dataset):
 
     # Return empty line if datasets are missing
     if not (has_sat or has_unsat):
-        return " "
+        return f"{dataset},{tool},NA,NA,NA,NA,NA,NA,NA\n"
 
     success = sat_success + unsat_success
     failure = sat_failure + unsat_failure
@@ -120,7 +120,7 @@ def run_evaluation(config, tool, dataset):
 
     if len(time) == 0:
         print("Found no execution times in results. Does the file contain any entries?\nSkipping dataset ...")
-        return
+        return f"{dataset},{tool},NA,NA,NA,NA,NA,NA,NA\n"
 
     corrections = None
     if "corrections" in config["datasets"][dataset] and tool in config["datasets"][dataset]["corrections"]:
