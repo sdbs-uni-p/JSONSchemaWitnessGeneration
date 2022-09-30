@@ -1,12 +1,12 @@
-# reproduction package for the article [Witness Generation for JSON Schema](http://arxiv.org/abs/2202.12849),
+# Reproduction package for the article Witness Generation for JSON Schema,
 # by Lyes Attouche, Mohamed-Amine Baazizi, Dario Colazzo, Giorgio Ghelli, Carlo Sartiani, and Stefanie Scherzinger.
 #
-# Copyright 2021, Stefan Klessinger <stefan.klessinger@uni-passau.de>
+# Copyright 2022, Stefan Klessinger <stefan.klessinger@uni-passau.de>
 # SPDX-License-Identifier: GPL-3.0
 
 FROM ubuntu:20.04
 
-MAINTAINER Stefan Klessinger <stefan.klessinger@uni-passau.de>
+LABEL maintainer="Stefan Klessinger <stefan.klessinger@uni-passau.de>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG="C.UTF-8"
