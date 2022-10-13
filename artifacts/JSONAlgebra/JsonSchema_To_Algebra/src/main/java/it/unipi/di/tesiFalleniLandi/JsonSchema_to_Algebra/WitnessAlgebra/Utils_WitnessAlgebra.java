@@ -46,15 +46,15 @@ public class Utils_WitnessAlgebra {
         WitnessEnv witnessEnv = Utils_FullAlgebra.getWitnessAlgebra(schema);
         witnessEnv.buildOBDD_notElimination();
         System.out.println("\n buildOBDD_notElimination\n");
-        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
         System.out.println("\n merge\n");
-        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         witnessEnv = witnessEnv.groupize();
         System.out.println("\n groupize\n");
-        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         int i = 1, prePrepEnvSize = 0;
         boolean fixpoint = false;
@@ -63,7 +63,7 @@ public class Utils_WitnessAlgebra {
         {
             witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
             System.out.println("\n merge\n");
-            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
             // expansion may destroy the groupization and merging
             witnessEnv.varNormalization_separation(null, null);
@@ -77,7 +77,7 @@ public class Utils_WitnessAlgebra {
             else
                 System.out.println("var normalization, after last iteration "+(i-1)+", currEnvSize " + witnessEnv.getSize() +"\n");
 
-            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
             if (fixpoint) break;
 
@@ -85,7 +85,7 @@ public class Utils_WitnessAlgebra {
 
             witnessEnv.preparation();
             System.out.println("\n preparation\n");
-            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
             //witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
             fixpoint = (prePrepEnvSize == witnessEnv.getSize());
@@ -95,7 +95,7 @@ public class Utils_WitnessAlgebra {
 
         witnessEnv.preparation();
         System.out.println("\n extra preparation\n");
-        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         return witnessEnv;
     }

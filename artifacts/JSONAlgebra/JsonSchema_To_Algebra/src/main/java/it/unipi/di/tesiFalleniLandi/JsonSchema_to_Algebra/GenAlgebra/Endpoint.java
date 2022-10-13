@@ -73,9 +73,9 @@ public class Endpoint {
         // "NPproblems/";//"demopaper/";// "oneTypeSchemas/object/";//
         //"schemastore/";//"oneTypeSchemas/enum/"; //
         //"jsonSchemaTestSuiteDraft6/";//"jsonSchemaOrg/";//
-        String path = "/expdataset/handwritten/failures/"; //"/oneOfAnyOf/InvalidWitnessException/InvalidWitnessException/"; // "/expDataset/failures/"; //"/expDataset/realWorldSchemas/processedFiles/"; // "/expDataset/realWorldSchemas/processedFiles/"; //"/expDataset/containment/sat/nonValid/"; //"/expDataset/unprocessedFiles/ok/"; // gitcleanfiles+"containment/unsat/witness/";//userPath+witnessGenTestFiles+subdir; //
+        String path ="/expdataset/testing/"; // "/expdataset/github/ourSat/"; //"/oneOfAnyOf/InvalidWitnessException/InvalidWitnessException/"; // "/expDataset/failures/"; //"/expDataset/realWorldSchemas/processedFiles/"; // "/expDataset/realWorldSchemas/processedFiles/"; //"/expDataset/containment/sat/nonValid/"; //"/expDataset/unprocessedFiles/ok/"; // gitcleanfiles+"containment/unsat/witness/";//userPath+witnessGenTestFiles+subdir; //
         //"containment/sat/noWitness/";//"unsat-pb/";//containment/sat/nonValid/";//"containment/sat/noWitness/";//"unsat-pb/test";//"unsat-pb/o"+"24470";//"unsat-pb/o"+"25731";//"o4413";//"o48024";//"47";//"o69888";//"weka_j48";//31//"hittingset";//"1Another";//"2Another3";//"2bis";//"BizTalkServerApplicationSchema";//
-        String file = "testsaved";//"problem_minItems";//"c_problem_items";//"o79743";//"o"+"46176";//"o"+"13707";//"uplimit";//"test";//""+"13707";//"draft6_reflexive_contains_id5_subschema1_not_2";//"tmp"; //"draft6_reflexive_items_id7_subschema1_not_2";//
+        String file = "test";//"problem_minItems";//"c_problem_items";//"o79743";//"o"+"46176";//"o"+"13707";//"uplimit";//"test";//""+"13707";//"draft6_reflexive_contains_id5_subschema1_not_2";//"tmp"; //"draft6_reflexive_items_id7_subschema1_not_2";//
         String extension = ".json";
 
 
@@ -118,45 +118,57 @@ public class Endpoint {
         boolean fromJS = true;//false; // false; //
         WitnessEnv env ;
         String witness = null;
-        if(fromJS)
-            env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromJSONSchema());
-        else
-            env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromAlgebra());
 
-//        obj.showEnv(env);
+        int attempts = 0;
 
-        GenEnv genv = null;
-        try {
-            genv = new GenEnv(env);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //by default attempt optimization
+        OneOf.asAnyOf = true;
 
-        try {
-            witness = genv.generate().toString();
-            System.out.flush();
-            System.out.println("==witness== \n"+ witness);
+        do{
+            if(fromJS)
+                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromJSONSchema());
+            else
+                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromAlgebra());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            GenEnv genv = null;
+            try {
+                genv = new GenEnv(env);
 
+                witness = genv.generate().toString();
+                System.out.flush();
+                System.out.println("==witness (attempt" + attempts + ")== \n"+ witness);
 
-        /*validate against the schema*/
-        if(fromJS && witness.compareTo(it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.getEmptyWitnessSymbol())!=0)
-        {
-            Set<ValidationMessage> errors =
-                    it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.validateStringWitness(obj.schemaString,witness,obj.version);
-            if(errors.size()==0)
-                System.out.println("++ valid witness ");
-            else{
-                System.out.println("-- invalid witness ");
-                for (ValidationMessage m: errors){
-                    System.out.println(m);
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
+
+            /*validate against the schema*/
+            if(fromJS && witness.compareTo(it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.getEmptyWitnessSymbol())!=0)
+            {
+                Set<ValidationMessage> errors =
+                        it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.validateStringWitness(obj.schemaString,witness,obj.version);
+                if(errors.size()==0){
+                    System.out.println("++ valid witness ");
+                    break;
+                }
+                else{
+                    System.out.println("-- invalid witness ");
+                    for (ValidationMessage m: errors){
+                        System.out.println(m);
+                    }
+                    //TODO check if the problem is due to the oneOf optimization
+                    OneOf.asAnyOf = false; //retry w/o the optimization
+                }
+
+            }
+
+            attempts++;
         }
+        while(true);
+
+
+
 
 
 
