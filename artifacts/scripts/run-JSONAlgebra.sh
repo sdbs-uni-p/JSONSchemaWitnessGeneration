@@ -1,5 +1,9 @@
 #!/bin/bash
 
+threads=1
+timeout="false"
+re_int='^[0-9]+$'
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     -i|--input)
@@ -7,10 +11,32 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    --timeout)
+      if ! [[ $2 =~ $re_int ]]; then
+        echo "Timeout must be a number greater than 0" >&2
+        exit 1
+      else
+        timeout="true ${2}";
+      fi
+      shift
+      shift
+      ;;
+    --threads)
+      if ! [[ $2 =~ $re_int ]]; then
+        echo "Thread count must be a number greater than 0" >&2
+        exit 1
+      else
+        threads=$2;
+      fi
+      shift
+      shift
+      ;;
     -*|--*|*)
       printf "Unknown option $1\nPossible options are:
-      \tNo Option\tExecute experiments on all datasets
-      \t-i | --input\tExecute experiments on the specified dataset (given as a path relative to ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/)\n"
+      \tNo Option\tExecute experiments on all datasets with 1 thread and no timeout.
+      \t-i | --input\tExecute experiments on the specified dataset (given as a path relative to ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/)
+      \t--threads\tSet the number of threads to be used (default 1)
+      \t--timeout\tSet the timeout in Milliseconds (default no timeout)\n"
       exit 1
       ;;
   esac
@@ -28,8 +54,8 @@ run_experiment() {
     mkdir -p ${HOME}/results/${1//\//-}/
     rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv 2> /dev/null
     mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" \
-            -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} 1 false" -pl JsonSchema_To_Algebra \
-            2> ${HOME}/results/${1//\//-}/${1//\//-}-err.log
+            -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} ${threads} ${timeout}" -pl JsonSchema_To_Algebra \
+            2> >(tee ${HOME}/results/${1//\//-}/${1//\//-}-err.log >&2)
     cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv ${HOME}/results/${1//\//-}/results.csv 2> /dev/null
 }
 
