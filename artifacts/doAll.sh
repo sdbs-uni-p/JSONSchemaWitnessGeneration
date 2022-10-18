@@ -22,4 +22,4 @@ echo "Creating charts..."
   printf "\nDone: Results are in ${HOME}/results.\n"
 )
 
-echo "To compare the results against our original results, run comapre.sh in ${HOME}/scripts/"
+echo "To compare the results against our original results, run compare.sh in ${HOME}/scripts/"

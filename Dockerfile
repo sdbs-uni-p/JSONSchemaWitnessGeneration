@@ -15,21 +15,21 @@ ENV LC_ALL="C.UTF-8"
 # Install packages for experiments
 RUN apt-get update && apt-get install -y --no-install-recommends \
                 build-essential \
-		git \
-		gradle \
+                git \
+                gradle \
                 libffi-dev \
                 libssl-dev \
                 maven \
-		openjdk-11-jdk \
-		openjdk-11-jre \
+                openjdk-11-jdk \
+                openjdk-11-jre \
                 patch \
-		wget \
+                wget \
                 zlib1g-dev 
 
 # Install dev packages
 RUN apt-get install -y --no-install-recommends \
-		nano \
-		sudo
+                nano \
+                sudo
 
 # Install packages for chart generation
 RUN apt-get update && apt-get install -y --no-install-recommends --purge \
@@ -104,6 +104,6 @@ RUN gradle build
 
 # Build jsonsubschema
 WORKDIR /home/repro/jsonsubschema
-RUN python3 setup.py install --user
+RUN python3.9 setup.py install --user
 
 WORKDIR /home/repro

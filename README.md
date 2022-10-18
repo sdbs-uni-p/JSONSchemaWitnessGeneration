@@ -1,6 +1,6 @@
 # JSON Schema Witness Generation - Reproduction Package
 
-This is a reproduction package for the article Witness Generation for JSON Schema,
+This is a reproduction package for the article Witness Generation for JSON Schema
 by Lyes Attouche, Mohamed-Amine Baazizi, Dario Colazzo, Giorgio Ghelli, Carlo Sartiani, and Stefanie Scherzinger.
 
 This reproduction package was created by Stefan Klessinger.
@@ -64,7 +64,7 @@ There are additional scripts located in [scripts](artifacts/scripts) for running
 ### Executing Experiments on Specific Datasets
 To execute experiments on a specific dataset (e.g., the excluded datasets mentioned above), supply the optional parameter ``-i <dataset>`` to ``run-JSONAlgebra`` or ``run-jsongenerator``, replacing ``<dataset>`` with the datasets path, relative to [JSONAlgebra/JsonSchema_To_Algebra/expDataset](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset).
 
-For instance, to run experiments with our tool on [github/excluded-ours/timeout](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/github/excluded-ours/timeout), run ``./run-JSONAlgebra -i github/excluded-ours/timeout``. Results will be store in a subdirectory of [results](artifacts/results), named like the dataset with slashes (/) replaced by dashes (-). Hence, in our example, results will be stored in ``results/github-excluded-ours-timeout``.
+For instance, to run experiments with our tool on [github/excluded-ours/timeout](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/github/excluded-ours/timeout), run ``./run-JSONAlgebra -i github/excluded-ours/timeout``. Results will be stored in a subdirectory of [results](artifacts/results), named like the dataset with slashes (/) replaced by dashes (-). Hence, in our example, results will be stored in ``results/github-excluded-ours-timeout``.
 
 ### Additional Settings
 By default, ``run-JSONAlgebra.sh`` runs single-threaded without a timeout. The settings can be changed through parameters ``--timeout <ms>`` and ``--threads <number>``, allowing to specify, as integer values, the timeout in ms and the number of threads.
