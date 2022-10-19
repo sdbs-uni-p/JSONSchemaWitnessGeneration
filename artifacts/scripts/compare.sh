@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -*|--*|*)
       printf "Unknown option $1\nPossible options are:
-      \tNo Option\tCompare without runtimes and use coloured output 
+      \tNo Option\tCompare without runtimes and use coloured output
       \t-c | --no-colors\tDisable colored output
       \t-t | --compare-times\tEnable comparison of runtimes\n"
       exit 1
@@ -45,7 +45,47 @@ do
     echo "$res" | tail -n +4
   fi
 done
+
+# Count Timeouts for specified dataset and print amount if greater than 0
+count_timeouts() {
+    if [ -z "${1}" ]; then
+        return
+    fi
+
+    if [ -z "${2}" ]; then
+        return
+    fi
+
+    result=0
+    path="${HOME}/results/${2}/results.csv"
+    if [ -f $path ]; then
+        result=$(($result + $(grep "TimeoutException" $path | wc -l)))
+    fi
+    sat_path="${HOME}/results/${2}-sat/results.csv"
+    if [ -f $sat_path ]; then
+        result=$(($result + $(grep "TimeoutException" $sat_path | wc -l)))
+    fi
+    unsat_path="${HOME}/results/${2}-unsat/results.csv"
+    if [ -f $unsat_path ]; then
+        result=$(($result + $(grep "TimeoutException" $unsat_path | wc -l)))
+    fi
+
+    if [ $result -gt 0 ]; then
+        echo "Encountered ${result} schema(s) with timeout in dataset ${1}"
+    fi
+}
+
+count_timeouts GitHub github
+count_timeouts Kubernetes kubernetes
+count_timeouts Snowplow snowplow
+count_timeouts WashingtonPost wp
+count_timeouts Handwritten handwritten
+count_timeouts Containment containment
+
 printf "\nNote: The value of 'errors sat' on dataset 'Containment' with tool 'DG' is 7.5%%. This
 is reported as 7%% in the papers' table and rounded to 8%% in this reproduction package.
 Likewise, median time for DG on Kubernetes is 0.0225s which is reported as 0.023s in
-the paper and 0.22s in the reproduction package.\n"
+the paper and 0.22s in the reproduction package.
+Numbers of timeouts (if encountered) are based on most recent results. Please ensure that evaluation.py
+ran on the same results.\n\n"
+
