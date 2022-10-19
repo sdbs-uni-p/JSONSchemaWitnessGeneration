@@ -67,7 +67,7 @@ To execute experiments on a specific dataset (e.g., the excluded datasets mentio
 For instance, to run experiments with our tool on [github/excluded-ours/timeout](artifacts/JSONAlgebra/JsonSchema_To_Algebra/expDataset/github/excluded-ours/timeout), run ``./run-JSONAlgebra -i github/excluded-ours/timeout``. Results will be stored in a subdirectory of [results](artifacts/results), named like the dataset with slashes (/) replaced by dashes (-). Hence, in our example, results will be stored in ``results/github-excluded-ours-timeout``.
 
 ### Additional Settings
-By default, ``run-JSONAlgebra.sh`` runs single-threaded without a timeout. The settings can be changed through parameters ``--timeout <ms>`` and ``--threads <number>``, allowing to specify, as integer values, the timeout in ms and the number of threads.
+By default, ``run-JSONAlgebra.sh`` runs single-threaded without a timeout. The settings can be changed through parameters ``--timeout <ms>``, allowing to specify the timeout in ms as an integer value.
 
 In ``doAll.sh``, a timeout of two hours per individual schema is set, to avoid excessively long runtimes. Our test dataset only contains schemas that were processed within an hour on our testing system. In case your system is considerably slower, please consider increasing the timeout.
 
@@ -87,7 +87,12 @@ To generate charts, execute ``create-charts.sh`` in [charts](artifacts/charts) i
 
 All results are stored at /home/repro/results in the container. To copy the results to the host system, use ``docker cp <containerID>:/home/repro/results .`` having obtained the containerID using ``docker ps``. If you use the ``--name`` flag, as explained above, you can replace the containerID with the chosen name.
 
-### Known Issues
-Due to partially undeterministic behavior of our implementation, a small deviation in results might occur. We only observed an issue with a single schema, o60883.json, in ``github/sat``. In a small number of cases, processing of this schema did not terminate in a reasonable time. In ``doAll.sh``, a timeout of 2 hours per schema is configured, resulting in a TimeoutException for that schema in these cases. We do not recommend executing ``run-JSONAlgebra.sh`` without configuring a timeout.
+### Known Issues and Troubleshooting
+Due to undeterministic behavior of Java datastructures in our implementation, a marginal deviation in results might occur. Specifically, we observed an issue with a single schema, o60883.json, in ``github/sat``: Infrequently, processing of this schema does not terminate in reasonable time. We added a configurable timeout in ``doAll.sh``, which causes a TimeoutException in these rare cases. Note that we do not recommend executing ``run-JSONAlgebra.sh`` without timeout enabled.
 
-While testing our reproduction package, we sometimes had issues with the availability of external resources during the build process. We provide pre-compiled binary containers on Zenodo, in case external resources are temporarily or permanently unavailable.
+We further provide pre-compiled binary containers on Zenodo, in case external resources should become temporarily or permanently unavailable.
+
+Should you run into other issues, we suggest the following approaches:
+  * Make sure that sufficient main memory is available on your system.
+  * Run the experiments with our tool single-threaded (which is the default configuration).
+  * Increase the configured timeout.

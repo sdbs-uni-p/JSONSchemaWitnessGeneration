@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
       printf "Unknown option $1\nPossible options are:
       \tNo Option\tExecute experiments on all datasets with 1 thread and no timeout.
       \t-i | --input\tExecute experiments on the specified dataset (given as a path relative to ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/)
-      \t--threads\tSet the number of threads to be used (default 1)
+      \t--threads\tSet the number of threads to be used (default 1). When using more than one thread, consider increasing the heap size (in this script).
       \t--timeout\tSet the timeout in Milliseconds (default no timeout)\n"
       exit 1
       ;;
