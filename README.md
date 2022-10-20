@@ -94,5 +94,7 @@ We further provide pre-compiled binary containers on Zenodo, in case external re
 
 Should you run into other issues, we suggest the following approaches:
   * Make sure that sufficient main memory is available on your system.
+  * Ensure that a sufficiently high memory limit is configured for the Docker container (e.g., in Docker Desktop) 
   * Run the experiments with our tool single-threaded (which is the default configuration).
-  * Increase the configured timeout.
+  * Increase the configured timeout in ``doAll.sh``.
+
