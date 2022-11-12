@@ -6,7 +6,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,49 +19,6 @@ import static org.junit.Assert.assertEquals;
  * @author Luca Escher
  */
 public class CorpusPatternTests {
-
-    @Test
-    public void test() throws REException, WitnessException, IOException {
-        GenAndValidate genVal = new GenAndValidate("C:\\Users\\chris\\IdeaProjects\\json-schema-corpus\\json_schema_corpus\\");
-        int file = 17571000;
-        long start = System.currentTimeMillis();
-        String witness = genVal.genWitness("pp_" + file + ".json");
-        long end = System.currentTimeMillis();
-        System.out.println("Generation time: " + (end - start));
-        int valid = genVal.validateWitness("pp_" + file + ".json", witness);
-        System.out.println("Valid: " + valid);
-        assertEquals(0, valid);
-    }
-
-    @Test
-    public void test0() {
-        GenAndValidate genVal = new GenAndValidate("C:\\Users\\chris\\IdeaProjects\\json-schema-corpus\\json_schema_corpus\\");
-        int[] files = {9790, 9803, 9896, 9967, 17571, 21053, 26958, 35154, 36516, 48761, 76551};
-        long[] genTimes = new long[files.length];
-        int[] valid = new int[files.length];
-        int i = 0;
-        for (int file : files) {
-            try {
-                long start = System.currentTimeMillis();
-                String witness = genVal.genWitness("pp_" + file + ".json");
-                long end = System.currentTimeMillis();
-                genTimes[i] = end - start;
-                try {
-                    valid[i] = genVal.validateWitness("pp_" + file + ".json", witness);
-                } catch (Throwable e) {
-                    valid[i] = -1;
-                }
-            } catch (Throwable e) {
-                genTimes[i] = -1;
-            }
-            i++;
-        }
-        System.out.println("Generation times: " + Arrays.toString(genTimes));
-        System.out.println("Valid: " + Arrays.toString(valid));
-        for (int j : valid) {
-            assertEquals(0, j);
-        }
-    }
 
     private final String noWitness = "{\"Problem\":\"Empty witness\"}";
     private GenAndValidate genVal = new GenAndValidate(System.getProperty("user.dir") +
