@@ -31,6 +31,10 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -w|--witness)
+      extract_witness=true
+      shift
+      ;;
     -*|--*|*)
       printf "Unknown option $1\nPossible options are:
       \tNo Option\tExecute experiments on all datasets with 1 thread and no timeout.
@@ -45,6 +49,22 @@ done
 cd ${HOME}/JSONAlgebra
 export MAVEN_OPTS="-Xmx10240m"
 
+extract_witnesses() {
+  cd $1
+  rm -rf witness/
+  mkdir witness
+  {
+    read #skip first line (csv header)
+    while read line
+    do
+      witness_cleaned=$(echo "${line}" | cut -d, -f2- -s | sed 's/\"\"/\"/g' | sed 's/^\"{/{/g' | sed 's/}\"$/}/g' | sed 's/^\"\[/\[/g' | sed 's/\]\"$/\]/g')
+      filename=$(echo "${line}" | cut -d, -f1 -s)
+      #echo $filename
+      echo "${witness_cleaned}" | jq '.' > witness/"${filename}_witness.json"
+    done
+  } < "witness.csv"
+}
+
 run_experiment() {
     if [ ! -d "${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}" ]; then
       echo "Dataset ${input} not found."
@@ -53,10 +73,15 @@ run_experiment() {
 
     mkdir -p ${HOME}/results/${1//\//-}/
     rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv 2> /dev/null
+    rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv 2> /dev/null
     mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" \
             -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} ${threads} ${timeout}" -pl JsonSchema_To_Algebra \
             2> >(tee ${HOME}/results/${1//\//-}/${1//\//-}-err.log >&2)
     cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv ${HOME}/results/${1//\//-}/results.csv 2> /dev/null
+    if [ "$extract_witness" = true ]; then
+        cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv ${HOME}/results/${1//\//-}/witness.csv
+        extract_witnesses ${HOME}/results/${1//\//-}/
+    fi
 }
 
 # If specified, run experiments only on the given input dataset. Otherwise run experiments on all default datasets
@@ -105,7 +130,7 @@ run_experiment github/unsat
     awk '(NR == 1) || (FNR > 1)' github-sat/results.csv \
         github-unsat/results.csv  > github/results.csv
     # Copy GitHub results to charts
-    mkdir -p ${HOME}/charts/data/github/ 2> /dev/null 
+    mkdir -p ${HOME}/charts/data/github/ 2> /dev/null
     cp ${HOME}/results/github/results.csv ${HOME}/charts/data/github/results.csv
     rm -r github
 )
