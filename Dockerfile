@@ -77,7 +77,8 @@ RUN git clone https://github.com/jimblackler/jsongenerator/ \
 RUN git clone https://github.com/IBM/jsonsubschema/ \
     && (cd jsonsubschema && git checkout 9413abe5bce2f1f94622e2ed756eaa2747f6479a)
 
-RUN python3.9 -m pip install pandas
+RUN python3.9 -m pip install greenery==3.3.7
+RUN python3.9 -m pip install pandas==1.5
 
 # Add artifacts directory (from host) to home directory
 ADD --chown=repro:repro artifacts/ /home/repro
