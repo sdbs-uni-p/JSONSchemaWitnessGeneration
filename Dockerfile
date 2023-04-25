@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                 build-essential \
                 git \
                 gradle \
+                jq \
                 libffi-dev \
                 libssl-dev \
                 maven \

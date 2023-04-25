@@ -57,7 +57,7 @@ extract_witnesses() {
     read #skip first line (csv header)
     while read line
     do
-      witness_cleaned=$(echo "${line}" | cut -d, -f2- -s | sed 's/\"\"/\"/g' | sed 's/^\"{/{/g' | sed 's/}\"$/}/g' | sed 's/^\"\[/\[/g' | sed 's/\]\"$/\]/g')
+      witness_cleaned=$(echo "${line}" | cut -d, -f2- -s | sed 's/^\"//g' | sed 's/\"$//g' | sed 's/\"\"/\"/g')
       filename=$(echo "${line}" | cut -d, -f1 -s)
       #echo $filename
       echo "${witness_cleaned}" | jq '.' > witness/"${filename}_witness.json"
@@ -70,7 +70,6 @@ run_experiment() {
       echo "Dataset ${input} not found."
       return
     fi
-
     mkdir -p ${HOME}/results/${1//\//-}/
     rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv 2> /dev/null
     rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv 2> /dev/null
