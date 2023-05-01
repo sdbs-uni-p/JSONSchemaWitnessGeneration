@@ -272,6 +272,7 @@ public class GenEnv {
 		varMap.keySet().forEach(var->openVars.add(var));
 
 		openVars.sort(Comparator.comparing(GenVar::getEvalOrder));
+		
 
 		//        varMap.forEach((var, typedAssertion)->{
 		//            List<GenVar> localUses = typedAssertion.getTypedAssertion().stream()

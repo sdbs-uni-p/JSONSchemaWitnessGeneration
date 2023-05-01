@@ -103,12 +103,16 @@ public class Items implements JSONSchemaElement{
 			if(items != null)
 				item.setAdditionalItems(items.toGrammar());
 			else
-				try {
-					throw new Exception("Beware: additionalItems ignored since no items : [] is present!");
-				} catch (Exception e) {
-					e.printStackTrace();
-					return new Boolean_Assertion(true);
-				}
+//				try {
+//					throw new Exception("Beware: additionalItems ignored since no items : [] is present!");
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					return new Boolean_Assertion(true);
+//				}
+			{
+				logger.warn("Beware: additionalItems ignored since no items : [] is present!");
+				return new Boolean_Assertion(true);
+			}
 
 
 		return item;
