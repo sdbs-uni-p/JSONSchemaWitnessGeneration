@@ -24,7 +24,7 @@ public class Utils_PattOfS {
             truePattern = ComplexPattern.createFromRegexp(".*");
         } catch (REException e) {
             e.printStackTrace();
-            System.exit(-1);
+//            System.exit(-1); //TODO commented for the sake of the experiments
         }
 
         falsePattern = truePattern.complement();
@@ -63,7 +63,7 @@ public class Utils_PattOfS {
 
         if(a instanceof OneOf_Assertion) {
             System.out.println("Unexpected OneOf referenced by propertyNames");
-            System.exit(-1);
+//            System.exit(-1);//TODO commented for the sake of the experiments
         }
 
         if(a instanceof Boolean_Assertion) {
@@ -87,7 +87,7 @@ public class Utils_PattOfS {
 
         if(a instanceof IfThenElse_Assertion) {
             System.out.println("Unexpected IfThenElse referenced by propertyNames");
-            System.exit(-1);
+//            System.exit(-1);//TODO commented for the sake of the experiments
         }
 
         logger.trace("PattOfS({}) returning {}", a, returnPattern);
