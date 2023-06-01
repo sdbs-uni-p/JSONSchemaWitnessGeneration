@@ -1,0 +1,651 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "authors": [
+    "Hay Kranen",
+    "James Hare"
+  ],
+  "definitions": {
+    "tool": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique identifier for tools. Must be unique for every tool. It is recommended you prefix your tool names to reduce the risk of clashes."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human readable tool name. Recommended limit of 25 characters."
+        },
+        "subtitle": {
+          "type": "string",
+          "maxLength": 250,
+          "description": "Longer than the full title but shorter than the description. It should add some additional context to the title."
+        },
+        "openhub_id": {
+          "type": "string",
+          "description": "The project ID on OpenHub. Given a URL https://openhub.net/p/foo, the project ID is `foo`."
+        },
+        "description": {
+          "type": "string",
+          "description": "A longer description of the tool. The recommended length for a description is 3-5 sentences. Future versions of this schema will impose a character limit."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "A direct link to the tool or to instructions on how to use or install the tool."
+        },
+        "url_alternates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/url_multilingual"
+          }
+        },
+        "keywords": {
+          "type": "string",
+          "@comment": "Comma-delineated list of keywords. This parameter is deprecated and will be removed in the next version."
+        },
+        "author": {
+          "type": "string",
+          "description": "The primary tool developer."
+        },
+        "repository": {
+          "type": "string",
+          "format": "uri",
+          "description": "A link to the repository where the tool code is hosted."
+        },
+        "bot_username": {
+          "type": "string",
+          "description": "If the tool is a bot, the Wikimedia username of the bot. Do not include 'User:' or similar prefixes."
+        },
+        "deprecated": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, the use of this tool is officially discouraged. The `replaced_by` parameter can be used to define a replacement."
+        },
+        "replaced_by": {
+          "type": "string",
+          "format": "uri",
+          "description": "If this tool is deprecated, this parameter should be used to link to the replacement tool."
+        },
+        "experimental": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this tool is unstable and can change or go offline at any time."
+        },
+        "for_wikis": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/wiki"
+              }
+            },
+            {
+              "$ref": "#/definitions/wiki"
+            }
+          ],
+          "default": "*",
+          "description": "A string or array of strings describing the wiki(s) this tool can be used on. Use hostnames such as `zh.wiktionary.org`. Use asterisks as wildcards. For example, `*.wikisource.org` means 'this tool works on all Wikisource wikis.' `*` means 'this works on all wikis, including Wikimedia wikis.'"
+        },
+        "icon": {
+          "$ref": "#/definitions/commons_file",
+          "description": "A link to a Wikimedia Commons file description page for an icon that depicts the tool."
+        },
+        "license": {
+          "$ref": "#/definitions/______spdx_schema_licenses_json_defs_license",
+          "description": "The software license the tool code's is available under. Use a standard SPDX license keyword."
+        },
+        "sponsor": {
+          "$ref": "#/definitions/string_or_string_array",
+          "description": "Organization that sponsored the tool's development."
+        },
+        "available_ui_languages": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/language"
+              }
+            },
+            {
+              "$ref": "#/definitions/language"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "*"
+              ]
+            }
+          ],
+          "default": "en",
+          "description": "The language(s) the tool's interface has been translated into. Specify this field manually only if the tool does not handle interface translation through translatewiki.net. Use ISO 639 language codes like `zh` and `scn`. If not defined it is assumed the tool is only available in English."
+        },
+        "technology_used": {
+          "$ref": "#/definitions/string_or_string_array",
+          "description": "A string or array of strings listing technologies (programming languages, development frameworks, etc.) used in creating the tool."
+        },
+        "tool_type": {
+          "type": "string",
+          "enum": [
+            "web app",
+            "desktop app",
+            "bot",
+            "gadget",
+            "user script",
+            "command line tool",
+            "coding framework",
+            "other"
+          ],
+          "description": "The manner in which the tool is used. Select one from the list of options."
+        },
+        "api_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "A link to the tool's API, if available."
+        },
+        "developer_docs_url": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/url_multilingual"
+              }
+            },
+            {
+              "type": "string",
+              "format": "uri"
+            }
+          ],
+          "description": "A link to the tool's developer documentation, if available."
+        },
+        "feedback_url": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/url_multilingual"
+              }
+            },
+            {
+              "type": "string",
+              "format": "uri"
+            }
+          ],
+          "description": "A link to where tool users can leave feedback."
+        },
+        "privacy_policy_url": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/url_multilingual"
+              }
+            },
+            {
+              "type": "string",
+              "format": "uri"
+            }
+          ],
+          "description": "A link to the tool's privacy policy, if available."
+        },
+        "translate_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "A link to the tool translation interface."
+        },
+        "bugtracker_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "A link to the tool's bug tracker on GitHub, Bitbucket, Phabricator, etc."
+        },
+        "toolinfo_version": {
+          "type": "integer",
+          "default": 1,
+          "description": "The major version number of the Toolinfo schema used. The default value assumed is 1, referring to versions 1.0.0 and 1.1.0."
+        },
+        "toolinfo_language": {
+          "$ref": "#/definitions/language",
+          "default": "en",
+          "description": "The language the toolinfo record is written if, if not the default value of English. Use ISO 639 language codes."
+        }
+      },
+      "required": [
+        "name",
+        "title",
+        "description",
+        "url"
+      ]
+    },
+    "wiki": {
+      "type": "string",
+      "pattern": "^(%5C*|(.*)?%5C.?(mediawiki|wiktionary|wiki(pedia|quote|books|source|news|versity|data|voyage|tech|media|mediafoundation))%5C.org)$"
+    },
+    "commons_file": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://commons.wikimedia.org/wiki/File:.+%5C..+$"
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^(x-.*|[A-Za-z]{2,3}(-.*)?)$"
+    },
+    "url_multilingual": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "$ref": "#/definitions/language"
+        },
+        "url": {
+          "type": "string",
+          "pattern": "uri"
+        }
+      }
+    },
+    "string_or_string_array": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "______spdx_schema_licenses_json_defs_license": {
+      "type": "string",
+      "enum": [
+        "0BSD",
+        "AAL",
+        "Abstyles",
+        "Adobe-2006",
+        "Adobe-Glyph",
+        "ADSL",
+        "AFL-1.1",
+        "AFL-1.2",
+        "AFL-2.0",
+        "AFL-2.1",
+        "AFL-3.0",
+        "Afmparse",
+        "AGPL-1.0-only",
+        "AGPL-1.0-or-later",
+        "AGPL-3.0-only",
+        "AGPL-3.0-or-later",
+        "Aladdin",
+        "AMDPLPA",
+        "AML",
+        "AMPAS",
+        "ANTLR-PD",
+        "Apache-1.0",
+        "Apache-1.1",
+        "Apache-2.0",
+        "APAFML",
+        "APL-1.0",
+        "APSL-1.0",
+        "APSL-1.1",
+        "APSL-1.2",
+        "APSL-2.0",
+        "Artistic-1.0-cl8",
+        "Artistic-1.0-Perl",
+        "Artistic-1.0",
+        "Artistic-2.0",
+        "Bahyph",
+        "Barr",
+        "Beerware",
+        "BitTorrent-1.0",
+        "BitTorrent-1.1",
+        "Borceux",
+        "BSD-1-Clause",
+        "BSD-2-Clause-FreeBSD",
+        "BSD-2-Clause-NetBSD",
+        "BSD-2-Clause-Patent",
+        "BSD-2-Clause",
+        "BSD-3-Clause-Attribution",
+        "BSD-3-Clause-Clear",
+        "BSD-3-Clause-LBNL",
+        "BSD-3-Clause-No-Nuclear-License-2014",
+        "BSD-3-Clause-No-Nuclear-License",
+        "BSD-3-Clause-No-Nuclear-Warranty",
+        "BSD-3-Clause",
+        "BSD-4-Clause-UC",
+        "BSD-4-Clause",
+        "BSD-Protection",
+        "BSD-Source-Code",
+        "BSL-1.0",
+        "bzip2-1.0.5",
+        "bzip2-1.0.6",
+        "Caldera",
+        "CATOSL-1.1",
+        "CC-BY-1.0",
+        "CC-BY-2.0",
+        "CC-BY-2.5",
+        "CC-BY-3.0",
+        "CC-BY-4.0",
+        "CC-BY-NC-1.0",
+        "CC-BY-NC-2.0",
+        "CC-BY-NC-2.5",
+        "CC-BY-NC-3.0",
+        "CC-BY-NC-4.0",
+        "CC-BY-NC-ND-1.0",
+        "CC-BY-NC-ND-2.0",
+        "CC-BY-NC-ND-2.5",
+        "CC-BY-NC-ND-3.0",
+        "CC-BY-NC-ND-4.0",
+        "CC-BY-NC-SA-1.0",
+        "CC-BY-NC-SA-2.0",
+        "CC-BY-NC-SA-2.5",
+        "CC-BY-NC-SA-3.0",
+        "CC-BY-NC-SA-4.0",
+        "CC-BY-ND-1.0",
+        "CC-BY-ND-2.0",
+        "CC-BY-ND-2.5",
+        "CC-BY-ND-3.0",
+        "CC-BY-ND-4.0",
+        "CC-BY-SA-1.0",
+        "CC-BY-SA-2.0",
+        "CC-BY-SA-2.5",
+        "CC-BY-SA-3.0",
+        "CC-BY-SA-4.0",
+        "CC0-1.0",
+        "CDDL-1.0",
+        "CDDL-1.1",
+        "CDLA-Permissive-1.0",
+        "CDLA-Sharing-1.0",
+        "CECILL-1.0",
+        "CECILL-1.1",
+        "CECILL-2.0",
+        "CECILL-2.1",
+        "CECILL-B",
+        "CECILL-C",
+        "ClArtistic",
+        "CNRI-Jython",
+        "CNRI-Python-GPL-Compatible",
+        "CNRI-Python",
+        "Condor-1.1",
+        "CPAL-1.0",
+        "CPL-1.0",
+        "CPOL-1.02",
+        "Crossword",
+        "CrystalStacker",
+        "CUA-OPL-1.0",
+        "Cube",
+        "curl",
+        "D-FSL-1.0",
+        "diffmark",
+        "DOC",
+        "Dotseqn",
+        "DSDP",
+        "dvipdfm",
+        "ECL-1.0",
+        "ECL-2.0",
+        "EFL-1.0",
+        "EFL-2.0",
+        "eGenix",
+        "Entessa",
+        "EPL-1.0",
+        "EPL-2.0",
+        "ErlPL-1.1",
+        "EUDatagrid",
+        "EUPL-1.0",
+        "EUPL-1.1",
+        "EUPL-1.2",
+        "Eurosym",
+        "Fair",
+        "Frameworx-1.0",
+        "FreeImage",
+        "FSFAP",
+        "FSFUL",
+        "FSFULLR",
+        "FTL",
+        "GFDL-1.1-only",
+        "GFDL-1.1-or-later",
+        "GFDL-1.2-only",
+        "GFDL-1.2-or-later",
+        "GFDL-1.3-only",
+        "GFDL-1.3-or-later",
+        "Giftware",
+        "GL2PS",
+        "Glide",
+        "Glulxe",
+        "gnuplot",
+        "GPL-1.0-only",
+        "GPL-1.0-or-later",
+        "GPL-2.0-only",
+        "GPL-2.0-or-later",
+        "GPL-3.0-only",
+        "GPL-3.0-or-later",
+        "gSOAP-1.3b",
+        "HaskellReport",
+        "HPND",
+        "IBM-pibs",
+        "ICU",
+        "IJG",
+        "ImageMagick",
+        "iMatix",
+        "Imlib2",
+        "Info-ZIP",
+        "Intel-ACPI",
+        "Intel",
+        "Interbase-1.0",
+        "IPA",
+        "IPL-1.0",
+        "ISC",
+        "JasPer-2.0",
+        "JSON",
+        "LAL-1.2",
+        "LAL-1.3",
+        "Latex2e",
+        "Leptonica",
+        "LGPL-2.0-only",
+        "LGPL-2.0-or-later",
+        "LGPL-2.1-only",
+        "LGPL-2.1-or-later",
+        "LGPL-3.0-only",
+        "LGPL-3.0-or-later",
+        "LGPLLR",
+        "Libpng",
+        "libtiff",
+        "LiLiQ-P-1.1",
+        "LiLiQ-R-1.1",
+        "LiLiQ-Rplus-1.1",
+        "Linux-OpenIB",
+        "LPL-1.0",
+        "LPL-1.02",
+        "LPPL-1.0",
+        "LPPL-1.1",
+        "LPPL-1.2",
+        "LPPL-1.3a",
+        "LPPL-1.3c",
+        "MakeIndex",
+        "MirOS",
+        "MIT-0",
+        "MIT-advertising",
+        "MIT-CMU",
+        "MIT-enna",
+        "MIT-feh",
+        "MIT",
+        "MITNFA",
+        "Motosoto",
+        "mpich2",
+        "MPL-1.0",
+        "MPL-1.1",
+        "MPL-2.0-no-copyleft-exception",
+        "MPL-2.0",
+        "MS-PL",
+        "MS-RL",
+        "MTLL",
+        "Multics",
+        "Mup",
+        "NASA-1.3",
+        "Naumen",
+        "NBPL-1.0",
+        "NCSA",
+        "Net-SNMP",
+        "NetCDF",
+        "Newsletr",
+        "NGPL",
+        "NLOD-1.0",
+        "NLPL",
+        "Nokia",
+        "NOSL",
+        "Noweb",
+        "NPL-1.0",
+        "NPL-1.1",
+        "NPOSL-3.0",
+        "NRL",
+        "NTP",
+        "OCCT-PL",
+        "OCLC-2.0",
+        "ODbL-1.0",
+        "OFL-1.0",
+        "OFL-1.1",
+        "OGTSL",
+        "OLDAP-1.1",
+        "OLDAP-1.2",
+        "OLDAP-1.3",
+        "OLDAP-1.4",
+        "OLDAP-2.0.1",
+        "OLDAP-2.0",
+        "OLDAP-2.1",
+        "OLDAP-2.2.1",
+        "OLDAP-2.2.2",
+        "OLDAP-2.2",
+        "OLDAP-2.3",
+        "OLDAP-2.4",
+        "OLDAP-2.5",
+        "OLDAP-2.6",
+        "OLDAP-2.7",
+        "OLDAP-2.8",
+        "OML",
+        "OpenSSL",
+        "OPL-1.0",
+        "OSET-PL-2.1",
+        "OSL-1.0",
+        "OSL-1.1",
+        "OSL-2.0",
+        "OSL-2.1",
+        "OSL-3.0",
+        "PDDL-1.0",
+        "PHP-3.0",
+        "PHP-3.01",
+        "Plexus",
+        "PostgreSQL",
+        "psfrag",
+        "psutils",
+        "Python-2.0",
+        "Qhull",
+        "QPL-1.0",
+        "Rdisc",
+        "RHeCos-1.1",
+        "RPL-1.1",
+        "RPL-1.5",
+        "RPSL-1.0",
+        "RSA-MD",
+        "RSCPL",
+        "Ruby",
+        "SAX-PD",
+        "Saxpath",
+        "SCEA",
+        "Sendmail",
+        "SGI-B-1.0",
+        "SGI-B-1.1",
+        "SGI-B-2.0",
+        "SimPL-2.0",
+        "SISSL-1.2",
+        "SISSL",
+        "Sleepycat",
+        "SMLNJ",
+        "SMPPL",
+        "SNIA",
+        "Spencer-86",
+        "Spencer-94",
+        "Spencer-99",
+        "SPL-1.0",
+        "SugarCRM-1.1.3",
+        "SWL",
+        "TCL",
+        "TCP-wrappers",
+        "TMate",
+        "TORQUE-1.1",
+        "TOSL",
+        "Unicode-DFS-2015",
+        "Unicode-DFS-2016",
+        "Unicode-TOU",
+        "Unlicense",
+        "UPL-1.0",
+        "Vim",
+        "VOSTROM",
+        "VSL-1.0",
+        "W3C-19980720",
+        "W3C-20150513",
+        "W3C",
+        "Watcom-1.0",
+        "Wsuipa",
+        "WTFPL",
+        "X11",
+        "Xerox",
+        "XFree86-1.1",
+        "xinetd",
+        "Xnet",
+        "xpp",
+        "XSkat",
+        "YPL-1.0",
+        "YPL-1.1",
+        "Zed",
+        "Zend-2.0",
+        "Zimbra-1.3",
+        "Zimbra-1.4",
+        "zlib-acknowledgement",
+        "Zlib",
+        "ZPL-1.1",
+        "ZPL-2.0",
+        "ZPL-2.1",
+        "AGPL-1.0",
+        "AGPL-3.0",
+        "eCos-2.0",
+        "GFDL-1.1",
+        "GFDL-1.2",
+        "GFDL-1.3",
+        "GPL-1.0+",
+        "GPL-1.0",
+        "GPL-2.0+",
+        "GPL-2.0-with-autoconf-exception",
+        "GPL-2.0-with-bison-exception",
+        "GPL-2.0-with-classpath-exception",
+        "GPL-2.0-with-font-exception",
+        "GPL-2.0-with-GCC-exception",
+        "GPL-2.0",
+        "GPL-3.0+",
+        "GPL-3.0-with-autoconf-exception",
+        "GPL-3.0-with-GCC-exception",
+        "GPL-3.0",
+        "LGPL-2.0+",
+        "LGPL-2.0",
+        "LGPL-2.1+",
+        "LGPL-2.1",
+        "LGPL-3.0+",
+        "LGPL-3.0",
+        "Nunit",
+        "StandardML-NJ",
+        "wxWindows"
+      ]
+    }
+  },
+  "description": "A tool is a piece of software that helps facilitate contribution toward, or consumption of, Wikimedia projects and associated data, not including the core wiki software and its extensions",
+  "id": "https://tools.wmflabs.org/toolhub/schema/1.1.0",
+  "oneOf": [
+    {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/tool"
+      }
+    },
+    {
+      "$ref": "#/definitions/tool"
+    }
+  ],
+  "title": "Wikimedia Tool",
+  "version": "1.1.0"
+}
