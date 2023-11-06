@@ -2,6 +2,7 @@ package it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra;
 
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.Commons.Utils;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.FullAlgebra.Assertion;
+import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.FullAlgebra.Boolean_Assertion;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.FullAlgebra.Utils_FullAlgebra;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra.Exceptions.WitnessException;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class Utils_WitnessAlgebra {
     private static Logger logger = LogManager.getLogger(Utils_WitnessAlgebra.class);
+    private static int _outAll = 0,  _outLast= 1, _outRes = 2;
 
 
     // Pipeline used until now
@@ -42,19 +44,21 @@ public class Utils_WitnessAlgebra {
 
     }
 
-    public static  WitnessEnv getWitnessEnv2(Assertion schema) throws WitnessException, REException {
+
+
+    public static  WitnessEnv getWitnessEnv2(Assertion schema, int stdoutLevel) throws WitnessException, REException {
         WitnessEnv witnessEnv = Utils_FullAlgebra.getWitnessAlgebra(schema);
         witnessEnv.buildOBDD_notElimination();
         System.out.println("\n buildOBDD_notElimination\n");
-//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+        if(stdoutLevel <=_outAll) System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
         System.out.println("\n merge\n");
-//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+        if(stdoutLevel <=_outAll) System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         witnessEnv = witnessEnv.groupize();
         System.out.println("\n groupize\n");
-//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+        if(stdoutLevel <=_outAll) System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         int i = 1, prePrepEnvSize = 0;
         boolean fixpoint = false;
@@ -62,8 +66,10 @@ public class Utils_WitnessAlgebra {
         do
         {
             witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
-            System.out.println("\n merge\n");
-//            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+            if(stdoutLevel <=_outAll) {
+                System.out.println("\n merge\n");
+                System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString()) + "\n");
+            }
 
             // expansion may destroy the groupization and merging
             witnessEnv.varNormalization_separation(null, null);
@@ -84,18 +90,22 @@ public class Utils_WitnessAlgebra {
             prePrepEnvSize = witnessEnv.getSize();
 
             witnessEnv.preparation();
-            System.out.println("\n preparation\n");
-//            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
+
+            if(stdoutLevel <=_outLast) {
+                System.out.println("\n preparation\n");
+                System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString()) + "\n");
+            }
             //witnessEnv = (WitnessEnv) witnessEnv.merge(null, null);
-            fixpoint = (prePrepEnvSize == witnessEnv.getSize());
+//            fixpoint = (prePrepEnvSize == witnessEnv.getSize());
 
 
         }while (true);
 
         witnessEnv.preparation();
-        System.out.println("\n extra preparation\n");
-//        System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
+//        System.out.println("\n extra preparation\n");
+        if(stdoutLevel <=_outRes)
+            System.out.println(Utils.beauty(witnessEnv.getFullAlgebra().toGrammarString())+"\n");
 
         return witnessEnv;
     }
