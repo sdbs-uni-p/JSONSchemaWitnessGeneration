@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import de.uni_passau.sds.patterns.REException;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge con notMof
@@ -16,6 +18,7 @@ public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge 
 
     private Double value;
 
+    private static int _precision = 10;
     public WitnessMof(Double value) {
         this.value = value;
         logger.trace("Created a new WitnessMof: {}", this);
@@ -54,26 +57,44 @@ public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge 
         return null;
     }
 
-    public WitnessAssertion mergeElement(WitnessMof a) {
+    public WitnessAssertion mergeElementOld(WitnessMof a) {
         WitnessMof result = new WitnessMof(a.value * (value / gcd(a.value, value)));
         logger.trace("Merge result: {}", result);
         return result;
     }
 
+    public WitnessAssertion mergeElement(WitnessMof a) {
+        Double merged = new BigDecimal(a.value * (value / gcd(a.value, value)), new MathContext(_precision)).doubleValue();
+        WitnessMof result = new WitnessMof(merged);
+        logger.trace("Merge result: {}", result);
+        return result;
+    }
+
     public WitnessAssertion mergeElement(WitnessNotMof a) throws REException {
+        System.out.println("!! this " + this+" notMof " + a);
 
         WitnessNotMof notMof = a;
         Double val1 = notMof.getValue();
         Double val2 = this.value;
+
+//        BigDecimal bdval1 = new BigDecimal(val1, new MathContext(_precision)), bdval2 = new BigDecimal(val2, new MathContext(_precision));
+//        boolean test = bdval1.remainder(bdval2).equals(0);
+//        System.out.println("!! val2 % val1" + val2 % val1);
+//        System.out.println("!! bdval1.remainder(bdval2) " + bdval1.remainder(bdval2));
+//        System.out.println("!! bdval1.divideToIntegralValue(bdval2) " + bdval1.divideToIntegralValue(bdval2));
 
         if(val2 % val1 == 0) {
             Type_Assertion type = new Type_Assertion();
             type.add(AlgebraStrings.TYPE_NUMBER);
 
             logger.trace("Merge result: {}", type.not());
+            System.out.println("!! ret " + type.not().toWitnessAlgebra(null,null, null));
+
             return type.not().toWitnessAlgebra(null,null, null);
         }else {
             logger.trace("Merge result: null");
+            System.out.println("!! ret null");
+
             return null;
         }
     }
