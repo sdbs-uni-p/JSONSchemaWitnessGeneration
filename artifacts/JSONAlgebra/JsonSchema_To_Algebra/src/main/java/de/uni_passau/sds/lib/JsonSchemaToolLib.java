@@ -22,6 +22,7 @@ import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.JSONSchema.Exceptions.
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.JSONSchema.JSONSchema;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.JSONSchema.Utils_JSONSchema;
 import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra.WitnessEnv;
+import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra.Utils_WitnessAlgebra;
 import model.normalization.Normalizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,32 +58,21 @@ class JsonSchemaToolLib implements IJsonSchemaLib {
     public Optional<String> generateWitness(String schema) throws WitnessGenerationException, InvalidWitnessException, JsonSyntaxException {
         String witness;
         JSONSchema root;
+        Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .create();
         try {
-            JsonElement jsonElement = new Gson().fromJson(schema, JsonElement.class);
+            JsonElement jsonElement = gson.fromJson(schema, JsonObject.class);
             root = new JSONSchema(jsonElement);
+            root = Utils_JSONSchema.normalize(root);
         } catch (SyntaxErrorRuntimeException e) {
             throw new JsonSyntaxException(e);
         }
 
-        Assertion grammar = Utils_JSONSchema.normalize(root).toGrammar();
-
         try {
-            WitnessEnv env = Utils_FullAlgebra.getWitnessAlgebra(grammar);
-            env.buildOBDD_notElimination();
-
-            env = (WitnessEnv) env.merge(null, null);
-            env = env.groupize();
-            env = env.DNF();
-            env.varNormalization_separation(null, null);
-            env = env.DNF();
-            env = env.varNormalization_expansion(null);
-
-            env = (WitnessEnv) env.merge(null, null);
-            //env.toOrPattReq();
-
-
-            env.objectPrepare();
-            env.arrayPreparation();
+            WitnessEnv env = Utils_WitnessAlgebra.getWitnessEnv2(root.toGrammar(), 2);
 
             var genv = new GenEnv(env);
             witness = genv.generate().toString();
