@@ -123,12 +123,13 @@ public class Endpoint {
 
         //by default attempt optimization
         OneOf.asAnyOf = true;
+        int level = 2; //_outAll = 0,  _outLast= 1, _outRes = 2
 
         do{
             if(fromJS)
-                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromJSONSchema(), 0);
+                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromJSONSchema(),level);
             else
-                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromAlgebra(), 0);
+                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromAlgebra(),level);
 
             GenEnv genv = null;
             try {
@@ -162,6 +163,7 @@ public class Endpoint {
                 }
 
             }
+            else break;
 
             attempts++;
         }

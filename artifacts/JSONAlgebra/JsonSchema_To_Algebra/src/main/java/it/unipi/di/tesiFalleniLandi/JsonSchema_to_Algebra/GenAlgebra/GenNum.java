@@ -7,6 +7,8 @@ import it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.WitnessAlgebra.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,8 @@ public class GenNum implements GenAssertion {
     private List<Double> notMofs; //keep sorted
     private Double _nongen = -999d;
     private Double epsilon = 0.000001d;
+
+
 
     @Override
     public String toString() {
@@ -89,7 +93,7 @@ public class GenNum implements GenAssertion {
     public void setMof(WitnessMof mof) throws Exception {
         this.mof = mof.getValue();
         //check invariant1
-              invariant1();
+          invariant1();
         logger.debug("Set mof to {}", this.mof);
     }
 
@@ -125,7 +129,8 @@ public class GenNum implements GenAssertion {
         else {
             double epsilon = 0.0000000000001d;
             return (Math.abs(remainder) < epsilon
-                    || Math.abs(factor)-Math.abs(remainder) < epsilon );
+//                    || Math.abs(factor)-Math.abs(remainder) < epsilon );
+                    || Math.abs(factor-remainder) < epsilon );
         }
     }
 
