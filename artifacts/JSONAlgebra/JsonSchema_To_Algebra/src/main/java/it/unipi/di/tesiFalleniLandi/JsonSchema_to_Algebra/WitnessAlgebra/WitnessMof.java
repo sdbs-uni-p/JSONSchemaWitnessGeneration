@@ -19,6 +19,7 @@ public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge 
     private Double value;
 
     private static int _precision = 10;
+    private static MathContext mc = new MathContext(_precision);
     public WitnessMof(Double value) {
         this.value = value;
         logger.trace("Created a new WitnessMof: {}", this);
@@ -71,29 +72,34 @@ public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge 
     }
 
     public WitnessAssertion mergeElement(WitnessNotMof a) throws REException {
-        System.out.println("!! this " + this+" notMof " + a);
+//        System.out.println("!! this " + this+" notMof " + a);
 
         WitnessNotMof notMof = a;
         Double val1 = notMof.getValue();
         Double val2 = this.value;
 
-//        BigDecimal bdval1 = new BigDecimal(val1, new MathContext(_precision)), bdval2 = new BigDecimal(val2, new MathContext(_precision));
-//        boolean test = bdval1.remainder(bdval2).equals(0);
-//        System.out.println("!! val2 % val1" + val2 % val1);
+//        BigDecimal bdval1 = new BigDecimal(val1, mc), bdval2 = new BigDecimal(val2, mc), r = bdval2.remainder(bdval1);
+//        System.out.println("!! bdval1 "+ bdval1+ " bdval2 "+bdval2);
+//        System.out.println("!! bdval1 scale " + bdval1.scale() + " bdval2 scale " + bdval2.scale());
+//        System.out.println("!! remainder " + r +" s "+r.scale() + " p " + r.precision() + " r " + r.movePointRight());
 //        System.out.println("!! bdval1.remainder(bdval2) " + bdval1.remainder(bdval2));
 //        System.out.println("!! bdval1.divideToIntegralValue(bdval2) " + bdval1.divideToIntegralValue(bdval2));
+//        System.exit(-1);
 
-        if(val2 % val1 == 0) {
+//        boolean b = (val2/val1)* val1 == val2 ;
+//        System.out.println("!! bool "+ b );
+
+        if((val2/val1)* val1 == val2) { //val2 % val1 == 0
             Type_Assertion type = new Type_Assertion();
             type.add(AlgebraStrings.TYPE_NUMBER);
 
             logger.trace("Merge result: {}", type.not());
-            System.out.println("!! ret " + type.not().toWitnessAlgebra(null,null, null));
+//            System.out.println("!! ret " + type.not().toWitnessAlgebra(null,null, null));
 
             return type.not().toWitnessAlgebra(null,null, null);
         }else {
             logger.trace("Merge result: null");
-            System.out.println("!! ret null");
+//            System.out.println("!! ret null");
 
             return null;
         }
