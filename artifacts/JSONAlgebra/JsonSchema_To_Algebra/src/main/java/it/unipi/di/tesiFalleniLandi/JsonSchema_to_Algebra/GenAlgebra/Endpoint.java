@@ -166,6 +166,7 @@ public class Endpoint {
             else break;
 
             attempts++;
+            if(attempts>2) break; //TODO remove after testing is finished
         }
         while(true);
 
