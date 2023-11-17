@@ -44,9 +44,11 @@ public class Utils_WitnessAlgebra {
 
     }
 
+    public static  WitnessEnv getWitnessEnv2(Assertion schema) throws REException, WitnessException {
+        return getWitnessEnv3(schema,2);
+    }
 
-
-    public static  WitnessEnv getWitnessEnv2(Assertion schema, int stdoutLevel) throws WitnessException, REException {
+    public static  WitnessEnv getWitnessEnv3(Assertion schema, int stdoutLevel) throws WitnessException, REException {
         WitnessEnv witnessEnv = Utils_FullAlgebra.getWitnessAlgebra(schema);
         witnessEnv.buildOBDD_notElimination();
         System.out.println("\n buildOBDD_notElimination\n");
