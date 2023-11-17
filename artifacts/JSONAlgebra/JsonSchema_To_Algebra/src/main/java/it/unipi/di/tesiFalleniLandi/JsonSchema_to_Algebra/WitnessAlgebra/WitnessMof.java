@@ -77,19 +77,15 @@ public class WitnessMof implements WitnessAssertion{ //fare anche il caso merge 
         WitnessNotMof notMof = a;
         Double val1 = notMof.getValue();
         Double val2 = this.value;
+        BigDecimal bdval1 = new BigDecimal(val1, mc), bdval2 = new BigDecimal(val2, mc), r = bdval2.remainder(bdval1);
 
-//        BigDecimal bdval1 = new BigDecimal(val1, mc), bdval2 = new BigDecimal(val2, mc), r = bdval2.remainder(bdval1);
-//        System.out.println("!! bdval1 "+ bdval1+ " bdval2 "+bdval2);
-//        System.out.println("!! bdval1 scale " + bdval1.scale() + " bdval2 scale " + bdval2.scale());
-//        System.out.println("!! remainder " + r +" s "+r.scale() + " p " + r.precision() + " r " + r.movePointRight());
-//        System.out.println("!! bdval1.remainder(bdval2) " + bdval1.remainder(bdval2));
-//        System.out.println("!! bdval1.divideToIntegralValue(bdval2) " + bdval1.divideToIntegralValue(bdval2));
-//        System.exit(-1);
+        //        System.out.println("!! bdval1 "+ bdval1+ " bdval2 "+bdval2);
+//        System.out.println("!! bdval2.divide(bdval1) " + bdval2.divide(bdval1,mc));
+//        System.out.println("!! bdval2.remainder(bdval1) " + bdval2.remainder(bdval1,mc).doubleValue());
 
-//        boolean b = (val2/val1)* val1 == val2 ;
-//        System.out.println("!! bool "+ b );
 
-        if((val2/val1)* val1 == val2) { //val2 % val1 == 0
+
+        if(bdval2.remainder(bdval1,mc).doubleValue()  == 0d) { //val2 % val1
             Type_Assertion type = new Type_Assertion();
             type.add(AlgebraStrings.TYPE_NUMBER);
 

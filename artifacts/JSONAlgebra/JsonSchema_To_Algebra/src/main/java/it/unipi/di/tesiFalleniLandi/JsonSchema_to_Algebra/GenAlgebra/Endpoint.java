@@ -127,9 +127,9 @@ public class Endpoint {
 
         do{
             if(fromJS)
-                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromJSONSchema(),level);
+                env = Utils_WitnessAlgebra.getWitnessEnv3(obj.assertionFromJSONSchema(),level);
             else
-                env = Utils_WitnessAlgebra.getWitnessEnv2(obj.assertionFromAlgebra(),level);
+                env = Utils_WitnessAlgebra.getWitnessEnv3(obj.assertionFromAlgebra(),level);
 
             GenEnv genv = null;
             try {
