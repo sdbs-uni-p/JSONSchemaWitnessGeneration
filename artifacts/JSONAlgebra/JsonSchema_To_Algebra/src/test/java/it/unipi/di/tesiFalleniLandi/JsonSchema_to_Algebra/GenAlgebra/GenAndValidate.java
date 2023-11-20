@@ -74,7 +74,7 @@ public class GenAndValidate {
 //        WitnessEnv env1 = Utils_WitnessAlgebra.getWitnessEnv1(schema);
 
         // New pipeline
-        WitnessEnv env2 = Utils_WitnessAlgebra.getWitnessEnv2(schema, 0);
+        WitnessEnv env2 = Utils_WitnessAlgebra.getWitnessEnv3(schema, 0);
 
         //System.out.println(Utils.beauty(env2.getFullAlgebra().toGrammarString())+"\n");
 
