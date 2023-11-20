@@ -72,7 +72,7 @@ class JsonSchemaToolLib implements IJsonSchemaLib {
         }
 
         try {
-            WitnessEnv env = Utils_WitnessAlgebra.getWitnessEnv2(root.toGrammar(), 2);
+            WitnessEnv env = Utils_WitnessAlgebra.getWitnessEnv2(root.toGrammar());
 
             var genv = new GenEnv(env);
             witness = genv.generate().toString();
