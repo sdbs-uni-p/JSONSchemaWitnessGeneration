@@ -90,6 +90,9 @@ if [ -n "$input" ];
     exit 0
 fi
 
+echo "Running experiments on MergeAllOf dataset..."
+run_experiment allOf-containment
+
 echo "Running experiments on Containment dataset..."
 run_experiment containment/sat
 run_experiment containment/unsat

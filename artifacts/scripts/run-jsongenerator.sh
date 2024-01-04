@@ -38,6 +38,9 @@ if [ -n "$input" ];
     exit 0
 fi
 
+# MergeAllOf Data Set
+run_experiment allOf-containment
+
 # Containment Data Set
 run_experiment containment/sat
 run_experiment containment/unsat
