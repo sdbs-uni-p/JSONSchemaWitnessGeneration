@@ -1,0 +1,116 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "additionalProperties": false,
+      "properties": {
+        "repositoryID": {
+          "description": "An identifier of the Artifact Hub repository where the packages will be published to",
+          "type": "string",
+          "format": "uuid"
+        },
+        "owners": {
+          "description": "Repository owners",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "title": "owner",
+            "description": "A repository owner",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "description": "A repository owner name",
+                "type": "string"
+              },
+              "email": {
+                "description": "A repository owner email",
+                "type": "string",
+                "format": "email"
+              }
+            }
+          }
+        },
+        "ignore": {
+          "description": "Packages that should not be indexed by Artifact Hub",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "title": "package",
+            "description": "A package",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "description": "A package name",
+                "type": "string"
+              },
+              "version": {
+                "description": "Regular expression",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "title": "An Artifact Hub config file",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "additionalProperties": false,
+        "properties": {
+          "repositoryID": {
+            "description": "The ID of the Artifact Hub repository where the packages will be published to (optional, but it enables verified publisher)",
+            "type": "string",
+            "format": "uuid"
+          },
+          "owners": {
+            "description": "Used to claim repository ownership",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          },
+          "ignore": {
+            "description": "Packages that should not be indexed by Artifact Hub",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Exact match",
+                  "type": "string"
+                },
+                "version": {
+                  "description": "Regular expression (when omitted, all versions are ignored)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "title": "Artifact Hub repository metadata file",
+        "type": "object"
+      }
+    }
+  ]
+}
