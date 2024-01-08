@@ -166,7 +166,7 @@ def evalSubschema(df):
 
 
 def runSubschemaTests():
-    schemaPairs = "/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/containment/schemaPairs"
+    schemaPairs = "/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/test_suite_containment/schemaPairs"
     subschemaDF = extractAndCheck(schemaPairs)
     subschemaDF = subschemaDF.sort_values(
         by=["subFolder", "subSubFolder", "fileName", "id"]

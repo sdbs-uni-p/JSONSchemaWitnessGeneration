@@ -80,7 +80,7 @@ count_timeouts Kubernetes kubernetes
 count_timeouts Snowplow snowplow
 count_timeouts WashingtonPost wp
 count_timeouts Handwritten handwritten
-count_timeouts Containment containment
+count_timeouts Containment test_suite_containment
 
 printf "\nNote: The value of 'errors sat' on dataset 'Containment' with tool 'DG' is 7.5%%. This
 is reported as 7%% in the papers' table and rounded to 8%% in this reproduction package.

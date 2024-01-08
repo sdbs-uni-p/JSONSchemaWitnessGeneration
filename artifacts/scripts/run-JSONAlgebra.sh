@@ -91,11 +91,11 @@ if [ -n "$input" ];
 fi
 
 echo "Running experiments on MergeAllOf dataset..."
-run_experiment allOf-containment
+run_experiment allOf_containment
 
 echo "Running experiments on Containment dataset..."
-run_experiment containment/sat
-run_experiment containment/unsat
+run_experiment test_suite_containment/sat
+run_experiment test_suite_containment/unsat
 
 echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat
