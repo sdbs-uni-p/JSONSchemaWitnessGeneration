@@ -72,7 +72,7 @@ WORKDIR /home/repro
 
 # Clone jsongenerator and checkout the version we used
 RUN git clone https://github.com/jimblackler/jsongenerator/ \
-    && (cd jsongenerator && git checkout 324d9c1853d41fd09c0c31184ff916d75373ad83)
+    && (cd jsongenerator && git checkout b8713027569cd5f76448a6e793000f1a39540163)
 
 # Clone jsonsubschema and checkout the version we used
 RUN git clone https://github.com/IBM/jsonsubschema/ \
