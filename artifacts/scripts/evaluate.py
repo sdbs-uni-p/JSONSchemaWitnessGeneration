@@ -205,7 +205,9 @@ if __name__ == "__main__":
         "Snowplow",
         "WashingtonPost",
         "Handwritten",
-        "Containment",
+        "Test Suite Containment",
+        "allOf Containment",
+        "Schemastore Containment"
     ]
     tools = ["Ours", "DG"]
 

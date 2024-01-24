@@ -45,6 +45,9 @@ run_experiment allOf_containment
 run_experiment test_suite_containment/sat
 run_experiment test_suite_containment/unsat
 
+# Schemastore Containment Data Set
+run_experiment schemastore_containment
+
 # Handwritten Data Set
 run_experiment handwritten/sat
 run_experiment handwritten/unsat

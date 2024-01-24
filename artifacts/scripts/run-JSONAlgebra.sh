@@ -97,6 +97,9 @@ echo "Running experiments on Containment dataset..."
 run_experiment test_suite_containment/sat
 run_experiment test_suite_containment/unsat
 
+echo "Running experiments on Schemastore Containment dataset..."
+run_experiment schemastore_containment
+
 echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat
 run_experiment handwritten/unsat
