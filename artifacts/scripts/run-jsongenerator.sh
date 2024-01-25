@@ -39,7 +39,8 @@ if [ -n "$input" ];
 fi
 
 # MergeAllOf Data Set
-run_experiment allOf_containment
+run_experiment allOf_containment/sat
+run_experiment allOf_containment/unsat
 
 # Containment Data Set
 run_experiment test_suite_containment/sat

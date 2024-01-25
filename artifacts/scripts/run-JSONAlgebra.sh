@@ -91,7 +91,8 @@ if [ -n "$input" ];
 fi
 
 echo "Running experiments on MergeAllOf dataset..."
-run_experiment allOf_containment
+run_experiment allOf_containment/sat
+run_experiment allOf_containment/unsat
 
 echo "Running experiments on Containment dataset..."
 run_experiment test_suite_containment/sat
