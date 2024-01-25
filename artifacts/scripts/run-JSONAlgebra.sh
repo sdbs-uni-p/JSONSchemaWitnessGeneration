@@ -94,12 +94,25 @@ echo "Running experiments on MergeAllOf dataset..."
 run_experiment allOf_containment/sat
 run_experiment allOf_containment/unsat
 
+# Combine allOf Containment results for chart generation
+(
+    cd ${HOME}/results
+    mkdir allOf_containment 2> /dev/null
+    awk '(NR == 1) || (FNR > 1)' allOf_containment-sat/results.csv \
+        allOf_containment-unsat/results.csv  > allOf_containment/results.csv
+    # Copy allOf Containment results to charts
+    mkdir -p ${HOME}/charts/data/allOf_containment/ 2> /dev/null
+    cp ${HOME}/results/allOf_containment/results.csv ${HOME}/charts/data/allOf_containment/results.csv
+    rm -r allOf_containment
+)
+
 echo "Running experiments on Containment dataset..."
 run_experiment test_suite_containment/sat
 run_experiment test_suite_containment/unsat
 
 echo "Running experiments on Schemastore Containment dataset..."
 run_experiment schemastore_containment
+cp ${HOME}/results/schemastore_containment/results.csv ${HOME}/charts/data/schemastore_containment/results.csv
 
 echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat
