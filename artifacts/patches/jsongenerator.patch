@@ -45,7 +45,7 @@ new file mode 100644
 index 0000000..cb7c93b
 --- /dev/null
 +++ b/src/main/java/massiveTesting/GenerationTask.java
-@@ -0,0 +1,175 @@
+@@ -0,0 +1,191 @@
 +package massiveTesting;
 +
 +import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,7 +69,7 @@ index 0000000..cb7c93b
 +import java.util.LinkedHashMap;
 +import java.util.Random;
 +import java.util.Set;
-+import java.util.concurrent.Callable;
++import java.util.concurrent.*;
 +
 +public class GenerationTask implements Callable<Boolean> {
 +
@@ -115,18 +115,34 @@ index 0000000..cb7c93b
 +        Schema schema;
 +
 +        this.currentOperation = Utils.loadSchema;
++        Future<Schema> futureSchema = null;
++        
++        ExecutorService executor = null;
 +        try {
-+            long start = System.currentTimeMillis();
-+            schema = schemaStore.loadSchema(this.inputSchema);
-+            long end = System.currentTimeMillis();
-+            this.resultMap.put(Utils.loadSchema,String.valueOf(end - start));
-+        }catch (Exception e) {
-+            this.resultMap.put(Utils.loadSchema,e.getClass().getSimpleName());
-+            this.resultMap.put(Utils.totalTime,String.valueOf(System.currentTimeMillis()-execStart));
++            executor = Executors.newSingleThreadExecutor();
++            Callable<Schema> loadSchemaTask = () -> {
++                return schemaStore.loadSchema(this.inputSchema);
++            };
++            futureSchema = executor.submit(loadSchemaTask);
++            schema = futureSchema.get(5, TimeUnit.SECONDS);
++            long totalTime = System.currentTimeMillis() - execStart;
++            this.resultMap.put(Utils.loadSchema, String.valueOf(totalTime));
++        } catch (TimeoutException e) {
++            System.out.println("TimeoutException occurred during schema loading: " + e.getMessage());
++            futureSchema.cancel(true);
++            this.resultMap.put(Utils.loadSchema, "TimeoutException");
++            this.resultMap.put(Utils.totalTime, String.valueOf(System.currentTimeMillis() - execStart));
 +            return false;
++        } catch (InterruptedException | ExecutionException e) {
++            System.out.println("Exception occurred: " + e.getMessage());
++            this.resultMap.put(Utils.loadSchema, e.getClass().getSimpleName());
++            this.resultMap.put(Utils.totalTime, String.valueOf(System.currentTimeMillis() - execStart));
++            return false;
++        } finally {
++            if (executor != null) {
++                executor.shutdownNow();
++            }
 +        }
-+
-+
 +
 +        String s = schema.toString();
 +        int i = s.indexOf("{");
