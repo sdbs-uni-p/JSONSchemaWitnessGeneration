@@ -112,6 +112,7 @@ run_experiment test_suite_containment/unsat
 
 echo "Running experiments on Schemastore Containment dataset..."
 run_experiment schemastore_containment
+mkdir -p ${HOME}/charts/data/schemastore_containment/ 2> /dev/null
 cp ${HOME}/results/schemastore_containment/results.csv ${HOME}/charts/data/schemastore_containment/results.csv
 
 echo "Running experiments on Handwritten dataset..."
