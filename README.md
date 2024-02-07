@@ -31,7 +31,7 @@ The basic reproduction workflow inside the container is as follows:
 * Run ``scripts/compare.sh``, producing a diff-like comparison of the new results against our original results
   * By default, this script does not compare the system-specific runtimes. Use the optional parameter -t to enable comparison of runtime.
 * Confirm successful reproduction:
-    * Inspect the output of ``scripts/compare.sh -t`` which produce an output showing different runtimes, like in the following screenshot (original results are shown in green, new results in red; use -c to disable colors):
+    * Inspect the output of ``scripts/compare.sh -t`` which produce an output showing different runtimes, like in the following screenshot (original results are shown in red, new results in green; use -c to disable colors):
       ![Output of compare script with runtimes showing differences](supplements/compare-t.png "Compare output with runtime")
     * Inspect the output of ``scripts/compare.sh`` which should show no differences and look similar to the following screenshot:
       ![Output of compare script without runtimes showing no differences](supplements/compare.png "Compare output without runtime")

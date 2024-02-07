@@ -33,7 +33,7 @@ f1=$(cat ${original_results} | cut -d, -f$clmns | column -t -s,)
 f2=$(cat ${new_results} | cut -d, -f$clmns | column -t -s,)
 
 printf "Comparing new results against original results (cf. Table 1 in the Paper).
-If differences occur, new results start with - and original results with +\n\n"
+If differences occur, new results start with + and original results with -\n\n"
 for ((i=1; i<=14; i++))
 do
   res=$(eval "$diff" -U 4 <(head -$i <(echo "$f1") | tail -1) <(head -$i <(echo "$f2") | tail -1))
