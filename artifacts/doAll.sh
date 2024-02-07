@@ -11,9 +11,12 @@ echo "Running JSONAlgebra experiments... (this may take a few hours)"
 echo "Running experiments with the DG-tool (jsongenerator)..."
 ./run-jsongenerator.sh 2>&1 | tee $logdir/jsongenerator.log
 
+echo "Running experiments with the CC-tool (jsonsubschema)..."
+./run-jsonsubschema.sh 2>&1 | tee $logdir/jsongenerator.log
+
 echo "Running evaluation..."
 ./evaluate.py > ${HOME}/results/evaluation.txt
-printf "\nEvaluation are in ${HOME}/results/evaluation.txt\n"
+printf "\nEvaluation results are in ${HOME}/results/evaluation.txt\n"
 
 echo "Creating charts..."
 (
