@@ -89,6 +89,13 @@ def print_results(type, val, total, corrections):
 
     return percentage
 
+def eval_schemastore_containment(df):
+    success = len(df[df["genSuccess"] == True])
+    failure = len(df[((df["genSuccess"] == False) | (df["genSuccess"].isnull()))])
+    satLogicalErrors = None
+    time = df["totalTime"].dropna().tolist()
+
+    return success, failure, satLogicalErrors, time
 
 def run_evaluation(config, tool, dataset):
     print("")
@@ -116,20 +123,26 @@ def run_evaluation(config, tool, dataset):
     sat_logical_errors, unsat_logical_errors = None, None
 
     has_sat, has_unsat = False, False
+    is_schema_store_containment = dataset == "Schemastore Containment"
     if "sat" in paths:
         path = f'{config["base_path"]}/{paths["sat"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
             print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
         else:
             df = readDF(path)
+            # TODO: integrate properly
+    
             if df is None or df.empty:
                 print(
                     f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m"
                 )
             else:
-                sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
+                if is_schema_store_containment:
+                    sat_success, sat_failure, sat_logical_errors, sat_time = eval_schemastore_containment(df)
+                else:
+                    sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
                 has_sat = True
-    if "unsat" in paths:
+    if not is_schema_store_containment and "unsat" in paths:
         path = f'{config["base_path"]}/{paths["unsat"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
             print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
@@ -165,6 +178,9 @@ def run_evaluation(config, tool, dataset):
     ):
         corrections = config["datasets"][dataset]["corrections"][tool]
 
+    total_processed = success + failure + (sat_logical_errors or 0) + (unsat_logical_errors or 0)
+    failure += total - total_processed
+    
     types = [
         ("Success", success),
         ("Failure", failure),
