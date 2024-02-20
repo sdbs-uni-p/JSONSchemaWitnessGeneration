@@ -33,7 +33,6 @@ def readDF(path):
 
     return df
 
-
 def eval_sat(df):
     success = len(df[(df["genSuccess"] == True) & (df["valid"] == True)])
     failure = len(
@@ -105,7 +104,6 @@ def run_evaluation(config, tool, dataset):
     if dataset not in config["datasets"]:
         print(f"Dataset {dataset} not configured. Skipping")
         return
-
     paths = config["datasets"][dataset]["paths"]
     if "sat" not in paths and "unsat" not in paths:
         print(f"Paths for dataset {dataset} are not configured properly")
@@ -224,6 +222,11 @@ def evalSubschema(config, tool, dataset):
     df = pd.read_csv(path)
     if df is None or df.empty:
         print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
+        
+    # if column s1SUBs2 is not empty or not present, we have no ground truth
+    has_ground_truth = "s1SUBs2" in df and not df["s1SUBs2"].isnull().all()
+    if not has_ground_truth:
+        print(f"Dataset {dataset} has no ground truth defined for CC tool. Only checking for sucess and failure")
     
     # TODO: currently only properly supports manual corrections for Test Suite Containment
     total_files = len(df)
@@ -235,30 +238,41 @@ def evalSubschema(config, tool, dataset):
             failure_message = failure_correction["description"] if "description" in failure_correction else ""
             total_files += failure_offset
         else:
-            printf("Only Failure correction is currently supported for CC datasets")
+            print(f"Only Failure correction is currently supported for CC datasets")
 
-    # convert IBM_s1SUBs2 and s1SUBs2 to numeric
-    df["IBM_s1SUBs2"] = pd.to_numeric(df["IBM_s1SUBs2"], errors="coerce")
-    df["s1SUBs2"] = pd.to_numeric(df["s1SUBs2"], errors="coerce")
+    if has_ground_truth:
+        # convert IBM_s1SUBs2 and s1SUBs2 to numeric
+        df["IBM_s1SUBs2"] = pd.to_numeric(df["IBM_s1SUBs2"], errors="coerce")
+        df["s1SUBs2"] = pd.to_numeric(df["s1SUBs2"], errors="coerce")
 
-    success = len(df[df["IBM_s1SUBs2"] == df["s1SUBs2"]])
+        success = len(df[df["IBM_s1SUBs2"] == df["s1SUBs2"]])
 
-    notEqual = df[df["IBM_s1SUBs2"] != df["s1SUBs2"]]
+        notEqual = df[df["IBM_s1SUBs2"] != df["s1SUBs2"]]
 
-    notEqual_dict = notEqual[["s1SUBs2", "IBM_s1SUBs2"]].value_counts().to_dict()
-    notEqual_list = [(k[0], k[1], v) for k, v in notEqual_dict.items()]
-    notEqualDF = pd.DataFrame(notEqual_list, columns=["s1SUBs2", "IBM_s1SUBs2", "count"])
+        notEqual_dict = notEqual[["s1SUBs2", "IBM_s1SUBs2"]].value_counts().to_dict()
+        notEqual_list = [(k[0], k[1], v) for k, v in notEqual_dict.items()]
+        notEqualDF = pd.DataFrame(notEqual_list, columns=["s1SUBs2", "IBM_s1SUBs2", "count"])
 
-    sat_logical_errors = notEqualDF[(notEqualDF["s1SUBs2"] == 0) & (notEqualDF["IBM_s1SUBs2"] == 1)]
-    unsat_logical_errors = (df[(df["s1SUBs2"] == 1)]["IBM_s1SUBs2"].value_counts(dropna=False).to_frame())
+        sat_logical_errors = notEqualDF[(notEqualDF["s1SUBs2"] == 0) & (notEqualDF["IBM_s1SUBs2"] == 1)]
+        unsat_logical_errors = (df[(df["s1SUBs2"] == 1)]["IBM_s1SUBs2"].value_counts(dropna=False).to_frame())
 
-    sat_logical_errors_count = sat_logical_errors.iloc[0]["count"] if len(sat_logical_errors) > 0 else 0
-    unsat_logical_errors_count = unsat_logical_errors.loc[0]["IBM_s1SUBs2"] if len(unsat_logical_errors) > 0 else 0
-    failure = (len(notEqual) - sat_logical_errors_count - unsat_logical_errors_count)
-    success_perc = round(100 * success / total_files, 2)
-    failure_perc = round(100 * (failure + failure_offset) / total_files, 2)
-    sat_err_perc = round(100 * sat_logical_errors_count / total_files, 2)
-    unsat_err_perc = round(100 * unsat_logical_errors_count / total_files, 2)
+        sat_logical_errors_count = sat_logical_errors.iloc[0]["count"] if len(sat_logical_errors) > 0 else 0
+        unsat_logical_errors_count = unsat_logical_errors.loc[0]["IBM_s1SUBs2"] if len(unsat_logical_errors) > 0 else 0
+        
+        failure = (len(notEqual) - sat_logical_errors_count - unsat_logical_errors_count)
+        success_perc = round(100 * success / total_files, 2)
+        failure_perc = round(100 * (failure + failure_offset) / total_files, 2)
+        sat_err_perc = round(100 * sat_logical_errors_count / total_files, 2)
+        unsat_err_perc = round(100 * unsat_logical_errors_count / total_files, 2)
+    else:
+        failure = len(df[(df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
+        success = total_files - failure
+        failure_perc = round(100 * (failure + failure_offset) / total_files, 2)
+        success_perc = round(100 * success / total_files, 2)
+        sat_logical_errors_count = "NA"
+        unsat_logical_errors_count = "NA"
+        sat_err_perc = "NA"
+        unsat_err_perc = "NA"
 
     med_time = round(df.totalTime.median() / 1000, 3)
     p95_time = round(df.totalTime.quantile(0.95) / 1000, 3)
@@ -304,7 +318,7 @@ if __name__ == "__main__":
     for c in combs:
         results_csv += run_evaluation(conf, c[1], c[0])
 
-    cc_datasets = ["Test Suite Containment", "allOf Containment"]
+    cc_datasets = ["Test Suite Containment", "allOf Containment", "Schemastore Containment"]
 
     for d in cc_datasets:
         results_csv += evalSubschema(conf, "CC", d)

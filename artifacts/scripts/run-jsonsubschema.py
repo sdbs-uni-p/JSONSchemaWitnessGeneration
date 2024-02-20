@@ -18,7 +18,6 @@ from jsonsubschema.exceptions import (
 )
 from argparse import ArgumentParser
 
-
 pd.set_option("display.max_columns", None)
 
 
@@ -60,65 +59,6 @@ def bool_to_int(b):
         return 0
     else:
         return b
-
-
-def extractAndCheckTestSuite(pathToFolder):
-    ID = "id"
-    S1 = "schema1"
-    S2 = "schema2"
-    TESTS = "tests"
-    S1SUBS2 = "s1SubsetEqOfs2"
-    new_dict = {
-        "subFolder": [],
-        "subSubFolder": [],
-        "fileName": [],
-        "id": [],
-        "s1SUBs2": [],
-        "IBM_s1SUBs2": [],
-        "totalTime": [],
-    }
-
-    subFoldersList = [f for f in os.listdir(pathToFolder) if path.isdir(join(pathToFolder, f))]
-    for subFolder in subFoldersList:
-        subFolderPath = join(pathToFolder, subFolder)
-        subSubFolders = [f for f in os.listdir(subFolderPath) if path.isdir(join(subFolderPath, f))]
-        for subSubFolder in subSubFolders:
-            subSubFolderPath = join(subFolderPath, subSubFolder)
-            files = [
-                f
-                for f in listdir(subFolderPath + "/" + subSubFolder)
-                if isfile(join(subFolderPath + "/" + subSubFolder, f))
-                and f.endswith(".json")
-            ]
-            for f in files:
-                fileName = f.replace(".json", "")
-                inputFile = open(subSubFolderPath + "/" + f, "r")
-                data = json.load(inputFile)
-                inputFile.close()
-                for i in data:
-                    d = i
-                    id = d[ID]
-                    s1 = d[S1]
-                    s2 = d[S2]
-                    tests = d[TESTS]
-                    s1Subs2 = 9
-                    IBM_s1Subs2 = 9
-                    if S1SUBS2 in tests:
-                        s1Subs2 = bool_to_int(tests[S1SUBS2])
-                        start = datetime.now()
-                        IBM_s1Subs2 = bool_to_int(analyze_schema(s1, s2))
-                        end = datetime.now()
-                        total = end - start
-                        totalTime = round(total.total_seconds() * 1000, 2)
-                    new_dict["subFolder"].append(subFolder)
-                    new_dict["subSubFolder"].append(subSubFolder)
-                    new_dict["fileName"].append(fileName)
-                    new_dict["id"].append(id)
-                    new_dict["s1SUBs2"].append(s1Subs2)
-                    new_dict["IBM_s1SUBs2"].append(IBM_s1Subs2)
-                    new_dict["totalTime"].append(totalTime)
-    df = pd.DataFrame(new_dict)
-    return df
 
 def extractAndCheckTestSuite(pathToFolder):
     ID = "id"
@@ -202,15 +142,17 @@ def extractAndCheck(pathToFolder):
         data = json.load(inputFile)
         inputFile.close()
         for i in data:
-            tests = i[TESTS]
+            tests = i[TESTS] if TESTS in i else None
             s1Subs2 = 9
             IBM_s1Subs2 = 9
-            if S1SUBS2 in tests:
+            if tests is None:
+                s1Subs2 = None 
+            elif S1SUBS2 in tests:
                 s1Subs2 = bool_to_int(tests[S1SUBS2])
-                start = datetime.now()
-                IBM_s1Subs2 = bool_to_int(analyze_schema(i[S1], i[S2]))
-                total = datetime.now() - start
-                totalTime = round(total.total_seconds() * 1000, 2)
+            start = datetime.now()
+            IBM_s1Subs2 = bool_to_int(analyze_schema(i[S1], i[S2]))
+            total = datetime.now() - start
+            totalTime = round(total.total_seconds() * 1000, 2)
             new_dict["fileName"].append(fileName)
             new_dict["id"].append(i[ID])
             new_dict["s1SUBs2"].append(s1Subs2)

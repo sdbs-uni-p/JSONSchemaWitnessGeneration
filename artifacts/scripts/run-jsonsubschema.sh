@@ -21,3 +21,4 @@ run_experiment() {
 
 run_experiment allOf_containment_schemaPairs
 run_experiment test_suite_containment/schemaPairs True
+run_experiment schemastore_containment_schemaPairs
