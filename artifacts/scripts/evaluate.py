@@ -94,9 +94,9 @@ def eval_schemastore_containment(df):
     timeout = df[df.columns[1:]].eq("TimeoutException").any(axis=1).sum()
     satLogicalErrors = None
     time = df["totalTime"].dropna().tolist()
+    success_valid = len(df[(df["genSuccess"] == True) & (df["valid"] == True)])
 
-    return success, failure, timeout, satLogicalErrors, time
-
+    return success, failure, timeout, satLogicalErrors, time, success_valid
 def run_evaluation(config, tool, dataset):
     print("")
     if tool not in config["filenames"]:
@@ -135,7 +135,7 @@ def run_evaluation(config, tool, dataset):
             else:
                 if is_schema_store_containment:
                     print(f"No ground truth defined. Only checking for sucess and failure")
-                    sat_success, sat_failure, timeout, sat_logical_errors, sat_time = eval_schemastore_containment(df)
+                    sat_success, sat_failure, timeout, sat_logical_errors, sat_time, success_valid = eval_schemastore_containment(df)
                 else:
                     sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
                 has_sat = True
@@ -186,6 +186,8 @@ def run_evaluation(config, tool, dataset):
         results += str(print_results(t[0], t[1], total, corrections)) + ","
         if t[0] == "Failure" and is_schema_store_containment:
             print("\t\tIncludes " + str(timeout) + " timeouts (" + str(round(100 * timeout / total, 2)) + "%)")
+        elif t[0] == "Success" and is_schema_store_containment:
+            print("\t\tIncludes " + str(success-success_valid) + " invalid results (" + str(round(100 * (success-success_valid) / total, 2)) + "%)")
     results = results[:-1]
 
     med_time = round(statistics.median(map(float, time)) / 1000, 3)
