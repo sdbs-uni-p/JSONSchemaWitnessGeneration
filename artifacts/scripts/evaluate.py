@@ -89,12 +89,13 @@ def print_results(type, val, total, corrections):
     return percentage
 
 def eval_schemastore_containment(df):
-    success = len(df[df["genSuccess"] == True])
-    failure = len(df[((df["genSuccess"] == False) | (df["genSuccess"].isnull()))])
+    success = len(df[(df["genSuccess"] == True) | (df["genSuccess"] == False)])
+    failure = len(df[df["genSuccess"].isnull()])
+    timeout = df[df.columns[1:]].eq("TimeoutException").any(axis=1).sum()
     satLogicalErrors = None
     time = df["totalTime"].dropna().tolist()
 
-    return success, failure, satLogicalErrors, time
+    return success, failure, timeout, satLogicalErrors, time
 
 def run_evaluation(config, tool, dataset):
     print("")
@@ -119,7 +120,6 @@ def run_evaluation(config, tool, dataset):
     sat_success, sat_failure, sat_time = 0, 0, []
     unsat_success, unsat_failure, unsat_time = 0, 0, []
     sat_logical_errors, unsat_logical_errors = None, None
-
     has_sat, has_unsat = False, False
     is_schema_store_containment = dataset == "Schemastore Containment"
     if "sat" in paths:
@@ -131,12 +131,11 @@ def run_evaluation(config, tool, dataset):
             # TODO: integrate properly
     
             if df is None or df.empty:
-                print(
-                    f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m"
-                )
+                print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
             else:
                 if is_schema_store_containment:
-                    sat_success, sat_failure, sat_logical_errors, sat_time = eval_schemastore_containment(df)
+                    print(f"No ground truth defined. Only checking for sucess and failure")
+                    sat_success, sat_failure, timeout, sat_logical_errors, sat_time = eval_schemastore_containment(df)
                 else:
                     sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
                 has_sat = True
@@ -170,10 +169,7 @@ def run_evaluation(config, tool, dataset):
         return f"{dataset},{tool},NA,NA,NA,NA,NA,NA,NA\n"
 
     corrections = None
-    if (
-        "corrections" in config["datasets"][dataset]
-        and tool in config["datasets"][dataset]["corrections"]
-    ):
+    if ("corrections" in config["datasets"][dataset] and tool in config["datasets"][dataset]["corrections"]):
         corrections = config["datasets"][dataset]["corrections"][tool]
 
     total_processed = success + failure + (sat_logical_errors or 0) + (unsat_logical_errors or 0)
@@ -188,6 +184,8 @@ def run_evaluation(config, tool, dataset):
     results = ""
     for t in types:
         results += str(print_results(t[0], t[1], total, corrections)) + ","
+        if t[0] == "Failure" and is_schema_store_containment:
+            print("\t\tIncludes " + str(timeout) + " timeouts (" + str(round(100 * timeout / total, 2)) + "%)")
     results = results[:-1]
 
     med_time = round(statistics.median(map(float, time)) / 1000, 3)
@@ -225,8 +223,6 @@ def evalSubschema(config, tool, dataset):
         
     # if column s1SUBs2 is not empty or not present, we have no ground truth
     has_ground_truth = "s1SUBs2" in df and not df["s1SUBs2"].isnull().all()
-    if not has_ground_truth:
-        print(f"Dataset {dataset} has no ground truth defined for CC tool. Only checking for sucess and failure")
     
     # TODO: currently only properly supports manual corrections for Test Suite Containment
     total_files = len(df)
@@ -281,6 +277,8 @@ def evalSubschema(config, tool, dataset):
     csv = f"{dataset},CC,{success_perc},{failure_perc},{sat_err_perc},{unsat_err_perc},{med_time},{p95_time},{avg_time}\n"
 
     print(f"\nDataset: {dataset}\nTool:\t jsonsubschema (CC)")
+    if not has_ground_truth:
+        print(f"No ground truth defined. Only checking for sucess and failure")
     print(f"\t#Success: {success} ({success_perc}%)")
     print(f"\t#Failure: {failure+failure_offset} ({failure_perc}%)")
     if failure_offset > 0:
@@ -314,7 +312,7 @@ if __name__ == "__main__":
     tools = ["Ours", "DG"]
 
     combs = itertools.product(datasets, tools)
-    results_csv = "dataset,tool,success,failure,errors sat,errors unsat,median time,95 percentile,average time\n"
+    results_csv = "dataset,tool,success,failure,errors sat,errors unsat,median time (s),95 percentile (s),average time (s)\n"
     for c in combs:
         results_csv += run_evaluation(conf, c[1], c[0])
 
