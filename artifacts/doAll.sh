@@ -18,6 +18,10 @@ echo "Running evaluation..."
 ./evaluate.py > ${HOME}/results/evaluation.txt
 printf "\nEvaluation results are in ${HOME}/results/evaluation.txt\n"
 
+echo "Running evaluation (Journal version)..."
+./evaluate.py > ${HOME}/results/evaluation_journal.txt
+printf "\nEvaluation results are in ${HOME}/results/evaluation_journal.txt\n"
+
 echo "Creating charts..."
 (
   cd ${HOME}/charts

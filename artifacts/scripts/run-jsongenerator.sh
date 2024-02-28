@@ -39,21 +39,26 @@ if [ -n "$input" ];
 fi
 
 # MergeAllOf Data Set
+echo "Running experiments on MergeAllOf dataset..."
 run_experiment allOf_containment/sat
 run_experiment allOf_containment/unsat
 
 # Containment Data Set
+echo "Running experiments on Test Suite Containment dataset..."
 run_experiment test_suite_containment/sat
 run_experiment test_suite_containment/unsat
 
 # Schemastore Containment Data Set
+echo "Running experiments on Schemastore Containment dataset..."
 run_experiment schemastore_containment
 
 # Handwritten Data Set
+echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat
 run_experiment handwritten/unsat
 
 # GitHub Data Set
+echo "Running experiments on GitHub datasets..."
 run_experiment github/sat-dg
 run_experiment github/unsat
 
@@ -65,9 +70,11 @@ run_experiment github/unsat
     rm -r github-sat-dg
 )
 
+echo "Running experiments on Kubernetes datasets..."
 run_experiment kubernetes/sat
 run_experiment kubernetes/unsat
 
+echo "Running experiments on Snowplow datasets..."
 run_experiment snowplow/dg
 
 # Move results from snowplow-dg to snowplow
@@ -78,4 +85,5 @@ run_experiment snowplow/dg
     rm -r snowplow-dg
 )
 
+echo "Running experiments on Washington Post dataset ..."
 run_experiment wp

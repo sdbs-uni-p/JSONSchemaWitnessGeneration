@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --timeout)
       if ! [[ $2 =~ $re_int ]]; then
-        echo "Timeout must be a number greater than 0" >&2
+        echo "Timeout must be a number greater than 0 (ms)" >&2
         exit 1
       else
         timeout="true ${2}";
@@ -106,7 +106,7 @@ run_experiment allOf_containment/unsat
     rm -r allOf_containment
 )
 
-echo "Running experiments on Containment dataset..."
+echo "Running experiments on Test Suite Containment dataset..."
 run_experiment test_suite_containment/sat
 run_experiment test_suite_containment/unsat
 
