@@ -100,8 +100,8 @@ def print_results(valid_witness, invalid_witness, unsatisfiable, exception, exce
         
         
         
-def print_results_gt(valid_witness_sat, invalid_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat, 
-                     valid_witness_unsat, invalid_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat, corrections):
+def print_results_gt(valid_witness_sat, invalid_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat, valid_witness_unsat, 
+                     invalid_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat, corrections, has_sat, has_unsat):
     exception = exception_sat + exception_unsat
     exception_timeout = exception_timeout_sat + exception_timeout_unsat
     time = time_sat + time_unsat
@@ -113,12 +113,14 @@ def print_results_gt(valid_witness_sat, invalid_witness_sat, unsatisfiable_sat, 
     exception += 0 if "Failure" not in corrections else corrections["Failure"]["value"]
 
     processed = valid_witness_sat + invalid_witness_sat + unsatisfiable_sat + exception + valid_witness_unsat + invalid_witness_unsat + unsatisfiable_unsat
-    print(f"\tGenerated Valid Witness (sat): {valid_witness_sat} ({round(100 * valid_witness_sat / processed, 2)}% of processed schemas)")
-    print(f"\tGenerated Invalid Witness (sat): {invalid_witness_sat} ({round(100 * invalid_witness_sat / processed, 2)}% of processed schemas)")
-    print(f"\tConsidered Unsatisfiable by the Tool (sat): {unsatisfiable_sat} ({round(100 * unsatisfiable_sat / processed, 2)}% of processed schemas)")
-    print(f"\tGenerated Valid Witness (unsat): {valid_witness_unsat} ({round(100 * valid_witness_unsat / processed, 2)}% of processed schemas)")
-    print(f"\tGenerated Invalid Witness (unsat): {invalid_witness_unsat} ({round(100 * invalid_witness_unsat / processed, 2)}% of processed schemas)")
-    print(f"\tConsidered Unsatisfiable by the Tool (unsat): {unsatisfiable_unsat} ({round(100 * unsatisfiable_unsat / processed, 2)}% of processed schemas)")
+    if has_sat > 0:
+        print(f"\tGenerated Valid Witness (sat): {valid_witness_sat} ({round(100 * valid_witness_sat / processed, 2)}% of processed schemas)")
+        print(f"\tGenerated Invalid Witness (sat): {invalid_witness_sat} ({round(100 * invalid_witness_sat / processed, 2)}% of processed schemas)")
+        print(f"\tConsidered Unsatisfiable by the Tool (sat): {unsatisfiable_sat} ({round(100 * unsatisfiable_sat / processed, 2)}% of processed schemas)")
+    if has_unsat > 0:
+        print(f"\tGenerated Valid Witness (unsat): {valid_witness_unsat} ({round(100 * valid_witness_unsat / processed, 2)}% of processed schemas)")
+        print(f"\tGenerated Invalid Witness (unsat): {invalid_witness_unsat} ({round(100 * invalid_witness_unsat / processed, 2)}% of processed schemas)")
+        print(f"\tConsidered Unsatisfiable by the Tool (unsat): {unsatisfiable_unsat} ({round(100 * unsatisfiable_unsat / processed, 2)}% of processed schemas)")
     print(f"\tExceptions: {exception} ({round(100 * exception / processed, 2)}% of processed schemas)")
     print(f"\t\tIncludes {exception_timeout} Timeouts ({round(100 * exception_timeout / processed, 2)}% of total of processed schemas)")
     
@@ -229,8 +231,8 @@ def run_evaluation(config, tool, dataset):
             print(f"No files found for dataset \"{dataset}\". Skipping dataset.")
             return
             
-        print_results_gt(valid_witness_sat, invalid_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat,
-                         valid_witness_unsat, invalid_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat, corrections)
+        print_results_gt(valid_witness_sat, invalid_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat, valid_witness_unsat, 
+                         invalid_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat, corrections, has_sat, has_unsat)
 
     print(f"\tProcessed {processed} of {total} schemas")
 
