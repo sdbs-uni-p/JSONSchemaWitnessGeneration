@@ -19,7 +19,7 @@ echo "Running evaluation..."
 printf "\nEvaluation results are in ${HOME}/results/evaluation.txt\n"
 
 echo "Running evaluation (Journal version)..."
-./evaluate.py > ${HOME}/results/evaluation_journal.txt
+./evaluate_journal.py > ${HOME}/results/evaluation_journal.txt
 printf "\nEvaluation results are in ${HOME}/results/evaluation_journal.txt\n"
 
 echo "Creating charts..."
