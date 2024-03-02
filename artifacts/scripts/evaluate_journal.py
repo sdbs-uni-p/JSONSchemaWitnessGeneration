@@ -247,17 +247,21 @@ def evalSubschema(config, tool, dataset):
     df = pd.read_csv(path)
     if df is None or df.empty:
         print(f"File at {path} is empty. Skipping dataset.")
-        
-    print(f"Dataset: {dataset}\nTool:\t {tool}")
+    
+    if tool == "CC":
+        tool_name = "jsonsubschema (CC)"
+    print(f"Dataset: {dataset}\nTool:\t {tool_name}")
     total = dataset_config["files"]
     if df["s1SUBs2"].isnull().all():
         # No ground truth is defined
         print(f"No ground truth is defined for the following results.")
-        no_error = len(df[(df["IBM_s1SUBs2"] == "1") | (df["IBM_s1SUBs2"] == "0")])
+        subschema = len(df[(df["IBM_s1SUBs2"] == "1")])
+        no_subschema = len(df[(df["IBM_s1SUBs2"] == "0")])
         error = len(df[(df["IBM_s1SUBs2"] != "1") & (df["IBM_s1SUBs2"] != "0")])
-        processed = no_error + error
+        processed = subschema + no_subschema + error
         time = df["totalTime"].dropna().tolist()
-        print(f"\tCompleted without Exception: {no_error} ({round(100 * no_error / total, 2)}% of total schema pairs)")
+        print(f"\tIdentified subschema relationship: {subschema} ({round(100 * subschema / total, 2)}% of total schema pairs)")
+        print(f"\tIdentified no subschema relationship: {no_subschema} ({round(100 * no_subschema / total, 2)}% of total schema pairs)")
         print(f"\tExceptions: {error} ({round(100 * error / total, 2)}% of total schema pairs)")
     elif df["s1SUBs2"].isin([0, 1]).all():
         # Ground truth is defined
