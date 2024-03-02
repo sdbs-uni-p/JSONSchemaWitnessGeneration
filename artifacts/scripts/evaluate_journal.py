@@ -98,20 +98,23 @@ def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, uns
     invalid_witness_sat += 0 if "Logical Errors (sat)" not in corrections else corrections["Logical Errors (sat)"]["value"]
     exception += 0 if "Failure" not in corrections else corrections["Failure"]["value"]
 
-    processed = valid_witness_sat + invalid_witness_sat + unsatisfiable_sat + exception + valid_witness_unsat + invalid_witness_unsat + unsatisfiable_unsat
     if has_sat > 0:
         print(f"\tGenerated Valid Witness (sat): {valid_witness_sat} ({round(100 * valid_witness_sat / total, 2)}% of total schemas)")
         print(f"\tGenerated Invalid Witness (sat): {invalid_witness_sat} ({round(100 * invalid_witness_sat / total, 2)}% of total schemas)")
-        print(f"\tGenerated no Witness (sat): {no_witness_sat} ({round(100 * unsatisfiable_sat / total, 2)}% of total schemas)")
+        print(f"\tGenerated no Witness (sat): {no_witness_sat} ({round(100 * no_witness_sat / total, 2)}% of total schemas)")
         print(f"\t\tIncludes {unsatisfiable_sat} Schemas considered Unsatisfiable by the Tool ({round(100 * unsatisfiable_sat / total, 2)}% of total schemas)")
+        print(f"\tExceptions (sat): {exception_sat} ({round(100 * exception_sat / total, 2)}% of total schemas)")
+        print(f"\t\tIncludes {exception_timeout_sat} Timeouts ({round(100 * exception_timeout_sat / total, 2)}% of total schemas)")
     if has_unsat > 0:
         print(f"\tGenerated Valid Witness (unsat): {valid_witness_unsat} ({round(100 * valid_witness_unsat / total, 2)}% of total schemas)")
         print(f"\tGenerated Invalid Witness (unsat): {invalid_witness_unsat} ({round(100 * invalid_witness_unsat / total, 2)}% of total schemas)")
         print(f"\tGenerated no Witness (unsat): {no_witness_unsat} ({round(100 * unsatisfiable_unsat / total, 2)}% of total schemas)")
         print(f"\t\tIncludes {unsatisfiable_unsat} Schemas considered Unsatisfiable by the Tool ({round(100 * unsatisfiable_unsat / total, 2)}% of total schemas)")
-    print(f"\tExceptions: {exception} ({round(100 * exception / total, 2)}% of total schemas)")
-    print(f"\t\tIncludes {exception_timeout} Timeouts ({round(100 * exception_timeout / total, 2)}% of total schemas)")
-    
+        print(f"\tExceptions (unsat): {exception_unsat} ({round(100 * exception_unsat / total, 2)}% of total schemas)")
+        print(f"\t\tIncludes {exception_timeout_unsat} Timeouts ({round(100 * exception_timeout_unsat / total, 2)}% of total schemas)")
+    if any(corrections) and "Failure" in corrections:
+        print(f"\tExceptions (sat or unsat): {corrections['Failure']['value']} ({round(100 * corrections['Failure']['value'] / total, 2)}% of total schemas)")
+
     med_time = round(statistics.median(map(float, time)) / 1000, 3)
     print(f"\tMedian Time: {med_time}s")
     p95_time = round(np.percentile(time, 95) / 1000, 3)
@@ -128,7 +131,7 @@ def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, uns
               f"\t\t\t => Adjusted \"Generated Invalid Witness (sat)\" by {corrections['Logical Errors (sat)']['value']}")
     if "Failure" in corrections:
         print(f"\t\t{corrections['Failure']['description']}\n",
-              f"\t\t\t => Adjusted \"Exceptions\" by {corrections['Failure']['value']}")
+              f"\t\t\t => Adjusted \"Exceptions\" (sat or unsat) by {corrections['Failure']['value']}")
 
 
 def run_evaluation(config, tool, dataset):
@@ -206,7 +209,7 @@ def run_evaluation(config, tool, dataset):
                 else:
                     has_unsat = True
                     valid_witness_unsat, invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat = eval_all(df)
-                    processed += valid_witness_unsat + invalid_witness_unsat + unsatisfiable_unsat + exception_unsat
+                    processed += valid_witness_unsat + invalid_witness_unsat + no_witness_unsat + exception_unsat
         else:
             valid_witness_unsat = 0
             invalid_witness_unsat = 0
@@ -252,17 +255,32 @@ def evalSubschema(config, tool, dataset):
         tool_name = "jsonsubschema (CC)"
     print(f"Dataset: {dataset}\nTool:\t {tool_name}")
     total = dataset_config["files"]
+    
+    exception_offset = 0 
+    if "corrections" in dataset_config and "CC" in dataset_config["corrections"]:
+        if "Failure" in dataset_config["corrections"]["CC"]:
+            exception_correction = dataset_config["corrections"]["CC"]["Failure"]
+            exception_offset = exception_correction["value"] if "value" in exception_correction else 0
+            exception_message = exception_correction["description"] if "description" in exception_correction else ""
+        else:
+            print(f"Only Exception correction is currently supported for CC datasets")
     if df["s1SUBs2"].isnull().all():
         # No ground truth is defined
         print(f"No ground truth is defined for the following results.")
         subschema = len(df[(df["IBM_s1SUBs2"] == "1")])
         no_subschema = len(df[(df["IBM_s1SUBs2"] == "0")])
         error = len(df[(df["IBM_s1SUBs2"] != "1") & (df["IBM_s1SUBs2"] != "0")])
+        timeout = len(df[(df["IBM_s1SUBs2"] == "TimeoutException")])
         processed = subschema + no_subschema + error
         time = df["totalTime"].dropna().tolist()
         print(f"\tIdentified subschema relationship: {subschema} ({round(100 * subschema / total, 2)}% of total schema pairs)")
         print(f"\tIdentified no subschema relationship: {no_subschema} ({round(100 * no_subschema / total, 2)}% of total schema pairs)")
         print(f"\tExceptions: {error} ({round(100 * error / total, 2)}% of total schema pairs)")
+        print(f"\t\tIncludes {timeout} Timeouts ({round(100 * timeout / total, 2)}% of total schema pairs)")
+        print(f"\tMedian Time: {round(statistics.median(map(float, time)) / 1000, 3)}s")
+        print(f"\t95th Percentile Time: {round(np.percentile(time, 95) / 1000, 3)}s")
+        print(f"\tAverage Time: {round(statistics.mean(map(float, time)) / 1000, 3)}s")
+        
     elif df["s1SUBs2"].isin([0, 1]).all():
         # Ground truth is defined
         result_correct_sat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "1")])
@@ -272,16 +290,24 @@ def evalSubschema(config, tool, dataset):
         # errors occured when "IBM_s1SUBs2" is neither 0 nor 1
         error_sat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
         error_unsat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
+        timeout_sat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "TimeoutException")])
+        timeout_unsat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "TimeoutException")])
         processed = result_correct_sat + result_wrong_sat + result_correct_unsat + result_wrong_unsat + error_sat + error_unsat
         
         time = df["totalTime"].dropna().tolist()
         if processed > 0:
             print(f"\tProduced correct result (sat): {result_correct_sat} ({round(100 * result_correct_sat / total, 2)}% of total schema pairs)")
             print(f"\tProduced wrong result (sat): {result_wrong_sat} ({round(100 * result_wrong_sat / total, 2)}% of total schema pairs)")
+            print(f"\tExceptions (sat): {error_sat} ({round(100 * error_sat / total, 2)}% of total schema pairs)")
+            print(f"\t\tIncludes {timeout_sat} Timeouts ({round(100 * timeout_sat / total, 2)}% of total schema pairs)")
             print(f"\tProduced correct result (unsat): {result_correct_unsat} ({round(100 * result_correct_unsat / total, 2)}% of total schema pairs)")
             print(f"\tProduced wrong result (unsat): {result_wrong_unsat} ({round(100 * result_wrong_unsat / total, 2)}% of total schema pairs)")
-            print(f"\tExceptions (sat): {error_sat} ({round(100 * error_sat / total, 2)}% of total schema pairs)")
             print(f"\tExceptions (unsat): {error_unsat} ({round(100 * error_unsat / total, 2)}% of total schema pairs)")
+            print(f"\t\tIncludes {timeout_unsat} Timeouts ({round(100 * timeout_unsat / total, 2)}% of total schema pairs)")
+            if exception_offset > 0:
+                print(f"\tExceptions (sat or unsat): {exception_offset} ({round(100 * exception_offset / total, 2)}% of total schema pairs)")
+                print(f"\tCorrections: \n\t\t{exception_message}\n",
+                    f"\t\t\t => Increased Exceptions (sat or unsat) by {exception_offset}")
             
             
             print(f"\tMedian Time: {round(statistics.median(map(float, time)) / 1000, 3)}s")
