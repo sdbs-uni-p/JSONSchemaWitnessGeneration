@@ -20,16 +20,10 @@ def readDF(path):
     df["genSuccess"] = df["genSuccess"].map(
         {"true": True, "false": False, True: True, False: False}
     )
+    # map "true" and "false" to True and False, respectively and all other values to None
     df["valid"] = df["valid"].map(
-        {
-            "true": True,
-            "false": False,
-            True: True,
-            False: False,
-            "JsonSchemaException": True,
-            "ExecutionException": True,
-        }
-    )
+        {"true": True, "false": False, True: True, False: False}
+    )   
 
     return df
 
@@ -42,14 +36,16 @@ def eval_all(df):
     # check whether there is an unsatisfiable schema where genSuccess is true
     if unsatisfiable > 0 and len(df[(df["genSuccess"] == True) & (df["noWitness"] == True)]):
         print("Warning: There are unsatisfiable schemas (\"noWitness\" == True) where genSuccess is true. This should not happen.")
+    validation_exception = len(df[(df["genSuccess"] == True) & df["valid"].isnull()])
     exception = len(df[df["genSuccess"].isnull()]) # genSuccess should only be null if an exception occured
+    exception += validation_exception
     exception_timeout = df[df.columns[1:]].eq("TimeoutException").any(axis=1).sum()
     time = df["totalTime"].dropna().tolist()
     
-    return valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, time
+    return valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time
     
 
-def print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, time, corrections, total, header=""):
+def print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time, corrections, total, header=""):
     if corrections is None:
         corrections = {}
     valid_witness += 0 if "Success" not in corrections else corrections["Success"]["value"]
@@ -65,6 +61,8 @@ def print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exc
     print(f"\t\tIncludes {unsatisfiable} Schemas considered Unsatisfiable by the Tool ({round(100 * unsatisfiable / total, 2)}% of total schemas)")
     print(f"\tExceptions: {exception} ({round(100 * exception / total, 2)}% of total schemas)")
     print(f"\t\tIncludes {exception_timeout} Timeouts ({round(100 * exception_timeout / total, 2)}% of total schemas)")
+    if validation_exception > 0:
+        print(f"\t\tIncludes {validation_exception} Validation Exceptions ({round(100 * validation_exception / total, 2)}% of total schemas)")
     
     med_time = round(statistics.median(map(float, time)) / 1000, 3)
     print(f"\tMedian Time: {med_time}s")
@@ -86,8 +84,8 @@ def print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exc
         
         
         
-def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat, valid_witness_unsat, 
-                     invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat, corrections, has_sat, has_unsat, total):
+def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, validation_exception_sat, time_sat, valid_witness_unsat, 
+                     invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, validation_exception_unsat, time_unsat, corrections, has_sat, has_unsat, total):
     exception = exception_sat + exception_unsat
     exception_timeout = exception_timeout_sat + exception_timeout_unsat
     time = time_sat + time_unsat
@@ -105,6 +103,8 @@ def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, uns
         print(f"\t\tIncludes {unsatisfiable_sat} Schemas considered Unsatisfiable by the Tool ({round(100 * unsatisfiable_sat / total, 2)}% of total schemas)")
         print(f"\tExceptions (sat): {exception_sat} ({round(100 * exception_sat / total, 2)}% of total schemas)")
         print(f"\t\tIncludes {exception_timeout_sat} Timeouts ({round(100 * exception_timeout_sat / total, 2)}% of total schemas)")
+        if validation_exception_sat > 0:
+            print(f"\t\tIncludes {validation_exception_sat} Validation Exceptions ({round(100 * validation_exception_sat / total, 2)}% of total schemas)")
     if has_unsat > 0:
         print(f"\tGenerated Valid Witness (unsat): {valid_witness_unsat} ({round(100 * valid_witness_unsat / total, 2)}% of total schemas)")
         print(f"\tGenerated Invalid Witness (unsat): {invalid_witness_unsat} ({round(100 * invalid_witness_unsat / total, 2)}% of total schemas)")
@@ -112,6 +112,8 @@ def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, uns
         print(f"\t\tIncludes {unsatisfiable_unsat} Schemas considered Unsatisfiable by the Tool ({round(100 * unsatisfiable_unsat / total, 2)}% of total schemas)")
         print(f"\tExceptions (unsat): {exception_unsat} ({round(100 * exception_unsat / total, 2)}% of total schemas)")
         print(f"\t\tIncludes {exception_timeout_unsat} Timeouts ({round(100 * exception_timeout_unsat / total, 2)}% of total schemas)")
+        if validation_exception_unsat > 0:
+            print(f"\t\tIncludes {validation_exception_unsat} Validation Exceptions ({round(100 * validation_exception_unsat / total, 2)}% of total schemas)")
     if any(corrections) and "Failure" in corrections:
         print(f"\tExceptions (sat or unsat): {corrections['Failure']['value']} ({round(100 * corrections['Failure']['value'] / total, 2)}% of total schemas)")
 
@@ -171,8 +173,8 @@ def run_evaluation(config, tool, dataset):
             if df is None or df.empty:
                 print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
             else:
-                valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, time = eval_all(df)
-                print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, time, 
+                valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time = eval_all(df)
+                print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time, 
                               corrections, total, "No ground truth is defined for the following results.")
                 processed += valid_witness + invalid_witness + unsatisfiable + exception
     else:
@@ -188,7 +190,7 @@ def run_evaluation(config, tool, dataset):
                     print(f"Results for satisfiable schemas at {path} is empty. Skipping case.")
                 else:
                     has_sat = True
-                    valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat = eval_all(df)
+                    valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, validation_exception_sat, time_sat = eval_all(df)
                     processed += valid_witness_sat + invalid_witness_sat + no_witness_sat + exception_sat
         else:
             valid_witness_sat = 0
@@ -208,7 +210,7 @@ def run_evaluation(config, tool, dataset):
                     print(f"Results for satisfiable schemas at {path} is empty. Skipping case.")
                 else:
                     has_unsat = True
-                    valid_witness_unsat, invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat = eval_all(df)
+                    valid_witness_unsat, invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, validation_exception_unsat, time_unsat = eval_all(df)
                     processed += valid_witness_unsat + invalid_witness_unsat + no_witness_unsat + exception_unsat
         else:
             valid_witness_unsat = 0
@@ -217,14 +219,15 @@ def run_evaluation(config, tool, dataset):
             exception_unsat = 0
             exception_timeout_unsat = 0
             no_witness_unsat = 0
+            validation_exception_unsat = 0
             time_unsat = []
             
         if not (has_sat or has_unsat):
             print(f"No files found for dataset \"{dataset}\". Skipping dataset.")
             return
             
-        print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, time_sat, valid_witness_unsat, 
-                         invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, time_unsat, corrections, has_sat, has_unsat, total)
+        print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, validation_exception_sat, time_sat, valid_witness_unsat, 
+                         invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, validation_exception_unsat, time_unsat, corrections, has_sat, has_unsat, total)
 
     print(f"\tProcessed {processed} of {total} schemas")
 
