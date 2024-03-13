@@ -316,8 +316,7 @@ if __name__ == "__main__":
         "WashingtonPost",
         "Handwritten",
         "Test Suite Containment",
-        "allOf Containment",
-        "Schemastore Containment"
+        "allOf Containment"
     ]
     tools = ["Ours", "DG"]
 
@@ -326,7 +325,7 @@ if __name__ == "__main__":
     for c in combs:
         results_csv += run_evaluation(conf, c[1], c[0])
 
-    cc_datasets = ["Test Suite Containment", "allOf Containment", "Schemastore Containment"]
+    cc_datasets = ["Test Suite Containment", "allOf Containment"]
 
     for d in cc_datasets:
         results_csv += evalSubschema(conf, "CC", d)
