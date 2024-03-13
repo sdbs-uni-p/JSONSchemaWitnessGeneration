@@ -99,6 +99,8 @@ def eval_schemastore_containment(df):
     success_unsat = len(df[df["genSuccess"] == False])
 
     return success, failure, timeout, satLogicalErrors, time, success_valid, success_invalid, success_unsat
+
+
 def run_evaluation(config, tool, dataset):
     print("")
     if tool not in config["filenames"]:
@@ -173,9 +175,6 @@ def run_evaluation(config, tool, dataset):
     corrections = None
     if ("corrections" in config["datasets"][dataset] and tool in config["datasets"][dataset]["corrections"]):
         corrections = config["datasets"][dataset]["corrections"][tool]
-
-    total_processed = success + failure + (sat_logical_errors or 0) + (unsat_logical_errors or 0)
-    failure += total - total_processed
     
     types = [
         ("Success", success),
