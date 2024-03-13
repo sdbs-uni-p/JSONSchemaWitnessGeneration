@@ -105,14 +105,14 @@ def run_evaluation(config, tool, dataset):
     print("")
     if tool not in config["filenames"]:
         print(f"Tool {tool} not configured. Skipping")
-        return
+        return ""
     if dataset not in config["datasets"]:
         print(f"Dataset {dataset} not configured. Skipping")
-        return
+        return ""
     paths = config["datasets"][dataset]["paths"]
     if "sat" not in paths and "unsat" not in paths:
         print(f"Paths for dataset {dataset} are not configured properly")
-        return
+        return ""
 
     if tool == "DG":
         tool_str = "jsongenerator (DG)"
