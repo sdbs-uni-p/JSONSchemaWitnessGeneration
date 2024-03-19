@@ -38,6 +38,10 @@ if [ -n "$input" ];
     exit 0
 fi
 
+# Trickyschemas Data Set
+run_experiment trickyschemas/sat
+run_experiment trickyschemas/unsat
+
 # MergeAllOf Data Set
 echo "Running experiments on MergeAllOf dataset..."
 run_experiment allOf_containment/sat

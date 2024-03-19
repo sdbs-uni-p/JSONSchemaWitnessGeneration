@@ -90,6 +90,10 @@ if [ -n "$input" ];
     exit 0
 fi
 
+echo "Running experiments on tricky schemas..."
+run_experiment trickyschemas/sat
+run_experiment trickyschemas/unsat
+
 echo "Running experiments on MergeAllOf dataset..."
 run_experiment allOf_containment/sat
 run_experiment allOf_containment/unsat
