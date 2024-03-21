@@ -19,6 +19,7 @@ run_experiment() {
             -o ${outdir}/jsonsubschema_results.csv ${testsuite}
 }
 
+run_experiment trickyschemas_schemaPairs
 run_experiment allOf_containment_schemaPairs
 run_experiment test_suite_containment/schemaPairs True
 run_experiment schemastore_containment_schemaPairs
