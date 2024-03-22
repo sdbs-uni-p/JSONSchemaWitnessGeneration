@@ -226,7 +226,7 @@ def runSubschemaTestsTestSuite(schemaPairs, output, isTestSuite=False):
         elif "schemastore_containment_schemaPairs" in schemaPairs:
             subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep="_", suffix_pattern_sep="_and_")
         else:
-            subschemaDF = extractAndCheck(schemaPairs, True)
+            subschemaDF = extractAndCheck(schemaPairs)
         if subschemaDF is None:
             return
         subschemaDF = subschemaDF.sort_values(by=["fileName", "id"])
