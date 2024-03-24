@@ -67,7 +67,6 @@ def extractAndCheckTestSuite(pathToFolder):
     S2 = "schema2"
     TESTS = "tests"
     S1SUBS2 = "s1SubsetEqOfs2"
-    S2SUBS1 = "s2SubsetEqOfs1"
     new_dict = {
         "subFolder": [],
         "subSubFolder": [],
@@ -143,6 +142,7 @@ def extractAndCheck(pathToFolder, bothDirections=False, suffixes=None, suffix_se
     S2 = "schema2"
     TESTS = "tests"
     S1SUBS2 = "s1SubsetEqOfs2"
+    S2SUBS1 = "s2SubsetEqOfs1"
     new_dict = {
         "fileName": [],
         "id": [],
@@ -198,8 +198,8 @@ def extractAndCheck(pathToFolder, bothDirections=False, suffixes=None, suffix_se
                 IBM_s1Subs2 = 9
                 if tests is None:
                     s1Subs2 = None 
-                elif S1SUBS2 in tests:
-                    s1Subs2 = bool_to_int(tests[S1SUBS2])
+                elif S2SUBS1 in tests:
+                    s1Subs2 = bool_to_int(tests[S2SUBS1])
                 start = datetime.now()
                 IBM_s1Subs2 = bool_to_int(analyze_schema(i[S2], i[S1]))
                 total = datetime.now() - start
