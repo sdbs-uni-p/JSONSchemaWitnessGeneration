@@ -167,11 +167,11 @@ def run_evaluation(config, tool, dataset):
             return f"{dataset},{tool},NA,NA,NA,NA,NA,NA,NA\n"
         path = f'{config["base_path"]}/{paths["unknown"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
-            print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
+            print(f"WARN: File at {path} not found. Skipping dataset.")
         else:
             df = readDF(path)
             if df is None or df.empty:
-                print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
+                print(f"WARN: File at {path} is empty. Skipping dataset.")
             else:
                 valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time = eval_all(df)
                 print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time, 
@@ -247,7 +247,7 @@ def evalSubschema(config, tool, dataset):
 
     path = f'{config["base_path"]}/{dataset_config["paths"]["schemaPairs"]}/{config["filenames"][tool]}'
     if not os.path.exists(path):
-        print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
+        print(f"WARN: File at {path} not found. Skipping dataset.")
         return f"{dataset},CC,NA,NA,NA,NA,NA,NA,NA\n"
 
     df = pd.read_csv(path)
@@ -335,9 +335,10 @@ if __name__ == "__main__":
         "Handwritten",
         "Test Suite Containment",
         "allOf Containment",
-        "Schemastore Containment"
+        "Schemastore Containment",
+        "Tricky Schemas"
     ]
-    cc_datasets = ["Test Suite Containment", "allOf Containment", "Schemastore Containment"]
+    cc_datasets = ["Test Suite Containment", "allOf Containment", "Schemastore Containment", "Tricky Schemas"]
     cc_datasets_processed = []
     tools = ["Ours", "DG"]
 
