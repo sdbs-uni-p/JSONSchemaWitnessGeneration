@@ -158,7 +158,22 @@ def run_evaluation(config, tool, dataset):
 
     total = config["datasets"][dataset]["files"]
     processed = 0
-    corrections = None
+    corrections = None        
+    valid_witness_sat = 0
+    invalid_witness_sat = 0
+    unsatisfiable_sat = 0
+    exception_sat = 0
+    exception_timeout_sat = 0
+    time_sat = []   
+    valid_witness_unsat = 0
+    invalid_witness_unsat = 0
+    unsatisfiable_unsat = 0
+    exception_unsat = 0
+    exception_timeout_unsat = 0
+    no_witness_unsat = 0
+    validation_exception_unsat = 0
+    time_unsat = []
+    
     if ("corrections" in config["datasets"][dataset] and tool in config["datasets"][dataset]["corrections"]):
         corrections = config["datasets"][dataset]["corrections"][tool]
     if "unknown" in paths:
@@ -192,14 +207,7 @@ def run_evaluation(config, tool, dataset):
                     has_sat = True
                     valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, validation_exception_sat, time_sat = eval_all(df)
                     processed += valid_witness_sat + invalid_witness_sat + no_witness_sat + exception_sat
-        else:
-            valid_witness_sat = 0
-            invalid_witness_sat = 0
-            unsatisfiable_sat = 0
-            exception_sat = 0
-            exception_timeout_sat = 0
-            time_sat = []
-            
+
         if "unsat" in paths:
             path = f'{config["base_path"]}/{paths["unsat"]}/{config["filenames"][tool]}'
             if not os.path.exists(path):
@@ -212,15 +220,6 @@ def run_evaluation(config, tool, dataset):
                     has_unsat = True
                     valid_witness_unsat, invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, validation_exception_unsat, time_unsat = eval_all(df)
                     processed += valid_witness_unsat + invalid_witness_unsat + no_witness_unsat + exception_unsat
-        else:
-            valid_witness_unsat = 0
-            invalid_witness_unsat = 0
-            unsatisfiable_unsat = 0
-            exception_unsat = 0
-            exception_timeout_unsat = 0
-            no_witness_unsat = 0
-            validation_exception_unsat = 0
-            time_unsat = []
             
         if not (has_sat or has_unsat):
             print(f"No files found for dataset \"{dataset}\". Skipping dataset.")
