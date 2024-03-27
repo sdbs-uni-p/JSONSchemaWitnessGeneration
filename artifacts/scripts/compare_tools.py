@@ -1,4 +1,7 @@
+#!/usr/local/bin/python3.9
+
 import pandas as pd
+import argparse
 
 def readDF(path):
     try:
@@ -23,16 +26,24 @@ def readDF(path):
     return df
 
 if __name__ == "__main__":
-    # Load the data
-    df_ours = readDF("/home/repro/results/schemastore_containment/results.csv")
-    df_dg = readDF("/home/repro/results/schemastore_containment/jsongenerator_results.csv")
-    df_cc = readDF("/home/repro/results/schemastore_containment_schemaPairs/jsonsubschema_results.csv")
-
+    # set parameters ours, dg, cc. Ours and DG take up to 2 arguments, CC takes 1 argument
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ours", nargs='+', required=True, help="Path to the csv file(s) of our tool")
+    parser.add_argument("--dg", nargs='+', required=True, help="Path to the csv file(s) of DG")
+    parser.add_argument("--cc", nargs='+', required=True, help="Path to the csv file(s) of CC")
+    args = parser.parse_args()
+    
+    df_ours = pd.concat([readDF(path) for path in args.ours])
+    df_dg = pd.concat([readDF(path) for path in args.dg])
+    df_cc = pd.concat([readDF(path) for path in args.cc])
+    df_cc = df_cc.rename(columns={"fileName": "objectId"})
+    
     # drop columns that are not relevant for this analysis
     df_ours = df_ours.drop(columns=["inSize", "outSize", "totalTime", "correctTime", "oneOfAsAnyOf", "parsing", 
                                     "extractSchema", "2Full", "2Witness", "notElim", "merge1", "groupize", 
                                     "separation", "expansion", "preparation", "merge3", "initGEnv", "genWitness",
                                     "#iterations", "cancelledAt","dateAndTime","timeout","git","machine"])
+    
     # rename columns
     df_ours = df_ours.rename(columns={"genSuccess": "ours_genSuccess", "noWitness": "ours_noWitness", "valid": "ours_valid"})
     
@@ -71,4 +82,8 @@ if __name__ == "__main__":
         for i, row in df_unsat_but_no_subschema.iterrows():
             print("\t\t", row["objectId"])
     print("Sat according to our tool but subschema according to CC: ", len(df_sat_but_subschema))
+    if len(df_sat_but_subschema) > 0:
+        print("\tSchemas: ")
+        for i, row in df_sat_but_subschema.iterrows():
+            print("\t\t", row["objectId"])
     
