@@ -65,7 +65,7 @@ if __name__ == "__main__":
     print("Sat according to our tool or DG: ", len(df_sat))
     print("\tThis is counting cases where our tool or DG (or both) produced a valid witness.")
     print("Sat according to our tool: ", len(df_sat_ours))
-    print("\tThis is counting cases where our tool produced a valid witness. For 1 case, the validator wrongfully marked the witness as invalid")
+    print("\tThis is counting cases where our tool produced a valid witness.")
     print("Errors in our tool: ", len(df_error), "\n")
     
     df_errors_ours_not_cc = df[df["ours_genSuccess"].isna() & ((df["IBM_s1SUBs2"] == True) | (df["IBM_s1SUBs2"] == False))]
