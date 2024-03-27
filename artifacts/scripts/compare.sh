@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 original_results=${HOME}/results/original_results.csv
 new_results=${HOME}/results/results.csv

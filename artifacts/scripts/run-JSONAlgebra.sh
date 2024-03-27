@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 threads=1
 timeout="false"
