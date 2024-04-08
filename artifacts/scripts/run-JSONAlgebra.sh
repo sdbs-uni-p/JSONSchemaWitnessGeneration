@@ -71,8 +71,9 @@ run_experiment() {
       return
     fi
     mkdir -p ${HOME}/results/${1//\//-}/
-    rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv 2> /dev/null
-    rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv 2> /dev/null
+    mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive
+    mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
+    rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
     mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" \
             -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} ${threads} ${timeout}" -pl JsonSchema_To_Algebra \
             2> >(tee ${HOME}/results/${1//\//-}/${1//\//-}-err.log >&2)

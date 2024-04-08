@@ -24,7 +24,8 @@ run_experiment() {
       return
     fi
 
-    rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_* 2> /dev/null
+    mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive
+    mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_* ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
     gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/']"
     mkdir -p ${HOME}/results/${1//\//-}/
     cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_*_results.csv \
