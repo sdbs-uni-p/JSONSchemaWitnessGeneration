@@ -40,6 +40,7 @@ if [ -n "$input" ];
 fi
 
 # Trickyschemas Data Set
+echo "Running experiments on Tricky Schemas dataset..."
 run_experiment trickyschemas/sat
 run_experiment trickyschemas/unsat
 
@@ -70,7 +71,7 @@ run_experiment github/unsat
 # Move results from github-sat-dg to github-sat
 (
     cd ${HOME}/results
-    mkdir github-sat 2> /dev/null
+    mkdir -p github-sat
     mv github-sat-dg/jsongenerator_results.csv github-sat/jsongenerator_results.csv
     rm -r github-sat-dg
 )
@@ -85,7 +86,7 @@ run_experiment snowplow/dg
 # Move results from snowplow-dg to snowplow
 (
     cd ${HOME}/results
-    mkdir snowplow 2> /dev/null
+    mkdir -p snowplow
     mv snowplow-dg/jsongenerator_results.csv snowplow/jsongenerator_results.csv
     rm -r snowplow-dg
 )
