@@ -12,7 +12,7 @@ echo "Running experiments with the DG-tool (jsongenerator)..."
 ./run-jsongenerator.sh 2>&1 | tee $logdir/jsongenerator.log
 
 echo "Running experiments with the CC-tool (jsonsubschema)..."
-./run-jsonsubschema.sh 2>&1 | tee $logdir/jsongenerator.log
+./run-jsonsubschema.sh 2>&1 | tee $logdir/jsonsubschema.log
 
 echo "Running evaluation..."
 ./evaluate.py > ${HOME}/results/evaluation.txt
