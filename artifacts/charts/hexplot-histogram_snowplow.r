@@ -9,6 +9,8 @@ library(scales)
 
 source('config.r')
 df <- read.csv('data/snowplow/clean_data.csv')
+df_timeout <- read.csv('data/snowplow/timeout.csv')
+df_timeout$totalTime=Inf
 
 hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", col.inf="red", y_title="") {
   size_median <- median(df$inSize)
@@ -16,6 +18,9 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
   
   plot <- ggplot(data=df, aes(x = inSize, y=totalTime)) + 
     geom_point(alpha=0)  +
+    geom_point(data=df_timeout, aes(x=inSize, y=Inf), colour=col.inf) +
+    geom_text(aes(x=10^5, label="Timeout", y=10^6.5), nudge_y=0.7, nudge_x=-0.3, vjust=0,
+             colour=col.inf, family=text_family, check_overlap = TRUE, size=7) +
     geom_hex(bins=256, binwidth = c(.15, .15)) +
     geom_vline(xintercept=size_median, size=.5, color=col.med, linetype = "dashed") +
     geom_text(aes(x=size_median, label="Median", y=10^6), nudge_x=-0.4, nudge_y=-0.2, colour=col.med, 
@@ -49,4 +54,3 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
 plot <- hexplot_fix(col.low="#56B1F7", col.high="#132B43", y_title="Time [ms]")
 plot
 ggsave(paste("output/hexplot_and_histograms_snowplow_fix",file_ending,sep=""), plot=plot, height=5, width=8.5, device=cairo_pdf)
-
