@@ -15,7 +15,7 @@ run_experiment() {
     fi
     outdir=${OUTDIR}/${1//\//-}/
     mkdir -p ${outdir}
-    python3 ${HOME}/scripts/run-jsonsubschema_journal.py -i ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} \
+    python3 -u ${HOME}/scripts/run-jsonsubschema_journal.py -i ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} \
             -o ${outdir}/jsonsubschema_results.csv ${testsuite}
 }
 
