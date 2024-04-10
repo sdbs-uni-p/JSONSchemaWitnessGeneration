@@ -285,15 +285,15 @@ def evalSubschema(config, tool, dataset):
         
     elif df["s1SUBs2"].isin([0, 1]).all():
         # Ground truth is defined
-        result_correct_sat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "1")])
-        result_correct_unsat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "0")])
+        result_correct_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "0")])
+        result_correct_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "1")])
         result_wrong_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "1")])
         result_wrong_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "0")])
         # errors occured when "IBM_s1SUBs2" is neither 0 nor 1
-        error_sat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
-        error_unsat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
-        timeout_sat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "TimeoutException")])
-        timeout_unsat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "TimeoutException")])
+        error_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
+        error_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
+        timeout_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "TimeoutException")])
+        timeout_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "TimeoutException")])
         processed = result_correct_sat + result_wrong_sat + result_correct_unsat + result_wrong_unsat + error_sat + error_unsat
         
         time = df["totalTime"].dropna().tolist()
