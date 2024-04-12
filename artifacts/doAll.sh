@@ -22,6 +22,10 @@ echo "Running evaluation (Journal version)..."
 ./evaluate_journal.py > ${HOME}/results/evaluation_journal.txt
 printf "\nEvaluation results are in ${HOME}/results/evaluation_journal.txt\n"
 
+echo "Running evaluation (Journal version, aggregated)..."
+./evaluate_journal_aggregate.py > ${HOME}/results/evaluation_journal_aggregate.txt
+printf "\nEvaluation results are in ${HOME}/results/evaluation_journal_aggregate.txt\n"
+
 echo "Comparing results for the different tools..."
 ./compare_tools.sh > ${HOME}/results/comparison.txt
 
