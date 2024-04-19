@@ -102,7 +102,7 @@ def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, uns
     success = valid_witness_sat + no_witness_unsat
     failure = exception
     timeouts = exception_timeout_sat + exception_timeout_unsat
-    error_sat = invalid_witness_sat
+    error_sat = invalid_witness_sat + no_witness_sat
     error_unsat = invalid_witness_unsat + valid_witness_unsat
 
     if has_sat > 0:
@@ -305,9 +305,8 @@ def evalSubschema(config, tool, dataset):
             print(f"\t\"Logical Errors (sat)\": {error_sat} ({round(100 * error_sat / total, 2)}% of total schema pairs)")
             print(f"\t\"Logical Errors (unsat)\": {error_unsat} ({round(100 * error_unsat / total, 2)}% of total schema pairs)")
             if exception_offset > 0:
-                print(f"\tExceptions (sat or unsat): {exception_offset} ({round(100 * exception_offset / total, 2)}% of total schema pairs)")
                 print(f"\tCorrections: \n\t\t{exception_message}\n",
-                    f"\t\t\t => Increased Exceptions (sat or unsat) by {exception_offset}")
+                    f"\t\t\t => Increased \"Failure\" (Exceptions) by {exception_offset}")
             
             
             print(f"\tMedian Time: {round(statistics.median(map(float, time)) / 1000, 3)}s")
