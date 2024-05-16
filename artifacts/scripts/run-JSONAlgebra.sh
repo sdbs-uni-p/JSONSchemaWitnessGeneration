@@ -95,6 +95,22 @@ echo "Running experiments on tricky schemas..."
 run_experiment trickyschemas/sat
 run_experiment trickyschemas/unsat
 
+echo "Running experiments on ISSTA dataset..."
+run_experiment issta/sat
+run_experiment issta/unsat
+
+# Combine ISSTA results for chart generation
+(
+    cd ${HOME}/results
+    mkdir -p issta
+    awk '(NR == 1) || (FNR > 1)' issta-sat/results.csv \
+        issta-unsat/results.csv > issta/results.csv
+    # Copy Kubernetes results to charts
+    mkdir -p ${HOME}/charts/data/issta/
+    cp ${HOME}/results/issta/results.csv ${HOME}/charts/data/issta/results.csv
+    rm -r issta
+)
+
 echo "Running experiments on MergeAllOf dataset..."
 run_experiment allOf_containment/sat
 run_experiment allOf_containment/unsat

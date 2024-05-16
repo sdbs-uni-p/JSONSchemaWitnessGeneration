@@ -353,6 +353,8 @@ if __name__ == "__main__":
     tools = ["Ours", "DG"]
 
     combs = itertools.product(datasets, tools)
+    combs = list(combs)
+    combs.append(("ISSTA", "Ours"))
     results_csv = "dataset,tool,success,failure,errors sat,errors unsat,median time (s),95 percentile (s),average time (s)\n"
     for c in combs:
         run_evaluation(conf, c[1], c[0])
