@@ -7,8 +7,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import argparse
 
 pd.set_option("display.max_columns", None)
+TIMEOUT = np.inf
 
 
 def readDF(path):
@@ -29,18 +31,20 @@ def readDF(path):
 
 
 def eval_all(df):
-    valid_witness = len(df[(df["genSuccess"] == True) & (df["valid"] == True)])
-    invalid_witness = len(df[(df["genSuccess"] == True) & (df["valid"] == False)])
-    no_witness = len(df[df["genSuccess"] == False])
-    unsatisfiable = len(df[df["noWitness"] == True]) if "noWitness" in df else 0
+    valid_witness = len(df[(df["genSuccess"] == True) & (df["valid"] == True) & (df["totalTime"] <= TIMEOUT)])
+    invalid_witness = len(df[(df["genSuccess"] == True) & (df["valid"] == False) & (df["totalTime"] <= TIMEOUT)])
+    no_witness = len(df[(df["genSuccess"] == False) & (df["totalTime"] <= TIMEOUT)])
+    unsatisfiable = len(df[(df["noWitness"] == True) & (df["totalTime"] <= TIMEOUT)]) if "noWitness" in df else 0
     # check whether there is an unsatisfiable schema where genSuccess is true
     if unsatisfiable > 0 and len(df[(df["genSuccess"] == True) & (df["noWitness"] == True)]):
         print("Warning: There are unsatisfiable schemas (\"noWitness\" == True) where genSuccess is true. This should not happen.")
     validation_exception = len(df[(df["genSuccess"] == True) & df["valid"].isnull()])
     exception = len(df[df["genSuccess"].isnull()]) # genSuccess should only be null if an exception occured
-    exception += validation_exception
-    exception_timeout = df[df.columns[1:]].eq("TimeoutException").any(axis=1).sum()
-    time = df["totalTime"].dropna().tolist()
+    exception_timeout = len(df[df["totalTime"] > TIMEOUT])
+    exception += validation_exception + exception_timeout
+    exception_timeout += df[df.columns[1:]].eq("TimeoutException").any(axis=1).sum() # these timeout exceptions are already counted in exception
+    df_no_timeout = df[df["totalTime"] <= TIMEOUT]
+    time = df_no_timeout["totalTime"].dropna().tolist()
     
     return valid_witness, invalid_witness, no_witness, unsatisfiable, exception, exception_timeout, validation_exception, time
     
@@ -85,9 +89,8 @@ def print_results(valid_witness, invalid_witness, no_witness, unsatisfiable, exc
     if "Failure" in corrections:
         print(f"\t\t{corrections['Failure']['description']}\n",
               f"\t\t\t => Adjusted \"Exceptions\" by {corrections['Failure']['value']}")
-        
-        
-        
+
+
 def print_results_gt(valid_witness_sat, invalid_witness_sat, no_witness_sat, unsatisfiable_sat, exception_sat, exception_timeout_sat, validation_exception_sat, time_sat, valid_witness_unsat, 
                      invalid_witness_unsat, no_witness_unsat, unsatisfiable_unsat, exception_unsat, exception_timeout_unsat, validation_exception_unsat, time_unsat, corrections, has_sat, has_unsat, total):
     exception = exception_sat + exception_unsat
@@ -265,12 +268,14 @@ def evalSubschema(config, tool, dataset):
     if df["s1SUBs2"].isnull().all():
         # No ground truth is defined
         print(f"No ground truth is defined for the following results.")
-        subschema = len(df[(df["IBM_s1SUBs2"] == "1")])
-        no_subschema = len(df[(df["IBM_s1SUBs2"] == "0")])
+        subschema = len(df[(df["IBM_s1SUBs2"] == "1") & (df["totalTime"] <= TIMEOUT)])
+        no_subschema = len(df[(df["IBM_s1SUBs2"] == "0") & (df["totalTime"] <= TIMEOUT)])
         error = len(df[(df["IBM_s1SUBs2"] != "1") & (df["IBM_s1SUBs2"] != "0")])
-        timeout = len(df[(df["IBM_s1SUBs2"] == "TimeoutException")])
+        timeout = len(df[(df["IBM_s1SUBs2"] == "TimeoutException") | (df["totalTime"] > TIMEOUT)])
+        error += timeout
         processed = subschema + no_subschema + error
-        time = df["totalTime"].dropna().tolist()
+        df_no_timeout = df[df["totalTime"] <= TIMEOUT]
+        time = df_no_timeout["totalTime"].dropna().tolist()
         success = subschema + no_subschema
         print(f"\t\"Success\" (No Exceptions): {success} ({round(100 * success / total, 2)}% of total schema pairs)")
         print(f"\t\"Failure\" (Exceptions): {error} ({round(100 * error / total, 2)}% of total schema pairs)")
@@ -281,23 +286,24 @@ def evalSubschema(config, tool, dataset):
         
     elif df["s1SUBs2"].isin([0, 1]).all():
         # Ground truth is defined
-        result_correct_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "0")])
-        result_correct_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "1")])
-        result_wrong_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "1")])
-        result_wrong_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "0")])
+        result_correct_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "0") & (df["totalTime"] <= TIMEOUT)])
+        result_correct_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "1") & (df["totalTime"] <= TIMEOUT)])
+        result_wrong_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "1") & (df["totalTime"] <= TIMEOUT)])
+        result_wrong_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "0") & (df["totalTime"] <= TIMEOUT)])
         # errors occured when "IBM_s1SUBs2" is neither 0 nor 1
         error_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
         error_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
-        timeout_sat = len(df[(df["s1SUBs2"] == 0) & (df["IBM_s1SUBs2"] == "TimeoutException")])
-        timeout_unsat = len(df[(df["s1SUBs2"] == 1) & (df["IBM_s1SUBs2"] == "TimeoutException")])
+        timeout_sat = len(df[(df["s1SUBs2"] == 0) & ((df["IBM_s1SUBs2"] == "TimeoutException") | (df["totalTime"] > TIMEOUT))])
+        timeout_unsat = len(df[(df["s1SUBs2"] == 1) & ((df["IBM_s1SUBs2"] == "TimeoutException") | (df["totalTime"] > TIMEOUT))])
         processed = result_correct_sat + result_wrong_sat + result_correct_unsat + result_wrong_unsat + error_sat + error_unsat
         
-        time = df["totalTime"].dropna().tolist()
+        df_no_timeout = df[df["totalTime"] <= TIMEOUT]
+        time = df_no_timeout["totalTime"].dropna().tolist()
         success = result_correct_sat + result_correct_unsat
         failure = error_sat + error_unsat + exception_offset
         timeouts = timeout_sat + timeout_unsat
-        error_sat = result_wrong_sat
-        error_unsat = result_wrong_unsat
+        error_sat = result_wrong_sat + timeout_sat
+        error_unsat = result_wrong_unsat + timeout_unsat
         if processed > 0:
             print(f"\t\"Success\" (Correctly identified subschema relationship): {success} ({round(100 * success / total, 2)}% of total schema pairs)")
             print(f"\t\"Failure\" (Exceptions): {failure} ({round(100 * failure / total, 2)}% of total schema pairs)")
@@ -318,6 +324,14 @@ def evalSubschema(config, tool, dataset):
     print(f"\tProcessed {processed} of {dataset_config['files']} schema pairs")
         
 if __name__ == "__main__":
+    # add integer argument -t for simulate timeout
+    args = argparse.ArgumentParser()
+    args.add_argument("-t", "--timeout", type=int, default=0, help="Consider results surpassing the specified milliseconds as timeout (0 for no timeout)")
+    timeout = args.parse_args().timeout
+    if timeout > 0:
+        TIMEOUT = timeout
+    else:
+        TIMEOUT = np.inf
     home = str(Path.home())
 
     with open(f"{home}/scripts/config.json") as f:

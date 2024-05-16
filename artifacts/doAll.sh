@@ -19,11 +19,11 @@ echo "Running evaluation..."
 printf "\nEvaluation results are in ${HOME}/results/evaluation.txt\n"
 
 echo "Running evaluation (Journal version)..."
-./evaluate_journal.py > ${HOME}/results/evaluation_journal.txt
+./evaluate_journal.py -t 600000 > ${HOME}/results/evaluation_journal_to.txt
 printf "\nEvaluation results are in ${HOME}/results/evaluation_journal.txt\n"
 
 echo "Running evaluation (Journal version, aggregated)..."
-./evaluate_journal_aggregate.py > ${HOME}/results/evaluation_journal_aggregate.txt
+./evaluate_journal_aggregate.py -t 600000 > ${HOME}/results/evaluation_journal_aggregate_to.txt
 printf "\nEvaluation results are in ${HOME}/results/evaluation_journal_aggregate.txt\n"
 
 echo "Comparing results for the different tools..."
