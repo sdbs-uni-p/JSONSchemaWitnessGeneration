@@ -21,17 +21,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                 libffi-dev \
                 libssl-dev \
                 maven \
+                nano \
                 openjdk-11-jdk \
                 openjdk-11-jre \
                 patch \
+                sudo \
+                tmux \
                 wget \
                 zlib1g-dev 
 
-# Install dev packages
-RUN apt-get install -y --no-install-recommends \
-                nano \
-                sudo
-
+                
 # Install packages for chart generation
 RUN apt-get update && apt-get install -y --no-install-recommends --purge \
                 fonts-linuxlibertine \
@@ -109,3 +108,4 @@ WORKDIR /home/repro/jsonsubschema
 RUN python3.9 setup.py install --user
 
 WORKDIR /home/repro
+ENTRYPOINT python3 -m http.server -d /home/repro/metaschema_cache 80 & bash

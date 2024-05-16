@@ -20,7 +20,7 @@ First, clone this repository with
 
 To build the container, run ``docker build -t wg_repro .`` inside the root directory of this repository.
 
-After building, start the container with ``docker run -it wg_repro``. You may include the flag ``--name <name>`` (replacing ``<name>`` with a name of your choice) to identify the container more conveniently.
+After building, start the container with ``docker run -it --add-host=json-schema.org:0.0.0.0 wg_repro``. You may include the flag ``--name <name>`` (replacing ``<name>`` with a name of your choice) to identify the container more conveniently.
 
 The contents of [artifacts](artifacts) are copied into the container's home directory (``/home/repro/``). Paths described in this README are always relative to ``/home/repro/`` (or ``artifacts``, respectively) unless explicitly stated otherwise.
 
