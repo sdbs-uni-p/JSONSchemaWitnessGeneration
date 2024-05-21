@@ -17,12 +17,15 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
   
   if (nrow(df_timeout) > 0) {
     timeouts <- geom_point(data=df_timeout, aes(x=inSize, y=Inf), colour=col.inf)
+    timeout_txt <- geom_text(aes(x=10^3.5, label="Timeout", y=10^6.5), nudge_y=0.7, nudge_x=-0.3, vjust=0,
+             colour=col.inf, family=text_family, check_overlap = TRUE, size=7)
   } else {
-    timeouts <- geom_point(alpha=0)
+    timeouts <- NULL
+    timeout_txt <- NULL
   }
   
   plot <- ggplot(data=df, aes(x = inSize, y=totalTime)) + 
-    timeouts +
+    geom_point(alpha=0) + timeouts + timeout_txt +
     geom_hex(bins=256, binwidth = c(.15, .15)) +
     geom_vline(xintercept=size_median, size=.5, color=col.med, linetype = "dashed") +
     geom_text(aes(x=size_median, label="Median", y=10^3.8), nudge_x=-0.4, nudge_y=-0.2, colour=col.med, 
@@ -35,10 +38,10 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
     scale_y_continuous(trans = "pseudo_log", breaks = 10^(0:7),
                        labels = trans_format('log10', math_format(10^.x)),
                        #oob = squish_infinite,
-                       limits = c(0, 10^5))  +
+                       limits = c(0, 10^7))  +
     scale_x_continuous(trans = "pseudo_log", breaks = 10^(0:7),
                        labels = trans_format('log10', math_format(10^.x)),
-                       limits = c(0, 10^5))  +
+                       limits = c(0, 10^7))  +
     theme(axis.title=element_text(size=text_size, family=text_family),
           axis.text=element_text(size=text_size, family=text_family),
           legend.position = c(.085,.72),
