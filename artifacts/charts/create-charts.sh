@@ -21,6 +21,7 @@ Rscript hexplot-histogram_snowplow.r > /dev/null
 Rscript hexplot-histogram_wp.r > /dev/null
 Rscript hexplot-histogram_allOf_containment.r > /dev/null
 Rscript hexplot-histogram_schemastore_containment.r > /dev/null
+Rscript hexplot-histogram_issta.r > /dev/null
 
 cp output/* ../results/charts/
 printf "\nCharts are in ${HOME}/results/charts\n"
