@@ -349,7 +349,7 @@ if __name__ == "__main__":
         "Schemastore Containment",
         "Tricky Schemas"
     ]
-    cc_datasets = ["Test Suite Containment", "allOf Containment", "Schemastore Containment", "Tricky Schemas"]
+    cc_datasets = ["Test Suite Containment", "allOf Containment", "Schemastore Containment", "Tricky Schemas", "ISSTA"]
     cc_datasets_processed = []
     tools = ["Ours", "DG"]
 
