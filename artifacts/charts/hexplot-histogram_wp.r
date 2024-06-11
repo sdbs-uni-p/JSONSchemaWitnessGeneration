@@ -20,7 +20,7 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
     average_timeout_x <- mean(df_timeout$inSize)
     num_rows <- nrow(df_timeout)
     label_text <- paste("Timeouts", paste("(", num_rows, ")", sep = ""), sep = " ")
-    timeout_txt <- geom_text(aes(x=average_timeout_x, label=label_text, y=10^6.5), nudge_y=0.7, nudge_x=-0.3, vjust=0,
+    timeout_txt <- geom_text(aes(x=average_timeout_x, label=label_text, y=10^6.2), nudge_y=0.7, nudge_x=-0.3, vjust=0,
               colour=col.inf, family=text_family, check_overlap = TRUE, size=7)
   } else {
     timeouts <- NULL
@@ -40,10 +40,10 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
     scale_fill_gradient(name="Count", low=col.low, high=col.high) +
     scale_y_continuous(trans = "pseudo_log", breaks = 10^(0:7),
                        labels = trans_format('log10', math_format(10^.x)),
-                       limits = c(0, 10^7))  +
+                       limits = c(0, 10^7), expand = c(0,0))  +
     scale_x_continuous(trans = "pseudo_log", breaks = 10^(0:7),
                        labels = trans_format('log10', math_format(10^.x)),
-                       limits = c(0, 10^7))  +
+                       limits = c(0, 10^6.15), expand = c(0,0))   +
     theme(axis.title=element_text(size=text_size, family=text_family),
           axis.text=element_text(size=text_size, family=text_family),
           legend.position = c(.085,.72),
