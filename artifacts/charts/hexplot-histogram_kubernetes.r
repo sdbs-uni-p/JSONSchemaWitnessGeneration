@@ -17,8 +17,11 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
 
   if (nrow(df_timeout) > 0) {
     timeouts <- geom_point(data=df_timeout, aes(x=inSize, y=Inf), colour=col.inf)
-    timeout_txt <- geom_text(aes(x=10^5, label="Timeout", y=10^6.5), nudge_y=0.7, nudge_x=-0.3, vjust=0,
-             colour=col.inf, family=text_family, check_overlap = TRUE, size=7)
+    average_timeout_x <- mean(df_timeout$inSize)
+    num_rows <- nrow(df_timeout)
+    label_text <- paste("Timeouts", paste("(", num_rows, ")", sep = ""), sep = " ")
+    timeout_txt <- geom_text(aes(x=average_timeout_x, label=label_text, y=10^6.5), nudge_y=0.7, nudge_x=-0.3, vjust=0,
+              colour=col.inf, family=text_family, check_overlap = TRUE, size=7)
   } else {
     timeouts <- NULL
     timeout_txt <- NULL
@@ -52,7 +55,7 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
           legend.text = element_text(size=text_size-2, family=text_family),
           legend.title =element_text(size=text_size, family=text_family),
           legend.spacing.y = unit(0.1, 'cm'))
-  plot <- ggMarginal(plot, type = "histogram", fill="transparent")
+  plot <- ggMarginal(plot, type = "histogram", fill="transparent", size=10)
   return(plot)
 }
 
