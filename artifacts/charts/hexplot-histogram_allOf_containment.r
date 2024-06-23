@@ -37,7 +37,7 @@ hexplot_fix <- function(col.low="#132B43", col.high="#56B1F7", col.med="red", co
     geom_text(aes(x=10^4, label="Median", y=time_median), nudge_x=0.1, nudge_y=0.6, colour=col.med, 
               family=text_family, check_overlap = TRUE, size=7) +
     labs(x = "File Size [Bytes]", y = y_title) +
-    scale_fill_gradient(name="Count", low=col.low, high=col.high) +
+     scale_fill_gradient(name="Count", low=col.low, high=col.high, breaks = set_breaks) +
     scale_y_continuous(trans = "pseudo_log", breaks = 10^(0:7),
                        labels = trans_format('log10', math_format(10^.x)),
                        limits = c(0, 10^7), expand = c(0,0))  +
