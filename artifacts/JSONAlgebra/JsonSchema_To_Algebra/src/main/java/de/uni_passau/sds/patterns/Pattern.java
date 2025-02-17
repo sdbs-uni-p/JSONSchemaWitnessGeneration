@@ -149,7 +149,10 @@ public class Pattern {
 	 */
 	public Integer domainSize() {
 		Set<String> domain = SpecialOperations.getFiniteStrings(this.getAutomaton(), 1000);
-		return domain == null ? null : domain.size();
+		//return domain == null ? null : domain.size();   --  corrected by GG on 12/02/2025
+		if (domain == null) return null;
+		else if (this.match(""))  return domain.size()+1;
+		else return domain.size();
 	}
 
 	/**
