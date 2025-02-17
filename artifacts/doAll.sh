@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 logdir=${HOME}/logs
 mkdir -p $logdir
@@ -6,14 +6,28 @@ mkdir -p $logdir
 cd scripts
 
 echo "Running JSONAlgebra experiments... (this may take a few hours)"
-./run-JSONAlgebra.sh --timeout 7200000 2>&1 | tee $logdir/JSONAlgebra.log
+./run-JSONAlgebra.sh --timeout 600000 2>&1 | tee $logdir/JSONAlgebra.log
 
 echo "Running experiments with the DG-tool (jsongenerator)..."
 ./run-jsongenerator.sh 2>&1 | tee $logdir/jsongenerator.log
 
+echo "Running experiments with the CC-tool (jsonsubschema)..."
+./run-jsonsubschema.sh 2>&1 | tee $logdir/jsonsubschema.log
+
 echo "Running evaluation..."
 ./evaluate.py > ${HOME}/results/evaluation.txt
-printf "\nEvaluation are in ${HOME}/results/evaluation.txt\n"
+printf "\nEvaluation results are in ${HOME}/results/evaluation.txt\n"
+
+echo "Running evaluation (Journal version)..."
+./evaluate_journal.py -t 600000 > ${HOME}/results/evaluation_journal_to.txt
+printf "\nEvaluation results are in ${HOME}/results/evaluation_journal.txt\n"
+
+echo "Running evaluation (Journal version, aggregated)..."
+./evaluate_journal_aggregate.py -t 600000 > ${HOME}/results/evaluation_journal_aggregate_to.txt
+printf "\nEvaluation results are in ${HOME}/results/evaluation_journal_aggregate.txt\n"
+
+echo "Comparing results for the different tools..."
+./compare_tools.sh > ${HOME}/results/comparison.txt
 
 echo "Creating charts..."
 (

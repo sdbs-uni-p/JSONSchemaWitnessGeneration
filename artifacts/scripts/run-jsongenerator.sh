@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -24,7 +24,8 @@ run_experiment() {
       return
     fi
 
-    rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_* 2> /dev/null
+    mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive
+    mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_* ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
     gradle run -Pdata="['/home/repro/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/']"
     mkdir -p ${HOME}/results/${1//\//-}/
     cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/jsongenerator_*_results.csv \
@@ -38,37 +39,57 @@ if [ -n "$input" ];
     exit 0
 fi
 
+# Trickyschemas Data Set
+echo "Running experiments on Tricky Schemas dataset..."
+run_experiment trickyschemas/sat
+run_experiment trickyschemas/unsat
+
+# MergeAllOf Data Set
+echo "Running experiments on MergeAllOf dataset..."
+run_experiment allOf_containment/sat
+run_experiment allOf_containment/unsat
+
 # Containment Data Set
-run_experiment containment/sat
-run_experiment containment/unsat
+echo "Running experiments on Test Suite Containment dataset..."
+run_experiment test_suite_containment/sat
+run_experiment test_suite_containment/unsat
+
+# Schemastore Containment Data Set
+echo "Running experiments on Schemastore Containment dataset..."
+run_experiment schemastore_containment
 
 # Handwritten Data Set
+echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat
 run_experiment handwritten/unsat
 
 # GitHub Data Set
+echo "Running experiments on GitHub datasets..."
 run_experiment github/sat-dg
 run_experiment github/unsat
 
 # Move results from github-sat-dg to github-sat
 (
     cd ${HOME}/results
-    mkdir github-sat 2> /dev/null
+    mkdir -p github-sat
     mv github-sat-dg/jsongenerator_results.csv github-sat/jsongenerator_results.csv
     rm -r github-sat-dg
 )
 
+echo "Running experiments on Kubernetes datasets..."
 run_experiment kubernetes/sat
 run_experiment kubernetes/unsat
 
+echo "Running experiments on Snowplow datasets..."
 run_experiment snowplow/dg
 
 # Move results from snowplow-dg to snowplow
 (
     cd ${HOME}/results
-    mkdir snowplow 2> /dev/null
+    mkdir -p snowplow
     mv snowplow-dg/jsongenerator_results.csv snowplow/jsongenerator_results.csv
     rm -r snowplow-dg
 )
 
+echo "Running experiments on Washington Post dataset ..."
 run_experiment wp

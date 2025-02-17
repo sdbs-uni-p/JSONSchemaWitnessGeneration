@@ -8,8 +8,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import evalContainment
-
 pd.set_option("display.max_columns", None)
 
 
@@ -34,7 +32,6 @@ def readDF(path):
     )
 
     return df
-
 
 def eval_sat(df):
     success = len(df[(df["genSuccess"] == True) & (df["valid"] == True)])
@@ -75,7 +72,7 @@ def eval_unsat(df):
 def print_results(type, val, total, corrections):
     if val is None:
         print(f"\t#{type}: na")
-        return "NA"
+        return "na"
 
     result_str = ""
     if corrections and type in corrections:
@@ -91,20 +88,31 @@ def print_results(type, val, total, corrections):
 
     return percentage
 
+def eval_schemastore_containment(df):
+    success = len(df[(df["genSuccess"] == True) | (df["genSuccess"] == False)])
+    failure = len(df[df["genSuccess"].isnull()])
+    timeout = df[df.columns[1:]].eq("TimeoutException").any(axis=1).sum()
+    satLogicalErrors = None
+    time = df["totalTime"].dropna().tolist()
+    success_valid = len(df[(df["genSuccess"] == True) & (df["valid"] == True)])
+    success_invalid = len(df[(df["genSuccess"] == True) & (df["valid"] == False)])
+    success_unsat = len(df[df["genSuccess"] == False])
+
+    return success, failure, timeout, satLogicalErrors, time, success_valid, success_invalid, success_unsat
+
 
 def run_evaluation(config, tool, dataset):
     print("")
     if tool not in config["filenames"]:
         print(f"Tool {tool} not configured. Skipping")
-        return
+        return ""
     if dataset not in config["datasets"]:
         print(f"Dataset {dataset} not configured. Skipping")
-        return
-
+        return ""
     paths = config["datasets"][dataset]["paths"]
     if "sat" not in paths and "unsat" not in paths:
         print(f"Paths for dataset {dataset} are not configured properly")
-        return
+        return ""
 
     if tool == "DG":
         tool_str = "jsongenerator (DG)"
@@ -116,31 +124,33 @@ def run_evaluation(config, tool, dataset):
     sat_success, sat_failure, sat_time = 0, 0, []
     unsat_success, unsat_failure, unsat_time = 0, 0, []
     sat_logical_errors, unsat_logical_errors = None, None
-
     has_sat, has_unsat = False, False
+    is_schema_store_containment = dataset == "Schemastore Containment"
     if "sat" in paths:
         path = f'{config["base_path"]}/{paths["sat"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
             print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
         else:
             df = readDF(path)
+            # TODO: integrate properly
+    
             if df is None or df.empty:
-                print(
-                    f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m"
-                )
+                print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
             else:
-                sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
+                if is_schema_store_containment:
+                    print(f"No ground truth defined. Only checking for sucess and failure")
+                    sat_success, sat_failure, timeout, sat_logical_errors, sat_time, success_valid, success_invalid, success_unsat = eval_schemastore_containment(df)
+                else:
+                    sat_success, sat_failure, sat_logical_errors, sat_time = eval_sat(df)
                 has_sat = True
-    if "unsat" in paths:
+    if not is_schema_store_containment and "unsat" in paths:
         path = f'{config["base_path"]}/{paths["unsat"]}/{config["filenames"][tool]}'
         if not os.path.exists(path):
             print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
         else:
             df = readDF(path)
             if df is None or df.empty:
-                print(
-                    f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m"
-                )
+                print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
             else:
                 (
                     unsat_success,
@@ -159,18 +169,13 @@ def run_evaluation(config, tool, dataset):
     time = sat_time + unsat_time
 
     if len(time) == 0:
-        print(
-            "Found no execution times in results. Does the file contain any entries?\nSkipping dataset ..."
-        )
+        print("Found no execution times in results. Does the file contain any entries?\nSkipping dataset ...")
         return f"{dataset},{tool},NA,NA,NA,NA,NA,NA,NA\n"
 
     corrections = None
-    if (
-        "corrections" in config["datasets"][dataset]
-        and tool in config["datasets"][dataset]["corrections"]
-    ):
+    if ("corrections" in config["datasets"][dataset] and tool in config["datasets"][dataset]["corrections"]):
         corrections = config["datasets"][dataset]["corrections"][tool]
-
+    
     types = [
         ("Success", success),
         ("Failure", failure),
@@ -179,7 +184,16 @@ def run_evaluation(config, tool, dataset):
     ]
     results = ""
     for t in types:
-        results += str(print_results(t[0], t[1], total, corrections)) + ","
+        if t[0] == "Success" and is_schema_store_containment:
+            results += str(print_results("Completed", t[1], total, corrections)) + ","
+            print("\t\tIncludes:\n\t\t\t" + str(success_valid) + " valid witnesses (" + str(round(100 * (success_valid) / total, 2)) + "%)")
+            print("\t\t\t" + str(success_invalid) + " invalid witnesses (" + str(round(100 * success_invalid / total, 2)) + "%)")
+            print("\t\t\t" + str(success_unsat) + " schemas considered by the tool as unsatisfiable (" + str(round(100 * success_unsat / total, 2)) + "%)")
+        else:
+            results += str(print_results(t[0], t[1], total, corrections)) + ","
+        if t[0] == "Failure" and is_schema_store_containment:
+            print("\t\tIncludes " + str(timeout) + " timeouts (" + str(round(100 * timeout / total, 2)) + "%)")
+        
     results = results[:-1]
 
     med_time = round(statistics.median(map(float, time)) / 1000, 3)
@@ -190,6 +204,102 @@ def run_evaluation(config, tool, dataset):
     print(f"\tAverage Time: {avg_time}s")
 
     csv = f"{dataset},{tool},{results},{med_time},{p95_time},{avg_time}\n"
+    return csv
+
+
+def evalSubschema(config, tool, dataset):
+    print("")
+    if tool not in config["filenames"]:
+        print(f"Tool {tool} not configured. Skipping")
+        return
+    if dataset not in config["datasets"]:
+        print(f"Dataset {dataset} not configured. Skipping")
+        return
+    dataset_config = config["datasets"][dataset]
+    if "schemaPairs" not in dataset_config["paths"]:
+        print(f"Dataset {dataset} does not have schemaPairs configured. Skipping")
+        return
+
+    path = f'{config["base_path"]}/{dataset_config["paths"]["schemaPairs"]}/{config["filenames"][tool]}'
+    if not os.path.exists(path):
+        print(f"\033[93mWARN: File at {path} not found. Skipping dataset.\033[0m")
+        return f"{dataset},CC,NA,NA,NA,NA,NA,NA,NA\n"
+
+    df = pd.read_csv(path)
+    if df is None or df.empty:
+        print(f"\033[93mWARN: File at {path} is empty. Skipping dataset.\033[0m")
+        
+    # if column s1SUBs2 is not empty or not present, we have no ground truth
+    has_ground_truth = "s1SUBs2" in df and not df["s1SUBs2"].isnull().all()
+    
+    # TODO: currently only properly supports manual corrections for Test Suite Containment
+    total_files = len(df)
+    failure_offset = 0 
+    if "corrections" in dataset_config and "CC" in dataset_config["corrections"]:
+        if "Failure" in dataset_config["corrections"]["CC"]:
+            failure_correction = dataset_config["corrections"]["CC"]["Failure"]
+            failure_offset = failure_correction["value"] if "value" in failure_correction else 0
+            failure_message = failure_correction["description"] if "description" in failure_correction else ""
+            total_files += failure_offset
+        else:
+            print(f"Only Failure correction is currently supported for CC datasets")
+
+    if has_ground_truth:
+        # convert IBM_s1SUBs2 and s1SUBs2 to numeric
+        df["IBM_s1SUBs2"] = pd.to_numeric(df["IBM_s1SUBs2"], errors="coerce")
+        df["s1SUBs2"] = pd.to_numeric(df["s1SUBs2"], errors="coerce")
+
+        success = len(df[df["IBM_s1SUBs2"] == df["s1SUBs2"]])
+
+        notEqual = df[df["IBM_s1SUBs2"] != df["s1SUBs2"]]
+
+        notEqual_dict = notEqual[["s1SUBs2", "IBM_s1SUBs2"]].value_counts().to_dict()
+        notEqual_list = [(k[0], k[1], v) for k, v in notEqual_dict.items()]
+        notEqualDF = pd.DataFrame(notEqual_list, columns=["s1SUBs2", "IBM_s1SUBs2", "count"])
+
+        sat_logical_errors = notEqualDF[(notEqualDF["s1SUBs2"] == 0) & (notEqualDF["IBM_s1SUBs2"] == 1)]
+        unsat_logical_errors = (df[(df["s1SUBs2"] == 1)]["IBM_s1SUBs2"].value_counts(dropna=False).to_frame())
+
+        sat_logical_errors_count = sat_logical_errors.iloc[0]["count"] if len(sat_logical_errors) > 0 else 0
+        unsat_logical_errors_count = unsat_logical_errors.loc[0]["IBM_s1SUBs2"] if len(unsat_logical_errors) > 0 else 0
+        
+        failure = (len(notEqual) - sat_logical_errors_count - unsat_logical_errors_count)
+        success_perc = round(100 * success / total_files, 2)
+        failure_perc = round(100 * (failure + failure_offset) / total_files, 2)
+        sat_err_perc = round(100 * sat_logical_errors_count / total_files, 2)
+        unsat_err_perc = round(100 * unsat_logical_errors_count / total_files, 2)
+    else:
+        failure = len(df[(df["IBM_s1SUBs2"] != "0") & (df["IBM_s1SUBs2"] != "1")])
+        success = total_files - failure
+        failure_perc = round(100 * (failure + failure_offset) / total_files, 2)
+        success_perc = round(100 * success / total_files, 2)
+        sat_logical_errors_count = "na"
+        unsat_logical_errors_count = "na"
+        sat_err_perc = "na"
+        unsat_err_perc = "na"
+
+    med_time = round(df.totalTime.median() / 1000, 3)
+    p95_time = round(df.totalTime.quantile(0.95) / 1000, 3)
+    avg_time = round(df.totalTime.mean() / 1000, 3)
+
+    csv = f"{dataset},CC,{success_perc},{failure_perc},{sat_err_perc},{unsat_err_perc},{med_time},{p95_time},{avg_time}\n"
+
+    print(f"\nDataset: {dataset}\nTool:\t jsonsubschema (CC)")
+    if not has_ground_truth:
+        print(f"No ground truth defined. Only checking for sucess and failure")
+    print(f"\t#Success: {success} ({success_perc}%)")
+    print(f"\t#Failure: {failure+failure_offset} ({failure_perc}%)")
+    if failure_offset > 0:
+        print(f"\t\tCorrection: {failure_message}\n",
+            f"\t\t\t => Increased Failure by {failure_offset}",)
+    sat_err_perc_str = "" if sat_err_perc == "na" else f" ({sat_err_perc}%)"
+    unsat_err_perc_str = "" if unsat_err_perc == "na" else f" ({unsat_err_perc}%)"
+    print(f"\tLogical errors sat: {sat_logical_errors_count}{sat_err_perc_str}")
+    print(f"\tLogical errors unsat: {unsat_logical_errors_count}{unsat_err_perc_str}")
+    print(f"\tMedian Time: {med_time}s")
+    print(f"\t95th Percentile Time: {p95_time}s")
+    print(f"\tAverage Time: {avg_time}s")
+    
     return csv
 
 
@@ -205,16 +315,20 @@ if __name__ == "__main__":
         "Snowplow",
         "WashingtonPost",
         "Handwritten",
-        "Containment",
+        "Test Suite Containment",
+        "allOf Containment"
     ]
     tools = ["Ours", "DG"]
 
     combs = itertools.product(datasets, tools)
-    results_csv = "dataset,tool,success,failure,errors sat,errors unsat,median time,95 percentile,average time\n"
+    results_csv = "dataset,tool,success,failure,errors sat,errors unsat,median time (s),95 percentile (s),average time (s)\n"
     for c in combs:
         results_csv += run_evaluation(conf, c[1], c[0])
 
-    results_csv += evalContainment.runSubschemaTests()
+    cc_datasets = ["Test Suite Containment", "allOf Containment"]
+
+    for d in cc_datasets:
+        results_csv += evalSubschema(conf, "CC", d)
 
     with open(f"{home}/results/results.csv", "w") as f:
         f.write(results_csv)

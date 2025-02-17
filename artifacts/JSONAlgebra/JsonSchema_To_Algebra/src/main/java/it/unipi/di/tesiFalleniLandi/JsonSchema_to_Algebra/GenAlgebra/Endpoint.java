@@ -118,12 +118,12 @@ public class Endpoint {
         boolean fromJS = true;//false; // false; //
         WitnessEnv env ;
         String witness = null;
-
-        int attempts = 0;
+        String _emptyWitnessSymb = it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.getEmptyWitnessSymbol();
 
         //by default attempt optimization
         OneOf.asAnyOf = true;
         int level = 2; //_outAll = 0,  _outLast= 1, _outRes = 2
+        System.out.println("--> OneOf.asAnyOf set to "+ OneOf.asAnyOf);
 
         do{
             if(fromJS)
@@ -131,22 +131,28 @@ public class Endpoint {
             else
                 env = Utils_WitnessAlgebra.getWitnessEnv3(obj.assertionFromAlgebra(),level);
 
-            GenEnv genv = null;
+            GenEnv genv;
             try {
                 genv = new GenEnv(env);
 
                 witness = genv.generate().toString();
                 System.out.flush();
-                System.out.println("==witness (attempt" + attempts + ")== \n"+ witness);
+//                System.out.println("==witness (attempt" + attempts + ")== \n"+ witness);
+                System.out.println("==witness == \n"+ witness);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-
-            /*validate against the schema*/
-            if(fromJS && witness.compareTo(it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.getEmptyWitnessSymbol())!=0)
-            {
+            /*if empty witness, check whether this is due to the oneOfAsAnyOf optimization*/
+            if(witness.compareTo(_emptyWitnessSymb)==0)
+                if(OneOf.asAnyOf == true)
+                {
+                    OneOf.asAnyOf = false;
+                    System.out.println("--> OneOf.asAnyOf set to "+ OneOf.asAnyOf);
+                }
+                else break;
+            else {
                 Set<ValidationMessage> errors =
                         it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.Utils.validateStringWitness(obj.schemaString,witness,obj.version);
                 if(errors.size()==0){
@@ -154,19 +160,19 @@ public class Endpoint {
                     break;
                 }
                 else{
-                    System.out.println("-- invalid witness ");
-                    for (ValidationMessage m: errors){
-                        System.out.println(m);
+                    if(OneOf.asAnyOf == true)
+                    {
+                        OneOf.asAnyOf = false;
+                        System.out.println("--> OneOf.asAnyOf set to "+ OneOf.asAnyOf);
                     }
-                    //TODO check if the problem is due to the oneOf optimization
-                    OneOf.asAnyOf = false; //retry w/o the optimization
+                    else {
+                        System.out.println("-- invalid witness ");
+                        for (ValidationMessage m: errors)
+                            System.out.println(m);
+                        break;
+                    }
                 }
-
             }
-            else break;
-
-            attempts++;
-            if(attempts>2) break; //TODO remove after testing is finished
         }
         while(true);
 

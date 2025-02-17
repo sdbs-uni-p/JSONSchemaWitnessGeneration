@@ -107,7 +107,7 @@ public class Utils {
 
 //    change [^0-9] to .json if not working with the schemas that have names o[0-9]+.json
     public static String getSchemaId(File file){
-        return file.getName().replaceAll(".json","");
+        return file.getName().replaceFirst("\\.json$", "");
     }
 
 

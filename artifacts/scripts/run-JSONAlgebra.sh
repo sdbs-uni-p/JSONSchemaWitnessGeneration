@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 threads=1
 timeout="false"
@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --timeout)
       if ! [[ $2 =~ $re_int ]]; then
-        echo "Timeout must be a number greater than 0" >&2
+        echo "Timeout must be a number greater than 0 (ms)" >&2
         exit 1
       else
         timeout="true ${2}";
@@ -71,8 +71,9 @@ run_experiment() {
       return
     fi
     mkdir -p ${HOME}/results/${1//\//-}/
-    rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv 2> /dev/null
-    rm JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv 2> /dev/null
+    mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive
+    mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
+    rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
     mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" \
             -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} ${threads} ${timeout}" -pl JsonSchema_To_Algebra \
             2> >(tee ${HOME}/results/${1//\//-}/${1//\//-}-err.log >&2)
@@ -90,9 +91,50 @@ if [ -n "$input" ];
     exit 0
 fi
 
-echo "Running experiments on Containment dataset..."
-run_experiment containment/sat
-run_experiment containment/unsat
+echo "Running experiments on tricky schemas..."
+run_experiment trickyschemas/sat
+run_experiment trickyschemas/unsat
+
+echo "Running experiments on ISSTA dataset..."
+run_experiment issta/sat
+run_experiment issta/unsat
+
+# Combine ISSTA results for chart generation
+(
+    cd ${HOME}/results
+    mkdir -p issta
+    awk '(NR == 1) || (FNR > 1)' issta-sat/results.csv \
+        issta-unsat/results.csv > issta/results.csv
+    # Copy Kubernetes results to charts
+    mkdir -p ${HOME}/charts/data/issta/
+    cp ${HOME}/results/issta/results.csv ${HOME}/charts/data/issta/results.csv
+    rm -r issta
+)
+
+echo "Running experiments on MergeAllOf dataset..."
+run_experiment allOf_containment/sat
+run_experiment allOf_containment/unsat
+
+# Combine allOf Containment results for chart generation
+(
+    cd ${HOME}/results
+    mkdir -p allOf_containment
+    awk '(NR == 1) || (FNR > 1)' allOf_containment-sat/results.csv \
+        allOf_containment-unsat/results.csv  > allOf_containment/results.csv
+    # Copy allOf Containment results to charts
+    mkdir -p ${HOME}/charts/data/allOf_containment/
+    cp ${HOME}/results/allOf_containment/results.csv ${HOME}/charts/data/allOf_containment/results.csv
+    rm -r allOf_containment
+)
+
+echo "Running experiments on Test Suite Containment dataset..."
+run_experiment test_suite_containment/sat
+run_experiment test_suite_containment/unsat
+
+echo "Running experiments on Schemastore Containment dataset..."
+run_experiment schemastore_containment
+mkdir -p ${HOME}/charts/data/schemastore_containment/
+cp ${HOME}/results/schemastore_containment/results.csv ${HOME}/charts/data/schemastore_containment/results.csv
 
 echo "Running experiments on Handwritten dataset..."
 run_experiment handwritten/sat
@@ -104,18 +146,18 @@ run_experiment snowplow/ours
 # Move results from snowplow-ours to snowplow
 (
     cd ${HOME}/results
-    mkdir snowplow 2> /dev/null
+    mkdir -p snowplow
     mv snowplow-ours/results.csv snowplow/results.csv
     rm -r snowplow-ours
 )
 # Copy Snowplow results to charts
-mkdir -p ${HOME}/charts/data/snowplow/ 2> /dev/null
+mkdir -p ${HOME}/charts/data/snowplow/
 cp ${HOME}/results/snowplow/results.csv ${HOME}/charts/data/snowplow/results.csv
 
 echo "Running experiments on Washington Post dataset ..."
 run_experiment wp
 # Copy Washington Post results to charts
-mkdir -p ${HOME}/charts/data/wp/ 2> /dev/null
+mkdir -p ${HOME}/charts/data/wp/
 cp ${HOME}/results/wp/results.csv ${HOME}/charts/data/wp/results.csv
 
 echo "Running experiments on GitHub dataset ..."
@@ -125,11 +167,11 @@ run_experiment github/unsat
 # Combine GitHub results for chart generation
 (
     cd ${HOME}/results
-    mkdir github 2> /dev/null
+    mkdir -p github
     awk '(NR == 1) || (FNR > 1)' github-sat/results.csv \
         github-unsat/results.csv  > github/results.csv
     # Copy GitHub results to charts
-    mkdir -p ${HOME}/charts/data/github/ 2> /dev/null
+    mkdir -p ${HOME}/charts/data/github/
     cp ${HOME}/results/github/results.csv ${HOME}/charts/data/github/results.csv
     rm -r github
 )
@@ -141,11 +183,11 @@ run_experiment kubernetes/unsat
 # Combine Kubernetes results for chart generation
 (
     cd ${HOME}/results
-    mkdir kubernetes 2> /dev/null
+    mkdir -p kubernetes
     awk '(NR == 1) || (FNR > 1)' kubernetes-sat/results.csv \
         kubernetes-unsat/results.csv > kubernetes/results.csv
     # Copy Kubernetes results to charts
-    mkdir -p ${HOME}/charts/data/kubernetes/ 2> /dev/null
+    mkdir -p ${HOME}/charts/data/kubernetes/
     cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
     rm -r kubernetes
 )

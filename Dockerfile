@@ -8,7 +8,7 @@ FROM ubuntu:20.04
 
 LABEL maintainer="Stefan Klessinger <stefan.klessinger@uni-passau.de>"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG="C.UTF-8"
 ENV LC_ALL="C.UTF-8"
 
@@ -71,13 +71,14 @@ WORKDIR /home/repro
 
 # Clone jsongenerator and checkout the version we used
 RUN git clone https://github.com/jimblackler/jsongenerator/ \
-    && (cd jsongenerator && git checkout 324d9c1853d41fd09c0c31184ff916d75373ad83)
+    && (cd jsongenerator && git checkout b8713027569cd5f76448a6e793000f1a39540163)
 
 # Clone jsonsubschema and checkout the version we used
 RUN git clone https://github.com/IBM/jsonsubschema/ \
     && (cd jsonsubschema && git checkout 9413abe5bce2f1f94622e2ed756eaa2747f6479a)
 
 RUN python3.9 -m pip install greenery==3.3.7
+RUN python3.9 -m pip install numpy==1.24.4
 RUN python3.9 -m pip install pandas==1.5
 
 # Add artifacts directory (from host) to home directory
@@ -108,4 +109,4 @@ WORKDIR /home/repro/jsonsubschema
 RUN python3.9 setup.py install --user
 
 WORKDIR /home/repro
-ENTRYPOINT python3 -m http.server -d /home/repro/metaschema_cache 80 & bash
+ENTRYPOINT python3 -m http.server -d /home/repro/metaschema_cache 80 & exec bash
