@@ -55,11 +55,11 @@ extract_witnesses() {
   mkdir witness
   {
     read #skip first line (csv header)
-    while read line
+    while IFS= read -r line
     do
+      # Remove leading and trailing quotes, and replace double quotes ("") with single quotes (")
       witness_cleaned=$(echo "${line}" | cut -d, -f2- -s | sed 's/^\"//g' | sed 's/\"$//g' | sed 's/\"\"/\"/g')
       filename=$(echo "${line}" | cut -d, -f1 -s)
-      #echo $filename
       echo "${witness_cleaned}" | jq '.' > witness/"${filename}_witness.json"
     done
   } < "witness.csv"
