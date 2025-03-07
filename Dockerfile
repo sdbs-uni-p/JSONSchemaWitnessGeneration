@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                 nano \
                 openjdk-11-jdk \
                 openjdk-11-jre \
+                parallel \
                 patch \
                 sudo \
                 tmux \
@@ -77,12 +78,12 @@ RUN git clone https://github.com/jimblackler/jsongenerator/ \
 RUN git clone https://github.com/IBM/jsonsubschema/ \
     && (cd jsonsubschema && git checkout 9413abe5bce2f1f94622e2ed756eaa2747f6479a)
 
-RUN python3.9 -m pip install greenery==3.3.7
-RUN python3.9 -m pip install numpy==1.24.4
-RUN python3.9 -m pip install pandas==1.5
-
 # Add artifacts directory (from host) to home directory
 ADD --chown=repro:repro artifacts/ /home/repro
+
+# Ensure pip is up-to-date and install required packages
+RUN python3.9 -m pip install --upgrade pip
+RUN python3.9 -m pip install -r requirements.txt
 
 # Ensure proper format and permissions of scripts
 RUN dos2unix scripts/* && dos2unix doAll.sh && \
@@ -95,10 +96,7 @@ RUN dos2unix jsongenerator.patch && git apply jsongenerator.patch
 
 # Build our tool
 WORKDIR /home/repro/JSONAlgebra
-RUN export MAVEN_OPTS="-Xmx10240m" && \
-    mvn clean install -DskipTests -pl jsonschema-refexpander,JsonSchema_To_Algebra
-# Run mvn exec once to build
-RUN mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" -pl JsonSchema_To_Algebra || true
+RUN mvn clean install -DskipTests
 
 # Build jsongenerator
 WORKDIR /home/repro/jsongenerator
