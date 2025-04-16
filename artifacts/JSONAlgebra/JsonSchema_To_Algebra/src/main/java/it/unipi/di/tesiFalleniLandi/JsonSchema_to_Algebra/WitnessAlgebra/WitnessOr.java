@@ -265,13 +265,15 @@ public class WitnessOr implements WitnessAssertion{
         int debug = 0;
         WitnessOr clone = new WitnessOr();
 
-        clone.hasTrue = hasTrue;
+        // clone.hasTrue = hasTrue;     GG 16/4/2025
 
         for(Map.Entry<Object, List<WitnessAssertion>> entry : orList.entrySet())
             for(WitnessAssertion assertion : entry.getValue()) {
                 clone.add(assertion.clone());
                 debug++;
             }
+
+        // assert (clone.hasTrue==hasTrue)
 
         logger.trace("Cloning WitnessOr of size {}", debug);
         return clone;
