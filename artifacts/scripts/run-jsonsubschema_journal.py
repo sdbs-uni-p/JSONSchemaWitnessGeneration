@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from os import listdir, path
 from os.path import isfile, join
-
+import math
 import pandas as pd
 from jsonref import JsonRefError
 from jsonschema.exceptions import SchemaError
@@ -17,13 +17,26 @@ from jsonsubschema.exceptions import (
     UnsupportedRecursiveRef,
 )
 from argparse import ArgumentParser
+import signal
+from tqdm import tqdm
 
 
 pd.set_option("display.max_columns", None)
-
 def analyze_schema(s1, s2):
     try:
-        return isSubschema(s1, s2)
+        def handler(signum, frame):
+            print("TimeoutException")
+            raise TimeoutError("TimeoutException")
+
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(TIMEOUT)  # Set timeout in seconds
+
+        try:
+            result = isSubschema(s1, s2)
+        finally:
+            signal.alarm(0)  # Disable the alarm 
+
+        return result
     except RecursionError:
         return "RecursionError"
     except AttributeError:
@@ -95,7 +108,7 @@ def extractAndCheckTestSuite(pathToFolder):
                 data = json.load(inputFile)
                 inputFile.close()
                 for i in data:
-                    print("Processing: " + fileName + " Case " + str(i[ID]))
+                    # print("Processing: " + fileName + " Case " + str(i[ID]))
                     d = i
                     id = d[ID]
                     s1 = d[S1]
@@ -136,6 +149,48 @@ def rename_file(filename, suffixes, suffix_sep, suffix_pattern_sep):
         
     return filename1, filename2
 
+def process_data_entries(data, fileName, fileName2, bothDirections, ID, S1, S2, TESTS, S1SUBS2, S2SUBS1):
+    new_dict = {
+        "fileName": [],
+        "id": [],
+        "s1SUBs2": [],
+        "IBM_s1SUBs2": [],
+        "totalTime": []
+    }   
+    for i in data:
+        # print("Processing: " + fileName + " Case " + str(i[ID]))
+        tests = i[TESTS] if TESTS in i else None
+        s1Subs2 = None if tests is None else 9
+        IBM_s1Subs2 = 9
+        if tests and S1SUBS2 in tests:
+            s1Subs2 = bool_to_int(tests[S1SUBS2])
+        start = datetime.now()
+        IBM_s1Subs2 = bool_to_int(analyze_schema(i[S1], i[S2]))
+        total = datetime.now() - start
+        totalTime = round(total.total_seconds() * 1000, 2)
+        new_dict["fileName"].append(fileName)
+        new_dict["id"].append(i[ID])
+        new_dict["s1SUBs2"].append(s1Subs2)
+        new_dict["IBM_s1SUBs2"].append(IBM_s1Subs2)
+        new_dict["totalTime"].append(totalTime)
+
+        if bothDirections:
+            # print("Processing: " + fileName2 + " Case " + str(i[ID]))
+            s1Subs2 = None if tests is None else 9
+            IBM_s1Subs2 = 9
+            if tests and S2SUBS1 in tests:
+                s1Subs2 = bool_to_int(tests[S2SUBS1])
+            start = datetime.now()
+            IBM_s1Subs2 = bool_to_int(analyze_schema(i[S2], i[S1]))
+            total = datetime.now() - start
+            totalTime = round(total.total_seconds() * 1000, 2)
+            new_dict["fileName"].append(fileName2)
+            new_dict["id"].append(i[ID])
+            new_dict["s1SUBs2"].append(s1Subs2)
+            new_dict["IBM_s1SUBs2"].append(IBM_s1Subs2)
+            new_dict["totalTime"].append(totalTime)
+    return new_dict
+
 def extractAndCheck(pathToFolder, bothDirections=False, suffixes=None, suffix_sep=None, suffix_pattern_sep=None):
     ID = "id"
     S1 = "schema1"
@@ -149,8 +204,7 @@ def extractAndCheck(pathToFolder, bothDirections=False, suffixes=None, suffix_se
         "s1SUBs2": [],
         "IBM_s1SUBs2": [],
         "totalTime": []
-    }
-    
+    }    
     if suffixes is not None and suffix_pattern_sep is not None:
         print("Warning: only one of suffixes and suffix_pattern_sep can be used. Aborting.")
         return None
@@ -163,53 +217,36 @@ def extractAndCheck(pathToFolder, bothDirections=False, suffixes=None, suffix_se
         print("Warning: bothDirections can only be used when suffixes or suffix_pattern_sep are used. Aborting.")
         return None
     
-    # get all json files in pathToFolder
-    files = [f for f in listdir(pathToFolder) if isfile(join(pathToFolder, f)) and f.endswith(".json")]
-    
-
+    # get all json files in pathToFolder if pathToFolder is a directory
+    if path.isdir(pathToFolder):
+        files = [f for f in listdir(pathToFolder) if isfile(join(pathToFolder, f)) and f.endswith(".json")]
+    else:
+        files = [pathToFolder]
+        
     for f in files:
-        fileName = f.replace(".json", "")
         if bothDirections:
             fileName, fileName2 = rename_file(f, suffixes, suffix_sep, suffix_pattern_sep)
-        inputFile = open(pathToFolder + "/" + f, "r")
-        data = json.load(inputFile)
-        inputFile.close()
-        for i in data:
-            print("Processing: " + fileName + " Case " + str(i[ID]))
-            tests = i[TESTS] if TESTS in i else None
-            s1Subs2 = 9
-            IBM_s1Subs2 = 9
-            if tests is None:
-                s1Subs2 = None 
-            elif S1SUBS2 in tests:
-                s1Subs2 = bool_to_int(tests[S1SUBS2])
-            start = datetime.now()
-            IBM_s1Subs2 = bool_to_int(analyze_schema(i[S1], i[S2]))
-            total = datetime.now() - start
-            totalTime = round(total.total_seconds() * 1000, 2)
-            new_dict["fileName"].append(fileName)
-            new_dict["id"].append(i[ID])
-            new_dict["s1SUBs2"].append(s1Subs2)
-            new_dict["IBM_s1SUBs2"].append(IBM_s1Subs2)
-            new_dict["totalTime"].append(totalTime)
-            if bothDirections:
-                print("Processing: " + fileName2 + " Case " + str(i[ID]))
-                s1Subs2 = 9
-                IBM_s1Subs2 = 9
-                if tests is None:
-                    s1Subs2 = None 
-                elif S2SUBS1 in tests:
-                    s1Subs2 = bool_to_int(tests[S2SUBS1])
-                start = datetime.now()
-                IBM_s1Subs2 = bool_to_int(analyze_schema(i[S2], i[S1]))
-                total = datetime.now() - start
-                totalTime = round(total.total_seconds() * 1000, 2)
-                new_dict["fileName"].append(fileName2)
-                new_dict["id"].append(i[ID])
-                new_dict["s1SUBs2"].append(s1Subs2)
-                new_dict["IBM_s1SUBs2"].append(IBM_s1Subs2)
-                new_dict["totalTime"].append(totalTime)
+        else:
+            fileName = f.replace(".json", "")
+            fileName2 = None
 
+        with open(path.join(pathToFolder, f), "r") as inputFile:
+            data = json.load(inputFile)
+        result_dict = process_data_entries(
+            data,
+            fileName,
+            fileName2,
+            bothDirections,
+            ID,
+            S1,
+            S2,
+            TESTS,
+            S1SUBS2,
+            S2SUBS1
+        )
+        for key in new_dict:
+            new_dict[key].extend(result_dict[key])
+        
     df = pd.DataFrame(new_dict)
     return df
 
@@ -225,6 +262,16 @@ def runSubschemaTestsTestSuite(schemaPairs, output, isTestSuite=False):
             subschemaDF = extractAndCheck(schemaPairs, True, suffixes=["orig", "merge"], suffix_sep=".")
         elif "schemastore_containment_schemaPairs" in schemaPairs:
             subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep="_", suffix_pattern_sep="_and_")
+        elif "oneOf_as_anyOf_schemapairs" in schemaPairs:
+            subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep=".", suffix_pattern_sep="_vs_")
+        elif "oneOf_as_anyOf_schemaPairs" in schemaPairs:
+            subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep=".", suffix_pattern_sep="_vs_")
+        elif "additional_as_uneval_schemaPairs" in schemaPairs:
+            subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep=".", suffix_pattern_sep="_vs_")
+        elif "uneval_as_additional_schemaPairs" in schemaPairs:
+            subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep=".", suffix_pattern_sep="_vs_")
+        elif "uneval_as_items_schemaPairs" in schemaPairs:
+            subschemaDF = extractAndCheck(schemaPairs, True, suffix_sep=".", suffix_pattern_sep="_vs_")
         else:
             subschemaDF = extractAndCheck(schemaPairs)
         if subschemaDF is None:
@@ -240,6 +287,9 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", help="Input directory", required=True)
     parser.add_argument("-o", "--output", help="Output file for results", required=True)
     parser.add_argument("-t", "--testsuite", help="Flag to indicate if the input is the containment test suite", action="store_true", default=False)
+    parser.add_argument("--timeout", help="Timeout for each test case", default=0)
     args = parser.parse_args()
+    
+    TIMEOUT = math.ceil(int(args.timeout)/1000)
     
     runSubschemaTestsTestSuite(args.input, args.output, args.testsuite)
