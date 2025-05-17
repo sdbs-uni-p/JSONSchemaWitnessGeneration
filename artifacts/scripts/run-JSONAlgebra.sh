@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
+# TODO: can we remove some initializations?
 threads=1
-timeout="false"
+timeout="false 0"
 re_int='^[0-9]+$'
+quiet=false
+quietquiet=false
+bar=""
+jar_file="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/target/JsonSchema_to_Algebra-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+extract_witness=false
+warmup="false 0"
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -35,19 +42,43 @@ while [[ $# -gt 0 ]]; do
       extract_witness=true
       shift
       ;;
+    -q)
+      quiet=true
+      shift
+      ;;
+    -qq)
+      quietquiet=true
+      shift
+      ;;
+    --bar)
+      bar="--bar"
+      shift
+      ;;
+    --warmup)
+      if ! [[ $2 =~ $re_int ]]; then
+        echo "Warmup must be a number greater than 0 (number of warmup runs)" >&2
+        exit 1
+      else
+        warmup="true ${2}";
+      fi
+      shift
+      shift
+      ;;
     -*|--*|*)
       printf "Unknown option $1\nPossible options are:
       \tNo Option\tExecute experiments on all datasets with 1 thread and no timeout.
       \t-i | --input\tExecute experiments on the specified dataset (given as a path relative to ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/)
       \t--threads\tSet the number of threads to be used (default 1). When using more than one thread, consider increasing the heap size (in this script).
-      \t--timeout\tSet the timeout in Milliseconds (default no timeout)\n"
+      \t--timeout\tSet the timeout in Milliseconds (default no timeout)\n
+      \t-w | --witness\tExtract witnesses from the results.
+      \t-q\tQuiet mode: Do not print the output of the witness generation, excluding errors.
+      \t-qq\tQuiet quiet mode: Do not print the output of the witness generation, including errors."
       exit 1
       ;;
   esac
 done
 
 cd ${HOME}/JSONAlgebra
-export MAVEN_OPTS="-Xmx10240m"
 
 extract_witnesses() {
   cd $1
@@ -72,23 +103,61 @@ run_experiment() {
     fi
     mkdir -p ${HOME}/results/${1//\//-}/
     mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive
-    mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
-    rm ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
-    mvn exec:java -Dexec.mainClass="it.unipi.di.tesiFalleniLandi.JsonSchema_to_Algebra.MassiveTesting.MainClassV2" \
-            -Dexec.args="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} ${threads} ${timeout}" -pl JsonSchema_To_Algebra \
-            2> >(tee ${HOME}/results/${1//\//-}/${1//\//-}-err.log >&2)
+    rm -rf ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/parts
+    mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/parts
+    mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*.csv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
+    export MAVEN_OPTS="-Xmx120G"
+    json_files=$(find ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} -name "*.json")
+    start_time=$(date +%s)
+    timestamp=$(date +%y%m%d_%H%M%S)
+
+    if [ "$quietquiet" = true ]; then
+      parallel -j ${threads} ${bar} java -jar "${jar_file}" {} 1 ${timeout} "parts/${timestamp}_{#}" ${warmup} '>/dev/null 2>&1' ::: $json_files
+    elif [ "$quiet" = true ]; then
+      parallel -j ${threads} ${bar} java -jar "${jar_file}" {} 1 ${timeout} "parts/${timestamp}_{#}" ${warmup} '>/dev/null' ::: $json_files
+    else
+      parallel -j ${threads} ${bar} java -jar "${jar_file}" {} 1 ${timeout} "parts/${timestamp}_{#}" ${warmup} ::: $json_files
+    fi
+    file_endings_to_merge=("results.csv" "witness.csv" "size.csv" "validation.csv" "validationException.csv" "exception.csv")
+    output_file_parts="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/parts/${timestamp}"
+    output_file_res="${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/${timestamp}"
+    for file_ending in "${file_endings_to_merge[@]}"; do
+      output_file="${output_file_res}_${file_ending}"
+      counter=0
+      file_parts=$(ls ${output_file_parts}*${file_ending} 2> /dev/null)
+      for file in $file_parts; do
+        if [ $counter -eq 0 ]; then
+          mv "$file" "$output_file"
+        else
+          tail -n +2 "$file" >> "$output_file"
+          rm "$file"
+        fi
+        counter=$((counter + 1))
+      done
+    done
     cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_results.csv ${HOME}/results/${1//\//-}/results.csv 2> /dev/null
     if [ "$extract_witness" = true ]; then
         cp ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*_witness.csv ${HOME}/results/${1//\//-}/witness.csv
-        extract_witnesses ${HOME}/results/${1//\//-}/
+        (
+          extract_witnesses ${HOME}/results/${1//\//-}/
+        )
     fi
 }
+
+if [ "$quietquiet" = true ]; then
+  echo "Warning: -qq is set; errors in Witness Generation won't be displayed."
+fi
 
 # If specified, run experiments only on the given input dataset. Otherwise run experiments on all default datasets
 if [ -n "$input" ];
   then
     run_experiment $input
     exit 0
+fi
+
+if [ ! -f "${jar_file}" ]; then
+  echo "Jar file not found. Building project..."
+  (cd "${HOME}/JSONAlgebra/JsonSchema_To_Algebra" && mvn clean install -DskipTests)
 fi
 
 echo "Running experiments on tricky schemas..."
@@ -105,7 +174,7 @@ run_experiment issta/unsat
     mkdir -p issta
     awk '(NR == 1) || (FNR > 1)' issta-sat/results.csv \
         issta-unsat/results.csv > issta/results.csv
-    # Copy Kubernetes results to charts
+
     mkdir -p ${HOME}/charts/data/issta/
     cp ${HOME}/results/issta/results.csv ${HOME}/charts/data/issta/results.csv
     rm -r issta
@@ -121,7 +190,7 @@ run_experiment allOf_containment/unsat
     mkdir -p allOf_containment
     awk '(NR == 1) || (FNR > 1)' allOf_containment-sat/results.csv \
         allOf_containment-unsat/results.csv  > allOf_containment/results.csv
-    # Copy allOf Containment results to charts
+
     mkdir -p ${HOME}/charts/data/allOf_containment/
     cp ${HOME}/results/allOf_containment/results.csv ${HOME}/charts/data/allOf_containment/results.csv
     rm -r allOf_containment
@@ -150,13 +219,12 @@ run_experiment snowplow/ours
     mv snowplow-ours/results.csv snowplow/results.csv
     rm -r snowplow-ours
 )
-# Copy Snowplow results to charts
 mkdir -p ${HOME}/charts/data/snowplow/
 cp ${HOME}/results/snowplow/results.csv ${HOME}/charts/data/snowplow/results.csv
 
 echo "Running experiments on Washington Post dataset ..."
 run_experiment wp
-# Copy Washington Post results to charts
+
 mkdir -p ${HOME}/charts/data/wp/
 cp ${HOME}/results/wp/results.csv ${HOME}/charts/data/wp/results.csv
 
@@ -170,7 +238,7 @@ run_experiment github/unsat
     mkdir -p github
     awk '(NR == 1) || (FNR > 1)' github-sat/results.csv \
         github-unsat/results.csv  > github/results.csv
-    # Copy GitHub results to charts
+
     mkdir -p ${HOME}/charts/data/github/
     cp ${HOME}/results/github/results.csv ${HOME}/charts/data/github/results.csv
     rm -r github
@@ -186,7 +254,7 @@ run_experiment kubernetes/unsat
     mkdir -p kubernetes
     awk '(NR == 1) || (FNR > 1)' kubernetes-sat/results.csv \
         kubernetes-unsat/results.csv > kubernetes/results.csv
-    # Copy Kubernetes results to charts
+
     mkdir -p ${HOME}/charts/data/kubernetes/
     cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
     rm -r kubernetes

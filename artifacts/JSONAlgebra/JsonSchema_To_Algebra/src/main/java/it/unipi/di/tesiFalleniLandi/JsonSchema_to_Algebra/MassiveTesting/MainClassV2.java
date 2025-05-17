@@ -16,13 +16,7 @@ import java.util.concurrent.*;
 
 public class MainClassV2 {
 
-
-
-
-
     public static void main(String[] args) throws InterruptedException, IOException {
-
-
         // Get the git version
         Runtime runtime = Runtime.getRuntime();
         Process process = runtime.exec("git rev-parse HEAD");
@@ -63,13 +57,24 @@ public class MainClassV2 {
         }
 
         String path = args[0];
-        File[] files = new File(path).listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
-        Arrays. sort(files, Comparator.comparing(f -> f.length()));
+        File[] files;
+        boolean singleFile = path.endsWith(".json");
+        String info = "";
+        // hacked-in support for single file
+        if (singleFile) {
+            File file = new File(path);
+            files = new File[1];
+            files[0] = file;
+            path = file.getParent();
+            info = args[4] + "_";
+        } else {
+            files = new File(path).listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
+            Arrays.sort(files, Comparator.comparing(f -> f.length()));
+            info = formatter.format(date) + "_";
+        }
+        
 
         int nbProcs = Integer.parseInt(args[1]);
-
-
-        String info = formatter.format(date)+"_";
 
         boolean withTimout = Boolean.valueOf(args[2]);
         long timeout = 0;
@@ -77,6 +82,21 @@ public class MainClassV2 {
             timeout = Long.parseLong(args[3]);
             info = info+timeout+"ms_";
         }
+
+        boolean warmup = args.length > 6 && Boolean.valueOf(args[5]);
+        int warmup_runs = Integer.parseInt(args[6]);
+
+        // if (warmup) {
+        //     System.out.println("Performing warmup run...");
+        //     // Perform a warmup run
+        //     for (File file : files) {
+        //         GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(file);
+        //         new TaskManager(timeout,TimeUnit.MILLISECONDS,task).call();
+        //     }
+        //     System.out.println("Warmup run completed.");
+        // } else {
+        //     System.out.println("Skipping warmup run.");
+        // }
 
         ExecutorService executor = Executors.newFixedThreadPool(nbProcs);
 
@@ -111,30 +131,37 @@ public class MainClassV2 {
                 //"merge2,"
                 "preparation,arrPrep,merge3,genEnv,witness\n");
 
-
-
-
         long start = System.currentTimeMillis();
         System.out.println(start);
 
         LinkedHashMap<File,GenerateWitnessTaskV4> fileTaskMap = new LinkedHashMap<>();
-
 
         for (File file : files){
             GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(file);
             fileTaskMap.put(file,task);
         }
 
-        List<Future<GenerateWitnessTaskV4>> futures = new ArrayList<>();
+        for (int i = 0; i < warmup_runs; i++) {
+            List<Future<GenerateWitnessTaskV4>> futures = new ArrayList<>();
 
+            for (int j = 0; j < files.length; j++) {
+                GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(files[j]);
+                Future<GenerateWitnessTaskV4> future = executor.submit(new TaskManager(timeout, TimeUnit.MILLISECONDS, task));
+                futures.add(future);
+            }
+
+            for (int j = 0; j < futures.size(); j++) {
+                Future<GenerateWitnessTaskV4> future = futures.get(j);
+            }
+        }
+                
+        List<Future<GenerateWitnessTaskV4>> futures = new ArrayList<>();
 
         for(int i=0;i< files.length;i++) {
             GenerateWitnessTaskV4 task = new GenerateWitnessTaskV4(files[i]);
             Future<GenerateWitnessTaskV4> future = executor.submit(new TaskManager(timeout,TimeUnit.MILLISECONDS,task));
             futures.add(future);
         }
-
-
 
         for(int i=0;i<futures.size();i++) {
             Future<GenerateWitnessTaskV4> future = futures.get(i);
@@ -161,7 +188,6 @@ public class MainClassV2 {
                 resultMap.put(Utils.machine,systemName);
             }
 
-
             LinkedHashMap<String, String> witnessMap = resTask.getWitnessMap();
 
             LinkedHashMap<String, Set<ValidationMessage>> validationErrorsMap = resTask.getErrorsMap();
@@ -177,7 +203,6 @@ public class MainClassV2 {
                     resTask.hasValidationErrors(), resTask.hasException,file,i, validationException, validationExceptionFile);
 
             writerExec.submit(writer);
-
         }
 
 
