@@ -4,7 +4,7 @@
 # Copyright 2022, Stefan Klessinger <stefan.klessinger@uni-passau.de>
 # SPDX-License-Identifier: GPL-3.0
 
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 LABEL maintainer="Stefan Klessinger <stefan.klessinger@uni-passau.de>"
 
@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                 libssl-dev \
                 maven \
                 nano \
-                openjdk-11-jdk \
-                openjdk-11-jre \
+                openjdk-21-jdk \
+                openjdk-21-jre \
                 parallel \
                 patch \
                 sudo \
