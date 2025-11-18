@@ -72,7 +72,7 @@ run_experiment() {
   done
   
   # Merge error files
-  rm ${output_dir}/hypothesis-errors.txt
+  rm ${output_dir}/hypothesis-errors.txt 2>/dev/null
   for file in ${parts_dir}/*.txt; do
     cat "$file" >> ${output_dir}/hypothesis-errors.txt
   done

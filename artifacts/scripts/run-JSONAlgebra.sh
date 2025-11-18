@@ -106,7 +106,7 @@ run_experiment() {
     rm -rf ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/parts
     mkdir -p ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/parts
     mv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/[0-9]*.csv ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1}/results/archive 2> /dev/null
-    export MAVEN_OPTS="-Xmx120G"
+    export _JAVA_OPTIONS="-Xmx10G"
     json_files=$(find ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} -name "*.json")
     start_time=$(date +%s)
     timestamp=$(date +%y%m%d_%H%M%S)
