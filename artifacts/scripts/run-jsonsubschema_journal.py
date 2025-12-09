@@ -18,7 +18,6 @@ from jsonsubschema.exceptions import (
 )
 from argparse import ArgumentParser
 import signal
-from tqdm import tqdm
 
 
 pd.set_option("display.max_columns", None)
