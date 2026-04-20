@@ -1,0 +1,109 @@
+{
+  "allOf": [
+    {
+      "properties": {
+        "plugins": {
+          "properties": {
+            "puppet": {
+              "$ref": "#/definitions4/modern_1"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "title": "Puppet plugin manifest",
+      "type": "object"
+    },
+    {
+      "not": {
+        "properties": {
+          "plugins": {
+            "properties": {
+              "puppet": {
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "assets": {
+                    "$ref": "#/definitions3/absolute_path"
+                  },
+                  "manifest": {
+                    "$ref": "#/definitions3/absolute_path"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "title": "Puppet plugin manifest",
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "minProperties": 1,
+              "properties": {
+                "assets": {
+                  "$ref": "#/definitions4/absolute_path"
+                },
+                "manifest": {
+                  "$ref": "#/definitions4/absolute_path"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^assets$": true,
+                "^manifest$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "absolute_path": {
+      "pattern": "^/[^\\0]+$",
+      "type": "string"
+    }
+  },
+  "definitions3": {
+    "absolute_path": {
+      "pattern": "^/[^\\0]+$",
+      "type": "string"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/absolute_path"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/absolute_path"
+      }
+    },
+    {
+      "$ref": "#/definitions4/absolute_path"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/absolute_path"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

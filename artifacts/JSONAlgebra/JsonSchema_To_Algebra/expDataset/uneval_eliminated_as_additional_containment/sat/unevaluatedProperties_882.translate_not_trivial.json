@@ -1,0 +1,4512 @@
+{
+  "allOf": [
+    {
+      "$id": "values.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "global": {
+          "type": "object",
+          "title": "Global properties",
+          "description": "Properties that are available to all charts and subcharts.",
+          "required": [
+            "components",
+            "connectivity",
+            "controlPlane",
+            "metadata"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "components": {
+              "type": "object",
+              "title": "Components",
+              "description": "Advanced configuration of components that are running on all nodes.",
+              "additionalProperties": false,
+              "properties": {
+                "containerd": {
+                  "type": "object",
+                  "title": "Containerd",
+                  "description": "Configuration of containerd.",
+                  "required": [
+                    "containerRegistries"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "containerRegistries": {
+                      "type": "object",
+                      "title": "Container registries",
+                      "description": "Endpoints and credentials configuration for container registries.",
+                      "additionalProperties": {
+                        "type": "array",
+                        "title": "Registries",
+                        "description": "Container registries and mirrors",
+                        "items": {
+                          "type": "object",
+                          "title": "Registry",
+                          "required": [
+                            "endpoint"
+                          ],
+                          "properties": {
+                            "credentials": {
+                              "type": "object",
+                              "title": "Credentials",
+                              "properties": {
+                                "auth": {
+                                  "type": "string",
+                                  "title": "Auth",
+                                  "description": "Base64-encoded string from the concatenation of the username, a colon, and the password."
+                                },
+                                "identitytoken": {
+                                  "type": "string",
+                                  "title": "Identity token",
+                                  "description": "Used to authenticate the user and obtain an access token for the registry."
+                                },
+                                "password": {
+                                  "type": "string",
+                                  "title": "Password",
+                                  "description": "Used to authenticate for the registry with username/password."
+                                },
+                                "username": {
+                                  "type": "string",
+                                  "title": "Username",
+                                  "description": "Used to authenticate for the registry with username/password."
+                                }
+                              }
+                            },
+                            "endpoint": {
+                              "type": "string",
+                              "title": "Endpoint",
+                              "description": "Endpoint for the container registry."
+                            }
+                          }
+                        }
+                      },
+                      "default": {
+                        "docker.io": [
+                          {
+                            "endpoint": "registry-1.docker.io"
+                          },
+                          {
+                            "endpoint": "giantswarm.azurecr.io"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "title": "Metadata",
+              "required": [
+                "name",
+                "organization",
+                "servicePriority"
+              ],
+              "properties": {
+                "organization": {
+                  "type": "string",
+                  "title": "Organization",
+                  "description": "The name of organization that owns the cluster.",
+                  "readOnly": true
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Cluster name",
+                  "description": "Unique identifier, cannot be changed after creation.",
+                  "readOnly": true
+                },
+                "description": {
+                  "type": "string",
+                  "title": "Cluster description",
+                  "description": "User-friendly description of the cluster's purpose."
+                },
+                "servicePriority": {
+                  "type": "string",
+                  "title": "Service priority",
+                  "description": "The relative importance of this cluster.",
+                  "$comment": "Defined in https://github.com/giantswarm/rfc/tree/main/classify-cluster-priority",
+                  "enum": [
+                    "highest",
+                    "medium",
+                    "lowest"
+                  ],
+                  "default": "highest"
+                },
+                "annotations": {
+                  "type": "object",
+                  "title": "Annotations",
+                  "description": "These annotations are added to all Kubernetes resources defining this cluster.",
+                  "additionalProperties": false,
+                  "patternProperties": {
+                    "^([a-zA-Z0-9\\.-]{1,253}/)?[a-zA-Z0-9\\._-]{1,63}$": {
+                      "type": "string",
+                      "title": "Annotation",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "labels": {
+                  "type": "object",
+                  "title": "Labels",
+                  "description": "These labels are added to all Kubernetes resources defining this cluster.",
+                  "additionalProperties": false,
+                  "patternProperties": {
+                    "^[a-zA-Z0-9/\\._-]+$": {
+                      "type": "string",
+                      "title": "Label",
+                      "maxLength": 63,
+                      "minLength": 0,
+                      "pattern": "^[a-zA-Z0-9\\._-]+$"
+                    }
+                  }
+                }
+              }
+            },
+            "controlPlane": {
+              "type": "object",
+              "title": "Control plane",
+              "description": "Configuration of the control plane.",
+              "required": [
+                "machineHealthCheck",
+                "replicas"
+              ],
+              "properties": {
+                "customNodeTaints": {
+                  "$ref": "#/definitions1/customNodeTaints"
+                },
+                "machineHealthCheck": {
+                  "type": "object",
+                  "title": "Machine health check",
+                  "properties": {
+                    "unhealthyNotReadyTimeout": {
+                      "type": "string",
+                      "title": "Timeout for ready",
+                      "description": "If a node is not in condition 'Ready' after this timeout, it will be considered unhealthy.",
+                      "examples": [
+                        "300s"
+                      ],
+                      "default": "10m0s"
+                    },
+                    "unhealthyUnknownTimeout": {
+                      "type": "string",
+                      "title": "Timeout for unknown condition",
+                      "description": "If a node is in 'Unknown' condition after this timeout, it will be considered unhealthy.",
+                      "examples": [
+                        "300s"
+                      ],
+                      "default": "10m0s"
+                    },
+                    "enabled": {
+                      "type": "boolean",
+                      "title": "Enable",
+                      "default": true
+                    },
+                    "nodeStartupTimeout": {
+                      "type": "string",
+                      "title": "Node startup timeout",
+                      "description": "Determines how long a machine health check should wait for a node to join the cluster, before considering a machine unhealthy.",
+                      "examples": [
+                        "10m",
+                        "100s"
+                      ],
+                      "default": "8m0s"
+                    },
+                    "maxUnhealthy": {
+                      "type": "string",
+                      "title": "Maximum unhealthy nodes",
+                      "examples": [
+                        "40%"
+                      ],
+                      "default": "40%"
+                    }
+                  }
+                },
+                "oidc": {
+                  "type": "object",
+                  "title": "OIDC authentication",
+                  "properties": {
+                    "caPem": {
+                      "type": "string",
+                      "title": "Certificate authority",
+                      "description": "Identity provider's CA certificate in PEM format."
+                    },
+                    "clientId": {
+                      "type": "string",
+                      "title": "Client ID"
+                    },
+                    "usernameClaim": {
+                      "type": "string",
+                      "title": "Username claim"
+                    },
+                    "issuerUrl": {
+                      "type": "string",
+                      "title": "Issuer URL",
+                      "description": "Exact issuer URL that will be included in identity tokens."
+                    },
+                    "groupsClaim": {
+                      "type": "string",
+                      "title": "Groups claim"
+                    }
+                  }
+                },
+                "replicas": {
+                  "type": "integer",
+                  "title": "Replicas",
+                  "description": "The number of control plane nodes.",
+                  "enum": [
+                    1,
+                    3,
+                    5
+                  ],
+                  "default": 3
+                }
+              }
+            },
+            "connectivity": {
+              "type": "object",
+              "title": "Connectivity",
+              "description": "Configuration of connectivity and networking options.",
+              "required": [
+                "baseDomain",
+                "network"
+              ],
+              "properties": {
+                "baseDomain": {
+                  "type": "string",
+                  "title": "Base DNS domain"
+                },
+                "bastion": {
+                  "type": "object",
+                  "title": "Bastion host",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "title": "Enable",
+                      "default": true
+                    },
+                    "replicas": {
+                      "type": "integer",
+                      "title": "Number of hosts",
+                      "default": 1
+                    }
+                  }
+                },
+                "network": {
+                  "type": "object",
+                  "title": "Network",
+                  "required": [
+                    "pods",
+                    "services"
+                  ],
+                  "properties": {
+                    "pods": {
+                      "type": "object",
+                      "title": "Pods",
+                      "required": [
+                        "cidrBlocks"
+                      ],
+                      "properties": {
+                        "cidrBlocks": {
+                          "type": "array",
+                          "title": "Pod subnets",
+                          "items": {
+                            "type": "string",
+                            "title": "Pod subnet",
+                            "description": "IPv4 address range for pods, in CIDR notation.",
+                            "examples": [
+                              "10.244.0.0/16"
+                            ]
+                          },
+                          "default": [
+                            "100.64.0.0/12"
+                          ],
+                          "maxItems": 1,
+                          "minItems": 1
+                        }
+                      }
+                    },
+                    "services": {
+                      "type": "object",
+                      "title": "Services",
+                      "required": [
+                        "cidrBlocks"
+                      ],
+                      "properties": {
+                        "cidrBlocks": {
+                          "type": "array",
+                          "title": "Kubernetes Service subnets",
+                          "items": {
+                            "type": "string",
+                            "title": "Service subnet",
+                            "description": "IPv4 address range for kubernetes services, in CIDR notation.",
+                            "examples": [
+                              "172.31.0.0/16"
+                            ]
+                          },
+                          "default": [
+                            "172.31.0.0/16"
+                          ],
+                          "maxItems": 1,
+                          "minItems": 1
+                        }
+                      }
+                    }
+                  }
+                },
+                "proxy": {
+                  "type": "object",
+                  "title": "Proxy",
+                  "description": "Whether/how outgoing traffic is routed through proxy servers.",
+                  "required": [
+                    "enabled"
+                  ],
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "title": "Enable"
+                    },
+                    "httpProxy": {
+                      "type": "string",
+                      "title": "HTTP proxy",
+                      "description": "To be passed to the HTTP_PROXY environment variable in all hosts."
+                    },
+                    "httpsProxy": {
+                      "type": "string",
+                      "title": "HTTPS proxy",
+                      "description": "To be passed to the HTTPS_PROXY environment variable in all hosts."
+                    },
+                    "noProxy": {
+                      "type": "object",
+                      "title": "No proxy",
+                      "properties": {
+                        "addresses": {
+                          "type": "array",
+                          "title": "Addresses",
+                          "description": "To be passed to the NO_PROXY environment variable in all hosts.",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "addressesTemplate": {
+                          "type": "string",
+                          "title": "Addresses template",
+                          "description": "Name of Helm template that renders a YAML array with NO_PROXY addresses."
+                        }
+                      }
+                    }
+                  },
+                  "default": {
+                    "enabled": false
+                  }
+                }
+              }
+            },
+            "managementCluster": {
+              "type": "string",
+              "title": "Management cluster",
+              "description": "Name of the Cluster API cluster managing this workload cluster."
+            },
+            "nodePools": {
+              "type": "object",
+              "title": "Node pools",
+              "patternProperties": {
+                "^[a-z0-9]{5,10}$": {
+                  "type": "object",
+                  "title": "Node pool",
+                  "properties": {
+                    "replicas": {
+                      "type": "integer",
+                      "title": "Replicas",
+                      "description": "The number of node pool nodes.",
+                      "maximum": 1000.0,
+                      "minimum": 0.0
+                    },
+                    "nodeTaints": {
+                      "type": "array",
+                      "title": "Custom node taints",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "effect",
+                          "key",
+                          "value"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "effect": {
+                            "type": "string",
+                            "title": "Effect",
+                            "enum": [
+                              "NoSchedule",
+                              "PreferNoSchedule",
+                              "NoExecute"
+                            ]
+                          },
+                          "key": {
+                            "type": "string",
+                            "title": "Key"
+                          },
+                          "value": {
+                            "type": "string",
+                            "title": "Value"
+                          }
+                        }
+                      }
+                    },
+                    "annotations": {
+                      "type": "object",
+                      "title": "Annotations",
+                      "description": "These annotations are added to all Kubernetes resources defining this node pool.",
+                      "additionalProperties": false,
+                      "patternProperties": {
+                        "^([a-zA-Z0-9\\.-]{1,253}/)?[a-zA-Z0-9\\._-]{1,63}$": {
+                          "type": "string",
+                          "title": "Annotation",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    "labels": {
+                      "type": "object",
+                      "title": "Labels",
+                      "description": "These labels are added to all Kubernetes resources defining this node pool.",
+                      "additionalProperties": false,
+                      "patternProperties": {
+                        "^[a-zA-Z0-9/\\._-]+$": {
+                          "type": "string",
+                          "title": "Label",
+                          "maxLength": 63,
+                          "minLength": 0,
+                          "pattern": "^[a-zA-Z0-9\\._-]+$"
+                        }
+                      }
+                    },
+                    "nodeLabels": {
+                      "type": "object",
+                      "title": "Node labels",
+                      "description": "Labels that are passed to kubelet argument 'node-labels'.",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "providerIntegration": {
+          "type": "object",
+          "title": "Provider integration",
+          "description": "Provider-specific properties that can be set by cluster-$provider chart in order to render correct templates for the provider.",
+          "required": [
+            "connectivity",
+            "components",
+            "controlPlane",
+            "kubernetesVersion",
+            "resourcesApi"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "resourcesApi": {
+              "$ref": "#/definitions1/modern_1"
+            },
+            "pauseProperties": {
+              "type": "object",
+              "title": "Pause properties",
+              "description": "A map of property names and their values that will affect setting pause annotation",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean"
+                ]
+              }
+            },
+            "workers": {
+              "type": "object",
+              "title": "Internal workers configuration",
+              "additionalProperties": false,
+              "properties": {
+                "kubeadmConfig": {
+                  "type": "object",
+                  "title": "Kubeadm config",
+                  "description": "Configuration of workers nodes.",
+                  "required": [
+                    "ignition"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "files": {
+                      "type": "array",
+                      "title": "Files",
+                      "description": "These are the files that are included on worker nodes.",
+                      "items": {
+                        "$ref": "#/definitions1/fileFromSecret"
+                      }
+                    },
+                    "ignition": {
+                      "$ref": "#/definitions1/ignition"
+                    },
+                    "postKubeadmCommands": {
+                      "$ref": "#/definitions1/postKubeadmCommands"
+                    },
+                    "preKubeadmCommands": {
+                      "$ref": "#/definitions1/preKubeadmCommands"
+                    }
+                  }
+                }
+              }
+            },
+            "bastion": {
+              "type": "object",
+              "title": "Internal bastion configuration",
+              "additionalProperties": false,
+              "properties": {
+                "kubeadmConfig": {
+                  "type": "object",
+                  "title": "Kubeadm config",
+                  "description": "Configuration of bastion nodes.",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ignition": {
+                      "$ref": "#/definitions1/ignition"
+                    },
+                    "preKubeadmCommands": {
+                      "$ref": "#/definitions1/preKubeadmCommands"
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
+              "type": "object",
+              "title": "Components",
+              "description": "Internal configuration of various components that form the Kubernetes cluster.",
+              "required": [
+                "containerd"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "containerd": {
+                  "type": "object",
+                  "title": "Containerd",
+                  "description": "Configuration of containerd.",
+                  "required": [
+                    "sandboxContainerImage"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "sandboxContainerImage": {
+                      "type": "object",
+                      "title": "Kubectl image",
+                      "required": [
+                        "name",
+                        "registry",
+                        "tag"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "title": "Repository",
+                          "default": "giantswarm/pause"
+                        },
+                        "registry": {
+                          "type": "string",
+                          "title": "Registry",
+                          "default": "quay.io"
+                        },
+                        "tag": {
+                          "type": "string",
+                          "title": "Tag",
+                          "default": "3.9"
+                        }
+                      }
+                    }
+                  }
+                },
+                "kubelet": {
+                  "title": "Kubelet",
+                  "description": "Kubelet configuration that is used on all nodes.",
+                  "default": null,
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "gracefulNodeShutdown": {
+                          "type": "object",
+                          "title": "Graceful node shut down",
+                          "description": "It enables kubelet to gracefully evict pods during a node shutdown. It is enabled by default in Kubernetes 1.21.",
+                          "additionalProperties": false,
+                          "properties": {
+                            "shutdownGracePeriod": {
+                              "type": "string",
+                              "title": "Shutdown grace period",
+                              "description": "Specifies the total duration that the node should delay the shutdown by. This is the total grace period for pod termination for both regular and critical pods."
+                            },
+                            "shutdownGracePeriodCriticalPods": {
+                              "type": "string",
+                              "title": "Shutdown grace period for critical pods",
+                              "description": "Specifies the duration used to terminate critical pods during a node shutdown. This should be less than shutdownGracePeriod."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "systemd": {
+                  "title": "systemd",
+                  "default": null,
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "timesyncd": {
+                          "type": "object",
+                          "title": "timesyncd",
+                          "description": "systemd-timesyncd is a system service that may be used to synchronize the local system clock with a remote Network Time Protocol (NTP) server.",
+                          "additionalProperties": false,
+                          "properties": {
+                            "npt": {
+                              "type": "array",
+                              "title": "NTP",
+                              "description": "A list of NTP server host names or IP addresses.",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "hashSalt": {
+              "type": "string",
+              "title": "Hash salt",
+              "description": "If specified, this token is used as a salt to the hash suffix of some resource names. Can be used to force-recreate some resources."
+            },
+            "clusterLabelsTemplateName": {
+              "type": "string",
+              "title": "Cluster labels template name",
+              "description": "The name of the template that renders provider-specific labels for the Cluster resource"
+            },
+            "teleport": {
+              "type": "object",
+              "title": "Teleport",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "title": "Enable teleport",
+                  "default": false
+                },
+                "proxyAddr": {
+                  "type": "string",
+                  "title": "Teleport proxy address",
+                  "default": "test.teleport.giantswarm.io:443"
+                },
+                "version": {
+                  "type": "string",
+                  "title": "Teleport version",
+                  "default": "13.3.8"
+                }
+              }
+            },
+            "kubeadmConfig": {
+              "type": "object",
+              "title": "Kubeadm config",
+              "description": "Common kubeadm config for all nodes, including both control plane and workers.",
+              "additionalProperties": false,
+              "properties": {
+                "files": {
+                  "type": "array",
+                  "title": "Files",
+                  "description": "These are the files that are included on all the nodes.",
+                  "items": {
+                    "$ref": "#/definitions1/fileFromSecret"
+                  }
+                },
+                "ignition": {
+                  "$ref": "#/definitions1/ignition"
+                },
+                "postKubeadmCommands": {
+                  "$ref": "#/definitions1/postKubeadmCommands"
+                },
+                "preKubeadmCommands": {
+                  "$ref": "#/definitions1/preKubeadmCommands"
+                }
+              }
+            },
+            "controlPlane": {
+              "type": "object",
+              "title": "Internal control plane configuration",
+              "required": [
+                "kubeadmConfig",
+                "resources"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "kubeadmConfig": {
+                  "type": "object",
+                  "title": "Kubeadm config",
+                  "description": "Configuration of control plane nodes.",
+                  "required": [
+                    "ignition",
+                    "localAPIEndpoint"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "ignition": {
+                      "$ref": "#/definitions1/ignition"
+                    },
+                    "preKubeadmCommands": {
+                      "$ref": "#/definitions1/preKubeadmCommands"
+                    },
+                    "files": {
+                      "type": "array",
+                      "title": "Files",
+                      "description": "These are the files that are included on control plane nodes.",
+                      "items": {
+                        "$ref": "#/definitions1/fileFromSecret"
+                      }
+                    },
+                    "clusterConfiguration": {
+                      "type": "object",
+                      "title": "Cluster configuration",
+                      "description": "Configuration of Kubernetes components.",
+                      "additionalProperties": false,
+                      "properties": {
+                        "apiServer": {
+                          "type": "object",
+                          "title": "API server",
+                          "description": "Configuration of API server.",
+                          "additionalProperties": false,
+                          "properties": {
+                            "extraArgs": {
+                              "type": "object",
+                              "title": "Extra args"
+                            },
+                            "apiAudiences": {
+                              "title": "API audiences",
+                              "description": "Identifiers of the API. The service account token authenticator will validate that tokens used against the API are bound to at least one of these audiences. If the --service-account-issuer flag is configured and this flag is not, 'api-audiences' field defaults to a single element list containing the issuer URL.",
+                              "oneOf": [
+                                {
+                                  "type": "null"
+                                },
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "templateName"
+                                  ],
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "templateName": {
+                                      "type": "string",
+                                      "title": "Template name",
+                                      "description": "The name of the Helm template which renders the 'api-audiences' value"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "serviceAccountIssuer": {
+                              "title": "Service account issuer",
+                              "description": "Configuration of the identifier of the service account token issuer. You must specify either URL or clusterDomainPrefix (only one, not both).",
+                              "oneOf": [
+                                {
+                                  "type": "null"
+                                },
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "clusterDomainPrefix": {
+                                      "type": "string",
+                                      "title": "Cluster domain prefix",
+                                      "description": "Prefix that is prepended to the cluster domain name, so that resulting URL is used as the identifier of the service account token issuer."
+                                    },
+                                    "url": {
+                                      "type": "string",
+                                      "title": "URL",
+                                      "description": "This URL is used as the identifier of the service account token issuer."
+                                    }
+                                  },
+                                  "oneOf": [
+                                    {
+                                      "required": [
+                                        "url"
+                                      ],
+                                      "not": {
+                                        "required": [
+                                          "clusterDomainPrefix"
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "required": [
+                                        "clusterDomainPrefix"
+                                      ],
+                                      "not": {
+                                        "required": [
+                                          "url"
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            "etcdPrefix": {
+                              "type": "string",
+                              "title": "etcd prefix"
+                            },
+                            "additionalAdmissionPlugins": {
+                              "type": "array",
+                              "title": "Additional admission plugins",
+                              "description": "A list of plugins to enable, in addition to the default ones that include DefaultStorageClass, DefaultTolerationSeconds, LimitRanger, MutatingAdmissionWebhook, NamespaceLifecycle, PersistentVolumeClaimResize, Priority, ResourceQuota, ServiceAccount and ValidatingAdmissionWebhook.",
+                              "items": {
+                                "type": "string",
+                                "title": "Additional admission plugin"
+                              }
+                            },
+                            "featureGates": {
+                              "type": "array",
+                              "title": "Feature gates",
+                              "items": {
+                                "type": "object",
+                                "title": "Feature gate",
+                                "required": [
+                                  "name",
+                                  "enabled"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                  "enabled": {
+                                    "type": "boolean",
+                                    "title": "Enabled"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "title": "Name"
+                                  }
+                                }
+                              }
+                            },
+                            "extraCertificateSANs": {
+                              "type": "array",
+                              "title": "Extra certificate SANs",
+                              "description": "The additional certificate SANs that are appended to the default SANs.",
+                              "items": {
+                                "type": "string",
+                                "title": "Extra certificate SAN"
+                              }
+                            }
+                          },
+                          "default": {}
+                        },
+                        "etcd": {
+                          "type": "object",
+                          "title": "etcd",
+                          "description": "Configuration of etcd",
+                          "additionalProperties": false,
+                          "properties": {
+                            "experimental": {
+                              "type": "object",
+                              "title": "Experimental",
+                              "properties": {
+                                "peerSkipClientSanVerification": {
+                                  "type": "boolean",
+                                  "title": "Peer skip client SAN verification",
+                                  "description": "Skip verification of SAN field in client certificate for peer connections."
+                                }
+                              }
+                            },
+                            "extraArgs": {
+                              "type": "object",
+                              "title": "Extra args"
+                            },
+                            "initialCluster": {
+                              "type": "string",
+                              "title": "Initial cluster",
+                              "description": "Initial cluster configuration for bootstrapping."
+                            },
+                            "initialClusterState": {
+                              "type": "string",
+                              "title": "Initial cluster state",
+                              "enum": [
+                                "new",
+                                "existing"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "localAPIEndpoint": {
+                      "type": "object",
+                      "title": "Local API endpoint",
+                      "required": [
+                        "bindPort"
+                      ],
+                      "properties": {
+                        "bindPort": {
+                          "type": "integer",
+                          "title": "Bind port",
+                          "description": "Kubernetes API bind port used for API server pod.",
+                          "default": 6443
+                        }
+                      }
+                    },
+                    "postKubeadmCommands": {
+                      "$ref": "#/definitions1/postKubeadmCommands"
+                    }
+                  }
+                },
+                "resources": {
+                  "type": "object",
+                  "title": "Resources configuration",
+                  "description": "GVK and other configuration for control plane resources.",
+                  "required": [
+                    "controlPlane",
+                    "infrastructureMachineTemplate",
+                    "infrastructureMachineTemplateSpecTemplateName"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "controlPlane": {
+                      "type": "object",
+                      "title": "Control plane resource config",
+                      "required": [
+                        "api"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "api": {
+                          "$ref": "#/definitions1/gvk"
+                        }
+                      },
+                      "default": {
+                        "api": {
+                          "group": "controlplane.cluster.x-k8s.io",
+                          "kind": "KubeadmControlPlane",
+                          "version": "v1beta1"
+                        }
+                      }
+                    },
+                    "infrastructureMachineTemplate": {
+                      "$ref": "#/definitions1/infrastructureMachineTemplate"
+                    },
+                    "infrastructureMachineTemplateSpecTemplateName": {
+                      "type": "string",
+                      "title": "Infrastructure Machine template spec template name",
+                      "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                    }
+                  }
+                }
+              }
+            },
+            "kubernetesVersion": {
+              "type": "string",
+              "title": "Kubernetes version",
+              "examples": [
+                "1.24.7"
+              ],
+              "default": "1.24.10"
+            },
+            "connectivity": {
+              "type": "object",
+              "title": "Connectivity",
+              "description": "Internal connectivity configuration.",
+              "required": [
+                "sshSsoPublicKey"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "sshSsoPublicKey": {
+                  "type": "string",
+                  "title": "SSH public key for single sign-on",
+                  "default": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4cvZ01fLmO9cJbWUj7sfF+NhECgy+Cl0bazSrZX7sU vault-ca@vault.operations.giantswarm.io"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$id": "values.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "global": {
+            "type": "object",
+            "title": "Global properties",
+            "description": "Properties that are available to all charts and subcharts.",
+            "required": [
+              "components",
+              "connectivity",
+              "controlPlane",
+              "metadata"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "components": {
+                "type": "object",
+                "title": "Components",
+                "description": "Advanced configuration of components that are running on all nodes.",
+                "additionalProperties": false,
+                "properties": {
+                  "containerd": {
+                    "type": "object",
+                    "title": "Containerd",
+                    "description": "Configuration of containerd.",
+                    "required": [
+                      "containerRegistries"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "containerRegistries": {
+                        "type": "object",
+                        "title": "Container registries",
+                        "description": "Endpoints and credentials configuration for container registries.",
+                        "additionalProperties": {
+                          "type": "array",
+                          "title": "Registries",
+                          "description": "Container registries and mirrors",
+                          "items": {
+                            "type": "object",
+                            "title": "Registry",
+                            "required": [
+                              "endpoint"
+                            ],
+                            "properties": {
+                              "credentials": {
+                                "type": "object",
+                                "title": "Credentials",
+                                "properties": {
+                                  "auth": {
+                                    "type": "string",
+                                    "title": "Auth",
+                                    "description": "Base64-encoded string from the concatenation of the username, a colon, and the password."
+                                  },
+                                  "identitytoken": {
+                                    "type": "string",
+                                    "title": "Identity token",
+                                    "description": "Used to authenticate the user and obtain an access token for the registry."
+                                  },
+                                  "password": {
+                                    "type": "string",
+                                    "title": "Password",
+                                    "description": "Used to authenticate for the registry with username/password."
+                                  },
+                                  "username": {
+                                    "type": "string",
+                                    "title": "Username",
+                                    "description": "Used to authenticate for the registry with username/password."
+                                  }
+                                }
+                              },
+                              "endpoint": {
+                                "type": "string",
+                                "title": "Endpoint",
+                                "description": "Endpoint for the container registry."
+                              }
+                            }
+                          }
+                        },
+                        "default": {
+                          "docker.io": [
+                            {
+                              "endpoint": "registry-1.docker.io"
+                            },
+                            {
+                              "endpoint": "giantswarm.azurecr.io"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "connectivity": {
+                "type": "object",
+                "title": "Connectivity",
+                "description": "Configuration of connectivity and networking options.",
+                "required": [
+                  "baseDomain",
+                  "network"
+                ],
+                "properties": {
+                  "baseDomain": {
+                    "type": "string",
+                    "title": "Base DNS domain"
+                  },
+                  "bastion": {
+                    "type": "object",
+                    "title": "Bastion host",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean",
+                        "title": "Enable",
+                        "default": true
+                      },
+                      "replicas": {
+                        "type": "integer",
+                        "title": "Number of hosts",
+                        "default": 1
+                      }
+                    }
+                  },
+                  "network": {
+                    "type": "object",
+                    "title": "Network",
+                    "required": [
+                      "pods",
+                      "services"
+                    ],
+                    "properties": {
+                      "pods": {
+                        "type": "object",
+                        "title": "Pods",
+                        "required": [
+                          "cidrBlocks"
+                        ],
+                        "properties": {
+                          "cidrBlocks": {
+                            "type": "array",
+                            "title": "Pod subnets",
+                            "items": {
+                              "type": "string",
+                              "title": "Pod subnet",
+                              "description": "IPv4 address range for pods, in CIDR notation.",
+                              "examples": [
+                                "10.244.0.0/16"
+                              ]
+                            },
+                            "default": [
+                              "100.64.0.0/12"
+                            ],
+                            "maxItems": 1,
+                            "minItems": 1
+                          }
+                        }
+                      },
+                      "services": {
+                        "type": "object",
+                        "title": "Services",
+                        "required": [
+                          "cidrBlocks"
+                        ],
+                        "properties": {
+                          "cidrBlocks": {
+                            "type": "array",
+                            "title": "Kubernetes Service subnets",
+                            "items": {
+                              "type": "string",
+                              "title": "Service subnet",
+                              "description": "IPv4 address range for kubernetes services, in CIDR notation.",
+                              "examples": [
+                                "172.31.0.0/16"
+                              ]
+                            },
+                            "default": [
+                              "172.31.0.0/16"
+                            ],
+                            "maxItems": 1,
+                            "minItems": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "proxy": {
+                    "type": "object",
+                    "title": "Proxy",
+                    "description": "Whether/how outgoing traffic is routed through proxy servers.",
+                    "required": [
+                      "enabled"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean",
+                        "title": "Enable"
+                      },
+                      "httpProxy": {
+                        "type": "string",
+                        "title": "HTTP proxy",
+                        "description": "To be passed to the HTTP_PROXY environment variable in all hosts."
+                      },
+                      "httpsProxy": {
+                        "type": "string",
+                        "title": "HTTPS proxy",
+                        "description": "To be passed to the HTTPS_PROXY environment variable in all hosts."
+                      },
+                      "noProxy": {
+                        "type": "object",
+                        "title": "No proxy",
+                        "properties": {
+                          "addresses": {
+                            "type": "array",
+                            "title": "Addresses",
+                            "description": "To be passed to the NO_PROXY environment variable in all hosts.",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "addressesTemplate": {
+                            "type": "string",
+                            "title": "Addresses template",
+                            "description": "Name of Helm template that renders a YAML array with NO_PROXY addresses."
+                          }
+                        }
+                      }
+                    },
+                    "default": {
+                      "enabled": false
+                    }
+                  }
+                }
+              },
+              "controlPlane": {
+                "type": "object",
+                "title": "Control plane",
+                "description": "Configuration of the control plane.",
+                "required": [
+                  "machineHealthCheck",
+                  "replicas"
+                ],
+                "properties": {
+                  "customNodeTaints": {
+                    "$ref": "#/definitions2/customNodeTaints"
+                  },
+                  "machineHealthCheck": {
+                    "type": "object",
+                    "title": "Machine health check",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean",
+                        "title": "Enable",
+                        "default": true
+                      },
+                      "maxUnhealthy": {
+                        "type": "string",
+                        "title": "Maximum unhealthy nodes",
+                        "examples": [
+                          "40%"
+                        ],
+                        "default": "40%"
+                      },
+                      "nodeStartupTimeout": {
+                        "type": "string",
+                        "title": "Node startup timeout",
+                        "description": "Determines how long a machine health check should wait for a node to join the cluster, before considering a machine unhealthy.",
+                        "examples": [
+                          "10m",
+                          "100s"
+                        ],
+                        "default": "8m0s"
+                      },
+                      "unhealthyNotReadyTimeout": {
+                        "type": "string",
+                        "title": "Timeout for ready",
+                        "description": "If a node is not in condition 'Ready' after this timeout, it will be considered unhealthy.",
+                        "examples": [
+                          "300s"
+                        ],
+                        "default": "10m0s"
+                      },
+                      "unhealthyUnknownTimeout": {
+                        "type": "string",
+                        "title": "Timeout for unknown condition",
+                        "description": "If a node is in 'Unknown' condition after this timeout, it will be considered unhealthy.",
+                        "examples": [
+                          "300s"
+                        ],
+                        "default": "10m0s"
+                      }
+                    }
+                  },
+                  "oidc": {
+                    "type": "object",
+                    "title": "OIDC authentication",
+                    "properties": {
+                      "caPem": {
+                        "type": "string",
+                        "title": "Certificate authority",
+                        "description": "Identity provider's CA certificate in PEM format."
+                      },
+                      "clientId": {
+                        "type": "string",
+                        "title": "Client ID"
+                      },
+                      "groupsClaim": {
+                        "type": "string",
+                        "title": "Groups claim"
+                      },
+                      "issuerUrl": {
+                        "type": "string",
+                        "title": "Issuer URL",
+                        "description": "Exact issuer URL that will be included in identity tokens."
+                      },
+                      "usernameClaim": {
+                        "type": "string",
+                        "title": "Username claim"
+                      }
+                    }
+                  },
+                  "replicas": {
+                    "type": "integer",
+                    "title": "Replicas",
+                    "description": "The number of control plane nodes.",
+                    "enum": [
+                      1,
+                      3,
+                      5
+                    ],
+                    "default": 3
+                  }
+                }
+              },
+              "managementCluster": {
+                "type": "string",
+                "title": "Management cluster",
+                "description": "Name of the Cluster API cluster managing this workload cluster."
+              },
+              "metadata": {
+                "type": "object",
+                "title": "Metadata",
+                "required": [
+                  "name",
+                  "organization",
+                  "servicePriority"
+                ],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "title": "Cluster description",
+                    "description": "User-friendly description of the cluster's purpose."
+                  },
+                  "annotations": {
+                    "type": "object",
+                    "title": "Annotations",
+                    "description": "These annotations are added to all Kubernetes resources defining this cluster.",
+                    "additionalProperties": false,
+                    "patternProperties": {
+                      "^([a-zA-Z0-9\\.-]{1,253}/)?[a-zA-Z0-9\\._-]{1,63}$": {
+                        "type": "string",
+                        "title": "Annotation",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "labels": {
+                    "type": "object",
+                    "title": "Labels",
+                    "description": "These labels are added to all Kubernetes resources defining this cluster.",
+                    "additionalProperties": false,
+                    "patternProperties": {
+                      "^[a-zA-Z0-9/\\._-]+$": {
+                        "type": "string",
+                        "title": "Label",
+                        "maxLength": 63,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9\\._-]+$"
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string",
+                    "title": "Cluster name",
+                    "description": "Unique identifier, cannot be changed after creation.",
+                    "readOnly": true
+                  },
+                  "organization": {
+                    "type": "string",
+                    "title": "Organization",
+                    "description": "The name of organization that owns the cluster.",
+                    "readOnly": true
+                  },
+                  "servicePriority": {
+                    "type": "string",
+                    "title": "Service priority",
+                    "description": "The relative importance of this cluster.",
+                    "$comment": "Defined in https://github.com/giantswarm/rfc/tree/main/classify-cluster-priority",
+                    "enum": [
+                      "highest",
+                      "medium",
+                      "lowest"
+                    ],
+                    "default": "highest"
+                  }
+                }
+              },
+              "nodePools": {
+                "type": "object",
+                "title": "Node pools",
+                "patternProperties": {
+                  "^[a-z0-9]{5,10}$": {
+                    "type": "object",
+                    "title": "Node pool",
+                    "properties": {
+                      "annotations": {
+                        "type": "object",
+                        "title": "Annotations",
+                        "description": "These annotations are added to all Kubernetes resources defining this node pool.",
+                        "additionalProperties": false,
+                        "patternProperties": {
+                          "^([a-zA-Z0-9\\.-]{1,253}/)?[a-zA-Z0-9\\._-]{1,63}$": {
+                            "type": "string",
+                            "title": "Annotation",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "labels": {
+                        "type": "object",
+                        "title": "Labels",
+                        "description": "These labels are added to all Kubernetes resources defining this node pool.",
+                        "additionalProperties": false,
+                        "patternProperties": {
+                          "^[a-zA-Z0-9/\\._-]+$": {
+                            "type": "string",
+                            "title": "Label",
+                            "maxLength": 63,
+                            "minLength": 0,
+                            "pattern": "^[a-zA-Z0-9\\._-]+$"
+                          }
+                        }
+                      },
+                      "nodeLabels": {
+                        "type": "object",
+                        "title": "Node labels",
+                        "description": "Labels that are passed to kubelet argument 'node-labels'.",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nodeTaints": {
+                        "type": "array",
+                        "title": "Custom node taints",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "effect",
+                            "key",
+                            "value"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "effect": {
+                              "type": "string",
+                              "title": "Effect",
+                              "enum": [
+                                "NoSchedule",
+                                "PreferNoSchedule",
+                                "NoExecute"
+                              ]
+                            },
+                            "key": {
+                              "type": "string",
+                              "title": "Key"
+                            },
+                            "value": {
+                              "type": "string",
+                              "title": "Value"
+                            }
+                          }
+                        }
+                      },
+                      "replicas": {
+                        "type": "integer",
+                        "title": "Replicas",
+                        "description": "The number of node pool nodes.",
+                        "maximum": 1000,
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "providerIntegration": {
+            "type": "object",
+            "title": "Provider integration",
+            "description": "Provider-specific properties that can be set by cluster-$provider chart in order to render correct templates for the provider.",
+            "required": [
+              "connectivity",
+              "components",
+              "controlPlane",
+              "kubernetesVersion",
+              "resourcesApi"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "bastion": {
+                "type": "object",
+                "title": "Internal bastion configuration",
+                "additionalProperties": false,
+                "properties": {
+                  "kubeadmConfig": {
+                    "type": "object",
+                    "title": "Kubeadm config",
+                    "description": "Configuration of bastion nodes.",
+                    "additionalProperties": false,
+                    "properties": {
+                      "ignition": {
+                        "$ref": "#/definitions2/ignition"
+                      },
+                      "preKubeadmCommands": {
+                        "$ref": "#/definitions2/preKubeadmCommands"
+                      }
+                    }
+                  }
+                }
+              },
+              "clusterLabelsTemplateName": {
+                "type": "string",
+                "title": "Cluster labels template name",
+                "description": "The name of the template that renders provider-specific labels for the Cluster resource"
+              },
+              "components": {
+                "type": "object",
+                "title": "Components",
+                "description": "Internal configuration of various components that form the Kubernetes cluster.",
+                "required": [
+                  "containerd"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "containerd": {
+                    "type": "object",
+                    "title": "Containerd",
+                    "description": "Configuration of containerd.",
+                    "required": [
+                      "sandboxContainerImage"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "sandboxContainerImage": {
+                        "type": "object",
+                        "title": "Kubectl image",
+                        "required": [
+                          "name",
+                          "registry",
+                          "tag"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "title": "Repository",
+                            "default": "giantswarm/pause"
+                          },
+                          "registry": {
+                            "type": "string",
+                            "title": "Registry",
+                            "default": "quay.io"
+                          },
+                          "tag": {
+                            "type": "string",
+                            "title": "Tag",
+                            "default": "3.9"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "kubelet": {
+                    "title": "Kubelet",
+                    "description": "Kubelet configuration that is used on all nodes.",
+                    "default": null,
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "gracefulNodeShutdown": {
+                            "type": "object",
+                            "title": "Graceful node shut down",
+                            "description": "It enables kubelet to gracefully evict pods during a node shutdown. It is enabled by default in Kubernetes 1.21.",
+                            "additionalProperties": false,
+                            "properties": {
+                              "shutdownGracePeriod": {
+                                "type": "string",
+                                "title": "Shutdown grace period",
+                                "description": "Specifies the total duration that the node should delay the shutdown by. This is the total grace period for pod termination for both regular and critical pods."
+                              },
+                              "shutdownGracePeriodCriticalPods": {
+                                "type": "string",
+                                "title": "Shutdown grace period for critical pods",
+                                "description": "Specifies the duration used to terminate critical pods during a node shutdown. This should be less than shutdownGracePeriod."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "systemd": {
+                    "title": "systemd",
+                    "default": null,
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "timesyncd": {
+                            "type": "object",
+                            "title": "timesyncd",
+                            "description": "systemd-timesyncd is a system service that may be used to synchronize the local system clock with a remote Network Time Protocol (NTP) server.",
+                            "additionalProperties": false,
+                            "properties": {
+                              "npt": {
+                                "type": "array",
+                                "title": "NTP",
+                                "description": "A list of NTP server host names or IP addresses.",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "connectivity": {
+                "type": "object",
+                "title": "Connectivity",
+                "description": "Internal connectivity configuration.",
+                "required": [
+                  "sshSsoPublicKey"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "sshSsoPublicKey": {
+                    "type": "string",
+                    "title": "SSH public key for single sign-on",
+                    "default": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4cvZ01fLmO9cJbWUj7sfF+NhECgy+Cl0bazSrZX7sU vault-ca@vault.operations.giantswarm.io"
+                  }
+                }
+              },
+              "controlPlane": {
+                "type": "object",
+                "title": "Internal control plane configuration",
+                "required": [
+                  "kubeadmConfig",
+                  "resources"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "kubeadmConfig": {
+                    "type": "object",
+                    "title": "Kubeadm config",
+                    "description": "Configuration of control plane nodes.",
+                    "required": [
+                      "ignition",
+                      "localAPIEndpoint"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "clusterConfiguration": {
+                        "type": "object",
+                        "title": "Cluster configuration",
+                        "description": "Configuration of Kubernetes components.",
+                        "additionalProperties": false,
+                        "properties": {
+                          "apiServer": {
+                            "type": "object",
+                            "title": "API server",
+                            "description": "Configuration of API server.",
+                            "additionalProperties": false,
+                            "properties": {
+                              "additionalAdmissionPlugins": {
+                                "type": "array",
+                                "title": "Additional admission plugins",
+                                "description": "A list of plugins to enable, in addition to the default ones that include DefaultStorageClass, DefaultTolerationSeconds, LimitRanger, MutatingAdmissionWebhook, NamespaceLifecycle, PersistentVolumeClaimResize, Priority, ResourceQuota, ServiceAccount and ValidatingAdmissionWebhook.",
+                                "items": {
+                                  "type": "string",
+                                  "title": "Additional admission plugin"
+                                }
+                              },
+                              "apiAudiences": {
+                                "title": "API audiences",
+                                "description": "Identifiers of the API. The service account token authenticator will validate that tokens used against the API are bound to at least one of these audiences. If the --service-account-issuer flag is configured and this flag is not, 'api-audiences' field defaults to a single element list containing the issuer URL.",
+                                "oneOf": [
+                                  {
+                                    "type": "null"
+                                  },
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "templateName"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "templateName": {
+                                        "type": "string",
+                                        "title": "Template name",
+                                        "description": "The name of the Helm template which renders the 'api-audiences' value"
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "etcdPrefix": {
+                                "type": "string",
+                                "title": "etcd prefix"
+                              },
+                              "extraArgs": {
+                                "type": "object",
+                                "title": "Extra args"
+                              },
+                              "extraCertificateSANs": {
+                                "type": "array",
+                                "title": "Extra certificate SANs",
+                                "description": "The additional certificate SANs that are appended to the default SANs.",
+                                "items": {
+                                  "type": "string",
+                                  "title": "Extra certificate SAN"
+                                }
+                              },
+                              "featureGates": {
+                                "type": "array",
+                                "title": "Feature gates",
+                                "items": {
+                                  "type": "object",
+                                  "title": "Feature gate",
+                                  "required": [
+                                    "name",
+                                    "enabled"
+                                  ],
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "enabled": {
+                                      "type": "boolean",
+                                      "title": "Enabled"
+                                    },
+                                    "name": {
+                                      "type": "string",
+                                      "title": "Name"
+                                    }
+                                  }
+                                }
+                              },
+                              "serviceAccountIssuer": {
+                                "title": "Service account issuer",
+                                "description": "Configuration of the identifier of the service account token issuer. You must specify either URL or clusterDomainPrefix (only one, not both).",
+                                "oneOf": [
+                                  {
+                                    "type": "null"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "clusterDomainPrefix": {
+                                        "type": "string",
+                                        "title": "Cluster domain prefix",
+                                        "description": "Prefix that is prepended to the cluster domain name, so that resulting URL is used as the identifier of the service account token issuer."
+                                      },
+                                      "url": {
+                                        "type": "string",
+                                        "title": "URL",
+                                        "description": "This URL is used as the identifier of the service account token issuer."
+                                      }
+                                    },
+                                    "oneOf": [
+                                      {
+                                        "required": [
+                                          "url"
+                                        ],
+                                        "not": {
+                                          "required": [
+                                            "clusterDomainPrefix"
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "required": [
+                                          "clusterDomainPrefix"
+                                        ],
+                                        "not": {
+                                          "required": [
+                                            "url"
+                                          ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            "default": {}
+                          },
+                          "etcd": {
+                            "type": "object",
+                            "title": "etcd",
+                            "description": "Configuration of etcd",
+                            "additionalProperties": false,
+                            "properties": {
+                              "experimental": {
+                                "type": "object",
+                                "title": "Experimental",
+                                "properties": {
+                                  "peerSkipClientSanVerification": {
+                                    "type": "boolean",
+                                    "title": "Peer skip client SAN verification",
+                                    "description": "Skip verification of SAN field in client certificate for peer connections."
+                                  }
+                                }
+                              },
+                              "extraArgs": {
+                                "type": "object",
+                                "title": "Extra args"
+                              },
+                              "initialCluster": {
+                                "type": "string",
+                                "title": "Initial cluster",
+                                "description": "Initial cluster configuration for bootstrapping."
+                              },
+                              "initialClusterState": {
+                                "type": "string",
+                                "title": "Initial cluster state",
+                                "enum": [
+                                  "new",
+                                  "existing"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "files": {
+                        "type": "array",
+                        "title": "Files",
+                        "description": "These are the files that are included on control plane nodes.",
+                        "items": {
+                          "$ref": "#/definitions2/fileFromSecret"
+                        }
+                      },
+                      "ignition": {
+                        "$ref": "#/definitions2/ignition"
+                      },
+                      "localAPIEndpoint": {
+                        "type": "object",
+                        "title": "Local API endpoint",
+                        "required": [
+                          "bindPort"
+                        ],
+                        "properties": {
+                          "bindPort": {
+                            "type": "integer",
+                            "title": "Bind port",
+                            "description": "Kubernetes API bind port used for API server pod.",
+                            "default": 6443
+                          }
+                        }
+                      },
+                      "postKubeadmCommands": {
+                        "$ref": "#/definitions2/postKubeadmCommands"
+                      },
+                      "preKubeadmCommands": {
+                        "$ref": "#/definitions2/preKubeadmCommands"
+                      }
+                    }
+                  },
+                  "resources": {
+                    "type": "object",
+                    "title": "Resources configuration",
+                    "description": "GVK and other configuration for control plane resources.",
+                    "required": [
+                      "controlPlane",
+                      "infrastructureMachineTemplate",
+                      "infrastructureMachineTemplateSpecTemplateName"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "controlPlane": {
+                        "type": "object",
+                        "title": "Control plane resource config",
+                        "required": [
+                          "api"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "api": {
+                            "$ref": "#/definitions2/gvk"
+                          }
+                        },
+                        "default": {
+                          "api": {
+                            "group": "controlplane.cluster.x-k8s.io",
+                            "kind": "KubeadmControlPlane",
+                            "version": "v1beta1"
+                          }
+                        }
+                      },
+                      "infrastructureMachineTemplate": {
+                        "$ref": "#/definitions2/infrastructureMachineTemplate"
+                      },
+                      "infrastructureMachineTemplateSpecTemplateName": {
+                        "type": "string",
+                        "title": "Infrastructure Machine template spec template name",
+                        "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                      }
+                    }
+                  }
+                }
+              },
+              "hashSalt": {
+                "type": "string",
+                "title": "Hash salt",
+                "description": "If specified, this token is used as a salt to the hash suffix of some resource names. Can be used to force-recreate some resources."
+              },
+              "kubeadmConfig": {
+                "type": "object",
+                "title": "Kubeadm config",
+                "description": "Common kubeadm config for all nodes, including both control plane and workers.",
+                "additionalProperties": false,
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "title": "Files",
+                    "description": "These are the files that are included on all the nodes.",
+                    "items": {
+                      "$ref": "#/definitions2/fileFromSecret"
+                    }
+                  },
+                  "ignition": {
+                    "$ref": "#/definitions2/ignition"
+                  },
+                  "postKubeadmCommands": {
+                    "$ref": "#/definitions2/postKubeadmCommands"
+                  },
+                  "preKubeadmCommands": {
+                    "$ref": "#/definitions2/preKubeadmCommands"
+                  }
+                }
+              },
+              "kubernetesVersion": {
+                "type": "string",
+                "title": "Kubernetes version",
+                "examples": [
+                  "1.24.7"
+                ],
+                "default": "1.24.10"
+              },
+              "pauseProperties": {
+                "type": "object",
+                "title": "Pause properties",
+                "description": "A map of property names and their values that will affect setting pause annotation",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "integer",
+                    "boolean"
+                  ]
+                }
+              },
+              "resourcesApi": {
+                "type": "object",
+                "title": "Resources API",
+                "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider.",
+                "required": [
+                  "clusterResourceEnabled",
+                  "controlPlaneResourceEnabled",
+                  "machinePoolResourcesEnabled",
+                  "machineHealthCheckResourceEnabled",
+                  "bastionResourceEnabled",
+                  "infrastructureCluster"
+                ],
+                "properties": {
+                  "bastionResourceEnabled": {
+                    "type": "boolean",
+                    "title": "Bastion resource enabled",
+                    "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                    "default": true
+                  },
+                  "clusterResourceEnabled": {
+                    "type": "boolean",
+                    "title": "Cluster resource enabled",
+                    "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                    "default": true
+                  },
+                  "controlPlaneResourceEnabled": {
+                    "type": "boolean",
+                    "title": "Control plane resource enabled",
+                    "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                    "default": true
+                  },
+                  "infrastructureCluster": {
+                    "$ref": "#/definitions2/infrastructureCluster"
+                  },
+                  "machineHealthCheckResourceEnabled": {
+                    "type": "boolean",
+                    "title": "MachineHealthCheck resource enabled",
+                    "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                    "default": true
+                  },
+                  "machinePoolResourcesEnabled": {
+                    "type": "boolean",
+                    "title": "Machine pool resources enabled",
+                    "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                    "default": true
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "type": "object",
+                      "properties": {
+                        "machinePoolResourcesEnabled": {
+                          "const": true
+                        }
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "nodePoolKind"
+                      ],
+                      "properties": {
+                        "nodePoolKind": {
+                          "type": "string",
+                          "title": "Node pool kind",
+                          "description": "Specifies which resource kind is used for node pools.",
+                          "enum": [
+                            "MachineDeployment",
+                            "MachinePool"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "type": "object",
+                      "properties": {
+                        "nodePoolKind": {
+                          "const": "MachinePool"
+                        }
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "infrastructureMachinePool"
+                      ],
+                      "properties": {
+                        "infrastructureMachinePool": {
+                          "$ref": "#/definitions2/infrastructureMachinePool"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "type": "object",
+                      "properties": {
+                        "bastionResourceEnabled": {
+                          "const": true
+                        }
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "bastion"
+                      ],
+                      "properties": {
+                        "bastion": {
+                          "type": "object",
+                          "title": "Bastion",
+                          "description": "Configuration of bastion resources API and names.",
+                          "properties": {
+                            "infrastructureMachineTemplate": {
+                              "$ref": "#/definitions2/infrastructureMachineTemplate"
+                            },
+                            "infrastructureMachineTemplateSpecTemplateName": {
+                              "type": "string",
+                              "title": "Infrastructure Machine template spec template name",
+                              "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "additionalProperties": false
+              },
+              "teleport": {
+                "type": "object",
+                "title": "Teleport",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "title": "Enable teleport",
+                    "default": false
+                  },
+                  "proxyAddr": {
+                    "type": "string",
+                    "title": "Teleport proxy address",
+                    "default": "test.teleport.giantswarm.io:443"
+                  },
+                  "version": {
+                    "type": "string",
+                    "title": "Teleport version",
+                    "default": "13.3.8"
+                  }
+                }
+              },
+              "workers": {
+                "type": "object",
+                "title": "Internal workers configuration",
+                "additionalProperties": false,
+                "properties": {
+                  "kubeadmConfig": {
+                    "type": "object",
+                    "title": "Kubeadm config",
+                    "description": "Configuration of workers nodes.",
+                    "required": [
+                      "ignition"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "files": {
+                        "type": "array",
+                        "title": "Files",
+                        "description": "These are the files that are included on worker nodes.",
+                        "items": {
+                          "$ref": "#/definitions2/fileFromSecret"
+                        }
+                      },
+                      "ignition": {
+                        "$ref": "#/definitions2/ignition"
+                      },
+                      "postKubeadmCommands": {
+                        "$ref": "#/definitions2/postKubeadmCommands"
+                      },
+                      "preKubeadmCommands": {
+                        "$ref": "#/definitions2/preKubeadmCommands"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions1": {
+    "ignition": {
+      "type": "object",
+      "title": "Ignition",
+      "description": "Ignition-specific configuration.",
+      "properties": {
+        "containerLinuxConfig": {
+          "type": "object",
+          "title": "Container Linux configuration",
+          "properties": {
+            "additionalConfig": {
+              "type": "object",
+              "title": "Additional config",
+              "description": "Additional configuration to be merged with the Ignition. More info: https://coreos.github.io/ignition/operator-notes/#config-merging.",
+              "properties": {
+                "storage": {
+                  "type": "object",
+                  "title": "Storage",
+                  "description": "It describes the desired state of the system\u2019s storage devices.",
+                  "properties": {
+                    "directories": {
+                      "type": "array",
+                      "title": "Directories",
+                      "description": "The list of directories to be created.",
+                      "items": {
+                        "type": "object",
+                        "title": "Directory",
+                        "description": "The directory to be created.",
+                        "required": [
+                          "path"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "title": "Path",
+                            "description": "The absolute path to the directory."
+                          },
+                          "filesystem": {
+                            "type": "string",
+                            "title": "Filesystem",
+                            "description": "The internal identifier of the filesystem in which to create the directory. This matches the last filesystem with the given identifier."
+                          },
+                          "mode": {
+                            "type": "integer",
+                            "title": "Mode",
+                            "description": "The directory\u2019s permission mode."
+                          },
+                          "overwrite": {
+                            "type": "boolean",
+                            "title": "Overwrite",
+                            "description": "Whether to delete preexisting nodes at the path."
+                          },
+                          "group": {
+                            "type": "object",
+                            "title": "Group",
+                            "description": "It specifies the group of the owner.",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "ID",
+                                "description": "The group ID of the owner."
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "Name",
+                                "description": "The group name of the owner."
+                              }
+                            }
+                          },
+                          "user": {
+                            "type": "object",
+                            "title": "User",
+                            "description": "It specifies the directory\u2019s owner.",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "ID",
+                                "description": "The user ID of the owner."
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "Name",
+                                "description": "The user name of the owner."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "filesystems": {
+                      "type": "array",
+                      "title": "File systems",
+                      "description": "The list of filesystems to be configured and/or used in the \u201cfiles\u201d section. Either \u201cmount\u201d or \u201cpath\u201d needs to be specified.",
+                      "items": {
+                        "type": "object",
+                        "title": "File system",
+                        "description": "The filesystem to be configured and/or used in the \u201cfiles\u201d section. Either \u201cmount\u201d or \u201cpath\u201d needs to be specified.",
+                        "properties": {
+                          "mount": {
+                            "type": "object",
+                            "title": "Mount",
+                            "description": "It contains the set of mount and formatting options for the filesystem. A non-null entry indicates that the filesystem should be mounted before it is used by Ignition.",
+                            "required": [
+                              "device",
+                              "format"
+                            ],
+                            "properties": {
+                              "format": {
+                                "type": "string",
+                                "title": "Format",
+                                "description": "The filesystem format (ext4, btrfs, or xfs).",
+                                "enum": [
+                                  "ext4",
+                                  "btrfs",
+                                  "xfs"
+                                ]
+                              },
+                              "wipeFilesystem": {
+                                "type": "boolean",
+                                "title": "Wipe filesystem",
+                                "description": "Whether or not to wipe the device before filesystem creation, see Ignition\u2019s documentation on filesystems for more information https://github.com/coreos/ignition/blob/main/docs/operator-notes.md#filesystem-reuse-semantics."
+                              },
+                              "uuid": {
+                                "type": "string",
+                                "title": "UUID",
+                                "description": "The uuid of the filesystem."
+                              },
+                              "label": {
+                                "type": "string",
+                                "title": "Label",
+                                "description": "The label of the filesystem."
+                              },
+                              "options": {
+                                "type": "array",
+                                "title": "Options",
+                                "description": "Any additional options to be passed to the format-specific mkfs utility.",
+                                "items": {
+                                  "type": "string",
+                                  "description": "An additional option to be passed to the format-specific mkfs utility.",
+                                  "name": "Option"
+                                }
+                              },
+                              "device": {
+                                "type": "string",
+                                "title": "Device",
+                                "description": "The absolute path to the device. Devices are typically referenced by the /dev/disk/by-* symlinks."
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string",
+                            "title": "Name",
+                            "description": "The identifier for the filesystem, internal to Ignition. This is only required if the filesystem needs to be referenced in the \u201cfiles\u201d section."
+                          },
+                          "path": {
+                            "type": "string",
+                            "title": "Path",
+                            "description": "The mount-point of the filesystem. A non-null entry indicates that the filesystem has already been mounted by the system at the specified path. This is really only useful for \u201c/sysroot\u201d."
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "systemd": {
+                  "type": "object",
+                  "title": "systemd",
+                  "description": "It describes the desired state of the systemd units.",
+                  "properties": {
+                    "units": {
+                      "type": "array",
+                      "title": "Units",
+                      "items": {
+                        "$ref": "#/definitions1/systemdUnit"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "strict": {
+              "type": "boolean",
+              "title": "Strict",
+              "description": "It controls if AdditionalConfig should be strictly parsed. If so, warnings are treated as errors."
+            }
+          }
+        }
+      }
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "machinePoolResourcesEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "nodePoolKind"
+                          ],
+                          "properties": {
+                            "nodePoolKind": {
+                              "type": "string",
+                              "title": "Node pool kind",
+                              "description": "Specifies which resource kind is used for node pools.",
+                              "enum": [
+                                "MachineDeployment",
+                                "MachinePool"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "nodePoolKind": {
+                              "const": "MachinePool"
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "infrastructureMachinePool"
+                          ],
+                          "properties": {
+                            "infrastructureMachinePool": {
+                              "$ref": "#/definitions1/infrastructureMachinePool"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "bastionResourceEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "bastion"
+                          ],
+                          "properties": {
+                            "bastion": {
+                              "type": "object",
+                              "title": "Bastion",
+                              "description": "Configuration of bastion resources API and names.",
+                              "properties": {
+                                "infrastructureMachineTemplate": {
+                                  "$ref": "#/definitions1/infrastructureMachineTemplate"
+                                },
+                                "infrastructureMachineTemplateSpecTemplateName": {
+                                  "type": "string",
+                                  "title": "Infrastructure Machine template spec template name",
+                                  "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^infrastructureMachinePool$": true,
+                "^bastion$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^nodePoolKind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "machinePoolResourcesEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "nodePoolKind"
+                          ],
+                          "properties": {
+                            "nodePoolKind": {
+                              "type": "string",
+                              "title": "Node pool kind",
+                              "description": "Specifies which resource kind is used for node pools.",
+                              "enum": [
+                                "MachineDeployment",
+                                "MachinePool"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "nodePoolKind": {
+                              "const": "MachinePool"
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "infrastructureMachinePool"
+                          ],
+                          "properties": {
+                            "infrastructureMachinePool": {
+                              "$ref": "#/definitions1/infrastructureMachinePool"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "bastionResourceEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^infrastructureMachinePool$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^nodePoolKind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "machinePoolResourcesEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "nodePoolKind"
+                          ],
+                          "properties": {
+                            "nodePoolKind": {
+                              "type": "string",
+                              "title": "Node pool kind",
+                              "description": "Specifies which resource kind is used for node pools.",
+                              "enum": [
+                                "MachineDeployment",
+                                "MachinePool"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "nodePoolKind": {
+                            "const": "MachinePool"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "bastionResourceEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "bastion"
+                          ],
+                          "properties": {
+                            "bastion": {
+                              "type": "object",
+                              "title": "Bastion",
+                              "description": "Configuration of bastion resources API and names.",
+                              "properties": {
+                                "infrastructureMachineTemplate": {
+                                  "$ref": "#/definitions1/infrastructureMachineTemplate"
+                                },
+                                "infrastructureMachineTemplateSpecTemplateName": {
+                                  "type": "string",
+                                  "title": "Infrastructure Machine template spec template name",
+                                  "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^bastion$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^nodePoolKind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "machinePoolResourcesEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "nodePoolKind"
+                          ],
+                          "properties": {
+                            "nodePoolKind": {
+                              "type": "string",
+                              "title": "Node pool kind",
+                              "description": "Specifies which resource kind is used for node pools.",
+                              "enum": [
+                                "MachineDeployment",
+                                "MachinePool"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "nodePoolKind": {
+                            "const": "MachinePool"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "bastionResourceEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^nodePoolKind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "machinePoolResourcesEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "nodePoolKind": {
+                              "const": "MachinePool"
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "infrastructureMachinePool"
+                          ],
+                          "properties": {
+                            "infrastructureMachinePool": {
+                              "$ref": "#/definitions1/infrastructureMachinePool"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "bastionResourceEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "bastion"
+                          ],
+                          "properties": {
+                            "bastion": {
+                              "type": "object",
+                              "title": "Bastion",
+                              "description": "Configuration of bastion resources API and names.",
+                              "properties": {
+                                "infrastructureMachineTemplate": {
+                                  "$ref": "#/definitions1/infrastructureMachineTemplate"
+                                },
+                                "infrastructureMachineTemplateSpecTemplateName": {
+                                  "type": "string",
+                                  "title": "Infrastructure Machine template spec template name",
+                                  "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^infrastructureMachinePool$": true,
+                "^bastion$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^nodePoolKind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "machinePoolResourcesEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "nodePoolKind": {
+                              "const": "MachinePool"
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "infrastructureMachinePool"
+                          ],
+                          "properties": {
+                            "infrastructureMachinePool": {
+                              "$ref": "#/definitions1/infrastructureMachinePool"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "bastionResourceEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^infrastructureMachinePool$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^nodePoolKind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "machinePoolResourcesEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "nodePoolKind": {
+                            "const": "MachinePool"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "bastionResourceEnabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "bastion"
+                          ],
+                          "properties": {
+                            "bastion": {
+                              "type": "object",
+                              "title": "Bastion",
+                              "description": "Configuration of bastion resources API and names.",
+                              "properties": {
+                                "infrastructureMachineTemplate": {
+                                  "$ref": "#/definitions1/infrastructureMachineTemplate"
+                                },
+                                "infrastructureMachineTemplateSpecTemplateName": {
+                                  "type": "string",
+                                  "title": "Infrastructure Machine template spec template name",
+                                  "description": "The name of Helm template that renders Infrastructure Machine template spec."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^bastion$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "title": "Resources API"
+                },
+                {
+                  "description": "Group, version and kind configuration that is required and used by a specific Cluster API provider."
+                },
+                {
+                  "required": [
+                    "clusterResourceEnabled",
+                    "controlPlaneResourceEnabled",
+                    "machinePoolResourcesEnabled",
+                    "machineHealthCheckResourceEnabled",
+                    "bastionResourceEnabled",
+                    "infrastructureCluster"
+                  ]
+                },
+                {
+                  "properties": {
+                    "controlPlaneResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Control plane resource enabled",
+                      "description": "Flag that indicates if the control plane resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machineHealthCheckResourceEnabled": {
+                      "type": "boolean",
+                      "title": "MachineHealthCheck resource enabled",
+                      "description": "Flag that indicates if the MachineHealthCheck resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "machinePoolResourcesEnabled": {
+                      "type": "boolean",
+                      "title": "Machine pool resources enabled",
+                      "description": "Flag that indicates if the machine pool resources are enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "bastionResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Bastion resource enabled",
+                      "description": "Flag that indicates if the Bastion resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "clusterResourceEnabled": {
+                      "type": "boolean",
+                      "title": "Cluster resource enabled",
+                      "description": "Flag that indicates if the Cluster resource is enabled and templated. This is meant only for the initial development purposes for the sake of incrementally integrating cluster chart into cluster-$provider apps.",
+                      "default": true
+                    },
+                    "infrastructureCluster": {
+                      "$ref": "#/definitions1/infrastructureCluster"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "machinePoolResourcesEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "nodePoolKind": {
+                            "const": "MachinePool"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "type": "object",
+                        "properties": {
+                          "bastionResourceEnabled": {
+                            "const": true
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bastionResourceEnabled$": true,
+                "^machineHealthCheckResourceEnabled$": true,
+                "^machinePoolResourcesEnabled$": true,
+                "^controlPlaneResourceEnabled$": true,
+                "^clusterResourceEnabled$": true,
+                "^infrastructureCluster$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "preKubeadmCommands": {
+      "type": "array",
+      "title": "Pre-kubeadm commands",
+      "description": "Extra commands to run before kubeadm runs.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "systemdUnit": {
+      "type": "object",
+      "title": "systemd unit",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "The name of the unit. This must be suffixed with a valid unit type (e.g. \u201cthing.service\u201d)."
+        },
+        "mask": {
+          "type": "boolean",
+          "title": "Masked?",
+          "description": "Whether or not the service shall be masked. When true, the service is masked by symlinking it to /dev/null."
+        },
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled?",
+          "description": "Whether or not the service shall be enabled. When true, the service is enabled. When false, the service is disabled. When omitted, the service is unmodified. In order for this to have any effect, the unit must have an install section."
+        },
+        "contents": {
+          "type": "string",
+          "title": "Contents",
+          "description": "The contents of the unit."
+        },
+        "dropins": {
+          "type": "array",
+          "title": "Unit drop-ins",
+          "description": "The list of drop-ins for the unit",
+          "items": {
+            "type": "object",
+            "title": "Unit drop-in",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "contents": {
+                "type": "string",
+                "title": "Contents",
+                "description": "The contents of the drop-in."
+              },
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "The name of the drop-in. This must be suffixed with \u201c.conf\u201d",
+                "pattern": "^.+\\.conf$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "gvk": {
+      "type": "object",
+      "title": "Schema for Kubernetes API group, version and kind",
+      "description": "It can be used to specify which CustomResourceDefinition is used.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "cluster.x-k8s.io",
+            "controlplane.cluster.x-k8s.io",
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "Cluster",
+            "KubeadmControlPlane"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1alpha2",
+            "v1beta1",
+            "v1"
+          ]
+        }
+      }
+    },
+    "customNodeTaints": {
+      "type": "array",
+      "title": "Custom node taints",
+      "items": {
+        "type": "object",
+        "required": [
+          "effect",
+          "key",
+          "value"
+        ],
+        "properties": {
+          "effect": {
+            "type": "string",
+            "title": "Effect",
+            "enum": [
+              "NoSchedule",
+              "PreferNoSchedule",
+              "NoExecute"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        }
+      }
+    },
+    "infrastructureCluster": {
+      "type": "object",
+      "title": "Infrastructure cluster",
+      "description": "Group, version and kind of provider-specific infrastructure cluster resource.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "AWSCluster",
+            "AzureCluster",
+            "VCDCluster",
+            "VSphereCluster"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1beta1",
+            "v1beta2",
+            "v1",
+            "v2"
+          ]
+        }
+      }
+    },
+    "fileFromSecret": {
+      "type": "object",
+      "title": "File from secret",
+      "description": "It defines a file with content in a Secret",
+      "required": [
+        "contentFrom",
+        "path",
+        "permissions"
+      ],
+      "properties": {
+        "contentFrom": {
+          "type": "object",
+          "title": "Content from",
+          "description": "It specifies where the file content is coming from.",
+          "properties": {
+            "secret": {
+              "type": "object",
+              "title": "Secret",
+              "description": "Kubernetes Secret resource with the file content.",
+              "required": [
+                "key",
+                "name"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "title": "Key",
+                  "description": "Secret key where the file content is."
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "Name of the Secret resource."
+                }
+              }
+            }
+          }
+        },
+        "path": {
+          "type": "string",
+          "title": "Path",
+          "description": "File path on the node."
+        },
+        "permissions": {
+          "type": "string",
+          "title": "Permissions",
+          "description": "File permissions in form 0644",
+          "default": "0644"
+        }
+      }
+    },
+    "postKubeadmCommands": {
+      "type": "array",
+      "title": "Post-kubeadm commands",
+      "description": "Extra commands to run after kubeadm runs.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "infrastructureMachinePool": {
+      "type": "object",
+      "title": "Infrastructure MachinePool",
+      "description": "Group, version and kind of provider-specific infrastructure MachinePool resource.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "AWSMachinePool",
+            "AzureMachinePool"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1beta1",
+            "v1beta2",
+            "v1",
+            "v2"
+          ]
+        }
+      }
+    },
+    "infrastructureMachineTemplate": {
+      "type": "object",
+      "title": "Infrastructure Machine template",
+      "description": "Group, version and kind of provider-specific infrastructure Machine template resource.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "AWSMachineTemplate",
+            "AzureMachineTemplate"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1beta1",
+            "v1beta2",
+            "v1",
+            "v2"
+          ]
+        }
+      }
+    }
+  },
+  "definitions2": {
+    "customNodeTaints": {
+      "type": "array",
+      "title": "Custom node taints",
+      "items": {
+        "type": "object",
+        "required": [
+          "effect",
+          "key",
+          "value"
+        ],
+        "properties": {
+          "effect": {
+            "type": "string",
+            "title": "Effect",
+            "enum": [
+              "NoSchedule",
+              "PreferNoSchedule",
+              "NoExecute"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        }
+      }
+    },
+    "fileFromSecret": {
+      "type": "object",
+      "title": "File from secret",
+      "description": "It defines a file with content in a Secret",
+      "required": [
+        "contentFrom",
+        "path",
+        "permissions"
+      ],
+      "properties": {
+        "contentFrom": {
+          "type": "object",
+          "title": "Content from",
+          "description": "It specifies where the file content is coming from.",
+          "properties": {
+            "secret": {
+              "type": "object",
+              "title": "Secret",
+              "description": "Kubernetes Secret resource with the file content.",
+              "required": [
+                "key",
+                "name"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "title": "Key",
+                  "description": "Secret key where the file content is."
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "Name of the Secret resource."
+                }
+              }
+            }
+          }
+        },
+        "path": {
+          "type": "string",
+          "title": "Path",
+          "description": "File path on the node."
+        },
+        "permissions": {
+          "type": "string",
+          "title": "Permissions",
+          "description": "File permissions in form 0644",
+          "default": "0644"
+        }
+      }
+    },
+    "gvk": {
+      "type": "object",
+      "title": "Schema for Kubernetes API group, version and kind",
+      "description": "It can be used to specify which CustomResourceDefinition is used.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "cluster.x-k8s.io",
+            "controlplane.cluster.x-k8s.io",
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "Cluster",
+            "KubeadmControlPlane"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1alpha2",
+            "v1beta1",
+            "v1"
+          ]
+        }
+      }
+    },
+    "ignition": {
+      "type": "object",
+      "title": "Ignition",
+      "description": "Ignition-specific configuration.",
+      "properties": {
+        "containerLinuxConfig": {
+          "type": "object",
+          "title": "Container Linux configuration",
+          "properties": {
+            "additionalConfig": {
+              "type": "object",
+              "title": "Additional config",
+              "description": "Additional configuration to be merged with the Ignition. More info: https://coreos.github.io/ignition/operator-notes/#config-merging.",
+              "properties": {
+                "storage": {
+                  "type": "object",
+                  "title": "Storage",
+                  "description": "It describes the desired state of the system\u2019s storage devices.",
+                  "properties": {
+                    "directories": {
+                      "type": "array",
+                      "title": "Directories",
+                      "description": "The list of directories to be created.",
+                      "items": {
+                        "type": "object",
+                        "title": "Directory",
+                        "description": "The directory to be created.",
+                        "required": [
+                          "path"
+                        ],
+                        "properties": {
+                          "filesystem": {
+                            "type": "string",
+                            "title": "Filesystem",
+                            "description": "The internal identifier of the filesystem in which to create the directory. This matches the last filesystem with the given identifier."
+                          },
+                          "group": {
+                            "type": "object",
+                            "title": "Group",
+                            "description": "It specifies the group of the owner.",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "ID",
+                                "description": "The group ID of the owner."
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "Name",
+                                "description": "The group name of the owner."
+                              }
+                            }
+                          },
+                          "mode": {
+                            "type": "integer",
+                            "title": "Mode",
+                            "description": "The directory\u2019s permission mode."
+                          },
+                          "overwrite": {
+                            "type": "boolean",
+                            "title": "Overwrite",
+                            "description": "Whether to delete preexisting nodes at the path."
+                          },
+                          "path": {
+                            "type": "string",
+                            "title": "Path",
+                            "description": "The absolute path to the directory."
+                          },
+                          "user": {
+                            "type": "object",
+                            "title": "User",
+                            "description": "It specifies the directory\u2019s owner.",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "ID",
+                                "description": "The user ID of the owner."
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "Name",
+                                "description": "The user name of the owner."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "filesystems": {
+                      "type": "array",
+                      "title": "File systems",
+                      "description": "The list of filesystems to be configured and/or used in the \u201cfiles\u201d section. Either \u201cmount\u201d or \u201cpath\u201d needs to be specified.",
+                      "items": {
+                        "type": "object",
+                        "title": "File system",
+                        "description": "The filesystem to be configured and/or used in the \u201cfiles\u201d section. Either \u201cmount\u201d or \u201cpath\u201d needs to be specified.",
+                        "properties": {
+                          "mount": {
+                            "type": "object",
+                            "title": "Mount",
+                            "description": "It contains the set of mount and formatting options for the filesystem. A non-null entry indicates that the filesystem should be mounted before it is used by Ignition.",
+                            "required": [
+                              "device",
+                              "format"
+                            ],
+                            "properties": {
+                              "device": {
+                                "type": "string",
+                                "title": "Device",
+                                "description": "The absolute path to the device. Devices are typically referenced by the /dev/disk/by-* symlinks."
+                              },
+                              "format": {
+                                "type": "string",
+                                "title": "Format",
+                                "description": "The filesystem format (ext4, btrfs, or xfs).",
+                                "enum": [
+                                  "ext4",
+                                  "btrfs",
+                                  "xfs"
+                                ]
+                              },
+                              "label": {
+                                "type": "string",
+                                "title": "Label",
+                                "description": "The label of the filesystem."
+                              },
+                              "options": {
+                                "type": "array",
+                                "title": "Options",
+                                "description": "Any additional options to be passed to the format-specific mkfs utility.",
+                                "items": {
+                                  "type": "string",
+                                  "description": "An additional option to be passed to the format-specific mkfs utility.",
+                                  "name": "Option"
+                                }
+                              },
+                              "uuid": {
+                                "type": "string",
+                                "title": "UUID",
+                                "description": "The uuid of the filesystem."
+                              },
+                              "wipeFilesystem": {
+                                "type": "boolean",
+                                "title": "Wipe filesystem",
+                                "description": "Whether or not to wipe the device before filesystem creation, see Ignition\u2019s documentation on filesystems for more information https://github.com/coreos/ignition/blob/main/docs/operator-notes.md#filesystem-reuse-semantics."
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string",
+                            "title": "Name",
+                            "description": "The identifier for the filesystem, internal to Ignition. This is only required if the filesystem needs to be referenced in the \u201cfiles\u201d section."
+                          },
+                          "path": {
+                            "type": "string",
+                            "title": "Path",
+                            "description": "The mount-point of the filesystem. A non-null entry indicates that the filesystem has already been mounted by the system at the specified path. This is really only useful for \u201c/sysroot\u201d."
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "systemd": {
+                  "type": "object",
+                  "title": "systemd",
+                  "description": "It describes the desired state of the systemd units.",
+                  "properties": {
+                    "units": {
+                      "type": "array",
+                      "title": "Units",
+                      "items": {
+                        "$ref": "#/definitions2/systemdUnit"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "strict": {
+              "type": "boolean",
+              "title": "Strict",
+              "description": "It controls if AdditionalConfig should be strictly parsed. If so, warnings are treated as errors."
+            }
+          }
+        }
+      }
+    },
+    "infrastructureCluster": {
+      "type": "object",
+      "title": "Infrastructure cluster",
+      "description": "Group, version and kind of provider-specific infrastructure cluster resource.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "AWSCluster",
+            "AzureCluster",
+            "VCDCluster",
+            "VSphereCluster"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1beta1",
+            "v1beta2",
+            "v1",
+            "v2"
+          ]
+        }
+      }
+    },
+    "infrastructureMachinePool": {
+      "type": "object",
+      "title": "Infrastructure MachinePool",
+      "description": "Group, version and kind of provider-specific infrastructure MachinePool resource.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "AWSMachinePool",
+            "AzureMachinePool"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1beta1",
+            "v1beta2",
+            "v1",
+            "v2"
+          ]
+        }
+      }
+    },
+    "infrastructureMachineTemplate": {
+      "type": "object",
+      "title": "Infrastructure Machine template",
+      "description": "Group, version and kind of provider-specific infrastructure Machine template resource.",
+      "required": [
+        "group",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "title": "API group",
+          "examples": [
+            "infrastructure.cluster.x-k8s.io"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "title": "API kind",
+          "examples": [
+            "AWSMachineTemplate",
+            "AzureMachineTemplate"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "title": "API version",
+          "examples": [
+            "v1alpha1",
+            "v1beta1",
+            "v1beta2",
+            "v1",
+            "v2"
+          ]
+        }
+      }
+    },
+    "postKubeadmCommands": {
+      "type": "array",
+      "title": "Post-kubeadm commands",
+      "description": "Extra commands to run after kubeadm runs.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preKubeadmCommands": {
+      "type": "array",
+      "title": "Pre-kubeadm commands",
+      "description": "Extra commands to run before kubeadm runs.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "systemdUnit": {
+      "type": "object",
+      "title": "systemd unit",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "contents": {
+          "type": "string",
+          "title": "Contents",
+          "description": "The contents of the unit."
+        },
+        "dropins": {
+          "type": "array",
+          "title": "Unit drop-ins",
+          "description": "The list of drop-ins for the unit",
+          "items": {
+            "type": "object",
+            "title": "Unit drop-in",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "contents": {
+                "type": "string",
+                "title": "Contents",
+                "description": "The contents of the drop-in."
+              },
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "The name of the drop-in. This must be suffixed with \u201c.conf\u201d",
+                "pattern": "^.+\\.conf$"
+              }
+            }
+          }
+        },
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled?",
+          "description": "Whether or not the service shall be enabled. When true, the service is enabled. When false, the service is disabled. When omitted, the service is unmodified. In order for this to have any effect, the unit must have an install section."
+        },
+        "mask": {
+          "type": "boolean",
+          "title": "Masked?",
+          "description": "Whether or not the service shall be masked. When true, the service is masked by symlinking it to /dev/null."
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "The name of the unit. This must be suffixed with a valid unit type (e.g. \u201cthing.service\u201d)."
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions2/customNodeTaints"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/customNodeTaints"
+      }
+    },
+    {
+      "$ref": "#/definitions2/infrastructureMachineTemplate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/infrastructureMachineTemplate"
+      }
+    },
+    {
+      "$ref": "#/definitions2/fileFromSecret"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/fileFromSecret"
+      }
+    },
+    {
+      "$ref": "#/definitions2/infrastructureCluster"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/infrastructureCluster"
+      }
+    },
+    {
+      "$ref": "#/definitions1/gvk"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/gvk"
+      }
+    },
+    {
+      "$ref": "#/definitions1/customNodeTaints"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/customNodeTaints"
+      }
+    },
+    {
+      "$ref": "#/definitions2/postKubeadmCommands"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/postKubeadmCommands"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ignition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ignition"
+      }
+    },
+    {
+      "$ref": "#/definitions2/infrastructureMachinePool"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/infrastructureMachinePool"
+      }
+    },
+    {
+      "$ref": "#/definitions1/infrastructureMachinePool"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/infrastructureMachinePool"
+      }
+    },
+    {
+      "$ref": "#/definitions1/ignition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/ignition"
+      }
+    },
+    {
+      "$ref": "#/definitions1/fileFromSecret"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/fileFromSecret"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/systemdUnit"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/systemdUnit"
+      }
+    },
+    {
+      "$ref": "#/definitions1/infrastructureCluster"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/infrastructureCluster"
+      }
+    },
+    {
+      "$ref": "#/definitions2/preKubeadmCommands"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/preKubeadmCommands"
+      }
+    },
+    {
+      "$ref": "#/definitions1/preKubeadmCommands"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/preKubeadmCommands"
+      }
+    },
+    {
+      "$ref": "#/definitions1/infrastructureMachineTemplate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/infrastructureMachineTemplate"
+      }
+    },
+    {
+      "$ref": "#/definitions2/systemdUnit"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/systemdUnit"
+      }
+    },
+    {
+      "$ref": "#/definitions2/gvk"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/gvk"
+      }
+    },
+    {
+      "$ref": "#/definitions1/postKubeadmCommands"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/postKubeadmCommands"
+      }
+    }
+  ]
+}

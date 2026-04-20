@@ -1,0 +1,158 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Whitelist",
+        "description": "Whitelist",
+        "type": "object",
+        "properties": {
+          "ignoreSevertiesAtOrBelow": {
+            "type": "string",
+            "enum": [
+              "negligible",
+              "Negligible",
+              "low",
+              "Low",
+              "medium",
+              "Medium",
+              "high",
+              "High"
+            ]
+          },
+          "vulnerabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "cveId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "cveId",
+                "rationale"
+              ],
+              "additionalProperties": false
+            },
+            "_uniqueItems": true
+          }
+        },
+        "required": [
+          "ignoreSevertiesAtOrBelow"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Whitelist",
+              "description": "Whitelist",
+              "type": "object",
+              "properties": {
+                "ignoreSevertiesAtOrBelow": {
+                  "type": "string",
+                  "enum": [
+                    "negligible",
+                    "Negligible",
+                    "low",
+                    "Low",
+                    "medium",
+                    "Medium",
+                    "high",
+                    "High"
+                  ]
+                },
+                "vulnerabilities": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  },
+                  "_uniqueItems": true
+                }
+              },
+              "required": [
+                "ignoreSevertiesAtOrBelow"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^ignoreSevertiesAtOrBelow$": true,
+                "^vulnerabilities$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "cveId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "cveId",
+                "rationale"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^cveId$": true,
+                "^rationale$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

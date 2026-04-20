@@ -1,0 +1,1769 @@
+[
+  {
+    "id": 143,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "Schema for the xAPI Statements endpoint",
+      "getParameters": {
+        "type": [
+          "object",
+          "array"
+        ],
+        "anyOf": [
+          {
+            "type": "array",
+            "maxItems": 0
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "not": {}
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "statementId",
+                    "voidedStatementId"
+                  ]
+                }
+              ]
+            },
+            "properties": {
+              "statementId": {
+                "$ref": "#/definitions2/uuid"
+              },
+              "voidedStatementId": {
+                "$ref": "#/definitions2/uuid"
+              },
+              "agent": {
+                "type": "object",
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/agent"
+                  },
+                  {
+                    "$ref": "#/definitions2/group"
+                  }
+                ]
+              },
+              "verb": {
+                "type": "string",
+                "format": "iri"
+              },
+              "activity": {
+                "type": "string",
+                "format": "iri"
+              },
+              "registration": {
+                "type": "string",
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/uuid"
+                  }
+                ]
+              },
+              "related_activities": {
+                "type": "boolean"
+              },
+              "related_agents": {
+                "type": "boolean"
+              },
+              "since": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "until": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "until_id": {
+                "type": "string"
+              },
+              "since_id": {
+                "type": "string"
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 0
+              },
+              "format": {
+                "enum": [
+                  "ids",
+                  "exact",
+                  "canonical"
+                ]
+              },
+              "attachments": {
+                "type": "boolean"
+              },
+              "ascending": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "postBody": {
+        "type": [
+          "object",
+          "array"
+        ],
+        "oneOf": [
+          {
+            "$ref": "#/definitions2/statement"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions2/statement"
+            }
+          }
+        ]
+      },
+      "putParameters": {
+        "type": [
+          "object",
+          "array"
+        ],
+        "required": [
+          "statementId"
+        ],
+        "properties": {
+          "statementId": {
+            "$ref": "#/definitions2/uuid"
+          }
+        }
+      },
+      "putBody": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/definitions2/statement"
+          }
+        ]
+      },
+      "definitions2": {
+        "statement": {
+          "type": "object",
+          "required": [
+            "actor",
+            "verb",
+            "object"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/definitions2/uuid"
+            },
+            "version": {
+              "type": "string",
+              "enum": [
+                "1.0.0"
+              ]
+            },
+            "actor": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/agent"
+                },
+                {
+                  "$ref": "#/definitions2/group"
+                }
+              ]
+            },
+            "verb": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "iri"
+                },
+                "display": {
+                  "$ref": "#/definitions2/languagemap"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "object": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/activity"
+                },
+                {
+                  "$ref": "#/definitions2/objectagent"
+                },
+                {
+                  "$ref": "#/definitions2/group"
+                },
+                {
+                  "$ref": "#/definitions2/statementref"
+                },
+                {
+                  "$ref": "#/definitions2/substatement"
+                }
+              ]
+            },
+            "objectType": {},
+            "result": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "object",
+                  "properties": {
+                    "scaled": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "raw": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "success": {
+                  "type": "boolean"
+                },
+                "completion": {
+                  "type": "boolean"
+                },
+                "response": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "string"
+                },
+                "extensions": {
+                  "$ref": "#/definitions2/extensions"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "context": {
+              "type": "object",
+              "properties": {
+                "registration": {
+                  "type": "string",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/uuid"
+                    }
+                  ]
+                },
+                "instructor": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/agent"
+                    },
+                    {
+                      "$ref": "#/definitions2/group"
+                    }
+                  ]
+                },
+                "team": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/agent"
+                    },
+                    {
+                      "$ref": "#/definitions2/group"
+                    }
+                  ]
+                },
+                "contextActivities": {
+                  "type": "object",
+                  "properties": {
+                    "parent": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    },
+                    "grouping": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    },
+                    "category": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    },
+                    "other": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                },
+                "revision": {
+                  "type": "string"
+                },
+                "platform": {
+                  "type": "string"
+                },
+                "language": {
+                  "type": "string"
+                },
+                "statement": {
+                  "$ref": "#/definitions2/statementref"
+                },
+                "extensions": {
+                  "$ref": "#/definitions2/extensions"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "timestamp": {
+              "type": "string"
+            },
+            "stored": {
+              "type": "string"
+            },
+            "authority": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/agent"
+                },
+                {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/anonymousgroup"
+                    }
+                  ],
+                  "properties": {
+                    "member": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              ]
+            },
+            "voided": {
+              "type": "boolean"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/attachment"
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "statementref": {
+          "type": "object",
+          "required": [
+            "objectType",
+            "id"
+          ],
+          "properties": {
+            "objectType": {
+              "enum": [
+                "StatementRef"
+              ]
+            },
+            "id": {
+              "$ref": "#/definitions2/uuid"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "substatement": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/statement"
+            }
+          ],
+          "required": [
+            "objectType"
+          ],
+          "properties": {
+            "objectType": {
+              "enum": [
+                "SubStatement"
+              ]
+            },
+            "object": {
+              "type": "object",
+              "properties": {
+                "objectType": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "Activity",
+                        "Agent",
+                        "Group",
+                        "StatementRef"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "patternProperties": {
+            "^(id|stored|authority|voided|version)$": {
+              "type": "null"
+            }
+          }
+        },
+        "activity": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "iri"
+            },
+            "objectType": {
+              "enum": [
+                "Activity"
+              ]
+            },
+            "definition": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions2/languagemap"
+                },
+                "description": {
+                  "$ref": "#/definitions2/languagemap"
+                },
+                "type": {
+                  "type": "string",
+                  "format": "iri"
+                },
+                "moreInfo": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "interactionType": {
+                  "enum": [
+                    "true-false",
+                    "choice",
+                    "fill-in",
+                    "long-fill-in",
+                    "matching",
+                    "performance",
+                    "sequencing",
+                    "likert",
+                    "numeric",
+                    "other"
+                  ]
+                },
+                "correctResponsesPattern": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "extensions": {
+                  "$ref": "#/definitions2/extensions"
+                }
+              },
+              "patternProperties": {
+                "^(choices|scale|source|target|steps)$": {
+                  "type": [
+                    "object",
+                    "array"
+                  ],
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/interaction"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/interaction"
+                      }
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z][a-zA-Z+.-]*:": {}
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "languagemap": {
+          "type": "object",
+          "patternProperties": {
+            "^(([a-zA-Z]{2,8}((-[a-zA-Z]{3}){0,3})(-[a-zA-Z]{4})?((-[a-zA-Z]{2})|(-\\d{3}))?(-[a-zA-Z\\d]{4,8})*(-[a-zA-Z\\d](-[a-zA-Z\\d]{1,8})+)*)|x(-[a-zA-Z\\d]{1,8})+|en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tsu|i-tay|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "mbox": {
+          "type": "object",
+          "required": [
+            "mbox"
+          ],
+          "properties": {
+            "mbox": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^mailto:"
+            }
+          },
+          "patternProperties": {
+            "^(mbox_sha1sum|account|openid)$": {
+              "type": "null"
+            }
+          }
+        },
+        "mbox_sha1sum": {
+          "type": "object",
+          "required": [
+            "mbox_sha1sum"
+          ],
+          "properties": {
+            "mbox_sha1sum": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{40}$"
+            }
+          },
+          "patternProperties": {
+            "^(mbox|account|openid)$": {
+              "type": "null"
+            }
+          }
+        },
+        "account": {
+          "type": "object",
+          "required": [
+            "account"
+          ],
+          "properties": {
+            "account": {
+              "type": "object",
+              "required": [
+                "homePage",
+                "name"
+              ],
+              "properties": {
+                "homePage": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          },
+          "patternProperties": {
+            "^(mbox_sha1sum|mbox|openid)$": {
+              "type": "null"
+            }
+          }
+        },
+        "openid": {
+          "type": "object",
+          "required": [
+            "openid"
+          ],
+          "properties": {
+            "openid": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "patternProperties": {
+            "^(mbox_sha1sum|account|mbox)$": {
+              "type": "null"
+            }
+          }
+        },
+        "inversefunctional": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/mbox"
+            },
+            {
+              "$ref": "#/definitions2/mbox_sha1sum"
+            },
+            {
+              "$ref": "#/definitions2/account"
+            },
+            {
+              "$ref": "#/definitions2/openid"
+            }
+          ]
+        },
+        "objectagent": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/agent"
+            }
+          ],
+          "required": [
+            "objectType"
+          ],
+          "properties": {
+            "objectType": {
+              "type": "string"
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "objectType": {
+                  "enum": [
+                    "Agent"
+                  ]
+                },
+                "mbox": {},
+                "mbox_sha1sum": {},
+                "account": {},
+                "openid": {}
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/mbox"
+                },
+                {
+                  "$ref": "#/definitions2/mbox_sha1sum"
+                },
+                {
+                  "$ref": "#/definitions2/account"
+                },
+                {
+                  "$ref": "#/definitions2/openid"
+                }
+              ],
+              "additionalProperties": {}
+            }
+          ]
+        },
+        "group": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/anonymousgroup"
+            },
+            {
+              "$ref": "#/definitions2/identifiedgroup"
+            }
+          ]
+        },
+        "anonymousgroup": {
+          "required": [
+            "objectType",
+            "member"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "objectType": {
+              "enum": [
+                "Group"
+              ]
+            },
+            "member": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions2/agent"
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "identifiedgroup": {
+          "required": [
+            "objectType"
+          ],
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "objectType": {
+                  "enum": [
+                    "Group"
+                  ]
+                },
+                "member": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/definitions2/agent"
+                  }
+                },
+                "mbox": {},
+                "mbox_sha1sum": {},
+                "account": {},
+                "openid": {}
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/mbox"
+                },
+                {
+                  "$ref": "#/definitions2/mbox_sha1sum"
+                },
+                {
+                  "$ref": "#/definitions2/account"
+                },
+                {
+                  "$ref": "#/definitions2/openid"
+                }
+              ],
+              "additionalProperties": {}
+            }
+          ]
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "attachment": {
+          "type": "object",
+          "required": [
+            "usageType",
+            "display",
+            "contentType",
+            "length",
+            "sha2"
+          ],
+          "properties": {
+            "usageType": {
+              "type": "string",
+              "format": "iri"
+            },
+            "display": {
+              "$ref": "#/definitions2/languagemap"
+            },
+            "description": {
+              "$ref": "#/definitions2/languagemap"
+            },
+            "contentType": {
+              "type": "string"
+            },
+            "length": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sha2": {
+              "type": "string"
+            },
+            "fileUrl": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "interaction": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "description": {
+              "$ref": "#/definitions2/languagemap"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "statement": {
+          "type": "object",
+          "required": [
+            "actor",
+            "verb",
+            "object"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/definitions2/uuid"
+            },
+            "version": {
+              "type": "string",
+              "enum": [
+                "1.0.0"
+              ]
+            },
+            "actor": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/agent"
+                },
+                {
+                  "$ref": "#/definitions2/group"
+                }
+              ]
+            },
+            "verb": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "iri"
+                },
+                "display": {
+                  "$ref": "#/definitions2/languagemap"
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "object": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/activity"
+                },
+                {
+                  "$ref": "#/definitions2/objectagent"
+                },
+                {
+                  "$ref": "#/definitions2/group"
+                },
+                {
+                  "$ref": "#/definitions2/statementref"
+                },
+                {
+                  "$ref": "#/definitions2/substatement"
+                }
+              ]
+            },
+            "objectType": {},
+            "result": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "object",
+                  "properties": {
+                    "scaled": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "raw": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "success": {
+                  "type": "boolean"
+                },
+                "completion": {
+                  "type": "boolean"
+                },
+                "response": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "string"
+                },
+                "extensions": {
+                  "$ref": "#/definitions2/extensions"
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "context": {
+              "type": "object",
+              "properties": {
+                "registration": {
+                  "type": "string",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/uuid"
+                    }
+                  ]
+                },
+                "instructor": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/agent"
+                    },
+                    {
+                      "$ref": "#/definitions2/group"
+                    }
+                  ]
+                },
+                "team": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/agent"
+                    },
+                    {
+                      "$ref": "#/definitions2/group"
+                    }
+                  ]
+                },
+                "contextActivities": {
+                  "type": "object",
+                  "properties": {
+                    "parent": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    },
+                    "grouping": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    },
+                    "category": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    },
+                    "other": {
+                      "type": [
+                        "object",
+                        "array"
+                      ],
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/activity"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/activity"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "unevaluatedProperties": false
+                },
+                "revision": {
+                  "type": "string"
+                },
+                "platform": {
+                  "type": "string"
+                },
+                "language": {
+                  "type": "string"
+                },
+                "statement": {
+                  "$ref": "#/definitions2/statementref"
+                },
+                "extensions": {
+                  "$ref": "#/definitions2/extensions"
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "timestamp": {
+              "type": "string"
+            },
+            "stored": {
+              "type": "string"
+            },
+            "authority": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/agent"
+                },
+                {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/anonymousgroup"
+                    }
+                  ],
+                  "properties": {
+                    "member": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              ]
+            },
+            "voided": {
+              "type": "boolean"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/attachment"
+              }
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "statementref": {
+          "type": "object",
+          "required": [
+            "objectType",
+            "id"
+          ],
+          "properties": {
+            "objectType": {
+              "enum": [
+                "StatementRef"
+              ]
+            },
+            "id": {
+              "$ref": "#/definitions2/uuid"
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "substatement": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/statement"
+            }
+          ],
+          "required": [
+            "objectType"
+          ],
+          "properties": {
+            "objectType": {
+              "enum": [
+                "SubStatement"
+              ]
+            },
+            "object": {
+              "type": "object",
+              "properties": {
+                "objectType": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "Activity",
+                        "Agent",
+                        "Group",
+                        "StatementRef"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "patternProperties": {
+            "^(id|stored|authority|voided|version)$": {
+              "type": "null"
+            }
+          }
+        },
+        "activity": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "iri"
+            },
+            "objectType": {
+              "enum": [
+                "Activity"
+              ]
+            },
+            "definition": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions2/languagemap"
+                },
+                "description": {
+                  "$ref": "#/definitions2/languagemap"
+                },
+                "type": {
+                  "type": "string",
+                  "format": "iri"
+                },
+                "moreInfo": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "interactionType": {
+                  "enum": [
+                    "true-false",
+                    "choice",
+                    "fill-in",
+                    "long-fill-in",
+                    "matching",
+                    "performance",
+                    "sequencing",
+                    "likert",
+                    "numeric",
+                    "other"
+                  ]
+                },
+                "correctResponsesPattern": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "extensions": {
+                  "$ref": "#/definitions2/extensions"
+                }
+              },
+              "patternProperties": {
+                "^(choices|scale|source|target|steps)$": {
+                  "type": [
+                    "object",
+                    "array"
+                  ],
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions2/interaction"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/interaction"
+                      }
+                    }
+                  ]
+                }
+              },
+              "unevaluatedProperties": false
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z][a-zA-Z+.-]*:": {}
+          },
+          "unevaluatedProperties": false
+        },
+        "languagemap": {
+          "type": "object",
+          "patternProperties": {
+            "^(([a-zA-Z]{2,8}((-[a-zA-Z]{3}){0,3})(-[a-zA-Z]{4})?((-[a-zA-Z]{2})|(-\\d{3}))?(-[a-zA-Z\\d]{4,8})*(-[a-zA-Z\\d](-[a-zA-Z\\d]{1,8})+)*)|x(-[a-zA-Z\\d]{1,8})+|en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tsu|i-tay|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)$": {
+              "type": "string"
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "mbox": {
+          "type": "object",
+          "required": [
+            "mbox"
+          ],
+          "properties": {
+            "mbox": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^mailto:"
+            }
+          },
+          "patternProperties": {
+            "^(mbox_sha1sum|account|openid)$": {
+              "type": "null"
+            }
+          }
+        },
+        "mbox_sha1sum": {
+          "type": "object",
+          "required": [
+            "mbox_sha1sum"
+          ],
+          "properties": {
+            "mbox_sha1sum": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{40}$"
+            }
+          },
+          "patternProperties": {
+            "^(mbox|account|openid)$": {
+              "type": "null"
+            }
+          }
+        },
+        "account": {
+          "type": "object",
+          "required": [
+            "account"
+          ],
+          "properties": {
+            "account": {
+              "type": "object",
+              "required": [
+                "homePage",
+                "name"
+              ],
+              "properties": {
+                "homePage": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "unevaluatedProperties": false
+            }
+          },
+          "patternProperties": {
+            "^(mbox_sha1sum|mbox|openid)$": {
+              "type": "null"
+            }
+          }
+        },
+        "openid": {
+          "type": "object",
+          "required": [
+            "openid"
+          ],
+          "properties": {
+            "openid": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "patternProperties": {
+            "^(mbox_sha1sum|account|mbox)$": {
+              "type": "null"
+            }
+          }
+        },
+        "inversefunctional": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/mbox"
+            },
+            {
+              "$ref": "#/definitions2/mbox_sha1sum"
+            },
+            {
+              "$ref": "#/definitions2/account"
+            },
+            {
+              "$ref": "#/definitions2/openid"
+            }
+          ]
+        },
+        "objectagent": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/agent"
+            }
+          ],
+          "required": [
+            "objectType"
+          ],
+          "properties": {
+            "objectType": {
+              "type": "string"
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "objectType": {
+                  "enum": [
+                    "Agent"
+                  ]
+                },
+                "mbox": {},
+                "mbox_sha1sum": {},
+                "account": {},
+                "openid": {}
+              },
+              "unevaluatedProperties": false
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/mbox"
+                },
+                {
+                  "$ref": "#/definitions2/mbox_sha1sum"
+                },
+                {
+                  "$ref": "#/definitions2/account"
+                },
+                {
+                  "$ref": "#/definitions2/openid"
+                }
+              ],
+              "unevaluatedProperties": true
+            }
+          ]
+        },
+        "group": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/anonymousgroup"
+            },
+            {
+              "$ref": "#/definitions2/identifiedgroup"
+            }
+          ]
+        },
+        "anonymousgroup": {
+          "required": [
+            "objectType",
+            "member"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "objectType": {
+              "enum": [
+                "Group"
+              ]
+            },
+            "member": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions2/agent"
+              }
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "identifiedgroup": {
+          "required": [
+            "objectType"
+          ],
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "objectType": {
+                  "enum": [
+                    "Group"
+                  ]
+                },
+                "member": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/definitions2/agent"
+                  }
+                },
+                "mbox": {},
+                "mbox_sha1sum": {},
+                "account": {},
+                "openid": {}
+              },
+              "unevaluatedProperties": false
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/mbox"
+                },
+                {
+                  "$ref": "#/definitions2/mbox_sha1sum"
+                },
+                {
+                  "$ref": "#/definitions2/account"
+                },
+                {
+                  "$ref": "#/definitions2/openid"
+                }
+              ],
+              "unevaluatedProperties": true
+            }
+          ]
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "attachment": {
+          "type": "object",
+          "required": [
+            "usageType",
+            "display",
+            "contentType",
+            "length",
+            "sha2"
+          ],
+          "properties": {
+            "usageType": {
+              "type": "string",
+              "format": "iri"
+            },
+            "display": {
+              "$ref": "#/definitions2/languagemap"
+            },
+            "description": {
+              "$ref": "#/definitions2/languagemap"
+            },
+            "contentType": {
+              "type": "string"
+            },
+            "length": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sha2": {
+              "type": "string"
+            },
+            "fileUrl": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "interaction": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "description": {
+              "$ref": "#/definitions2/languagemap"
+            }
+          },
+          "unevaluatedProperties": false
+        }
+      },
+      "description": "Schema for the xAPI Statements endpoint",
+      "getParameters": {
+        "type": [
+          "object",
+          "array"
+        ],
+        "anyOf": [
+          {
+            "type": "array",
+            "maxItems": 0
+          },
+          {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "statementId",
+                    "voidedStatementId"
+                  ]
+                }
+              ]
+            },
+            "properties": {
+              "statementId": {
+                "$ref": "#/definitions2/uuid"
+              },
+              "voidedStatementId": {
+                "$ref": "#/definitions2/uuid"
+              },
+              "agent": {
+                "type": "object",
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/agent"
+                  },
+                  {
+                    "$ref": "#/definitions2/group"
+                  }
+                ]
+              },
+              "verb": {
+                "type": "string",
+                "format": "iri"
+              },
+              "activity": {
+                "type": "string",
+                "format": "iri"
+              },
+              "registration": {
+                "type": "string",
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/uuid"
+                  }
+                ]
+              },
+              "related_activities": {
+                "type": "boolean"
+              },
+              "related_agents": {
+                "type": "boolean"
+              },
+              "since": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "until": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "until_id": {
+                "type": "string"
+              },
+              "since_id": {
+                "type": "string"
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 0
+              },
+              "format": {
+                "enum": [
+                  "ids",
+                  "exact",
+                  "canonical"
+                ]
+              },
+              "attachments": {
+                "type": "boolean"
+              },
+              "ascending": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "postBody": {
+        "type": [
+          "object",
+          "array"
+        ],
+        "oneOf": [
+          {
+            "$ref": "#/definitions2/statement"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions2/statement"
+            }
+          }
+        ]
+      },
+      "putParameters": {
+        "type": [
+          "object",
+          "array"
+        ],
+        "required": [
+          "statementId"
+        ],
+        "properties": {
+          "statementId": {
+            "$ref": "#/definitions2/uuid"
+          }
+        }
+      },
+      "putBody": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/definitions2/statement"
+          }
+        ]
+      }
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

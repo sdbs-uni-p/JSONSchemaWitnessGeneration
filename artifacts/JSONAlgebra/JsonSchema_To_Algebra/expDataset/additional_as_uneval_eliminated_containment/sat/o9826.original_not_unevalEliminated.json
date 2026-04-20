@@ -1,0 +1,146 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "array",
+      "items": {
+        "title": "Device Command",
+        "description": "Schema for a command for a single Device",
+        "type": "object",
+        "properties": {
+          "time": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "$date": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "$date"
+                ]
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "payload": {}
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions4/modern_1"
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Device Command",
+              "description": "Schema for a command for a single Device",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_2"
+                    }
+                  ]
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "payload": true
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^time$": true,
+                "^name$": true,
+                "^payload$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "$date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "$date"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^$date$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

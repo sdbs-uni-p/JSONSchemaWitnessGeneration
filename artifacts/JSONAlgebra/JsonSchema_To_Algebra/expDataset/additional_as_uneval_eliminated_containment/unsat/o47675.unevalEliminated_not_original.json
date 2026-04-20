@@ -1,0 +1,758 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Solidarity",
+      "description": "A rule-set and config for the Solidarity JSON checker",
+      "type": "object",
+      "properties": {
+        "config": {
+          "output": {
+            "description": "Identify what kind output should happen when a check is called",
+            "type": "string",
+            "enum": [
+              "moderate",
+              "verbose",
+              "silent"
+            ]
+          }
+        },
+        "requirements": {
+          "$ref": "#/definitions4/modern_2"
+        }
+      },
+      "required": [
+        "requirements"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Solidarity",
+        "description": "A rule-set and config for the Solidarity JSON checker",
+        "type": "object",
+        "properties": {
+          "config": {
+            "output": {
+              "description": "Identify what kind output should happen when a check is called",
+              "type": "string",
+              "enum": [
+                "moderate",
+                "verbose",
+                "silent"
+              ]
+            }
+          },
+          "requirements": {
+            "description": "List of requirement rules for your particular environment",
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions3/cli"
+                  },
+                  {
+                    "$ref": "#/definitions3/dir"
+                  },
+                  {
+                    "$ref": "#/definitions3/file"
+                  },
+                  {
+                    "$ref": "#/definitions3/env"
+                  },
+                  {
+                    "$ref": "#/definitions3/shell"
+                  },
+                  {
+                    "$ref": "#/definitions3/custom"
+                  }
+                ]
+              },
+              "minItems": 1,
+              "_uniqueItems": true
+            }
+          }
+        },
+        "required": [
+          "requirements"
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Custom Rule",
+              "type": "object",
+              "properties": {
+                "plugin": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "fix": {
+                  "type": "string"
+                },
+                "rule": {
+                  "enum": [
+                    "custom"
+                  ]
+                },
+                "match": {
+                  "type": "string",
+                  "description": "A regexp to search the output."
+                },
+                "error": {
+                  "type": "string"
+                },
+                "ci": {
+                  "type": "boolean"
+                },
+                "platform": {
+                  "enum": [
+                    "darwin",
+                    "macos",
+                    "freebsd",
+                    "linux",
+                    "sunos",
+                    "win32",
+                    "windows"
+                  ]
+                }
+              },
+              "required": [
+                "rule",
+                "plugin",
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^rule$": true,
+                "^fix$": true,
+                "^ci$": true,
+                "^platform$": true,
+                "^match$": true,
+                "^error$": true,
+                "^name$": true,
+                "^plugin$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "List of requirement rules for your particular environment",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/cli"
+                    },
+                    {
+                      "$ref": "#/definitions4/dir"
+                    },
+                    {
+                      "$ref": "#/definitions4/file"
+                    },
+                    {
+                      "$ref": "#/definitions4/env"
+                    },
+                    {
+                      "$ref": "#/definitions4/shell"
+                    },
+                    {
+                      "$ref": "#/definitions4/custom"
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "_uniqueItems": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dir": {
+      "description": "Dir Rule",
+      "type": "object",
+      "properties": {
+        "fix": {
+          "type": "string"
+        },
+        "rule": {
+          "enum": [
+            "dir",
+            "directory"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "location"
+      ]
+    },
+    "file": {
+      "description": "File Rule",
+      "type": "object",
+      "properties": {
+        "fix": {
+          "type": "string"
+        },
+        "rule": {
+          "enum": [
+            "file"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "location"
+      ]
+    },
+    "cli": {
+      "description": "CLI Rule",
+      "type": "object",
+      "properties": {
+        "line": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "fix": {
+          "type": "string"
+        },
+        "rule": {
+          "enum": [
+            "cli"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "matchIndex": {
+          "type": "integer"
+        },
+        "binary": {
+          "type": "string"
+        },
+        "semver": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "binary"
+      ]
+    },
+    "env": {
+      "description": "ENV Rule",
+      "type": "object",
+      "properties": {
+        "fix": {
+          "type": "string"
+        },
+        "rule": {
+          "enum": [
+            "env"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "variable"
+      ]
+    },
+    "custom": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "shell": {
+      "description": "Shell Rule",
+      "type": "object",
+      "properties": {
+        "fix": {
+          "type": "string"
+        },
+        "rule": {
+          "enum": [
+            "shell"
+          ]
+        },
+        "match": {
+          "type": "string",
+          "description": "A regexp to search the output."
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "match"
+      ]
+    }
+  },
+  "definitions3": {
+    "cli": {
+      "description": "CLI Rule",
+      "type": "object",
+      "properties": {
+        "rule": {
+          "enum": [
+            "cli"
+          ]
+        },
+        "binary": {
+          "type": "string"
+        },
+        "semver": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "line": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "matchIndex": {
+          "type": "integer"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "fix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "binary"
+      ]
+    },
+    "dir": {
+      "description": "Dir Rule",
+      "type": "object",
+      "properties": {
+        "rule": {
+          "enum": [
+            "dir",
+            "directory"
+          ]
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "fix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "location"
+      ]
+    },
+    "file": {
+      "description": "File Rule",
+      "type": "object",
+      "properties": {
+        "rule": {
+          "enum": [
+            "file"
+          ]
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "fix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "location"
+      ]
+    },
+    "env": {
+      "description": "ENV Rule",
+      "type": "object",
+      "properties": {
+        "rule": {
+          "enum": [
+            "env"
+          ]
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "fix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "variable"
+      ]
+    },
+    "shell": {
+      "description": "Shell Rule",
+      "type": "object",
+      "properties": {
+        "rule": {
+          "enum": [
+            "shell"
+          ]
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "match": {
+          "type": "string",
+          "description": "A regexp to search the output."
+        },
+        "fix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "match"
+      ]
+    },
+    "custom": {
+      "description": "Custom Rule",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "rule": {
+          "enum": [
+            "custom"
+          ]
+        },
+        "plugin": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "platform": {
+          "enum": [
+            "darwin",
+            "macos",
+            "freebsd",
+            "linux",
+            "sunos",
+            "win32",
+            "windows"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "match": {
+          "type": "string",
+          "description": "A regexp to search the output."
+        },
+        "fix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "plugin",
+        "name"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/cli"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/cli"
+      }
+    },
+    {
+      "$ref": "#/definitions4/shell"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/shell"
+      }
+    },
+    {
+      "$ref": "#/definitions3/custom"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/custom"
+      }
+    },
+    {
+      "$ref": "#/definitions4/custom"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/custom"
+      }
+    },
+    {
+      "$ref": "#/definitions4/env"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/env"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/cli"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/cli"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dir"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dir"
+      }
+    },
+    {
+      "$ref": "#/definitions3/file"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/file"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/shell"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/shell"
+      }
+    },
+    {
+      "$ref": "#/definitions3/env"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/env"
+      }
+    },
+    {
+      "$ref": "#/definitions4/file"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/file"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dir"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dir"
+      }
+    }
+  ]
+}

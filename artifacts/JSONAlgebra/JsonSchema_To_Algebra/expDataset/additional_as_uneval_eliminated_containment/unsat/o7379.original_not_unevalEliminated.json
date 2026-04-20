@@ -1,0 +1,777 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "users": {
+          "description": "All saved user account through mutliple services",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions3/UserProfile"
+          }
+        },
+        "selectedUser": {
+          "description": "Contains the UUID-hashed account and the UUID of the currently selected user",
+          "default": {
+            "account": "",
+            "profile": ""
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "The UUID-hashed key of the currently selected user",
+              "default": "",
+              "type": "string"
+            },
+            "profile": {
+              "description": "The UUID of the currently selected player",
+              "default": "",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "profile"
+          ]
+        },
+        "authServices": {
+          "description": "All loaded auth services api. Used for yggdrisal auth",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions3/YggdrasilAuthAPI"
+          }
+        },
+        "profileServices": {
+          "description": "All loaded profile services api. Used for",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions3/ProfileServiceAPI"
+          }
+        },
+        "clientToken": {
+          "description": "The client token of current client. The launcher will generate one at first launch.",
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authServices",
+        "clientToken",
+        "profileServices",
+        "selectedUser",
+        "users"
+      ],
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$ref": "#/definitions4/modern_4"
+      }
+    }
+  ],
+  "definitions3": {
+    "UserProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "user id",
+          "type": "string"
+        },
+        "username": {
+          "description": "The username usually email",
+          "type": "string"
+        },
+        "profileService": {
+          "description": "The used profile service id",
+          "type": "string"
+        },
+        "authService": {
+          "description": "The used auth service id",
+          "type": "string"
+        },
+        "accessToken": {
+          "description": "The access token of the user",
+          "type": "string"
+        },
+        "profiles": {
+          "description": "All avaiable game profiles",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions3/GameProfileAndTexture"
+          }
+        },
+        "selectedProfile": {
+          "description": "Selected profile uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accessToken",
+        "authService",
+        "id",
+        "profileService",
+        "profiles",
+        "selectedProfile",
+        "username"
+      ]
+    },
+    "GameProfileAndTexture": {
+      "type": "object",
+      "properties": {
+        "textures": {
+          "type": "object",
+          "properties": {
+            "SKIN": {
+              "$ref": "#/definitions3/GameProfile.Texture"
+            },
+            "CAPE": {
+              "description": "The data structure that hold the texture",
+              "$ref": "#/definitions3/GameProfile.Texture"
+            },
+            "ELYTRA": {
+              "description": "The data structure that hold the texture",
+              "$ref": "#/definitions3/GameProfile.Texture"
+            }
+          },
+          "required": [
+            "SKIN"
+          ]
+        },
+        "id": {
+          "description": "game profile unique id",
+          "type": "string"
+        },
+        "name": {
+          "description": "This is in game displayed name",
+          "type": "string"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "userId": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "number"
+        },
+        "legacyProfile": {
+          "type": "boolean"
+        },
+        "suspended": {
+          "type": "boolean"
+        },
+        "paid": {
+          "type": "boolean"
+        },
+        "migrated": {
+          "type": "boolean"
+        },
+        "legacy": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "textures"
+      ]
+    },
+    "GameProfile.Texture": {
+      "description": "The data structure that hold the texture",
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {},
+          "properties": {
+            "model": {
+              "enum": [
+                "slim",
+                "steve"
+              ],
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "YggdrasilAuthAPI": {
+      "type": "object",
+      "properties": {
+        "hostName": {
+          "description": "The host url, like https://xxx.xxx.com",
+          "type": "string"
+        },
+        "authenticate": {
+          "description": "Authenticate path, in the form of `/your-endpoint`.\nUse to login",
+          "type": "string"
+        },
+        "refresh": {
+          "description": "Use to refresh access token",
+          "type": "string"
+        },
+        "validate": {
+          "description": "Use to validate the user access token",
+          "type": "string"
+        },
+        "invalidate": {
+          "description": "Use to logout user (invalidate user access token)",
+          "type": "string"
+        },
+        "signout": {
+          "description": "Use to logout user (by username and password)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authenticate",
+        "hostName",
+        "invalidate",
+        "refresh",
+        "signout",
+        "validate"
+      ]
+    },
+    "ProfileServiceAPI": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "description": "The PEM public key",
+          "type": "string"
+        },
+        "profile": {
+          "description": "Full url to query profile by uuid. Place the uuid as `${uuid}` in this url",
+          "type": "string"
+        },
+        "profileByName": {
+          "description": "Full url to query profile by name. Place the name as `${name}` in this url",
+          "type": "string"
+        },
+        "texture": {
+          "description": "Full url to set texture by profile uuid and texture type. Place uuid as `${uuid}` and type as `${type}`",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile",
+        "profileByName",
+        "texture"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "All loaded auth services api. Used for yggdrisal auth",
+              "default": {},
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/YggdrasilAuthAPI"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "All loaded profile services api. Used for",
+              "default": {},
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/ProfileServiceAPI"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "UserProfile": {
+      "type": "object",
+      "properties": {
+        "selectedProfile": {
+          "description": "Selected profile uuid",
+          "type": "string"
+        },
+        "username": {
+          "description": "The username usually email",
+          "type": "string"
+        },
+        "profileService": {
+          "description": "The used profile service id",
+          "type": "string"
+        },
+        "authService": {
+          "description": "The used auth service id",
+          "type": "string"
+        },
+        "id": {
+          "description": "user id",
+          "type": "string"
+        },
+        "profiles": {
+          "$ref": "#/definitions4/modern_1"
+        },
+        "accessToken": {
+          "description": "The access token of the user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accessToken",
+        "authService",
+        "id",
+        "profileService",
+        "profiles",
+        "selectedProfile",
+        "username"
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "All avaiable game profiles",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/GameProfileAndTexture"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "GameProfile.Texture": {
+      "description": "The data structure that hold the texture",
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions4/modern_2"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "All saved user account through mutliple services",
+              "default": {},
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/UserProfile"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "model": {
+                  "enum": [
+                    "slim",
+                    "steve"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^model$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "YggdrasilAuthAPI": {
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "description": "Use to refresh access token",
+          "type": "string"
+        },
+        "validate": {
+          "description": "Use to validate the user access token",
+          "type": "string"
+        },
+        "invalidate": {
+          "description": "Use to logout user (invalidate user access token)",
+          "type": "string"
+        },
+        "hostName": {
+          "description": "The host url, like https://xxx.xxx.com",
+          "type": "string"
+        },
+        "signout": {
+          "description": "Use to logout user (by username and password)",
+          "type": "string"
+        },
+        "authenticate": {
+          "description": "Authenticate path, in the form of `/your-endpoint`.\nUse to login",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authenticate",
+        "hostName",
+        "invalidate",
+        "refresh",
+        "signout",
+        "validate"
+      ]
+    },
+    "GameProfileAndTexture": {
+      "type": "object",
+      "properties": {
+        "legacy": {
+          "type": "boolean"
+        },
+        "name": {
+          "description": "This is in game displayed name",
+          "type": "string"
+        },
+        "suspended": {
+          "type": "boolean"
+        },
+        "migrated": {
+          "type": "boolean"
+        },
+        "id": {
+          "description": "game profile unique id",
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/definitions4/modern_3"
+        },
+        "paid": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "number"
+        },
+        "legacyProfile": {
+          "type": "boolean"
+        },
+        "textures": {
+          "type": "object",
+          "properties": {
+            "SKIN": {
+              "$ref": "#/definitions4/GameProfile.Texture"
+            },
+            "CAPE": {
+              "description": "The data structure that hold the texture",
+              "$ref": "#/definitions4/GameProfile.Texture"
+            },
+            "ELYTRA": {
+              "description": "The data structure that hold the texture",
+              "$ref": "#/definitions4/GameProfile.Texture"
+            }
+          },
+          "required": [
+            "SKIN"
+          ]
+        },
+        "userId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "textures"
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "ProfileServiceAPI": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "description": "The PEM public key",
+          "type": "string"
+        },
+        "profile": {
+          "description": "Full url to query profile by uuid. Place the uuid as `${uuid}` in this url",
+          "type": "string"
+        },
+        "profileByName": {
+          "description": "Full url to query profile by name. Place the name as `${name}` in this url",
+          "type": "string"
+        },
+        "texture": {
+          "description": "Full url to set texture by profile uuid and texture type. Place uuid as `${uuid}` and type as `${type}`",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile",
+        "profileByName",
+        "texture"
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "authServices": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "selectedUser": {
+                  "description": "Contains the UUID-hashed account and the UUID of the currently selected user",
+                  "default": {
+                    "account": "",
+                    "profile": ""
+                  },
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The UUID-hashed key of the currently selected user",
+                      "default": "",
+                      "type": "string"
+                    },
+                    "profile": {
+                      "description": "The UUID of the currently selected player",
+                      "default": "",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "profile"
+                  ]
+                },
+                "profileServices": {
+                  "$ref": "#/definitions4/modern_6"
+                },
+                "clientToken": {
+                  "description": "The client token of current client. The launcher will generate one at first launch.",
+                  "default": "",
+                  "type": "string"
+                },
+                "users": {
+                  "$ref": "#/definitions4/modern_7"
+                }
+              },
+              "required": [
+                "authServices",
+                "clientToken",
+                "profileServices",
+                "selectedUser",
+                "users"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^selectedUser$": true,
+                "^profileServices$": true,
+                "^clientToken$": true,
+                "^authServices$": true,
+                "^users$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/ProfileServiceAPI"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/ProfileServiceAPI"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/ProfileServiceAPI"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/ProfileServiceAPI"
+      }
+    },
+    {
+      "$ref": "#/definitions4/UserProfile"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/UserProfile"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/GameProfileAndTexture"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/GameProfileAndTexture"
+      }
+    },
+    {
+      "$ref": "#/definitions3/YggdrasilAuthAPI"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/YggdrasilAuthAPI"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/YggdrasilAuthAPI"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/YggdrasilAuthAPI"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/GameProfileAndTexture"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/GameProfileAndTexture"
+      }
+    },
+    {
+      "$ref": "#/definitions4/GameProfile.Texture"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/GameProfile.Texture"
+      }
+    },
+    {
+      "$ref": "#/definitions3/UserProfile"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/UserProfile"
+      }
+    },
+    {
+      "$ref": "#/definitions3/GameProfile.Texture"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/GameProfile.Texture"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

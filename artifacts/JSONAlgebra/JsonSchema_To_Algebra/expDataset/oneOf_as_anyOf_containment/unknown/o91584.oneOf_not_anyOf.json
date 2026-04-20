@@ -1,0 +1,100 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Check @context value",
+      "description": "'http://www.w3.org/ns/anno.jsonld must be' an @context value (Section 3.1)",
+      "assertionType": "must",
+      "expectedResult": "valid",
+      "errorMessage": "Error: 'http://www.w3.org/ns/anno.jsonld' is not an @context value.",
+      "type": "object",
+      "properties": {
+        "@context": {
+          "oneOf": [
+            {
+              "type": "string",
+              "$ref": "#/definitions3/contextValue"
+            },
+            {
+              "type": "array",
+              "$ref": "#/definitions3/contextArray"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Check @context value",
+        "description": "'http://www.w3.org/ns/anno.jsonld must be' an @context value (Section 3.1)",
+        "assertionType": "must",
+        "expectedResult": "valid",
+        "errorMessage": "Error: 'http://www.w3.org/ns/anno.jsonld' is not an @context value.",
+        "type": "object",
+        "properties": {
+          "@context": {
+            "anyOf": [
+              {
+                "type": "string",
+                "$ref": "#/definitions4/contextValue"
+              },
+              {
+                "type": "array",
+                "$ref": "#/definitions4/contextArray"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "contextValue": {
+      "enum": [
+        "http://www.w3.org/ns/anno.jsonld"
+      ]
+    },
+    "contextArray": {
+      "not": {
+        "items": {
+          "not": {
+            "type": "string",
+            "$ref": "#/definitions3/contextValue"
+          }
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "contextValue": {
+      "enum": [
+        "http://www.w3.org/ns/anno.jsonld"
+      ]
+    },
+    "contextArray": {
+      "not": {
+        "items": {
+          "not": {
+            "type": "string",
+            "$ref": "#/definitions4/contextValue"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/contextArray"
+    },
+    {
+      "$ref": "#/definitions3/contextValue"
+    },
+    {
+      "$ref": "#/definitions4/contextValue"
+    },
+    {
+      "$ref": "#/definitions3/contextArray"
+    }
+  ]
+}

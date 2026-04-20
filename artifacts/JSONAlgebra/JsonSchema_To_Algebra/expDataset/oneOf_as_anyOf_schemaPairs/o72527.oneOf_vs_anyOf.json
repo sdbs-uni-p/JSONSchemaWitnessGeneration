@@ -1,0 +1,743 @@
+[
+  {
+    "id": 669,
+    "schema1": {
+      "$ref": "#/definitions2/feed",
+      "definitions2": {
+        "all_feed": {
+          "properties": {
+            "type": {
+              "enum": [
+                "all",
+                null
+              ]
+            }
+          },
+          "required": [
+            "targets",
+            "broadcast_interval"
+          ],
+          "type": "object"
+        },
+        "binary_feed": {
+          "properties": {
+            "broadcast_date": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "binary",
+                null
+              ]
+            }
+          },
+          "required": [
+            "broadcast_date",
+            "targets"
+          ],
+          "type": "object"
+        },
+        "cfd_feed": {
+          "properties": {
+            "broadcast_date": {
+              "format": "interval",
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "cfd",
+                null
+              ]
+            }
+          },
+          "required": [
+            "broadcast_date",
+            "deadline"
+          ],
+          "type": "object"
+        },
+        "customs": {
+          "patternProperties": {
+            ".": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "default_labels": {
+          "allOf": [
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "bear": {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                "bull": {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                "equal": {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                "not_equal": {
+                  "maxLength": 32,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "anyOf": [
+                {
+                  "properties": {
+                    "equal": {
+                      "maxLength": 32,
+                      "type": "string"
+                    },
+                    "not_equal": {
+                      "maxLength": 32,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "equal",
+                    "not_equal"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "bear": {
+                      "maxLength": 32,
+                      "type": "string"
+                    },
+                    "bull": {
+                      "maxLength": 32,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "bear",
+                    "bull"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          ]
+        },
+        "default_odds": {
+          "oneOf": [
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "initial": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "initial"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "suggested": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "suggested"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "initial": {
+                  "type": "number"
+                },
+                "suggested": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "initial",
+                "suggested"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "feed": {
+          "allOf": [
+            {
+              "$ref": "#/definitions2/feed_properties"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/binary_feed"
+                },
+                {
+                  "$ref": "#/definitions2/cfd_feed"
+                },
+                {
+                  "$ref": "#/definitions2/all_feed"
+                }
+              ]
+            }
+          ]
+        },
+        "feed_properties": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "broadcast_date": {
+              "type": "string"
+            },
+            "category": {
+              "enum": [
+                "sports",
+                "politics",
+                "entertainment",
+                "economics",
+                "other"
+              ]
+            },
+            "customs": {
+              "$ref": "#/definitions2/customs"
+            },
+            "deadline": {
+              "format": "interval",
+              "type": "string"
+            },
+            "description": {
+              "maxLength": 255,
+              "type": "string"
+            },
+            "image": {
+              "format": "uri",
+              "type": "string"
+            },
+            "labels": {
+              "$ref": "#/definitions2/default_labels"
+            },
+            "odds": {
+              "$ref": "#/definitions2/default_odds"
+            },
+            "operator": {
+              "$ref": "#/definitions2/operator"
+            },
+            "targets": {
+              "$ref": "#/definitions2/targets"
+            },
+            "title": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "binary",
+                "cfd",
+                "all"
+              ]
+            },
+            "url": {
+              "format": "uri",
+              "type": "string"
+            },
+            "version": {
+              "pattern": "^[0-9]+(\\.[0-9]+){1,2}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "address",
+            "title"
+          ],
+          "type": "object"
+        },
+        "operator": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "description": {
+              "maxLength": 255,
+              "type": "string"
+            },
+            "image": {
+              "format": "uri",
+              "type": "string"
+            },
+            "name": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        },
+        "target": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "deadline": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "image": {
+              "format": "uri",
+              "type": "string"
+            },
+            "labels": {
+              "$ref": "#/definitions2/target_labels"
+            },
+            "odds": {
+              "$ref": "#/definitions2/default_odds"
+            },
+            "text": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "text",
+            "value",
+            "deadline"
+          ],
+          "type": "object"
+        },
+        "target_labels": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "equal": {
+              "maxLength": 32,
+              "type": "string"
+            },
+            "not_equal": {
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          "required": [
+            "equal",
+            "not_equal"
+          ],
+          "type": "object"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/definitions2/target"
+          },
+          "minItems": 1,
+          "type": "array",
+          "_uniqueItems": true
+        }
+      }
+    },
+    "schema2": {
+      "$ref": "#/definitions2/feed",
+      "definitions2": {
+        "all_feed": {
+          "properties": {
+            "type": {
+              "enum": [
+                "all",
+                null
+              ]
+            }
+          },
+          "required": [
+            "targets",
+            "broadcast_interval"
+          ],
+          "type": "object"
+        },
+        "binary_feed": {
+          "properties": {
+            "broadcast_date": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "binary",
+                null
+              ]
+            }
+          },
+          "required": [
+            "broadcast_date",
+            "targets"
+          ],
+          "type": "object"
+        },
+        "cfd_feed": {
+          "properties": {
+            "broadcast_date": {
+              "format": "interval",
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "cfd",
+                null
+              ]
+            }
+          },
+          "required": [
+            "broadcast_date",
+            "deadline"
+          ],
+          "type": "object"
+        },
+        "customs": {
+          "patternProperties": {
+            ".": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "default_labels": {
+          "allOf": [
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "bear": {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                "bull": {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                "equal": {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                "not_equal": {
+                  "maxLength": 32,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "anyOf": [
+                {
+                  "properties": {
+                    "equal": {
+                      "maxLength": 32,
+                      "type": "string"
+                    },
+                    "not_equal": {
+                      "maxLength": 32,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "equal",
+                    "not_equal"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "bear": {
+                      "maxLength": 32,
+                      "type": "string"
+                    },
+                    "bull": {
+                      "maxLength": 32,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "bear",
+                    "bull"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          ]
+        },
+        "default_odds": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "initial": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "initial"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "suggested": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "suggested"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "initial": {
+                  "type": "number"
+                },
+                "suggested": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "initial",
+                "suggested"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "feed": {
+          "allOf": [
+            {
+              "$ref": "#/definitions2/feed_properties"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/binary_feed"
+                },
+                {
+                  "$ref": "#/definitions2/cfd_feed"
+                },
+                {
+                  "$ref": "#/definitions2/all_feed"
+                }
+              ]
+            }
+          ]
+        },
+        "feed_properties": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "broadcast_date": {
+              "type": "string"
+            },
+            "category": {
+              "enum": [
+                "sports",
+                "politics",
+                "entertainment",
+                "economics",
+                "other"
+              ]
+            },
+            "customs": {
+              "$ref": "#/definitions2/customs"
+            },
+            "deadline": {
+              "format": "interval",
+              "type": "string"
+            },
+            "description": {
+              "maxLength": 255,
+              "type": "string"
+            },
+            "image": {
+              "format": "uri",
+              "type": "string"
+            },
+            "labels": {
+              "$ref": "#/definitions2/default_labels"
+            },
+            "odds": {
+              "$ref": "#/definitions2/default_odds"
+            },
+            "operator": {
+              "$ref": "#/definitions2/operator"
+            },
+            "targets": {
+              "$ref": "#/definitions2/targets"
+            },
+            "title": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "binary",
+                "cfd",
+                "all"
+              ]
+            },
+            "url": {
+              "format": "uri",
+              "type": "string"
+            },
+            "version": {
+              "pattern": "^[0-9]+(\\.[0-9]+){1,2}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "address",
+            "title"
+          ],
+          "type": "object"
+        },
+        "operator": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "description": {
+              "maxLength": 255,
+              "type": "string"
+            },
+            "image": {
+              "format": "uri",
+              "type": "string"
+            },
+            "name": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        },
+        "target": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "deadline": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "image": {
+              "format": "uri",
+              "type": "string"
+            },
+            "labels": {
+              "$ref": "#/definitions2/target_labels"
+            },
+            "odds": {
+              "$ref": "#/definitions2/default_odds"
+            },
+            "text": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "text",
+            "value",
+            "deadline"
+          ],
+          "type": "object"
+        },
+        "target_labels": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "equal": {
+              "maxLength": 32,
+              "type": "string"
+            },
+            "not_equal": {
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          "required": [
+            "equal",
+            "not_equal"
+          ],
+          "type": "object"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/definitions2/target"
+          },
+          "minItems": 1,
+          "type": "array",
+          "_uniqueItems": true
+        }
+      }
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

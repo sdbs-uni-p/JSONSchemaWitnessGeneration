@@ -1,0 +1,1089 @@
+[
+  {
+    "id": 941,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "anitya_response": {
+          "type": "object",
+          "description": "Anitya maps upstream components to downstream packages",
+          "properties": {},
+          "additionalProperties": {}
+        },
+        "changes": {
+          "type": "object",
+          "description": "Breakdown of changed lines per given file",
+          "properties": {
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "file": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "lines",
+            "file"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "diff": {
+          "type": "object",
+          "description": "Information about changed files and lines",
+          "properties": {
+            "files": {
+              "type": "integer"
+            },
+            "lines": {
+              "type": "integer"
+            },
+            "changes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/changes"
+              }
+            }
+          },
+          "required": [
+            "files",
+            "lines",
+            "changes"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "downstream": {
+          "type": "object",
+          "description": "Patch information about downstream SRPM",
+          "properties": {
+            "diff": {
+              "$ref": "#/definitions2/diff"
+            },
+            "patch_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "package": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "diff",
+            "patch_files",
+            "package"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "downstream_usage_summary": {
+          "type": "object",
+          "properties": {
+            "package_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "registered_srpms": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/srpm_record"
+              }
+            },
+            "all_rhn_channels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "all_rhsm_content_sets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "all_rhsm_product_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rh_mvn_matched_versions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "package_names",
+            "registered_srpms",
+            "all_rhn_channels",
+            "all_rhsm_content_sets",
+            "all_rhsm_product_names",
+            "rh_mvn_matched_versions"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "pulp_cdn_response": {
+          "type": "object",
+          "description": "The Pulp CDN handles Red Hat's SRPM publication",
+          "properties": {
+            "srpm_filename": {
+              "type": "string"
+            },
+            "rhn_channels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rhsm_content_sets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rhsm_product_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "srpm_filename",
+            "rhn_channels",
+            "rhsm_content_sets",
+            "rhsm_product_names"
+          ],
+          "additionalProperties": {}
+        },
+        "srpm_record": {
+          "type": "object",
+          "description": "Summary of Red Hat tracked SRPM",
+          "properties": {
+            "package_name": {
+              "type": "string"
+            },
+            "epoch": {
+              "type": "number"
+            },
+            "version": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "patch_count": {
+              "type": "number"
+            },
+            "modified_line_count": {
+              "type": "number"
+            },
+            "modified_file_count": {
+              "type": "number"
+            },
+            "published_in": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "architectures": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "hashes": {
+              "type": "object",
+              "properties": {
+                "md5": {
+                  "type": "string"
+                },
+                "sha1": {
+                  "type": "string"
+                },
+                "sha256": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "package_name",
+            "epoch",
+            "version",
+            "release",
+            "patch_count",
+            "modified_line_count",
+            "modified_file_count"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "toolchain_responses": {
+          "type": "object",
+          "properties": {
+            "redhat_anitya": {
+              "$ref": "#/definitions2/anitya_response"
+            },
+            "brew": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/downstream"
+              }
+            },
+            "pulp_cdn": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/pulp_cdn_response"
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      },
+      "type": "object",
+      "description": "Result of DownstreamUsage worker",
+      "properties": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the schema",
+              "pattern": "^[a-zA-Z0-9_]+$"
+            },
+            "version": {
+              "type": "string",
+              "description": "Version of the schema",
+              "pattern": "^[0-9]+-[0-9]+-[0-9]+$"
+            },
+            "url": {
+              "type": "string",
+              "description": "Full URL of the schema",
+              "format": "uri"
+            }
+          },
+          "required": [
+            "name",
+            "version"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "_release": {
+          "type": "string",
+          "description": "Unique release id in form of \"ecosystem:package:version\""
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "details": {
+          "$ref": "#/definitions2/toolchain_responses"
+        },
+        "summary": {
+          "$ref": "#/definitions2/downstream_usage_summary"
+        }
+      },
+      "required": [
+        "status",
+        "summary"
+      ],
+      "additionalProperties": {
+        "not": {}
+      },
+      "title": "downstream_usage_result-v2-2-1"
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Patch information about downstream SRPM",
+                  "properties": {
+                    "diff": {
+                      "$ref": "#/definitions2/diff"
+                    },
+                    "patch_files": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "package": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "diff",
+                    "patch_files",
+                    "package"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^diff$": {},
+                    "^patch_files$": {},
+                    "^package$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the schema",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Version of the schema",
+                      "pattern": "^[0-9]+-[0-9]+-[0-9]+$"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Full URL of the schema",
+                      "format": "uri"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "version"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^name$": {},
+                    "^version$": {},
+                    "^url$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "toolchain_responses": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "all_rhsm_product_names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "package_names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "all_rhsm_content_sets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "all_rhn_channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "registered_srpms": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/srpm_record"
+                      }
+                    },
+                    "rh_mvn_matched_versions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "package_names",
+                    "registered_srpms",
+                    "all_rhn_channels",
+                    "all_rhsm_content_sets",
+                    "all_rhsm_product_names",
+                    "rh_mvn_matched_versions"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^all_rhn_channels$": {},
+                    "^rh_mvn_matched_versions$": {},
+                    "^registered_srpms$": {},
+                    "^all_rhsm_content_sets$": {},
+                    "^package_names$": {},
+                    "^all_rhsm_product_names$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "anitya_response": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Summary of Red Hat tracked SRPM",
+                  "properties": {
+                    "epoch": {
+                      "type": "number"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "patch_count": {
+                      "type": "number"
+                    },
+                    "modified_file_count": {
+                      "type": "number"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "package_name": {
+                      "type": "string"
+                    },
+                    "modified_line_count": {
+                      "type": "number"
+                    },
+                    "hashes": {
+                      "type": "object",
+                      "properties": {
+                        "md5": {
+                          "type": "string"
+                        },
+                        "sha1": {
+                          "type": "string"
+                        },
+                        "sha256": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "release": {
+                      "type": "string"
+                    },
+                    "published_in": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "architectures": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "package_name",
+                    "epoch",
+                    "version",
+                    "release",
+                    "patch_count",
+                    "modified_line_count",
+                    "modified_file_count"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^version$": {},
+                    "^modified_file_count$": {},
+                    "^modified_line_count$": {},
+                    "^published_in$": {},
+                    "^package_name$": {},
+                    "^architectures$": {},
+                    "^release$": {},
+                    "^patch_count$": {},
+                    "^epoch$": {},
+                    "^tags$": {},
+                    "^hashes$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "downstream": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "The Pulp CDN handles Red Hat's SRPM publication",
+                  "properties": {
+                    "srpm_filename": {
+                      "type": "string"
+                    },
+                    "rhn_channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "rhsm_content_sets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "rhsm_product_names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "srpm_filename",
+                    "rhn_channels",
+                    "rhsm_content_sets",
+                    "rhsm_product_names"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^srpm_filename$": {},
+                    "^rhn_channels$": {},
+                    "^rhsm_content_sets$": {},
+                    "^rhsm_product_names$": {}
+                  },
+                  "additionalProperties": {}
+                }
+              ]
+            }
+          ]
+        },
+        "diff": {
+          "$ref": "#/definitions2/modern_6"
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "definitions2": {
+                    "anitya_response": {
+                      "type": "object",
+                      "description": "Anitya maps upstream components to downstream packages",
+                      "properties": {},
+                      "unevaluatedProperties": true
+                    },
+                    "changes": {
+                      "type": "object",
+                      "description": "Breakdown of changed lines per given file",
+                      "properties": {
+                        "lines": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "file": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "lines",
+                        "file"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "diff": {
+                      "type": "object",
+                      "description": "Information about changed files and lines",
+                      "properties": {
+                        "files": {
+                          "type": "integer"
+                        },
+                        "lines": {
+                          "type": "integer"
+                        },
+                        "changes": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/changes"
+                          }
+                        }
+                      },
+                      "required": [
+                        "files",
+                        "lines",
+                        "changes"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "downstream": {
+                      "type": "object",
+                      "description": "Patch information about downstream SRPM",
+                      "properties": {
+                        "diff": {
+                          "$ref": "#/definitions2/diff"
+                        },
+                        "patch_files": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "package": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "diff",
+                        "patch_files",
+                        "package"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "downstream_usage_summary": {
+                      "type": "object",
+                      "properties": {
+                        "package_names": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "registered_srpms": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/srpm_record"
+                          }
+                        },
+                        "all_rhn_channels": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "all_rhsm_content_sets": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "all_rhsm_product_names": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "rh_mvn_matched_versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "package_names",
+                        "registered_srpms",
+                        "all_rhn_channels",
+                        "all_rhsm_content_sets",
+                        "all_rhsm_product_names",
+                        "rh_mvn_matched_versions"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "pulp_cdn_response": {
+                      "type": "object",
+                      "description": "The Pulp CDN handles Red Hat's SRPM publication",
+                      "properties": {
+                        "srpm_filename": {
+                          "type": "string"
+                        },
+                        "rhn_channels": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "rhsm_content_sets": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "rhsm_product_names": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "srpm_filename",
+                        "rhn_channels",
+                        "rhsm_content_sets",
+                        "rhsm_product_names"
+                      ],
+                      "unevaluatedProperties": true
+                    },
+                    "srpm_record": {
+                      "type": "object",
+                      "description": "Summary of Red Hat tracked SRPM",
+                      "properties": {
+                        "package_name": {
+                          "type": "string"
+                        },
+                        "epoch": {
+                          "type": "number"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "release": {
+                          "type": "string"
+                        },
+                        "patch_count": {
+                          "type": "number"
+                        },
+                        "modified_line_count": {
+                          "type": "number"
+                        },
+                        "modified_file_count": {
+                          "type": "number"
+                        },
+                        "published_in": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "architectures": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "hashes": {
+                          "type": "object",
+                          "properties": {
+                            "md5": {
+                              "type": "string"
+                            },
+                            "sha1": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "package_name",
+                        "epoch",
+                        "version",
+                        "release",
+                        "patch_count",
+                        "modified_line_count",
+                        "modified_file_count"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "toolchain_responses": {
+                      "type": "object",
+                      "properties": {
+                        "redhat_anitya": {
+                          "$ref": "#/definitions2/anitya_response"
+                        },
+                        "brew": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/downstream"
+                          }
+                        },
+                        "pulp_cdn": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/pulp_cdn_response"
+                          }
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    }
+                  },
+                  "type": "object",
+                  "description": "Result of DownstreamUsage worker",
+                  "properties": {
+                    "schema": {
+                      "$ref": "#/definitions2/modern_10"
+                    },
+                    "_release": {
+                      "type": "string",
+                      "description": "Unique release id in form of \"ecosystem:package:version\""
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "success",
+                        "error"
+                      ]
+                    },
+                    "details": {
+                      "$ref": "#/definitions2/toolchain_responses"
+                    },
+                    "summary": {
+                      "$ref": "#/definitions2/downstream_usage_summary"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "summary"
+                  ],
+                  "title": "downstream_usage_result-v2-2-1"
+                },
+                {
+                  "patternProperties": {
+                    "^schema$": {},
+                    "^_release$": {},
+                    "^details$": {},
+                    "^status$": {},
+                    "^summary$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Anitya maps upstream components to downstream packages",
+                  "properties": {}
+                },
+                {
+                  "additionalProperties": {}
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Breakdown of changed lines per given file",
+                  "properties": {
+                    "lines": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "file": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "lines",
+                    "file"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^lines$": {},
+                    "^file$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "downstream_usage_summary": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Information about changed files and lines",
+                  "properties": {
+                    "files": {
+                      "type": "integer"
+                    },
+                    "lines": {
+                      "type": "integer"
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/changes"
+                      }
+                    }
+                  },
+                  "required": [
+                    "files",
+                    "lines",
+                    "changes"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^files$": {},
+                    "^lines$": {},
+                    "^changes$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "changes": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "redhat_anitya": {
+                      "$ref": "#/definitions2/anitya_response"
+                    },
+                    "brew": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/downstream"
+                      }
+                    },
+                    "pulp_cdn": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/pulp_cdn_response"
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^redhat_anitya$": {},
+                    "^brew$": {},
+                    "^pulp_cdn$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "srpm_record": {
+          "$ref": "#/definitions2/modern_7"
+        },
+        "pulp_cdn_response": {
+          "$ref": "#/definitions2/modern_8"
+        }
+      },
+      "$ref": "#/definitions2/modern_9"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

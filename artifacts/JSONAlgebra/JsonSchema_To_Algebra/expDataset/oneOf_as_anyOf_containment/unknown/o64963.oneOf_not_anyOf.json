@@ -1,0 +1,582 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "https://github.com/ohadschn/ET4W/src/events-schema.json",
+      "type": "object",
+      "properties": {
+        "class": {
+          "$ref": "#/definitions3/identifier"
+        },
+        "sourceName": {
+          "type": "string"
+        },
+        "tasks": {
+          "$ref": "#/definitions3/identifier-array"
+        },
+        "keywords": {
+          "allOf": [
+            {
+              "$ref": "#/definitions3/identifier-array"
+            },
+            {
+              "maxItems": 44
+            }
+          ]
+        },
+        "customTypes": {
+          "$ref": "#/definitions3/customType-array"
+        },
+        "commonParameters": {
+          "$ref": "#/definitions3/commonParameter-array"
+        },
+        "events": {
+          "$ref": "#/definitions3/event-array"
+        }
+      },
+      "required": [
+        "class",
+        "sourceName",
+        "events"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "https://github.com/ohadschn/ET4W/src/events-schema.json",
+        "type": "object",
+        "properties": {
+          "class": {
+            "$ref": "#/definitions4/identifier"
+          },
+          "sourceName": {
+            "type": "string"
+          },
+          "tasks": {
+            "$ref": "#/definitions4/identifier-array"
+          },
+          "keywords": {
+            "allOf": [
+              {
+                "$ref": "#/definitions4/identifier-array"
+              },
+              {
+                "maxItems": 44
+              }
+            ]
+          },
+          "customTypes": {
+            "$ref": "#/definitions4/customType-array"
+          },
+          "commonParameters": {
+            "$ref": "#/definitions4/commonParameter-array"
+          },
+          "events": {
+            "$ref": "#/definitions4/event-array"
+          }
+        },
+        "required": [
+          "class",
+          "sourceName",
+          "events"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "etwNativeType": {
+      "enum": [
+        "Boolean",
+        "Char",
+        "SByte",
+        "Byte",
+        "Int16",
+        "UInt16",
+        "Int32",
+        "UInt32",
+        "Int64",
+        "UInt64",
+        "Single",
+        "Double",
+        "DateTime",
+        "String",
+        "GUID",
+        "IntPtr",
+        "ByteArray"
+      ]
+    },
+    "etwEventLevel": {
+      "enum": [
+        "Verbose",
+        "Informational",
+        "Warning",
+        "Error",
+        "Critical",
+        "LogAlways"
+      ]
+    },
+    "etwOpcode": {
+      "enum": [
+        "Info",
+        "Start",
+        "Stop",
+        "DataCollectionStart",
+        "DataCollectionStop",
+        "Extension",
+        "Reply",
+        "Resume",
+        "Suspend",
+        "Send",
+        "Receive"
+      ]
+    },
+    "etwChannel": {
+      "enum": [
+        "Admin",
+        "Analytic",
+        "Debug",
+        "None",
+        "Operational"
+      ]
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+    "fullyQualifiedIdentifier": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_](\\.?[a-zA-Z0-9_]+)*$"
+    },
+    "identifier-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions3/identifier"
+      }
+    },
+    "customType": {
+      "type": "object",
+      "properties": {
+        "fullyQualifiedName": {
+          "$ref": "#/definitions3/fullyQualifiedIdentifier"
+        },
+        "targetType": {
+          "$ref": "#/definitions3/etwNativeType"
+        }
+      },
+      "required": [
+        "fullyQualifiedName",
+        "targetType"
+      ]
+    },
+    "customType-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions3/customType"
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions3/identifier"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "$ref": "#/definitions3/etwNativeType"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "properties": {
+            "customType": {
+              "$ref": "#/definitions3/fullyQualifiedIdentifier"
+            }
+          },
+          "required": [
+            "customType"
+          ]
+        }
+      ]
+    },
+    "parameter-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions3/parameter"
+      }
+    },
+    "commonParameter": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/parameter"
+        },
+        {
+          "properties": {
+            "generated": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "commonParameter-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions3/commonParameter"
+      }
+    },
+    "event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "$ref": "#/definitions3/identifier"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "channel": {
+          "$ref": "#/definitions3/etwChannel"
+        },
+        "level": {
+          "$ref": "#/definitions3/etwEventLevel"
+        },
+        "message": {
+          "type": "string"
+        },
+        "keywords": {
+          "$ref": "#/definitions3/identifier-array"
+        },
+        "task": {
+          "$ref": "#/definitions3/identifier"
+        },
+        "opcode": {
+          "$ref": "#/definitions3/etwOpcode"
+        },
+        "parameters": {
+          "$ref": "#/definitions3/parameter-array"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "event-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions3/event"
+      },
+      "minItems": 1
+    }
+  },
+  "definitions4": {
+    "etwNativeType": {
+      "enum": [
+        "Boolean",
+        "Char",
+        "SByte",
+        "Byte",
+        "Int16",
+        "UInt16",
+        "Int32",
+        "UInt32",
+        "Int64",
+        "UInt64",
+        "Single",
+        "Double",
+        "DateTime",
+        "String",
+        "GUID",
+        "IntPtr",
+        "ByteArray"
+      ]
+    },
+    "etwEventLevel": {
+      "enum": [
+        "Verbose",
+        "Informational",
+        "Warning",
+        "Error",
+        "Critical",
+        "LogAlways"
+      ]
+    },
+    "etwOpcode": {
+      "enum": [
+        "Info",
+        "Start",
+        "Stop",
+        "DataCollectionStart",
+        "DataCollectionStop",
+        "Extension",
+        "Reply",
+        "Resume",
+        "Suspend",
+        "Send",
+        "Receive"
+      ]
+    },
+    "etwChannel": {
+      "enum": [
+        "Admin",
+        "Analytic",
+        "Debug",
+        "None",
+        "Operational"
+      ]
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+    "fullyQualifiedIdentifier": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_](\\.?[a-zA-Z0-9_]+)*$"
+    },
+    "identifier-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions4/identifier"
+      }
+    },
+    "customType": {
+      "type": "object",
+      "properties": {
+        "fullyQualifiedName": {
+          "$ref": "#/definitions4/fullyQualifiedIdentifier"
+        },
+        "targetType": {
+          "$ref": "#/definitions4/etwNativeType"
+        }
+      },
+      "required": [
+        "fullyQualifiedName",
+        "targetType"
+      ]
+    },
+    "customType-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions4/customType"
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions4/identifier"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "$ref": "#/definitions4/etwNativeType"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "properties": {
+            "customType": {
+              "$ref": "#/definitions4/fullyQualifiedIdentifier"
+            }
+          },
+          "required": [
+            "customType"
+          ]
+        }
+      ]
+    },
+    "parameter-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions4/parameter"
+      }
+    },
+    "commonParameter": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/parameter"
+        },
+        {
+          "properties": {
+            "generated": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "commonParameter-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions4/commonParameter"
+      }
+    },
+    "event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "$ref": "#/definitions4/identifier"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "channel": {
+          "$ref": "#/definitions4/etwChannel"
+        },
+        "level": {
+          "$ref": "#/definitions4/etwEventLevel"
+        },
+        "message": {
+          "type": "string"
+        },
+        "keywords": {
+          "$ref": "#/definitions4/identifier-array"
+        },
+        "task": {
+          "$ref": "#/definitions4/identifier"
+        },
+        "opcode": {
+          "$ref": "#/definitions4/etwOpcode"
+        },
+        "parameters": {
+          "$ref": "#/definitions4/parameter-array"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "event-array": {
+      "type": "array",
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions4/event"
+      },
+      "minItems": 1
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/parameter"
+    },
+    {
+      "$ref": "#/definitions4/commonParameter"
+    },
+    {
+      "$ref": "#/definitions4/etwNativeType"
+    },
+    {
+      "$ref": "#/definitions3/customType-array"
+    },
+    {
+      "$ref": "#/definitions4/identifier"
+    },
+    {
+      "$ref": "#/definitions4/event-array"
+    },
+    {
+      "$ref": "#/definitions3/commonParameter-array"
+    },
+    {
+      "$ref": "#/definitions3/etwNativeType"
+    },
+    {
+      "$ref": "#/definitions3/identifier"
+    },
+    {
+      "$ref": "#/definitions3/etwEventLevel"
+    },
+    {
+      "$ref": "#/definitions3/etwChannel"
+    },
+    {
+      "$ref": "#/definitions4/etwOpcode"
+    },
+    {
+      "$ref": "#/definitions3/parameter-array"
+    },
+    {
+      "$ref": "#/definitions3/identifier-array"
+    },
+    {
+      "$ref": "#/definitions4/customType-array"
+    },
+    {
+      "$ref": "#/definitions3/commonParameter"
+    },
+    {
+      "$ref": "#/definitions4/parameter-array"
+    },
+    {
+      "$ref": "#/definitions3/fullyQualifiedIdentifier"
+    },
+    {
+      "$ref": "#/definitions4/customType"
+    },
+    {
+      "$ref": "#/definitions4/parameter"
+    },
+    {
+      "$ref": "#/definitions4/etwEventLevel"
+    },
+    {
+      "$ref": "#/definitions4/identifier-array"
+    },
+    {
+      "$ref": "#/definitions3/event"
+    },
+    {
+      "$ref": "#/definitions3/event-array"
+    },
+    {
+      "$ref": "#/definitions4/etwChannel"
+    },
+    {
+      "$ref": "#/definitions4/event"
+    },
+    {
+      "$ref": "#/definitions3/customType"
+    },
+    {
+      "$ref": "#/definitions4/commonParameter-array"
+    },
+    {
+      "$ref": "#/definitions4/fullyQualifiedIdentifier"
+    },
+    {
+      "$ref": "#/definitions3/etwOpcode"
+    }
+  ]
+}

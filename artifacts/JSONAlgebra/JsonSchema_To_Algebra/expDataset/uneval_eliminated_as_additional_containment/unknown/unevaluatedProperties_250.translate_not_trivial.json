@@ -1,0 +1,163 @@
+{
+  "allOf": [
+    {
+      "$id": "state_store_config.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "description": "Configuration for storing extraction progress either locally or in CDF Raw",
+      "type": "object",
+      "properties": {
+        "raw": {
+          "$ref": "#/definitions1/modern_1"
+        },
+        "local": {
+          "$ref": "#/definitions1/modern_2"
+        }
+      }
+    },
+    {
+      "not": {
+        "$id": "state_store_config.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Configuration for storing extraction progress either locally or in CDF Raw",
+        "type": "object",
+        "properties": {
+          "raw": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Store state in a Raw table",
+            "required": [
+              "database",
+              "table"
+            ],
+            "properties": {
+              "database": {
+                "type": "string",
+                "description": "Raw database"
+              },
+              "table": {
+                "type": "string",
+                "description": "Raw table"
+              },
+              "upload-interval": {
+                "type": "integer",
+                "description": "Interval in seconds between each upload of state to Raw",
+                "default": 30
+              }
+            }
+          },
+          "local": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Store state in a local JSON file",
+            "required": [
+              "path"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to JSON file"
+              },
+              "save-interval": {
+                "type": "integer",
+                "description": "Interval in seconds between each time state is saved",
+                "default": 30
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Store state in a Raw table",
+              "required": [
+                "database",
+                "table"
+              ],
+              "properties": {
+                "database": {
+                  "type": "string",
+                  "description": "Raw database"
+                },
+                "table": {
+                  "type": "string",
+                  "description": "Raw table"
+                },
+                "upload-interval": {
+                  "type": "integer",
+                  "description": "Interval in seconds between each upload of state to Raw",
+                  "default": 30
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^database$": true,
+                "^table$": true,
+                "^upload-interval$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Store state in a local JSON file",
+              "required": [
+                "path"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Path to JSON file"
+                },
+                "save-interval": {
+                  "type": "integer",
+                  "description": "Interval in seconds between each time state is saved",
+                  "default": 30
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^path$": true,
+                "^save-interval$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    }
+  ]
+}

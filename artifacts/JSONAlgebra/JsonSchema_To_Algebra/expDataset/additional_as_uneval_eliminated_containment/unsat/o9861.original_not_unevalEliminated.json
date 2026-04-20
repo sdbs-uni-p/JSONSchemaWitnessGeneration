@@ -1,0 +1,123 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "new",
+            "acknowledged",
+            "resolved"
+          ]
+        },
+        "comment": {
+          "type": "string",
+          "maxLength": 32767
+        },
+        "data": {},
+        "eventTags": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9a-zA-Z_-]{1,255}$": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "new",
+                    "acknowledged",
+                    "resolved"
+                  ]
+                },
+                "comment": {
+                  "type": "string",
+                  "maxLength": 32767
+                },
+                "data": true,
+                "eventTags": {
+                  "$ref": "#/definitions4/modern_2"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^state$": true,
+                "^comment$": true,
+                "^data$": true,
+                "^eventTags$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]{1,255}$": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]{1,255}$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

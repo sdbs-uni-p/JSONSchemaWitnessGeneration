@@ -1,0 +1,410 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the resource",
+            "type": "string"
+          },
+          "path": {
+            "description": "The resource file path",
+            "type": "string"
+          },
+          "ino": {
+            "description": "The ino of the file on disk",
+            "type": "number"
+          },
+          "hash": {
+            "description": "The sha1 of the resource",
+            "type": "string"
+          },
+          "size": {
+            "description": "The size of the resource",
+            "type": "number"
+          },
+          "ext": {
+            "description": "The suggested ext of the resource",
+            "type": "string"
+          },
+          "type": {
+            "description": "The resource type. Can be `forge`, `liteloader`, `resourcepack`, and etc.",
+            "type": "string"
+          },
+          "tags": {
+            "description": "The custom tag on this resource",
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "domain": {
+            "description": "The domain of the resource. This decide where (which folder) the resource go",
+            "type": "string"
+          },
+          "metadata": {
+            "description": "The resource specific metadata read from the file",
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                }
+              }
+            ]
+          },
+          "source": {
+            "$ref": "#/definitions3/Source",
+            "description": "Where the resource imported from?"
+          }
+        },
+        "required": [
+          "domain",
+          "ext",
+          "hash",
+          "ino",
+          "metadata",
+          "name",
+          "path",
+          "size",
+          "source",
+          "tags",
+          "type"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ino": {
+                  "description": "The ino of the file on disk",
+                  "type": "number"
+                },
+                "name": {
+                  "description": "The name of the resource",
+                  "type": "string"
+                },
+                "source": {
+                  "$ref": "#/definitions4/Source",
+                  "description": "Where the resource imported from?"
+                },
+                "tags": {
+                  "description": "The custom tag on this resource",
+                  "default": [],
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "domain": {
+                  "description": "The domain of the resource. This decide where (which folder) the resource go",
+                  "type": "string"
+                },
+                "hash": {
+                  "description": "The sha1 of the resource",
+                  "type": "string"
+                },
+                "metadata": {
+                  "description": "The resource specific metadata read from the file",
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions4/modern_2"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions4/modern_3"
+                      }
+                    }
+                  ]
+                },
+                "ext": {
+                  "description": "The suggested ext of the resource",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "The resource type. Can be `forge`, `liteloader`, `resourcepack`, and etc.",
+                  "type": "string"
+                },
+                "path": {
+                  "description": "The resource file path",
+                  "type": "string"
+                },
+                "size": {
+                  "description": "The size of the resource",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "domain",
+                "ext",
+                "hash",
+                "ino",
+                "metadata",
+                "name",
+                "path",
+                "size",
+                "source",
+                "tags",
+                "type"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^metadata$": true,
+                "^ext$": true,
+                "^name$": true,
+                "^hash$": true,
+                "^path$": true,
+                "^size$": true,
+                "^type$": true,
+                "^domain$": true,
+                "^ino$": true,
+                "^source$": true,
+                "^tags$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {}
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "Source": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "description": "The source uris.\n- For the forge mod, it will be the forge://<modid>/<version>\n- For the liteloader mod, it will be the liteloader://<name>/<version>\n- For the curseforge file, it will be the curseforge://<fileId>\n\nIf the source is remote resource, it might also contain the uri like https://host/paths",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "date": {
+          "description": "The date of import",
+          "default": "",
+          "type": "string"
+        },
+        "github": {
+          "description": "The github info for this source. If this is imported from github release, it will present.",
+          "type": "object",
+          "properties": {
+            "owner": {
+              "type": "string"
+            },
+            "repo": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "release",
+            "repo"
+          ]
+        },
+        "curseforge": {
+          "description": "The curseforge info for this source. If this is imported from curseforge, it will present.",
+          "$ref": "#/definitions4/CurseforgeSource"
+        }
+      },
+      "required": [
+        "date",
+        "uri"
+      ]
+    },
+    "CurseforgeSource": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "description": "The curseforge project id",
+          "type": "number"
+        },
+        "fileId": {
+          "description": "The file id",
+          "type": "number"
+        }
+      },
+      "required": [
+        "fileId",
+        "projectId"
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {}
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "Source": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "description": "The source uris.\n- For the forge mod, it will be the forge://<modid>/<version>\n- For the liteloader mod, it will be the liteloader://<name>/<version>\n- For the curseforge file, it will be the curseforge://<fileId>\n\nIf the source is remote resource, it might also contain the uri like https://host/paths",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "date": {
+          "description": "The date of import",
+          "default": "",
+          "type": "string"
+        },
+        "github": {
+          "description": "The github info for this source. If this is imported from github release, it will present.",
+          "type": "object",
+          "properties": {
+            "owner": {
+              "type": "string"
+            },
+            "repo": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "release",
+            "repo"
+          ]
+        },
+        "curseforge": {
+          "description": "The curseforge info for this source. If this is imported from curseforge, it will present.",
+          "$ref": "#/definitions3/CurseforgeSource"
+        }
+      },
+      "required": [
+        "date",
+        "uri"
+      ]
+    },
+    "CurseforgeSource": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "description": "The curseforge project id",
+          "type": "number"
+        },
+        "fileId": {
+          "description": "The file id",
+          "type": "number"
+        }
+      },
+      "required": [
+        "fileId",
+        "projectId"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/Source"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Source"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Source"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Source"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/CurseforgeSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/CurseforgeSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/CurseforgeSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/CurseforgeSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

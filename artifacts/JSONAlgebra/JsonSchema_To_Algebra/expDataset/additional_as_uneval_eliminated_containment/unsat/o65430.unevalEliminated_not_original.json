@@ -1,0 +1,422 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "additionalProperties": false,
+        "description": "A relationship of control between two companies",
+        "properties": {
+          "company": {
+            "$ref": "#/definitions3/company"
+          },
+          "data": {
+            "additionalItems": false,
+            "description": "This is an array of data objects, that is the objects which actually contain the data about the datum. Generally there will only be one element in this, although in for some types of data_types there may naturally be several releated to the same company, e.g. shareholders",
+            "items": {
+              "$ref": "#/definitions3/subsidiary-relationship-data"
+            },
+            "type": "array"
+          },
+          "end_date": {
+            "_format": "date",
+            "type": "string"
+          },
+          "end_date_type": {
+            "type": "string"
+          },
+          "retrieved_at": {
+            "_format": "date",
+            "type": "string"
+          },
+          "sample_date": {
+            "_format": "date",
+            "type": "string"
+          },
+          "source_jurisdiction": {
+            "description": "Jurisdiction of the source of the data",
+            "type": "string"
+          },
+          "start_date": {
+            "_format": "date",
+            "type": "string"
+          },
+          "start_date_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "company",
+          "data",
+          "sample_date"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "direct": {
+                  "description": "If the control is direct (if via an intermediary, this value should be false; if unknown, left blank)",
+                  "type": "boolean"
+                },
+                "percentage_controlled": {
+                  "description": "Percentage controlled, either directly or indirectly",
+                  "type": "string"
+                },
+                "significant": {
+                  "description": "Does the source define the control as somehow significant?",
+                  "type": "boolean"
+                },
+                "subsidiary": {
+                  "$ref": "#/definitions4/modern_2"
+                }
+              },
+              "required": [
+                "subsidiary"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^direct$": true,
+                "^percentage_controlled$": true,
+                "^significant$": true,
+                "^subsidiary$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Company that is controlled",
+              "properties": {
+                "company_number": {
+                  "description": "Company number, if company and known",
+                  "type": "string"
+                },
+                "identifier": {
+                  "description": "Unique identifier of company",
+                  "type": "string"
+                },
+                "jurisdiction": {
+                  "description": "Jurisdiction of registration",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name of company",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^company_number$": true,
+                "^identifier$": true,
+                "^jurisdiction$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "company": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "A company which is the subject of a statement",
+      "properties": {
+        "company_number": {
+          "type": "string"
+        },
+        "identifier": {
+          "description": "An official identifier paired with a code for the issuer of the identifier, e.g sec/12345",
+          "pattern": "^[^/]+/[^/]+$",
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "jurisdiction"
+      ],
+      "type": "object"
+    },
+    "subsidiary-relationship-data": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "properties": {
+        "data_type": {
+          "enum": [
+            "subsidiary_relationship"
+          ]
+        },
+        "properties": {
+          "$ref": "#/definitions4/modern_1"
+        }
+      },
+      "type": "object"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A relationship of control between two companies",
+              "properties": {
+                "source_jurisdiction": {
+                  "description": "Jurisdiction of the source of the data",
+                  "type": "string"
+                },
+                "start_date": {
+                  "_format": "date",
+                  "type": "string"
+                },
+                "start_date_type": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "sample_date": {
+                  "_format": "date",
+                  "type": "string"
+                },
+                "company": {
+                  "$ref": "#/definitions4/company"
+                },
+                "retrieved_at": {
+                  "_format": "date",
+                  "type": "string"
+                },
+                "end_date_type": {
+                  "type": "string"
+                },
+                "end_date": {
+                  "_format": "date",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "company",
+                "data",
+                "sample_date"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^end_date_type$": true,
+                "^start_date$": true,
+                "^company$": true,
+                "^source_jurisdiction$": true,
+                "^start_date_type$": true,
+                "^sample_date$": true,
+                "^end_date$": true,
+                "^retrieved_at$": true,
+                "^data$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "This is an array of data objects, that is the objects which actually contain the data about the datum. Generally there will only be one element in this, although in for some types of data_types there may naturally be several releated to the same company, e.g. shareholders",
+              "items": {
+                "$ref": "#/definitions4/subsidiary-relationship-data"
+              },
+              "type": "array"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  true,
+                  false
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "company": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "A company which is the subject of a statement",
+      "properties": {
+        "company_number": {
+          "type": "string"
+        },
+        "identifier": {
+          "description": "An official identifier paired with a code for the issuer of the identifier, e.g sec/12345",
+          "pattern": "^[^/]+/[^/]+$",
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "jurisdiction"
+      ],
+      "type": "object"
+    },
+    "subsidiary-relationship-data": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "properties": {
+        "data_type": {
+          "enum": [
+            "subsidiary_relationship"
+          ]
+        },
+        "properties": {
+          "additionalProperties": false,
+          "properties": {
+            "direct": {
+              "description": "If the control is direct (if via an intermediary, this value should be false; if unknown, left blank)",
+              "type": "boolean"
+            },
+            "percentage_controlled": {
+              "description": "Percentage controlled, either directly or indirectly",
+              "type": "string"
+            },
+            "significant": {
+              "description": "Does the source define the control as somehow significant?",
+              "type": "boolean"
+            },
+            "subsidiary": {
+              "additionalProperties": false,
+              "description": "Company that is controlled",
+              "properties": {
+                "company_number": {
+                  "description": "Company number, if company and known",
+                  "type": "string"
+                },
+                "identifier": {
+                  "description": "Unique identifier of company",
+                  "type": "string"
+                },
+                "jurisdiction": {
+                  "description": "Jurisdiction of registration",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name of company",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "subsidiary"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/subsidiary-relationship-data"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/subsidiary-relationship-data"
+      }
+    },
+    {
+      "$ref": "#/definitions4/company"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/company"
+      }
+    },
+    {
+      "$ref": "#/definitions3/company"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/company"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/subsidiary-relationship-data"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/subsidiary-relationship-data"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

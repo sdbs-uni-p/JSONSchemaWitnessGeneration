@@ -1,0 +1,1335 @@
+[
+  {
+    "id": 2020,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "definitions2": {
+        "id": {
+          "type": "string",
+          "description": "A lowercase alphanumeric string separated by hyphens.",
+          "pattern": "^[a-z0-9][a-z0-9\\-]*[a-z0-9]$"
+        },
+        "when": {
+          "type": "array",
+          "description": "Configure conditional rules. By adding more than one `condition` element it will evaluate as an and rule.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "meta": {
+                "type": "string"
+              },
+              "condition": {
+                "enum": [
+                  "equals",
+                  "not equals",
+                  "contains",
+                  "not set"
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "boolean"
+                ]
+              }
+            },
+            "additionalProperties": {
+              "not": {}
+            },
+            "required": [
+              "condition"
+            ],
+            "oneOf": [
+              {
+                "required": [
+                  "id"
+                ]
+              },
+              {
+                "required": [
+                  "meta"
+                ]
+              }
+            ]
+          }
+        },
+        "messages": {
+          "type": "object",
+          "properties": {
+            "NOT_INTEGER": {
+              "type": "string"
+            },
+            "NOT_STRING": {
+              "type": "string"
+            },
+            "MANDATORY": {
+              "type": "string"
+            },
+            "INVALID_DATE": {
+              "type": "string"
+            },
+            "NEGATIVE_INTEGER": {
+              "type": "string"
+            },
+            "INTEGER_TOO_LARGE": {
+              "type": "string"
+            },
+            "INVALID_DATE_RANGE_TO_BEFORE_FROM": {
+              "type": "string"
+            },
+            "INVALID_DATE_RANGE_TO_FROM_SAME": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "routing_rules": {
+          "type": "array",
+          "navigation_label_answer_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "_uniqueItems": true
+          },
+          "items": {
+            "type": "object",
+            "properties": {
+              "goto": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "when": {
+                    "$ref": "#/definitions2/when"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "repeat": {
+                "type": "object",
+                "properties": {
+                  "answer_id": {
+                    "type": "string"
+                  },
+                  "goto": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "answer_value",
+                      "answer_count",
+                      "answer_count_minus_one"
+                    ]
+                  }
+                },
+                "required": [
+                  "answer_id"
+                ]
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "goto"
+                ]
+              },
+              {
+                "required": [
+                  "repeat"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "mime_type",
+        "schema_version",
+        "data_version",
+        "questionnaire_id",
+        "survey_id",
+        "title",
+        "groups",
+        "theme",
+        "legal_basis"
+      ],
+      "properties": {
+        "mime_type": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        },
+        "data_version": {
+          "enum": [
+            "0.0.1",
+            "0.0.2"
+          ]
+        },
+        "questionnaire_id": {
+          "type": "string"
+        },
+        "survey_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "legal_basis": {
+          "enum": [
+            "Voluntary",
+            "StatisticsOfTradeAct"
+          ]
+        },
+        "navigation": {
+          "type": "boolean"
+        },
+        "introduction": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "information_to_provide": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "_uniqueItems": true
+            }
+          }
+        },
+        "messages": {
+          "$ref": "#/definitions2/messages"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/definitions2/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "completed_id": {
+                "type": "string"
+              },
+              "highlight_when": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "_uniqueItems": true
+              },
+              "hide_in_navigation": {
+                "type": "boolean"
+              },
+              "skip_condition": {
+                "description": "Allows a group to be skipped when a condition has been met. By adding more than one `when` element it will evaluate as an or rule.",
+                "type": "array",
+                "minItems": 1,
+                "_uniqueItems": true,
+                "properties": {
+                  "when": {
+                    "$ref": "#/definitions2/when"
+                  }
+                },
+                "required": [
+                  "when"
+                ]
+              },
+              "routing_rules": {
+                "ref": "#/definitions2/routing_rules"
+              },
+              "blocks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/definitions2/id"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "sections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "$ref": "#/definitions2/id"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "number": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "questions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "$ref": "#/definitions2/id"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "number": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "guidance": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "title": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "list": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "skip_condition": {
+                                  "description": "Allows a question to be skipped when a condition has been met.",
+                                  "type": "object",
+                                  "properties": {
+                                    "when": {
+                                      "$ref": "#/definitions2/when"
+                                    }
+                                  },
+                                  "additionalProperties": {
+                                    "not": {}
+                                  },
+                                  "required": [
+                                    "when"
+                                  ]
+                                },
+                                "type": {
+                                  "enum": [
+                                    "General",
+                                    "DateRange",
+                                    "RepeatingAnswer",
+                                    "Relationship"
+                                  ]
+                                },
+                                "answers": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "$ref": "#/definitions2/id"
+                                      },
+                                      "q_code": {
+                                        "type": "string",
+                                        "pattern": "[0-9]+"
+                                      },
+                                      "label": {
+                                        "type": "string"
+                                      },
+                                      "guidance": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "enum": [
+                                          "Checkbox",
+                                          "Currency",
+                                          "Date",
+                                          "MonthYearDate",
+                                          "Integer",
+                                          "Percentage",
+                                          "PositiveInteger",
+                                          "Radio",
+                                          "TextArea",
+                                          "TextField",
+                                          "Relationship"
+                                        ]
+                                      },
+                                      "options": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "label": {
+                                              "type": "string"
+                                            },
+                                            "value": {
+                                              "type": "string"
+                                            },
+                                            "q_code": {
+                                              "type": "string",
+                                              "pattern": "[0-9]+"
+                                            }
+                                          },
+                                          "required": [
+                                            "label",
+                                            "value"
+                                          ]
+                                        }
+                                      },
+                                      "mandatory": {
+                                        "type": "boolean"
+                                      },
+                                      "alias": {
+                                        "type": "string"
+                                      },
+                                      "repeats": {
+                                        "type": "boolean"
+                                      },
+                                      "validation": {
+                                        "type": "object",
+                                        "properties": {
+                                          "messages": {
+                                            "$ref": "#/definitions2/messages"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "additionalProperties": {
+                                      "not": {}
+                                    },
+                                    "required": [
+                                      "id",
+                                      "type",
+                                      "mandatory"
+                                    ]
+                                  }
+                                }
+                              },
+                              "additionalProperties": {
+                                "not": {}
+                              },
+                              "required": [
+                                "id",
+                                "title",
+                                "type",
+                                "answers"
+                              ]
+                            }
+                          }
+                        },
+                        "additionalProperties": {
+                          "not": {}
+                        },
+                        "required": [
+                          "id",
+                          "questions"
+                        ]
+                      }
+                    },
+                    "routing_rules": {
+                      "ref": "#/definitions2/routing_rules"
+                    }
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  },
+                  "required": [
+                    "id",
+                    "sections"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": {
+              "not": {}
+            },
+            "required": [
+              "id",
+              "title",
+              "blocks"
+            ]
+          }
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "questions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_7"
+                      }
+                    },
+                    "id": {
+                      "$ref": "#/definitions2/id"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "questions"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^description$": {},
+                    "^number$": {},
+                    "^id$": {},
+                    "^questions$": {},
+                    "^title$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "meta": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "enum": [
+                        "equals",
+                        "not equals",
+                        "contains",
+                        "not set"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "boolean"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "condition"
+                  ],
+                  "oneOf": [
+                    {
+                      "required": [
+                        "id"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "meta"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^id$": {},
+                    "^meta$": {},
+                    "^condition$": {},
+                    "^value$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_8"
+                      }
+                    },
+                    "guidance": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "list": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "id": {
+                      "$ref": "#/definitions2/id"
+                    },
+                    "skip_condition": {
+                      "$ref": "#/definitions2/modern_9"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "General",
+                        "DateRange",
+                        "RepeatingAnswer",
+                        "Relationship"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "type",
+                    "answers"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^skip_condition$": {},
+                    "^description$": {},
+                    "^type$": {},
+                    "^id$": {},
+                    "^answers$": {},
+                    "^title$": {},
+                    "^guidance$": {},
+                    "^number$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "A lowercase alphanumeric string separated by hyphens.",
+          "pattern": "^[a-z0-9][a-z0-9\\-]*[a-z0-9]$"
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "mandatory": {
+                      "type": "boolean"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "$ref": "#/definitions2/id"
+                    },
+                    "repeats": {
+                      "type": "boolean"
+                    },
+                    "type": {
+                      "enum": [
+                        "Checkbox",
+                        "Currency",
+                        "Date",
+                        "MonthYearDate",
+                        "Integer",
+                        "Percentage",
+                        "PositiveInteger",
+                        "Radio",
+                        "TextArea",
+                        "TextField",
+                        "Relationship"
+                      ]
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "q_code": {
+                            "type": "string",
+                            "pattern": "[0-9]+"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "value"
+                        ]
+                      }
+                    },
+                    "alias": {
+                      "type": "string"
+                    },
+                    "guidance": {
+                      "type": "string"
+                    },
+                    "q_code": {
+                      "type": "string",
+                      "pattern": "[0-9]+"
+                    },
+                    "validation": {
+                      "type": "object",
+                      "properties": {
+                        "messages": {
+                          "$ref": "#/definitions2/messages"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type",
+                    "mandatory"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^repeats$": {},
+                    "^options$": {},
+                    "^label$": {},
+                    "^guidance$": {},
+                    "^type$": {},
+                    "^id$": {},
+                    "^validation$": {},
+                    "^mandatory$": {},
+                    "^q_code$": {},
+                    "^alias$": {},
+                    "^description$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Allows a question to be skipped when a condition has been met.",
+                  "type": "object",
+                  "properties": {
+                    "when": {
+                      "$ref": "#/definitions2/when"
+                    }
+                  },
+                  "required": [
+                    "when"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^when$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "definitions2": {
+                    "id": {
+                      "type": "string",
+                      "description": "A lowercase alphanumeric string separated by hyphens.",
+                      "pattern": "^[a-z0-9][a-z0-9\\-]*[a-z0-9]$"
+                    },
+                    "when": {
+                      "type": "array",
+                      "description": "Configure conditional rules. By adding more than one `condition` element it will evaluate as an and rule.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "meta": {
+                            "type": "string"
+                          },
+                          "condition": {
+                            "enum": [
+                              "equals",
+                              "not equals",
+                              "contains",
+                              "not set"
+                            ]
+                          },
+                          "value": {
+                            "type": [
+                              "string",
+                              "boolean"
+                            ]
+                          }
+                        },
+                        "unevaluatedProperties": false,
+                        "required": [
+                          "condition"
+                        ],
+                        "oneOf": [
+                          {
+                            "required": [
+                              "id"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "meta"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "messages": {
+                      "type": "object",
+                      "properties": {
+                        "NOT_INTEGER": {
+                          "type": "string"
+                        },
+                        "NOT_STRING": {
+                          "type": "string"
+                        },
+                        "MANDATORY": {
+                          "type": "string"
+                        },
+                        "INVALID_DATE": {
+                          "type": "string"
+                        },
+                        "NEGATIVE_INTEGER": {
+                          "type": "string"
+                        },
+                        "INTEGER_TOO_LARGE": {
+                          "type": "string"
+                        },
+                        "INVALID_DATE_RANGE_TO_BEFORE_FROM": {
+                          "type": "string"
+                        },
+                        "INVALID_DATE_RANGE_TO_FROM_SAME": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "routing_rules": {
+                      "type": "array",
+                      "navigation_label_answer_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1,
+                        "_uniqueItems": true
+                      },
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "goto": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "when": {
+                                "$ref": "#/definitions2/when"
+                              }
+                            },
+                            "required": [
+                              "id"
+                            ]
+                          },
+                          "repeat": {
+                            "type": "object",
+                            "properties": {
+                              "answer_id": {
+                                "type": "string"
+                              },
+                              "goto": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "answer_value",
+                                  "answer_count",
+                                  "answer_count_minus_one"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "answer_id"
+                            ]
+                          }
+                        },
+                        "oneOf": [
+                          {
+                            "required": [
+                              "goto"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "repeat"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "mime_type",
+                    "schema_version",
+                    "data_version",
+                    "questionnaire_id",
+                    "survey_id",
+                    "title",
+                    "groups",
+                    "theme",
+                    "legal_basis"
+                  ],
+                  "properties": {
+                    "messages": {
+                      "$ref": "#/definitions2/messages"
+                    },
+                    "introduction": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "information_to_provide": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "_uniqueItems": true
+                        }
+                      }
+                    },
+                    "data_version": {
+                      "enum": [
+                        "0.0.1",
+                        "0.0.2"
+                      ]
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "legal_basis": {
+                      "enum": [
+                        "Voluntary",
+                        "StatisticsOfTradeAct"
+                      ]
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_4"
+                      }
+                    },
+                    "questionnaire_id": {
+                      "type": "string"
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "navigation": {
+                      "type": "boolean"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "theme": {
+                      "type": "string"
+                    },
+                    "survey_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^theme$": {},
+                    "^description$": {},
+                    "^groups$": {},
+                    "^questionnaire_id$": {},
+                    "^messages$": {},
+                    "^mime_type$": {},
+                    "^navigation$": {},
+                    "^survey_id$": {},
+                    "^schema_version$": {},
+                    "^legal_basis$": {},
+                    "^introduction$": {},
+                    "^title$": {},
+                    "^data_version$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "when": {
+          "type": "array",
+          "description": "Configure conditional rules. By adding more than one `condition` element it will evaluate as an and rule.",
+          "items": {
+            "$ref": "#/definitions2/modern_1"
+          }
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "blocks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_5"
+                      }
+                    },
+                    "routing_rules": {
+                      "ref": "#/definitions2/routing_rules"
+                    },
+                    "completed_id": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "$ref": "#/definitions2/id"
+                    },
+                    "highlight_when": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 1,
+                      "_uniqueItems": true
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "hide_in_navigation": {
+                      "type": "boolean"
+                    },
+                    "skip_condition": {
+                      "description": "Allows a group to be skipped when a condition has been met. By adding more than one `when` element it will evaluate as an or rule.",
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "properties": {
+                        "when": {
+                          "$ref": "#/definitions2/when"
+                        }
+                      },
+                      "required": [
+                        "when"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "blocks"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^skip_condition$": {},
+                    "^highlight_when$": {},
+                    "^routing_rules$": {},
+                    "^blocks$": {},
+                    "^hide_in_navigation$": {},
+                    "^title$": {},
+                    "^completed_id$": {},
+                    "^id$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "sections": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_6"
+                      }
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "routing_rules": {
+                      "ref": "#/definitions2/routing_rules"
+                    },
+                    "id": {
+                      "$ref": "#/definitions2/id"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "sections"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^description$": {},
+                    "^routing_rules$": {},
+                    "^type$": {},
+                    "^id$": {},
+                    "^sections$": {},
+                    "^title$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "messages": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "INVALID_DATE": {
+                      "type": "string"
+                    },
+                    "INTEGER_TOO_LARGE": {
+                      "type": "string"
+                    },
+                    "NOT_STRING": {
+                      "type": "string"
+                    },
+                    "NOT_INTEGER": {
+                      "type": "string"
+                    },
+                    "MANDATORY": {
+                      "type": "string"
+                    },
+                    "INVALID_DATE_RANGE_TO_FROM_SAME": {
+                      "type": "string"
+                    },
+                    "INVALID_DATE_RANGE_TO_BEFORE_FROM": {
+                      "type": "string"
+                    },
+                    "NEGATIVE_INTEGER": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^INTEGER_TOO_LARGE$": {},
+                    "^INVALID_DATE_RANGE_TO_FROM_SAME$": {},
+                    "^NOT_INTEGER$": {},
+                    "^NEGATIVE_INTEGER$": {},
+                    "^NOT_STRING$": {},
+                    "^INVALID_DATE_RANGE_TO_BEFORE_FROM$": {},
+                    "^INVALID_DATE$": {},
+                    "^MANDATORY$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "routing_rules": {
+          "type": "array",
+          "navigation_label_answer_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "_uniqueItems": true
+          },
+          "items": {
+            "type": "object",
+            "properties": {
+              "goto": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "when": {
+                    "$ref": "#/definitions2/when"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "repeat": {
+                "type": "object",
+                "properties": {
+                  "answer_id": {
+                    "type": "string"
+                  },
+                  "goto": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "answer_value",
+                      "answer_count",
+                      "answer_count_minus_one"
+                    ]
+                  }
+                },
+                "required": [
+                  "answer_id"
+                ]
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "goto"
+                ]
+              },
+              {
+                "required": [
+                  "repeat"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "$ref": "#/definitions2/modern_3"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

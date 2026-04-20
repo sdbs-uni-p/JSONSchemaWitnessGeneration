@@ -1,0 +1,2909 @@
+{
+  "allOf": [
+    {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      },
+      "properties": {
+        "configs": {
+          "additionalProperties": false,
+          "id": "#/properties/configs",
+          "patternProperties": {
+            "^[a-zA-Z0-9._-]+$": {
+              "$ref": "#/definitions3/config"
+            }
+          },
+          "type": "object"
+        },
+        "networks": {
+          "id": "#/properties/networks",
+          "patternProperties": {
+            "^[a-zA-Z0-9._-]+$": {
+              "$ref": "#/definitions3/network"
+            }
+          },
+          "type": "object"
+        },
+        "secrets": {
+          "additionalProperties": false,
+          "id": "#/properties/secrets",
+          "patternProperties": {
+            "^[a-zA-Z0-9._-]+$": {
+              "$ref": "#/definitions3/secret"
+            }
+          },
+          "type": "object"
+        },
+        "services": {
+          "additionalProperties": false,
+          "id": "#/properties/services",
+          "patternProperties": {
+            "^[a-zA-Z0-9._-]+$": {
+              "$ref": "#/definitions3/service"
+            }
+          },
+          "type": "object"
+        },
+        "version": {
+          "type": "string"
+        },
+        "volumes": {
+          "additionalProperties": false,
+          "id": "#/properties/volumes",
+          "patternProperties": {
+            "^[a-zA-Z0-9._-]+$": {
+              "$ref": "#/definitions3/volume"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_27"
+      }
+    }
+  ],
+  "definitions3": {
+    "config": {
+      "additionalProperties": false,
+      "id": "#/definitions3/config",
+      "properties": {
+        "external": {
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": [
+            "boolean",
+            "object"
+          ]
+        },
+        "file": {
+          "type": "string"
+        },
+        "labels": {
+          "$ref": "#/definitions3/labels"
+        }
+      },
+      "type": "object"
+    },
+    "constraints": {
+      "service": {
+        "anyOf": [
+          {
+            "required": [
+              "build"
+            ]
+          },
+          {
+            "required": [
+              "image"
+            ]
+          }
+        ],
+        "id": "#/definitions3/constraints/service",
+        "properties": {
+          "build": {
+            "required": [
+              "context"
+            ]
+          }
+        }
+      }
+    },
+    "deployment": {
+      "additionalProperties": false,
+      "id": "#/definitions3/deployment",
+      "properties": {
+        "endpoint_mode": {
+          "type": "string"
+        },
+        "labels": {
+          "$ref": "#/definitions3/labels"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "placement": {
+          "additionalProperties": false,
+          "properties": {
+            "constraints": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "preferences": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "spread": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "replicas": {
+          "type": "integer"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "$ref": "#/definitions3/resource"
+            },
+            "reservations": {
+              "$ref": "#/definitions3/resource"
+            }
+          },
+          "type": "object"
+        },
+        "restart_policy": {
+          "additionalProperties": false,
+          "properties": {
+            "condition": {
+              "type": "string"
+            },
+            "delay": {
+              "_format": "duration",
+              "type": "string"
+            },
+            "max_attempts": {
+              "type": "integer"
+            },
+            "window": {
+              "_format": "duration",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "update_config": {
+          "additionalProperties": false,
+          "properties": {
+            "delay": {
+              "_format": "duration",
+              "type": "string"
+            },
+            "failure_action": {
+              "type": "string"
+            },
+            "max_failure_ratio": {
+              "type": "number"
+            },
+            "monitor": {
+              "_format": "duration",
+              "type": "string"
+            },
+            "order": {
+              "enum": [
+                "start-first",
+                "stop-first"
+              ],
+              "type": "string"
+            },
+            "parallelism": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "healthcheck": {
+      "additionalProperties": false,
+      "id": "#/definitions3/healthcheck",
+      "properties": {
+        "disable": {
+          "type": "boolean"
+        },
+        "interval": {
+          "_format": "duration",
+          "type": "string"
+        },
+        "retries": {
+          "type": "number"
+        },
+        "start_period": {
+          "_format": "duration",
+          "type": "string"
+        },
+        "test": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "timeout": {
+          "_format": "duration",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "labels": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "patternProperties": {
+            ".+": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        }
+      ]
+    },
+    "list_of_strings": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "list_or_dict": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "patternProperties": {
+            ".+": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        }
+      ]
+    },
+    "network": {
+      "additionalProperties": false,
+      "id": "#/definitions3/network",
+      "properties": {
+        "attachable": {
+          "type": "boolean"
+        },
+        "driver": {
+          "type": "string"
+        },
+        "driver_opts": {
+          "patternProperties": {
+            "^.+$": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "external": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": [
+            "boolean",
+            "object"
+          ]
+        },
+        "internal": {
+          "type": "boolean"
+        },
+        "ipam": {
+          "additionalProperties": false,
+          "properties": {
+            "config": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "subnet": {
+                    "_format": "subnet_ip_address",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "driver": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "labels": {
+          "$ref": "#/definitions3/labels"
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "resource": {
+      "additionalProperties": false,
+      "id": "#/definitions3/resource",
+      "properties": {
+        "cpus": {
+          "type": "string"
+        },
+        "memory": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "secret": {
+      "additionalProperties": false,
+      "id": "#/definitions3/secret",
+      "properties": {
+        "external": {
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": [
+            "boolean",
+            "object"
+          ]
+        },
+        "file": {
+          "type": "string"
+        },
+        "labels": {
+          "$ref": "#/definitions3/labels"
+        }
+      },
+      "type": "object"
+    },
+    "service": {
+      "additionalProperties": false,
+      "id": "#/definitions3/service",
+      "properties": {
+        "build": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "args": {
+                  "$ref": "#/definitions3/list_or_dict"
+                },
+                "cache_from": {
+                  "$ref": "#/definitions3/list_of_strings"
+                },
+                "context": {
+                  "type": "string"
+                },
+                "dockerfile": {
+                  "type": "string"
+                },
+                "labels": {
+                  "$ref": "#/definitions3/labels"
+                },
+                "network": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          ]
+        },
+        "cap_add": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "cap_drop": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "cgroup_parent": {
+          "type": "string"
+        },
+        "command": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "configs": {
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "properties": {
+                  "gid": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "number"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "uid": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "container_name": {
+          "type": "string"
+        },
+        "credential_spec": {
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "registry": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "depends_on": {
+          "$ref": "#/definitions3/list_of_strings"
+        },
+        "deploy": {
+          "$ref": "#/definitions3/deployment"
+        },
+        "devices": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "dns": {
+          "$ref": "#/definitions3/string_or_list"
+        },
+        "dns_search": {
+          "$ref": "#/definitions3/string_or_list"
+        },
+        "domainname": {
+          "type": "string"
+        },
+        "entrypoint": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "env_file": {
+          "$ref": "#/definitions3/string_or_list"
+        },
+        "environment": {
+          "$ref": "#/definitions3/list_or_dict"
+        },
+        "expose": {
+          "items": {
+            "format": "expose",
+            "type": [
+              "string",
+              "number"
+            ]
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "external_links": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "extra_hosts": {
+          "$ref": "#/definitions3/list_or_dict"
+        },
+        "healthcheck": {
+          "$ref": "#/definitions3/healthcheck"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "ipc": {
+          "type": "string"
+        },
+        "labels": {
+          "$ref": "#/definitions3/labels"
+        },
+        "links": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "logging": {
+          "additionalProperties": false,
+          "properties": {
+            "driver": {
+              "type": "string"
+            },
+            "options": {
+              "patternProperties": {
+                "^.+$": {
+                  "type": [
+                    "string",
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "mac_address": {
+          "type": "string"
+        },
+        "network_mode": {
+          "type": "string"
+        },
+        "networks": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/list_of_strings"
+            },
+            {
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "oneOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "aliases": {
+                          "$ref": "#/definitions3/list_of_strings"
+                        },
+                        "ipv4_address": {
+                          "type": "string"
+                        },
+                        "ipv6_address": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "type": "object"
+            }
+          ]
+        },
+        "pid": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ports": {
+          "items": {
+            "oneOf": [
+              {
+                "format": "ports",
+                "type": "number"
+              },
+              {
+                "_format": "ports",
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "mode": {
+                    "type": "string"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "published": {
+                    "type": "integer"
+                  },
+                  "target": {
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "privileged": {
+          "type": "boolean"
+        },
+        "read_only": {
+          "type": "boolean"
+        },
+        "restart": {
+          "type": "string"
+        },
+        "secrets": {
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "properties": {
+                  "gid": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "number"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "uid": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "security_opt": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "shm_size": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "stdin_open": {
+          "type": "boolean"
+        },
+        "stop_grace_period": {
+          "_format": "duration",
+          "type": "string"
+        },
+        "stop_signal": {
+          "type": "string"
+        },
+        "sysctls": {
+          "$ref": "#/definitions3/list_or_dict"
+        },
+        "tmpfs": {
+          "$ref": "#/definitions3/string_or_list"
+        },
+        "tty": {
+          "type": "boolean"
+        },
+        "ulimits": {
+          "patternProperties": {
+            "^[a-z]+$": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "hard": {
+                      "type": "integer"
+                    },
+                    "soft": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "soft",
+                    "hard"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "user": {
+          "type": "string"
+        },
+        "userns_mode": {
+          "type": "string"
+        },
+        "volumes": {
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "bind": {
+                    "properties": {
+                      "propagation": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "consistency": {
+                    "type": "string"
+                  },
+                  "read_only": {
+                    "type": "boolean"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "volume": {
+                    "properties": {
+                      "nocopy": {
+                        "type": "boolean"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "_uniqueItems": true
+          },
+          "type": "array"
+        },
+        "working_dir": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "string_or_list": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions3/list_of_strings"
+        }
+      ]
+    },
+    "volume": {
+      "additionalProperties": false,
+      "id": "#/definitions3/volume",
+      "properties": {
+        "driver": {
+          "type": "string"
+        },
+        "driver_opts": {
+          "patternProperties": {
+            "^.+$": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "external": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": [
+            "boolean",
+            "object"
+          ]
+        },
+        "labels": {
+          "$ref": "#/definitions3/labels"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_20": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "network": {
+                  "type": "string"
+                },
+                "dockerfile": {
+                  "type": "string"
+                },
+                "context": {
+                  "type": "string"
+                },
+                "cache_from": {
+                  "$ref": "#/definitions4/list_of_strings"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                },
+                "args": {
+                  "$ref": "#/definitions4/list_or_dict"
+                },
+                "target": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^args$": true,
+                "^labels$": true,
+                "^context$": true,
+                "^cache_from$": true,
+                "^dockerfile$": true,
+                "^network$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "string_or_list": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions4/list_of_strings"
+        }
+      ]
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                ".+": {
+                  "type": [
+                    "string",
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                ".+": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "parallelism": {
+                  "type": "integer"
+                },
+                "monitor": {
+                  "_format": "duration",
+                  "type": "string"
+                },
+                "delay": {
+                  "_format": "duration",
+                  "type": "string"
+                },
+                "max_failure_ratio": {
+                  "type": "number"
+                },
+                "order": {
+                  "enum": [
+                    "start-first",
+                    "stop-first"
+                  ],
+                  "type": "string"
+                },
+                "failure_action": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^parallelism$": true,
+                "^delay$": true,
+                "^max_failure_ratio$": true,
+                "^order$": true,
+                "^monitor$": true,
+                "^failure_action$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_24": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/healthcheck",
+              "properties": {
+                "test": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "retries": {
+                  "type": "number"
+                },
+                "interval": {
+                  "_format": "duration",
+                  "type": "string"
+                },
+                "disable": {
+                  "type": "boolean"
+                },
+                "timeout": {
+                  "_format": "duration",
+                  "type": "string"
+                },
+                "start_period": {
+                  "_format": "duration",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^start_period$": true,
+                "^timeout$": true,
+                "^disable$": true,
+                "^retries$": true,
+                "^interval$": true,
+                "^test$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "config": {
+                  "items": {
+                    "$ref": "#/definitions4/modern_4"
+                  },
+                  "type": "array"
+                },
+                "driver": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^config$": true,
+                "^driver$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_22": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/resource",
+              "properties": {
+                "cpus": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^cpus$": true,
+                "^memory$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_26": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "type": [
+                "boolean",
+                "object"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "limits": {
+                  "$ref": "#/definitions4/resource"
+                },
+                "reservations": {
+                  "$ref": "#/definitions4/resource"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^limits$": true,
+                "^reservations$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "list_of_strings": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/service",
+              "properties": {
+                "networks": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/list_of_strings"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_15"
+                    }
+                  ]
+                },
+                "image": {
+                  "type": "string"
+                },
+                "credential_spec": {
+                  "properties": {
+                    "file": {
+                      "type": "string"
+                    },
+                    "registry": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "read_only": {
+                  "type": "boolean"
+                },
+                "volumes": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "$ref": "#/definitions4/modern_17"
+                      }
+                    ],
+                    "_uniqueItems": true
+                  },
+                  "type": "array"
+                },
+                "configs": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "gid": {
+                            "type": "string"
+                          },
+                          "target": {
+                            "type": "string"
+                          },
+                          "uid": {
+                            "type": "string"
+                          },
+                          "mode": {
+                            "type": "number"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                },
+                "userns_mode": {
+                  "type": "string"
+                },
+                "tty": {
+                  "type": "boolean"
+                },
+                "devices": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "dns": {
+                  "$ref": "#/definitions4/string_or_list"
+                },
+                "ulimits": {
+                  "patternProperties": {
+                    "^[a-z]+$": {
+                      "oneOf": [
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "$ref": "#/definitions4/modern_18"
+                        }
+                      ]
+                    }
+                  },
+                  "type": "object"
+                },
+                "stop_signal": {
+                  "type": "string"
+                },
+                "sysctls": {
+                  "$ref": "#/definitions4/list_or_dict"
+                },
+                "logging": {
+                  "$ref": "#/definitions4/modern_19"
+                },
+                "shm_size": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                },
+                "hostname": {
+                  "type": "string"
+                },
+                "secrets": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "gid": {
+                            "type": "string"
+                          },
+                          "target": {
+                            "type": "string"
+                          },
+                          "uid": {
+                            "type": "string"
+                          },
+                          "mode": {
+                            "type": "number"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                "dns_search": {
+                  "$ref": "#/definitions4/string_or_list"
+                },
+                "cgroup_parent": {
+                  "type": "string"
+                },
+                "env_file": {
+                  "$ref": "#/definitions4/string_or_list"
+                },
+                "domainname": {
+                  "type": "string"
+                },
+                "build": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_20"
+                    }
+                  ]
+                },
+                "ports": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "format": "ports",
+                        "type": "number"
+                      },
+                      {
+                        "_format": "ports",
+                        "type": "string"
+                      },
+                      {
+                        "$ref": "#/definitions4/modern_21"
+                      }
+                    ]
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "extra_hosts": {
+                  "$ref": "#/definitions4/list_or_dict"
+                },
+                "cap_drop": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "ipc": {
+                  "type": "string"
+                },
+                "depends_on": {
+                  "$ref": "#/definitions4/list_of_strings"
+                },
+                "command": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "mac_address": {
+                  "type": "string"
+                },
+                "entrypoint": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "links": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "pid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "stdin_open": {
+                  "type": "boolean"
+                },
+                "container_name": {
+                  "type": "string"
+                },
+                "network_mode": {
+                  "type": "string"
+                },
+                "environment": {
+                  "$ref": "#/definitions4/list_or_dict"
+                },
+                "expose": {
+                  "items": {
+                    "format": "expose",
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "security_opt": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "deploy": {
+                  "$ref": "#/definitions4/deployment"
+                },
+                "working_dir": {
+                  "type": "string"
+                },
+                "external_links": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "stop_grace_period": {
+                  "_format": "duration",
+                  "type": "string"
+                },
+                "privileged": {
+                  "type": "boolean"
+                },
+                "restart": {
+                  "type": "string"
+                },
+                "healthcheck": {
+                  "$ref": "#/definitions4/healthcheck"
+                },
+                "user": {
+                  "type": "string"
+                },
+                "cap_add": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "tmpfs": {
+                  "$ref": "#/definitions4/string_or_list"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^tty$": true,
+                "^pid$": true,
+                "^logging$": true,
+                "^labels$": true,
+                "^hostname$": true,
+                "^env_file$": true,
+                "^domainname$": true,
+                "^configs$": true,
+                "^deploy$": true,
+                "^build$": true,
+                "^networks$": true,
+                "^volumes$": true,
+                "^external_links$": true,
+                "^userns_mode$": true,
+                "^extra_hosts$": true,
+                "^ports$": true,
+                "^healthcheck$": true,
+                "^tmpfs$": true,
+                "^user$": true,
+                "^ipc$": true,
+                "^container_name$": true,
+                "^image$": true,
+                "^privileged$": true,
+                "^security_opt$": true,
+                "^mac_address$": true,
+                "^depends_on$": true,
+                "^working_dir$": true,
+                "^environment$": true,
+                "^cap_drop$": true,
+                "^dns_search$": true,
+                "^stdin_open$": true,
+                "^stop_signal$": true,
+                "^links$": true,
+                "^ulimits$": true,
+                "^entrypoint$": true,
+                "^network_mode$": true,
+                "^shm_size$": true,
+                "^dns$": true,
+                "^devices$": true,
+                "^cap_add$": true,
+                "^stop_grace_period$": true,
+                "^secrets$": true,
+                "^sysctls$": true,
+                "^credential_spec$": true,
+                "^command$": true,
+                "^cgroup_parent$": true,
+                "^restart$": true,
+                "^expose$": true,
+                "^read_only$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_21": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "mode": {
+                  "type": "string"
+                },
+                "protocol": {
+                  "type": "string"
+                },
+                "published": {
+                  "type": "integer"
+                },
+                "target": {
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^mode$": true,
+                "^protocol$": true,
+                "^published$": true,
+                "^target$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "type": [
+                "boolean",
+                "object"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "secret": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "network": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/deployment",
+              "properties": {
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                },
+                "restart_policy": {
+                  "$ref": "#/definitions4/modern_7"
+                },
+                "replicas": {
+                  "type": "integer"
+                },
+                "update_config": {
+                  "$ref": "#/definitions4/modern_8"
+                },
+                "placement": {
+                  "$ref": "#/definitions4/modern_9"
+                },
+                "endpoint_mode": {
+                  "type": "string"
+                },
+                "resources": {
+                  "$ref": "#/definitions4/modern_11"
+                },
+                "mode": {
+                  "type": "string"
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^endpoint_mode$": true,
+                "^labels$": true,
+                "^replicas$": true,
+                "^restart_policy$": true,
+                "^mode$": true,
+                "^placement$": true,
+                "^resources$": true,
+                "^update_config$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "spread": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^spread$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "deployment": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "aliases": {
+                  "$ref": "#/definitions4/list_of_strings"
+                },
+                "ipv4_address": {
+                  "type": "string"
+                },
+                "ipv6_address": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^aliases$": true,
+                "^ipv4_address$": true,
+                "^ipv6_address$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/modern_16"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "list_or_dict": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/modern_12"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        }
+      ]
+    },
+    "modern_27": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^x-": true
+              },
+              "properties": {
+                "services": {
+                  "$ref": "#/definitions4/modern_28"
+                },
+                "networks": {
+                  "id": "#/properties/networks",
+                  "patternProperties": {
+                    "^[a-zA-Z0-9._-]+$": {
+                      "$ref": "#/definitions4/network"
+                    }
+                  },
+                  "type": "object"
+                },
+                "secrets": {
+                  "$ref": "#/definitions4/modern_29"
+                },
+                "volumes": {
+                  "$ref": "#/definitions4/modern_30"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "configs": {
+                  "$ref": "#/definitions4/modern_31"
+                }
+              },
+              "required": [
+                "version"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^x-": true,
+                "^services$": true,
+                "^secrets$": true,
+                "^configs$": true,
+                "^networks$": true,
+                "^volumes$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/secret",
+              "properties": {
+                "external": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "type": [
+                    "boolean",
+                    "object"
+                  ]
+                },
+                "file": {
+                  "type": "string"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^external$": true,
+                "^file$": true,
+                "^labels$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_31": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/properties/configs",
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "$ref": "#/definitions4/config"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "condition": {
+                  "type": "string"
+                },
+                "delay": {
+                  "_format": "duration",
+                  "type": "string"
+                },
+                "max_attempts": {
+                  "type": "integer"
+                },
+                "window": {
+                  "_format": "duration",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^condition$": true,
+                "^delay$": true,
+                "^max_attempts$": true,
+                "^window$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_23": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                ".+": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                ".+": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "bind": {
+                  "properties": {
+                    "propagation": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "volume": {
+                  "properties": {
+                    "nocopy": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                },
+                "read_only": {
+                  "type": "boolean"
+                },
+                "consistency": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^consistency$": true,
+                "^type$": true,
+                "^volume$": true,
+                "^bind$": true,
+                "^read_only$": true,
+                "^source$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "config": {
+      "$ref": "#/definitions4/modern_13"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/network",
+              "properties": {
+                "attachable": {
+                  "type": "boolean"
+                },
+                "internal": {
+                  "type": "boolean"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                },
+                "driver_opts": {
+                  "patternProperties": {
+                    "^.+$": {
+                      "type": [
+                        "string",
+                        "number"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                },
+                "ipam": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "driver": {
+                  "type": "string"
+                },
+                "external": {
+                  "$ref": "#/definitions4/modern_5"
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^internal$": true,
+                "^labels$": true,
+                "^external$": true,
+                "^attachable$": true,
+                "^driver$": true,
+                "^ipam$": true,
+                "^driver_opts$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "service": {
+      "$ref": "#/definitions4/modern_14"
+    },
+    "modern_28": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/properties/services",
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "$ref": "#/definitions4/service"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "resource": {
+      "$ref": "#/definitions4/modern_22"
+    },
+    "labels": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/modern_23"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        }
+      ]
+    },
+    "modern_30": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/properties/volumes",
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "$ref": "#/definitions4/volume"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "constraints": {
+      "service": {
+        "anyOf": [
+          {
+            "required": [
+              "build"
+            ]
+          },
+          {
+            "required": [
+              "image"
+            ]
+          }
+        ],
+        "id": "#/definitions4/constraints/service",
+        "properties": {
+          "build": {
+            "required": [
+              "context"
+            ]
+          }
+        }
+      }
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "constraints": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "preferences": {
+                  "items": {
+                    "$ref": "#/definitions4/modern_10"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^constraints$": true,
+                "^preferences$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_29": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/properties/secrets",
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "$ref": "#/definitions4/secret"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "hard": {
+                  "type": "integer"
+                },
+                "soft": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "soft",
+                "hard"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^hard$": true,
+                "^soft$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/config",
+              "properties": {
+                "external": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "type": [
+                    "boolean",
+                    "object"
+                  ]
+                },
+                "file": {
+                  "type": "string"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^external$": true,
+                "^file$": true,
+                "^labels$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "healthcheck": {
+      "$ref": "#/definitions4/modern_24"
+    },
+    "volume": {
+      "$ref": "#/definitions4/modern_25"
+    },
+    "modern_25": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "#/definitions4/volume",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/labels"
+                },
+                "driver_opts": {
+                  "patternProperties": {
+                    "^.+$": {
+                      "type": [
+                        "string",
+                        "number"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                },
+                "driver": {
+                  "type": "string"
+                },
+                "external": {
+                  "$ref": "#/definitions4/modern_26"
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^labels$": true,
+                "^external$": true,
+                "^name$": true,
+                "^driver$": true,
+                "^driver_opts$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "driver": {
+                  "type": "string"
+                },
+                "options": {
+                  "patternProperties": {
+                    "^.+$": {
+                      "type": [
+                        "string",
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^driver$": true,
+                "^options$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "subnet": {
+                  "_format": "subnet_ip_address",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^subnet$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_24"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_24"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_25"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_25"
+      }
+    },
+    {
+      "$ref": "#/definitions4/network"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/network"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_31"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_31"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/secret"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/secret"
+      }
+    },
+    {
+      "$ref": "#/definitions3/labels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/labels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/volume"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/volume"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions4/resource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/resource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/resource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/resource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/list_of_strings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/list_of_strings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/healthcheck"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/healthcheck"
+      }
+    },
+    {
+      "$ref": "#/definitions4/string_or_list"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/string_or_list"
+      }
+    },
+    {
+      "$ref": "#/definitions4/deployment"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/deployment"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_28"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_28"
+      }
+    },
+    {
+      "$ref": "#/definitions3/volume"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/volume"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_30"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_30"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions3/deployment"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/deployment"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_26"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_26"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_23"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_23"
+      }
+    },
+    {
+      "$ref": "#/definitions3/healthcheck"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/healthcheck"
+      }
+    },
+    {
+      "$ref": "#/definitions3/secret"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/secret"
+      }
+    },
+    {
+      "$ref": "#/definitions4/list_or_dict"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/list_or_dict"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_29"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_29"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions3/config"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/config"
+      }
+    },
+    {
+      "$ref": "#/definitions4/config"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/config"
+      }
+    },
+    {
+      "$ref": "#/definitions4/labels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/labels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_27"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_27"
+      }
+    },
+    {
+      "$ref": "#/definitions3/string_or_list"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/string_or_list"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions3/list_or_dict"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/list_or_dict"
+      }
+    },
+    {
+      "$ref": "#/definitions3/network"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/network"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions3/list_of_strings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/list_of_strings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_20"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_20"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/service"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/service"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_22"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_22"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions3/service"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/service"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_21"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_21"
+      }
+    }
+  ]
+}

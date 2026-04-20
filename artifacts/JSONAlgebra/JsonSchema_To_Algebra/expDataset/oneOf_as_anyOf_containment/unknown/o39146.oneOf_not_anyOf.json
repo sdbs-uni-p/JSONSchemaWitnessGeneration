@@ -1,0 +1,180 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "statusCode",
+        "reasonPhrase"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "statusCode": {
+          "type": "integer"
+        },
+        "reasonPhrase": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {},
+        "stackTrace": {
+          "$ref": "#/definitions3/exception"
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "statusCode",
+          "reasonPhrase"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "statusCode": {
+            "type": "integer"
+          },
+          "reasonPhrase": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {},
+          "stackTrace": {
+            "$ref": "#/definitions4/exception"
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "exception": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "at": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suppressed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/maybeCircularException"
+          }
+        },
+        "causedBy": {
+          "$ref": "#/definitions3/maybeCircularException"
+        }
+      }
+    },
+    "circularReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "circularReference"
+      ],
+      "properties": {
+        "circularReference": {
+          "$ref": "#/definitions3/exception"
+        }
+      }
+    },
+    "maybeCircularException": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/exception"
+        },
+        {
+          "$ref": "#/definitions3/circularReference"
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "exception": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "at": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suppressed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/maybeCircularException"
+          }
+        },
+        "causedBy": {
+          "$ref": "#/definitions4/maybeCircularException"
+        }
+      }
+    },
+    "circularReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "circularReference"
+      ],
+      "properties": {
+        "circularReference": {
+          "$ref": "#/definitions4/exception"
+        }
+      }
+    },
+    "maybeCircularException": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/exception"
+        },
+        {
+          "$ref": "#/definitions4/circularReference"
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/circularReference"
+    },
+    {
+      "$ref": "#/definitions3/maybeCircularException"
+    },
+    {
+      "$ref": "#/definitions4/circularReference"
+    },
+    {
+      "$ref": "#/definitions4/maybeCircularException"
+    },
+    {
+      "$ref": "#/definitions4/exception"
+    },
+    {
+      "$ref": "#/definitions3/exception"
+    }
+  ]
+}

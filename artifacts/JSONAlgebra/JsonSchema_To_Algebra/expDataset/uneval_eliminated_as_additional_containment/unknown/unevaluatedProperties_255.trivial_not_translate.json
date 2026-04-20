@@ -1,0 +1,184 @@
+{
+  "allOf": [
+    {
+      "$id": "display_field.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Display field",
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "field"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Definition of the data to be displayed. One or more relation or entity properties can be displayed. Each property to be displayed can consist of a relation path with a relation property or entity property identifier at the end."
+        },
+        "type": {
+          "type": "string",
+          "description": "Definition of how the selected data should be displayed.",
+          "enum": [
+            "edtf",
+            "edtf_year",
+            "iiif_manifest",
+            "filmmagie",
+            "geometry",
+            "link",
+            "list",
+            "online_identifier",
+            "table",
+            "text_flatten",
+            "vooruit_image",
+            "wikidata_images"
+          ]
+        },
+        "base_url": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string",
+          "description": "Definition of the label to displayed for this field, should it be different from the label defined for a single property."
+        },
+        "show_condition": {
+          "type": "string",
+          "description": "Definition of a condition that defines whether the field is displayed or not."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "online_identifier"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "base_url"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "not": {
+        "$id": "display_field.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$ref": "#/definitions1/modern_1"
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Display field",
+              "type": "object",
+              "required": [
+                "field"
+              ],
+              "properties": {
+                "show_condition": {
+                  "type": "string",
+                  "description": "Definition of a condition that defines whether the field is displayed or not."
+                },
+                "field": {
+                  "type": "string",
+                  "description": "Definition of the data to be displayed. One or more relation or entity properties can be displayed. Each property to be displayed can consist of a relation path with a relation property or entity property identifier at the end."
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Definition of the label to displayed for this field, should it be different from the label defined for a single property."
+                },
+                "base_url": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Definition of how the selected data should be displayed.",
+                  "enum": [
+                    "edtf",
+                    "edtf_year",
+                    "iiif_manifest",
+                    "filmmagie",
+                    "geometry",
+                    "link",
+                    "list",
+                    "online_identifier",
+                    "table",
+                    "text_flatten",
+                    "vooruit_image",
+                    "wikidata_images"
+                  ]
+                }
+              },
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "type": {
+                              "const": "online_identifier"
+                            }
+                          },
+                          "required": [
+                            "type"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "base_url"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "type": {
+                            "const": "online_identifier"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^show_condition$": true,
+                "^base_url$": true,
+                "^label$": true,
+                "^type$": true,
+                "^field$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    }
+  ]
+}

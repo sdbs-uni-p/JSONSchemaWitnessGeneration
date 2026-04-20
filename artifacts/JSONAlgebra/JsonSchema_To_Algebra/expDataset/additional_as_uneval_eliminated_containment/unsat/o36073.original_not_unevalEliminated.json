@@ -1,0 +1,181 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "https://github.com/dguo/pawblock/blob/master/storage-schema.json",
+      "description": "Schema for PawBlock's browser storage state",
+      "type": "object",
+      "properties": {
+        "on": {
+          "description": "Whether or not the rules should be applied",
+          "type": "boolean"
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "_uniqueItems": true
+        },
+        "storageVersion": {
+          "description": "To make schema changes easier in the future",
+          "type": "string"
+        },
+        "allowedTabId": {
+          "description": "The tab that should not enforce a block",
+          "type": "integer"
+        },
+        "blockType": {
+          "description": "The strictness of the block page",
+          "type": "string",
+          "enum": [
+            "hard",
+            "soft"
+          ]
+        },
+        "softBlockDelay": {
+          "description": "The number of seconds that the user must wait before continuing",
+          "type": "integer",
+          "minimum": 0
+        },
+        "reenableMinutes": {
+          "description": "Number of minutes to wait before automatically turning PawBlock back on after turning it off",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "https://github.com/dguo/pawblock/blob/master/storage-schema.json",
+              "description": "Schema for PawBlock's browser storage state",
+              "type": "object",
+              "properties": {
+                "softBlockDelay": {
+                  "description": "The number of seconds that the user must wait before continuing",
+                  "type": "integer",
+                  "minimum": 0.0
+                },
+                "blockType": {
+                  "description": "The strictness of the block page",
+                  "type": "string",
+                  "enum": [
+                    "hard",
+                    "soft"
+                  ]
+                },
+                "reenableMinutes": {
+                  "description": "Number of minutes to wait before automatically turning PawBlock back on after turning it off",
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1.0
+                },
+                "storageVersion": {
+                  "description": "To make schema changes easier in the future",
+                  "type": "string"
+                },
+                "on": {
+                  "description": "Whether or not the rules should be applied",
+                  "type": "boolean"
+                },
+                "allowedTabId": {
+                  "description": "The tab that should not enforce a block",
+                  "type": "integer"
+                },
+                "rules": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  },
+                  "_uniqueItems": true
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^rules$": true,
+                "^blockType$": true,
+                "^allowedTabId$": true,
+                "^on$": true,
+                "^reenableMinutes$": true,
+                "^storageVersion$": true,
+                "^softBlockDelay$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "domain": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^domain$": true,
+                "^path$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

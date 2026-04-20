@@ -1,0 +1,223 @@
+[
+  {
+    "id": 841,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "A JSON RPC 2.0 response",
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/success"
+        },
+        {
+          "$ref": "#/definitions2/error"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/success"
+              },
+              {
+                "$ref": "#/definitions2/error"
+              }
+            ]
+          }
+        }
+      ],
+      "definitions2": {
+        "common": {
+          "required": [
+            "id",
+            "jsonrpc"
+          ],
+          "not": {
+            "description": "cannot have result and error at the same time",
+            "required": [
+              "result",
+              "error"
+            ]
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "note": [
+                "spec says a number which should not contain a fractional part",
+                "We choose integer here, but this is unenforceable with some languages"
+              ]
+            },
+            "jsonrpc": {
+              "enum": [
+                "2.0"
+              ]
+            }
+          }
+        },
+        "success": {
+          "description": "A success. The result member is then required and can be anything.",
+          "allOf": [
+            {
+              "$ref": "#/definitions2/common"
+            },
+            {
+              "required": [
+                "result"
+              ]
+            }
+          ]
+        },
+        "error": {
+          "allOf": [
+            {
+              "$ref": "#/definitions2/common"
+            },
+            {
+              "required": [
+                "error"
+              ],
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "note": [
+                        "unenforceable in some languages"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "description": "optional, can be anything"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "A JSON RPC 2.0 response",
+      "definitions2": {
+        "common": {
+          "required": [
+            "id",
+            "jsonrpc"
+          ],
+          "not": {
+            "description": "cannot have result and error at the same time",
+            "required": [
+              "result",
+              "error"
+            ]
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "note": [
+                "spec says a number which should not contain a fractional part",
+                "We choose integer here, but this is unenforceable with some languages"
+              ]
+            },
+            "jsonrpc": {
+              "enum": [
+                "2.0"
+              ]
+            }
+          }
+        },
+        "success": {
+          "description": "A success. The result member is then required and can be anything.",
+          "allOf": [
+            {
+              "$ref": "#/definitions2/common"
+            },
+            {
+              "required": [
+                "result"
+              ]
+            }
+          ]
+        },
+        "error": {
+          "allOf": [
+            {
+              "$ref": "#/definitions2/common"
+            },
+            {
+              "required": [
+                "error"
+              ],
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "note": [
+                        "unenforceable in some languages"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "description": "optional, can be anything"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/success"
+        },
+        {
+          "$ref": "#/definitions2/error"
+        },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions2/success"
+              },
+              {
+                "$ref": "#/definitions2/error"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

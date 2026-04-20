@@ -1,0 +1,2907 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "atomic-reactor server-side configuration",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "version": {
+          "type": "integer"
+        },
+        "clusters": {
+          "description": "Clusters grouped by platform name",
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z0-9_]*$": {
+              "description": "List of clusters for this platform",
+              "type": "array",
+              "items": {
+                "properties": {
+                  "name": {
+                    "description": "osbs-client instance name for this cluster",
+                    "type": "string"
+                  },
+                  "max_concurrent_builds": {
+                    "description": "Maximum number of active builds",
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "enabled": {
+                    "description": "Whether this cluster should be used",
+                    "type": "boolean",
+                    "default": true
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "max_concurrent_builds"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "clusters_client_config_dir": {
+          "description": "Path to directory with osbs.conf for communicating with workers",
+          "type": "string"
+        },
+        "koji": {
+          "description": "Koji instance",
+          "type": "object",
+          "properties": {
+            "hub_url": {
+              "description": "Koji hub's xmlrpc url",
+              "type": "string"
+            },
+            "root_url": {
+              "description": "Koji's root storage url",
+              "type": "string"
+            },
+            "auth": {
+              "description": "Authentication information",
+              "type": "object",
+              "anyOf": [
+                {
+                  "properties": {
+                    "proxyuser": {
+                      "$ref": "#/definitions3/proxyuser"
+                    },
+                    "ssl_certs_dir": {
+                      "description": "Path to directory with cert and ca files",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "ssl_certs_dir"
+                  ]
+                },
+                {
+                  "properties": {
+                    "proxyuser": {
+                      "$ref": "#/definitions3/proxyuser"
+                    },
+                    "krb_cache_path": {
+                      "description": "Path to kerberos credential cache file",
+                      "type": "string"
+                    },
+                    "krb_principal": {
+                      "description": "Kerberos principal",
+                      "type": "string"
+                    },
+                    "krb_keytab_path": {
+                      "description": "Location of Kerberos keytab, e.g. FILE:<absolute_path>",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "krb_principal",
+                    "krb_keytab_path"
+                  ]
+                },
+                {
+                  "properties": {
+                    "proxyuser": {
+                      "$ref": "#/definitions3/proxyuser"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "use_fast_upload": {
+              "description": "Use Koji's fast upload API",
+              "type": "boolean",
+              "default": true
+            },
+            "reserve_build": {
+              "description": "Reserve build id and NVR through Content Generator API. If set, requires koji > 1.17.0",
+              "type": "boolean",
+              "default": false
+            },
+            "insecure_download": {
+              "description": "Download data from koji insecurely",
+              "type": "boolean",
+              "default": false
+            },
+            "delegate_task": {
+              "description": "Autorebuild will create new intermediate task, instead of using original task",
+              "type": "boolean",
+              "default": true
+            },
+            "delegated_task_priority": {
+              "description": "When delegate_build is enabled, delegated task will use this koji task priority, if not set it will use default koji priority",
+              "type": "integer"
+            },
+            "task_annotations_whitelist": {
+              "description": "Annotations to be included in the build_annotations.json task output file. If empty or not described, the file will not be generated",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "hub_url",
+            "root_url",
+            "auth"
+          ]
+        },
+        "pulp": {
+          "description": "Pulp registry instance (deprecated)",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Pulp registry name, specified in /etc/dockpulp.conf",
+              "type": "string"
+            },
+            "loglevel": {
+              "description": "Log level",
+              "type": "string"
+            },
+            "auth": {
+              "description": "Authentication information",
+              "type": "object",
+              "anyOf": [
+                {
+                  "properties": {
+                    "ssl_certs_dir": {
+                      "description": "Path to directory with pulp.cer and pulp.key files",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ssl_certs_dir"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "properties": {
+                    "username": {
+                      "description": "Pulp username",
+                      "type": "string"
+                    },
+                    "password": {
+                      "description": "Pulp password",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "username",
+                    "password"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "auth"
+          ]
+        },
+        "odcs": {
+          "description": "OnDemand Compose Service (ODCS) instance",
+          "type": "object",
+          "properties": {
+            "api_url": {
+              "description": "ODCS api url, including api version",
+              "type": "string"
+            },
+            "insecure": {
+              "description": "Don't check SSL certificate for api_url",
+              "type": "boolean"
+            },
+            "auth": {
+              "description": "Authentication information",
+              "type": "object",
+              "anyOf": [
+                {
+                  "properties": {
+                    "ssl_certs_dir": {
+                      "description": "Path to directory with cert file",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "ssl_certs_dir"
+                  ]
+                },
+                {
+                  "properties": {
+                    "openidc_dir": {
+                      "description": "Path to directory with token file",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "openidc_dir"
+                  ]
+                }
+              ]
+            },
+            "signing_intents": {
+              "description": "List of signing intents",
+              "type": "array",
+              "items": {
+                "properties": {
+                  "name": {
+                    "description": "signing intent name",
+                    "type": "string"
+                  },
+                  "keys": {
+                    "description": "signing intent keys",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "deprecated_keys": {
+                    "description": "deprecated signing intent keys",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "keys"
+                ]
+              }
+            },
+            "default_signing_intent": {
+              "description": "Default signing intent",
+              "type": "string"
+            },
+            "timeout": {
+              "description": "How long in seconds to wait for requested compose to complete. Defaults to 3600",
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "api_url",
+            "auth",
+            "signing_intents",
+            "default_signing_intent"
+          ]
+        },
+        "omps": {
+          "description": "Integration with OMPS service for pushing operators manifests to appregistry",
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "omps_url": {
+              "description": "URL of OMPS REST API",
+              "type": "string"
+            },
+            "omps_namespace": {
+              "description": "Namespace (organization) where manifest will be pushed",
+              "type": "string"
+            },
+            "omps_secret_dir": {
+              "description": "Path to dir with secrets",
+              "type": "string"
+            },
+            "appregistry_url": {
+              "description": "URL for appregistry where operator manifests are stored",
+              "type": "string"
+            },
+            "koji_insecure": {
+              "description": "Download data from koji insecurely (default: false)",
+              "type": "boolean"
+            },
+            "insecure": {
+              "description": "Connect to OMPS service insecurely (default: false)",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "omps_url",
+            "omps_namespace",
+            "omps_secret_dir",
+            "appregistry_url"
+          ]
+        },
+        "smtp": {
+          "description": "SMTP notifications",
+          "type": "object",
+          "properties": {
+            "host": {
+              "description": "SMTP host server name",
+              "type": "string"
+            },
+            "from_address": {
+              "description": "From email address in notification email",
+              "type": "string"
+            },
+            "additional_addresses": {
+              "description": "Email addresses to always send notification email",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "error_addresses": {
+              "description": "Email addresses to send notifications if no other email address can be resolved",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "domain": {
+              "description": "Domain used when constructing email addresses",
+              "type": "string"
+            },
+            "send_to_submitter": {
+              "description": "Send email notification to Koji task submitter",
+              "type": "boolean"
+            },
+            "send_to_pkg_owner": {
+              "description": "Send email notification to Koji package owner",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "host",
+            "from_address"
+          ]
+        },
+        "cachito": {
+          "description": "Cachito instance",
+          "type": "object",
+          "properties": {
+            "api_url": {
+              "description": "Cachito API url",
+              "type": "string"
+            },
+            "insecure": {
+              "description": "Don't check SSL certificate for api_url",
+              "type": "boolean"
+            },
+            "unknown_user": {
+              "description": "User to set in cachito request user param in case koji user is not found",
+              "type": "string",
+              "default": "unknown_user"
+            },
+            "auth": {
+              "description": "Authentication information",
+              "type": "object",
+              "properties": {
+                "ssl_certs_dir": {
+                  "description": "Path to directory with cert file",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "timeout": {
+              "description": "How long in seconds to wait for a Cachito request completes",
+              "type": "integer",
+              "default": 3600
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "api_url",
+            "auth"
+          ]
+        },
+        "arrangement_version": {
+          "description": "Arrangement version",
+          "type": "integer"
+        },
+        "artifacts_allowed_domains": {
+          "description": "Domains allowed to use when fetching artifacts by url, if not specified no restrictions will be applied",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "yum_repo_allowed_domains": {
+          "description": "Domains allowed when fetching yum repo files. If not specified, no restrictions will be applied. The restriction does not apply to scratch builds",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "image_labels": {
+          "description": "Labels to be applied to container image",
+          "type": "object",
+          "patternProperties": {
+            "^[\\w\\.-]+$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "image_label_info_url_format": {
+          "description": "URL format (with {label}-style substitution) for 'info' label",
+          "type": "string"
+        },
+        "image_equal_labels": {
+          "description": "Labels that are expected to be equal in value",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "openshift": {
+          "description": "OpenShift instance running build",
+          "type": "object",
+          "properties": {
+            "url": {
+              "description": "OpenShift url",
+              "type": "string"
+            },
+            "insecure": {
+              "description": "Don't check SSL certificate for url",
+              "type": "boolean"
+            },
+            "build_json_dir": {
+              "description": "Path to directory containing Json files templates for osbs-client lib",
+              "type": "string"
+            },
+            "auth": {
+              "description": "Authentication information",
+              "type": "object",
+              "anyOf": [
+                {
+                  "properties": {
+                    "enable": {
+                      "$ref": "#/definitions3/enable"
+                    },
+                    "krb_cache_path": {
+                      "description": "Path to kerberos credential cache file",
+                      "type": "string"
+                    },
+                    "krb_principal": {
+                      "description": "Kerberos principal",
+                      "type": "string"
+                    },
+                    "krb_keytab_path": {
+                      "description": "Location of Kerberos keytab, e.g. FILE:<absolute_path>",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "krb_principal",
+                    "krb_keytab_path"
+                  ]
+                },
+                {
+                  "properties": {
+                    "enable": {
+                      "$ref": "#/definitions3/enable"
+                    },
+                    "ssl_certs_dir": {
+                      "description": "Path to directory with cert, key and ca files",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "ssl_certs_dir"
+                  ]
+                },
+                {
+                  "properties": {
+                    "enable": {
+                      "$ref": "#/definitions3/enable"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "url"
+          ]
+        },
+        "group_manifests": {
+          "description": "Create manifest list, or image index, in container registry",
+          "type": "boolean"
+        },
+        "platform_descriptors": {
+          "description": "Definition of supported platforms",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string"
+              },
+              "architecture": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "prefer_schema1_digest": {
+          "description": "schema 1 as preferred digest",
+          "type": "boolean"
+        },
+        "content_versions": {
+          "description": "Produce container image of given version",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "v2"
+            ]
+          }
+        },
+        "registries_organization": {
+          "$ref": "#/definitions3/organization"
+        },
+        "registries": {
+          "description": "Container registries to output images",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "Registry URI including version",
+                "type": "string"
+              },
+              "insecure": {
+                "description": "Don't check SSL certificate for url",
+                "type": "boolean"
+              },
+              "auth": {
+                "$ref": "#/definitions3/registry_auth"
+              },
+              "expected_media_types": {
+                "$ref": "#/definitions3/media_types"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "url"
+            ]
+          }
+        },
+        "yum_proxy": {
+          "description": "Proxy to access yum repositories",
+          "type": "string"
+        },
+        "skip_koji_check_for_base_image": {
+          "description": "Allow base image without a related koji build (insecure) when there are no NVR labels set on the base image. If the NVR labels are set on the base image, the check is performed regardless",
+          "type": "boolean"
+        },
+        "deep_manifest_list_inspection": {
+          "description": "If manifest list digest check fails, inspect the manifest list contents",
+          "type": "boolean",
+          "default": true
+        },
+        "fail_on_digest_mismatch": {
+          "description": "Raise an error and stop build when a manifest list digest check fails",
+          "type": "boolean",
+          "default": true
+        },
+        "hide_files": {
+          "description": "Hide files during build for each stage",
+          "type": "object",
+          "properties": {
+            "tmpdir": {
+              "description": "Temporary location, where files will be hidden",
+              "type": "string",
+              "minLength": 1
+            },
+            "files": {
+              "description": "List of files to hide",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "_uniqueItems": true
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "tmpdir",
+            "files"
+          ]
+        },
+        "source_registry": {
+          "description": "Default container registry to use for pulling images",
+          "$ref": "#/definitions3/source_registry"
+        },
+        "pull_registries": {
+          "description": "Other container registries that may be used for pulling images",
+          "type": "array",
+          "items": {
+            "description": "Any container registry other than the default one",
+            "$ref": "#/definitions3/source_registry"
+          }
+        },
+        "sources_command": {
+          "description": "Command to retrieve artifacts in lookaside cache",
+          "type": "string"
+        },
+        "required_secrets": {
+          "description": "List of OpenShift secrets required by this configuration",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "worker_token_secrets": {
+          "description": "List of OpenShift secrets for worker clusters authentication",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "build_image_override": {
+          "description": "Specify different build_image image for platforms",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "default_image_build_method": {
+          "description": "Specify different default buildstep plugin for worker builds",
+          "enum": [
+            "docker_api",
+            "imagebuilder",
+            "buildah_bud"
+          ]
+        },
+        "buildstep_alias": {
+          "description": "Aliases for buildstep plugins",
+          "type": "object",
+          "patternProperties": {
+            "^[\\w_]+$": {
+              "type": "string",
+              "enum": [
+                "docker_api",
+                "imagebuilder"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "flatpak": {
+          "description": "Flatpak specific properties",
+          "type": "object",
+          "properties": {
+            "base_image": {
+              "description": "host image used to install packages when creating a Flatpak",
+              "type": "string"
+            },
+            "metadata": {
+              "description": "how to store Flatpak metadata in the image",
+              "type": "string",
+              "enum": [
+                "annotations",
+                "labels",
+                "both"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "package_comparison_exceptions": {
+          "description": "List of packages that are not compared across architectures",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_container": {
+          "description": "Properties relating to source containers",
+          "type": "object",
+          "properties": {
+            "limit_media_types": {
+              "description": "Do not report any media types other than these",
+              "allOf": [
+                {
+                  "$ref": "#/definitions3/media_types"
+                }
+              ]
+            },
+            "denylist_srpms": {
+              "description": "Don't include srpms specified in denylist json with key",
+              "type": "object",
+              "properties": {
+                "denylist_url": {
+                  "description": "Url with denylist json file",
+                  "type": "string"
+                },
+                "denylist_key": {
+                  "description": "Key in denylist json file, with denylist sources as list (with SRPM names)",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "denylist_url",
+                "denylist_key"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "operator_manifests": {
+          "description": "Configuration for operator manifest bundle builds",
+          "type": "object",
+          "properties": {
+            "allowed_registries": {
+              "description": "Registries allowed to appear in pullspecs, use null to allow all",
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "examples": [
+                null,
+                [
+                  "registry.fedoraproject.org",
+                  "quay.io"
+                ]
+              ]
+            },
+            "repo_replacements": {
+              "description": "Replacements for repos found in pullspecs, configured per registry",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "registry": {
+                    "type": "string"
+                  },
+                  "package_mappings_url": {
+                    "description": "URL of file containing repo replacement mappings",
+                    "type": "string",
+                    "pattern": "^http(s?)://.*$"
+                  }
+                },
+                "required": [
+                  "registry",
+                  "package_mappings_url"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "registry_post_replace": {
+              "description": "After looking up image digest, replace original registries",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "old": {
+                    "description": "Original registry",
+                    "type": "string"
+                  },
+                  "new": {
+                    "description": "Replacement registry",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "old",
+                  "new"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "allowed_registries"
+          ],
+          "additionalProperties": false
+        },
+        "build_env_vars": {
+          "description": "Variables to propagate to build environment",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Name of environment variable",
+                "type": "string"
+              },
+              "value": {
+                "description": "Value of environment variable",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "value"
+            ]
+          }
+        },
+        "image_size_limit": {
+          "description": "Define maximum uncompressed image size in bytes for binary image checked before push",
+          "type": "object",
+          "properties": {
+            "binary_image": {
+              "description": "Maximum size of binary images. Set to 0 or omit to skip the check",
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "koji"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "atomic-reactor server-side configuration",
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "platform_descriptors": {
+            "description": "Definition of supported platforms",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/modern_3"
+            }
+          },
+          "skip_koji_check_for_base_image": {
+            "description": "Allow base image without a related koji build (insecure) when there are no NVR labels set on the base image. If the NVR labels are set on the base image, the check is performed regardless",
+            "type": "boolean"
+          },
+          "omps": {
+            "$ref": "#/definitions4/modern_4"
+          },
+          "source_registry": {
+            "description": "Default container registry to use for pulling images",
+            "$ref": "#/definitions4/source_registry"
+          },
+          "operator_manifests": {
+            "$ref": "#/definitions4/modern_5"
+          },
+          "fail_on_digest_mismatch": {
+            "description": "Raise an error and stop build when a manifest list digest check fails",
+            "type": "boolean",
+            "default": true
+          },
+          "hide_files": {
+            "$ref": "#/definitions4/modern_8"
+          },
+          "source_container": {
+            "$ref": "#/definitions4/modern_9"
+          },
+          "prefer_schema1_digest": {
+            "description": "schema 1 as preferred digest",
+            "type": "boolean"
+          },
+          "registries_organization": {
+            "$ref": "#/definitions4/organization"
+          },
+          "sources_command": {
+            "description": "Command to retrieve artifacts in lookaside cache",
+            "type": "string"
+          },
+          "smtp": {
+            "$ref": "#/definitions4/modern_10"
+          },
+          "image_label_info_url_format": {
+            "description": "URL format (with {label}-style substitution) for 'info' label",
+            "type": "string"
+          },
+          "cachito": {
+            "$ref": "#/definitions4/modern_11"
+          },
+          "openshift": {
+            "$ref": "#/definitions4/modern_13"
+          },
+          "flatpak": {
+            "$ref": "#/definitions4/modern_17"
+          },
+          "clusters": {
+            "$ref": "#/definitions4/modern_18"
+          },
+          "artifacts_allowed_domains": {
+            "description": "Domains allowed to use when fetching artifacts by url, if not specified no restrictions will be applied",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pulp": {
+            "$ref": "#/definitions4/modern_20"
+          },
+          "yum_proxy": {
+            "description": "Proxy to access yum repositories",
+            "type": "string"
+          },
+          "odcs": {
+            "$ref": "#/definitions4/modern_23"
+          },
+          "group_manifests": {
+            "description": "Create manifest list, or image index, in container registry",
+            "type": "boolean"
+          },
+          "image_labels": {
+            "$ref": "#/definitions4/modern_27"
+          },
+          "package_comparison_exceptions": {
+            "description": "List of packages that are not compared across architectures",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image_equal_labels": {
+            "description": "Labels that are expected to be equal in value",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "version": {
+            "type": "integer"
+          },
+          "buildstep_alias": {
+            "$ref": "#/definitions4/modern_28"
+          },
+          "koji": {
+            "$ref": "#/definitions4/modern_29"
+          },
+          "yum_repo_allowed_domains": {
+            "description": "Domains allowed when fetching yum repo files. If not specified, no restrictions will be applied. The restriction does not apply to scratch builds",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "clusters_client_config_dir": {
+            "description": "Path to directory with osbs.conf for communicating with workers",
+            "type": "string"
+          },
+          "required_secrets": {
+            "description": "List of OpenShift secrets required by this configuration",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image_size_limit": {
+            "$ref": "#/definitions4/modern_33"
+          },
+          "arrangement_version": {
+            "description": "Arrangement version",
+            "type": "integer"
+          },
+          "content_versions": {
+            "description": "Produce container image of given version",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "v2"
+              ]
+            }
+          },
+          "registries": {
+            "description": "Container registries to output images",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/modern_34"
+            }
+          },
+          "pull_registries": {
+            "description": "Other container registries that may be used for pulling images",
+            "type": "array",
+            "items": {
+              "description": "Any container registry other than the default one",
+              "$ref": "#/definitions4/source_registry"
+            }
+          },
+          "deep_manifest_list_inspection": {
+            "description": "If manifest list digest check fails, inspect the manifest list contents",
+            "type": "boolean",
+            "default": true
+          },
+          "build_image_override": {
+            "$ref": "#/definitions4/modern_35"
+          },
+          "default_image_build_method": {
+            "description": "Specify different default buildstep plugin for worker builds",
+            "enum": [
+              "docker_api",
+              "imagebuilder",
+              "buildah_bud"
+            ]
+          },
+          "worker_token_secrets": {
+            "description": "List of OpenShift secrets for worker clusters authentication",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "build_env_vars": {
+            "description": "Variables to propagate to build environment",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/modern_36"
+            }
+          }
+        },
+        "required": [
+          "version",
+          "koji"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "enable": {
+      "description": "Enable authentication",
+      "type": "boolean"
+    },
+    "proxyuser": {
+      "description": "Login as different user",
+      "type": "string"
+    },
+    "organization": {
+      "description": "Registry organization",
+      "type": "string"
+    },
+    "media_types": {
+      "description": "Media types to be found in registry",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "application/json",
+          "application/vnd.docker.distribution.manifest.v1+json",
+          "application/vnd.docker.distribution.manifest.v2+json",
+          "application/vnd.docker.distribution.manifest.list.v2+json",
+          "application/vnd.oci.image.manifest.v1+json",
+          "application/vnd.oci.image.index.v1+json"
+        ]
+      }
+    },
+    "registry_auth": {
+      "description": "Registry authentication information",
+      "type": "object",
+      "properties": {
+        "cfg_path": {
+          "description": "Path to directory containing .dockercfg for registry auth",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "cfg_path"
+      ]
+    },
+    "source_registry": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "Registry url",
+          "type": "string"
+        },
+        "insecure": {
+          "description": "Don't check SSL certificate for url",
+          "type": "boolean"
+        },
+        "auth": {
+          "$ref": "#/definitions3/registry_auth"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "registry": {
+                  "type": "string"
+                },
+                "package_mappings_url": {
+                  "description": "URL of file containing repo replacement mappings",
+                  "type": "string",
+                  "pattern": "^http(s?)://.*$"
+                }
+              },
+              "required": [
+                "registry",
+                "package_mappings_url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^registry$": true,
+                "^package_mappings_url$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "SMTP notifications",
+              "type": "object",
+              "properties": {
+                "error_addresses": {
+                  "description": "Email addresses to send notifications if no other email address can be resolved",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "send_to_pkg_owner": {
+                  "description": "Send email notification to Koji package owner",
+                  "type": "boolean"
+                },
+                "additional_addresses": {
+                  "description": "Email addresses to always send notification email",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "send_to_submitter": {
+                  "description": "Send email notification to Koji task submitter",
+                  "type": "boolean"
+                },
+                "from_address": {
+                  "description": "From email address in notification email",
+                  "type": "string"
+                },
+                "domain": {
+                  "description": "Domain used when constructing email addresses",
+                  "type": "string"
+                },
+                "host": {
+                  "description": "SMTP host server name",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "host",
+                "from_address"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^additional_addresses$": true,
+                "^send_to_pkg_owner$": true,
+                "^host$": true,
+                "^error_addresses$": true,
+                "^domain$": true,
+                "^from_address$": true,
+                "^send_to_submitter$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "proxyuser": {
+      "description": "Login as different user",
+      "type": "string"
+    },
+    "modern_34": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "Registry URI including version",
+                  "type": "string"
+                },
+                "insecure": {
+                  "description": "Don't check SSL certificate for url",
+                  "type": "boolean"
+                },
+                "auth": {
+                  "$ref": "#/definitions4/registry_auth"
+                },
+                "expected_media_types": {
+                  "$ref": "#/definitions4/media_types"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^url$": true,
+                "^insecure$": true,
+                "^auth$": true,
+                "^expected_media_types$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_20": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Pulp registry instance (deprecated)",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Pulp registry name, specified in /etc/dockpulp.conf",
+                  "type": "string"
+                },
+                "loglevel": {
+                  "description": "Log level",
+                  "type": "string"
+                },
+                "auth": {
+                  "description": "Authentication information",
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions4/modern_21"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_22"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "auth"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^loglevel$": true,
+                "^auth$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "source_registry": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_28": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Aliases for buildstep plugins",
+              "type": "object",
+              "patternProperties": {
+                "^[\\w_]+$": {
+                  "type": "string",
+                  "enum": [
+                    "docker_api",
+                    "imagebuilder"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[\\w_]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_35": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specify different build_image image for platforms",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Hide files during build for each stage",
+              "type": "object",
+              "properties": {
+                "tmpdir": {
+                  "description": "Temporary location, where files will be hidden",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "files": {
+                  "description": "List of files to hide",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                }
+              },
+              "required": [
+                "tmpdir",
+                "files"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^tmpdir$": true,
+                "^files$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_30": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "proxyuser": {
+                  "$ref": "#/definitions4/proxyuser"
+                },
+                "ssl_certs_dir": {
+                  "description": "Path to directory with cert and ca files",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ssl_certs_dir"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^proxyuser$": true,
+                "^ssl_certs_dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_24": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "ssl_certs_dir": {
+                  "description": "Path to directory with cert file",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ssl_certs_dir"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^ssl_certs_dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "platform": {
+                  "type": "string"
+                },
+                "architecture": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^platform$": true,
+                "^architecture$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_22": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "username": {
+                  "description": "Pulp username",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Pulp password",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^username$": true,
+                "^password$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "enable": {
+                  "$ref": "#/definitions4/enable"
+                },
+                "krb_cache_path": {
+                  "description": "Path to kerberos credential cache file",
+                  "type": "string"
+                },
+                "krb_principal": {
+                  "description": "Kerberos principal",
+                  "type": "string"
+                },
+                "krb_keytab_path": {
+                  "description": "Location of Kerberos keytab, e.g. FILE:<absolute_path>",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "krb_principal",
+                "krb_keytab_path"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^enable$": true,
+                "^krb_cache_path$": true,
+                "^krb_principal$": true,
+                "^krb_keytab_path$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_21": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "ssl_certs_dir": {
+                  "description": "Path to directory with pulp.cer and pulp.key files",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ssl_certs_dir"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^ssl_certs_dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Configuration for operator manifest bundle builds",
+              "type": "object",
+              "properties": {
+                "allowed_registries": {
+                  "description": "Registries allowed to appear in pullspecs, use null to allow all",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "examples": [
+                    null,
+                    [
+                      "registry.fedoraproject.org",
+                      "quay.io"
+                    ]
+                  ]
+                },
+                "repo_replacements": {
+                  "description": "Replacements for repos found in pullspecs, configured per registry",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_6"
+                  }
+                },
+                "registry_post_replace": {
+                  "description": "After looking up image digest, replace original registries",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_7"
+                  }
+                }
+              },
+              "required": [
+                "allowed_registries"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^allowed_registries$": true,
+                "^repo_replacements$": true,
+                "^registry_post_replace$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "enable": {
+      "description": "Enable authentication",
+      "type": "boolean"
+    },
+    "modern_32": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "proxyuser": {
+                  "$ref": "#/definitions4/proxyuser"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^proxyuser$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "organization": {
+      "description": "Registry organization",
+      "type": "string"
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "enable": {
+                  "$ref": "#/definitions4/enable"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^enable$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "enable": {
+                  "$ref": "#/definitions4/enable"
+                },
+                "ssl_certs_dir": {
+                  "description": "Path to directory with cert, key and ca files",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ssl_certs_dir"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^enable$": true,
+                "^ssl_certs_dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_27": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Labels to be applied to container image",
+              "type": "object",
+              "patternProperties": {
+                "^[\\w\\.-]+$": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[\\w\\.-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "Registry url",
+                  "type": "string"
+                },
+                "insecure": {
+                  "description": "Don't check SSL certificate for url",
+                  "type": "boolean"
+                },
+                "auth": {
+                  "$ref": "#/definitions4/registry_auth"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^url$": true,
+                "^insecure$": true,
+                "^auth$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_31": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "proxyuser": {
+                  "$ref": "#/definitions4/proxyuser"
+                },
+                "krb_cache_path": {
+                  "description": "Path to kerberos credential cache file",
+                  "type": "string"
+                },
+                "krb_principal": {
+                  "description": "Kerberos principal",
+                  "type": "string"
+                },
+                "krb_keytab_path": {
+                  "description": "Location of Kerberos keytab, e.g. FILE:<absolute_path>",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "krb_principal",
+                "krb_keytab_path"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^proxyuser$": true,
+                "^krb_cache_path$": true,
+                "^krb_principal$": true,
+                "^krb_keytab_path$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "old": {
+                  "description": "Original registry",
+                  "type": "string"
+                },
+                "new": {
+                  "description": "Replacement registry",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "old",
+                "new"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^old$": true,
+                "^new$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_23": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "OnDemand Compose Service (ODCS) instance",
+              "type": "object",
+              "properties": {
+                "default_signing_intent": {
+                  "description": "Default signing intent",
+                  "type": "string"
+                },
+                "auth": {
+                  "description": "Authentication information",
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions4/modern_24"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_25"
+                    }
+                  ]
+                },
+                "api_url": {
+                  "description": "ODCS api url, including api version",
+                  "type": "string"
+                },
+                "insecure": {
+                  "description": "Don't check SSL certificate for api_url",
+                  "type": "boolean"
+                },
+                "timeout": {
+                  "description": "How long in seconds to wait for requested compose to complete. Defaults to 3600",
+                  "type": "integer"
+                },
+                "signing_intents": {
+                  "description": "List of signing intents",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_26"
+                  }
+                }
+              },
+              "required": [
+                "api_url",
+                "auth",
+                "signing_intents",
+                "default_signing_intent"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^api_url$": true,
+                "^signing_intents$": true,
+                "^timeout$": true,
+                "^default_signing_intent$": true,
+                "^insecure$": true,
+                "^auth$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Flatpak specific properties",
+              "type": "object",
+              "properties": {
+                "base_image": {
+                  "description": "host image used to install packages when creating a Flatpak",
+                  "type": "string"
+                },
+                "metadata": {
+                  "description": "how to store Flatpak metadata in the image",
+                  "type": "string",
+                  "enum": [
+                    "annotations",
+                    "labels",
+                    "both"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^base_image$": true,
+                "^metadata$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Registry authentication information",
+              "type": "object",
+              "properties": {
+                "cfg_path": {
+                  "description": "Path to directory containing .dockercfg for registry auth",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cfg_path"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^cfg_path$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Authentication information",
+              "type": "object",
+              "properties": {
+                "ssl_certs_dir": {
+                  "description": "Path to directory with cert file",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^ssl_certs_dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "registry_auth": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Properties relating to source containers",
+              "type": "object",
+              "properties": {
+                "limit_media_types": {
+                  "description": "Do not report any media types other than these",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions4/media_types"
+                    }
+                  ]
+                },
+                "denylist_srpms": {
+                  "description": "Don't include srpms specified in denylist json with key",
+                  "type": "object",
+                  "properties": {
+                    "denylist_url": {
+                      "description": "Url with denylist json file",
+                      "type": "string"
+                    },
+                    "denylist_key": {
+                      "description": "Key in denylist json file, with denylist sources as list (with SRPM names)",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "denylist_url",
+                    "denylist_key"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^limit_media_types$": true,
+                "^denylist_srpms$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_29": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Koji instance",
+              "type": "object",
+              "properties": {
+                "task_annotations_whitelist": {
+                  "description": "Annotations to be included in the build_annotations.json task output file. If empty or not described, the file will not be generated",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "auth": {
+                  "description": "Authentication information",
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions4/modern_30"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_31"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_32"
+                    }
+                  ]
+                },
+                "hub_url": {
+                  "description": "Koji hub's xmlrpc url",
+                  "type": "string"
+                },
+                "reserve_build": {
+                  "description": "Reserve build id and NVR through Content Generator API. If set, requires koji > 1.17.0",
+                  "type": "boolean",
+                  "default": false
+                },
+                "delegate_task": {
+                  "description": "Autorebuild will create new intermediate task, instead of using original task",
+                  "type": "boolean",
+                  "default": true
+                },
+                "root_url": {
+                  "description": "Koji's root storage url",
+                  "type": "string"
+                },
+                "insecure_download": {
+                  "description": "Download data from koji insecurely",
+                  "type": "boolean",
+                  "default": false
+                },
+                "use_fast_upload": {
+                  "description": "Use Koji's fast upload API",
+                  "type": "boolean",
+                  "default": true
+                },
+                "delegated_task_priority": {
+                  "description": "When delegate_build is enabled, delegated task will use this koji task priority, if not set it will use default koji priority",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "hub_url",
+                "root_url",
+                "auth"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^root_url$": true,
+                "^hub_url$": true,
+                "^use_fast_upload$": true,
+                "^insecure_download$": true,
+                "^delegate_task$": true,
+                "^delegated_task_priority$": true,
+                "^task_annotations_whitelist$": true,
+                "^reserve_build$": true,
+                "^auth$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Clusters grouped by platform name",
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z0-9_]*$": {
+                  "description": "List of clusters for this platform",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_19"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_]*$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "OpenShift instance running build",
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "OpenShift url",
+                  "type": "string"
+                },
+                "insecure": {
+                  "description": "Don't check SSL certificate for url",
+                  "type": "boolean"
+                },
+                "build_json_dir": {
+                  "description": "Path to directory containing Json files templates for osbs-client lib",
+                  "type": "string"
+                },
+                "auth": {
+                  "description": "Authentication information",
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions4/modern_14"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_15"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_16"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^url$": true,
+                "^insecure$": true,
+                "^build_json_dir$": true,
+                "^auth$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "media_types": {
+      "description": "Media types to be found in registry",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "application/json",
+          "application/vnd.docker.distribution.manifest.v1+json",
+          "application/vnd.docker.distribution.manifest.v2+json",
+          "application/vnd.docker.distribution.manifest.list.v2+json",
+          "application/vnd.oci.image.manifest.v1+json",
+          "application/vnd.oci.image.index.v1+json"
+        ]
+      }
+    },
+    "modern_33": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Define maximum uncompressed image size in bytes for binary image checked before push",
+              "type": "object",
+              "properties": {
+                "binary_image": {
+                  "description": "Maximum size of binary images. Set to 0 or omit to skip the check",
+                  "type": "integer",
+                  "minimum": 0.0
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^binary_image$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_26": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "description": "signing intent name",
+                  "type": "string"
+                },
+                "keys": {
+                  "description": "signing intent keys",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "deprecated_keys": {
+                  "description": "deprecated signing intent keys",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "keys"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^keys$": true,
+                "^deprecated_keys$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_36": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Name of environment variable",
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Value of environment variable",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Cachito instance",
+              "type": "object",
+              "properties": {
+                "auth": {
+                  "$ref": "#/definitions4/modern_12"
+                },
+                "api_url": {
+                  "description": "Cachito API url",
+                  "type": "string"
+                },
+                "unknown_user": {
+                  "description": "User to set in cachito request user param in case koji user is not found",
+                  "type": "string",
+                  "default": "unknown_user"
+                },
+                "insecure": {
+                  "description": "Don't check SSL certificate for api_url",
+                  "type": "boolean"
+                },
+                "timeout": {
+                  "description": "How long in seconds to wait for a Cachito request completes",
+                  "type": "integer",
+                  "default": 3600
+                }
+              },
+              "required": [
+                "api_url",
+                "auth"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^api_url$": true,
+                "^insecure$": true,
+                "^auth$": true,
+                "^timeout$": true,
+                "^unknown_user$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_25": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "openidc_dir": {
+                  "description": "Path to directory with token file",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "openidc_dir"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^openidc_dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "description": "osbs-client instance name for this cluster",
+                  "type": "string"
+                },
+                "max_concurrent_builds": {
+                  "description": "Maximum number of active builds",
+                  "type": "integer",
+                  "minimum": 0.0
+                },
+                "enabled": {
+                  "description": "Whether this cluster should be used",
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "name",
+                "max_concurrent_builds"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^max_concurrent_builds$": true,
+                "^enabled$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Integration with OMPS service for pushing operators manifests to appregistry",
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "appregistry_url": {
+                  "description": "URL for appregistry where operator manifests are stored",
+                  "type": "string"
+                },
+                "omps_url": {
+                  "description": "URL of OMPS REST API",
+                  "type": "string"
+                },
+                "insecure": {
+                  "description": "Connect to OMPS service insecurely (default: false)",
+                  "type": "boolean"
+                },
+                "omps_secret_dir": {
+                  "description": "Path to dir with secrets",
+                  "type": "string"
+                },
+                "omps_namespace": {
+                  "description": "Namespace (organization) where manifest will be pushed",
+                  "type": "string"
+                },
+                "koji_insecure": {
+                  "description": "Download data from koji insecurely (default: false)",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "omps_url",
+                "omps_namespace",
+                "omps_secret_dir",
+                "appregistry_url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^omps_secret_dir$": true,
+                "^koji_insecure$": true,
+                "^insecure$": true,
+                "^omps_url$": true,
+                "^omps_namespace$": true,
+                "^appregistry_url$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_24"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_24"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_25"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_25"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_34"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_34"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_31"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_31"
+      }
+    },
+    {
+      "$ref": "#/definitions4/media_types"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/media_types"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions4/registry_auth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/registry_auth"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/organization"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/organization"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_28"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_28"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions3/source_registry"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/source_registry"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_30"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_30"
+      }
+    },
+    {
+      "$ref": "#/definitions3/media_types"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/media_types"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_26"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_26"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_32"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_32"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_23"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_23"
+      }
+    },
+    {
+      "$ref": "#/definitions3/registry_auth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/registry_auth"
+      }
+    },
+    {
+      "$ref": "#/definitions3/proxyuser"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/proxyuser"
+      }
+    },
+    {
+      "$ref": "#/definitions3/enable"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/enable"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_29"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_29"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/proxyuser"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/proxyuser"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_27"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_27"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/source_registry"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/source_registry"
+      }
+    },
+    {
+      "$ref": "#/definitions4/enable"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/enable"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/organization"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/organization"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_33"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_33"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_20"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_20"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_36"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_36"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_22"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_22"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_35"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_35"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_21"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_21"
+      }
+    }
+  ]
+}

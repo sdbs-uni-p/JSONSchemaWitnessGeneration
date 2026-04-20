@@ -1,0 +1,421 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "Mapping from the Vulnerability Rating Taxonomy to Remediation Advice",
+      "properties": {
+        "content": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions3/MappingParent"
+              },
+              {
+                "$ref": "#/definitions3/Mapping"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "metadata": {
+          "$ref": "#/definitions3/MappingMetadata"
+        }
+      },
+      "required": [
+        "metadata",
+        "content"
+      ],
+      "title": "VRT to Remediation Advice",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "Mapping from the Vulnerability Rating Taxonomy to Remediation Advice",
+        "properties": {
+          "content": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions4/MappingParent"
+                },
+                {
+                  "$ref": "#/definitions4/Mapping"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "metadata": {
+            "$ref": "#/definitions4/MappingMetadata"
+          }
+        },
+        "required": [
+          "metadata",
+          "content"
+        ],
+        "title": "VRT to Remediation Advice",
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "Mapping": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "remediation_advice"
+          ]
+        },
+        {
+          "required": [
+            "references"
+          ]
+        }
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions3/VRTid"
+        },
+        "references": {
+          "$ref": "#/definitions3/References"
+        },
+        "remediation_advice": {
+          "$ref": "#/definitions3/RemediationAdvice"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "MappingMetadata": {
+      "properties": {
+        "default": {
+          "type": "null"
+        },
+        "keys": {
+          "items": {
+            "enum": [
+              "remediation_advice",
+              "references"
+            ],
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array",
+          "_uniqueItems": true
+        }
+      },
+      "required": [
+        "default",
+        "keys"
+      ],
+      "type": "object"
+    },
+    "MappingParent": {
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions3/MappingParent"
+              },
+              {
+                "$ref": "#/definitions3/Mapping"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "#/definitions3/VRTid"
+        },
+        "references": {
+          "$ref": "#/definitions3/References"
+        },
+        "remediation_advice": {
+          "$ref": "#/definitions3/RemediationAdvice"
+        }
+      },
+      "required": [
+        "id",
+        "children"
+      ],
+      "type": "object"
+    },
+    "References": {
+      "items": {
+        "pattern": "^http[s]?://.*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "RemediationAdvice": {
+      "type": "string"
+    },
+    "VRTid": {
+      "pattern": "^[a-z_]*$",
+      "type": "string"
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "remediation_advice"
+                  ]
+                },
+                {
+                  "required": [
+                    "references"
+                  ]
+                }
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions4/VRTid"
+                },
+                "references": {
+                  "$ref": "#/definitions4/References"
+                },
+                "remediation_advice": {
+                  "$ref": "#/definitions4/RemediationAdvice"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^references$": true,
+                "^remediation_advice$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "children": {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions4/MappingParent"
+                      },
+                      {
+                        "$ref": "#/definitions4/Mapping"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                "id": {
+                  "$ref": "#/definitions4/VRTid"
+                },
+                "references": {
+                  "$ref": "#/definitions4/References"
+                },
+                "remediation_advice": {
+                  "$ref": "#/definitions4/RemediationAdvice"
+                }
+              },
+              "required": [
+                "id",
+                "children"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^children$": true,
+                "^id$": true,
+                "^references$": true,
+                "^remediation_advice$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Mapping": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "MappingMetadata": {
+      "properties": {
+        "default": {
+          "type": "null"
+        },
+        "keys": {
+          "items": {
+            "enum": [
+              "remediation_advice",
+              "references"
+            ],
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array",
+          "_uniqueItems": true
+        }
+      },
+      "required": [
+        "default",
+        "keys"
+      ],
+      "type": "object"
+    },
+    "References": {
+      "items": {
+        "pattern": "^http[s]?://.*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "RemediationAdvice": {
+      "type": "string"
+    },
+    "VRTid": {
+      "pattern": "^[a-z_]*$",
+      "type": "string"
+    },
+    "MappingParent": {
+      "$ref": "#/definitions4/modern_2"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/RemediationAdvice"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/RemediationAdvice"
+      }
+    },
+    {
+      "$ref": "#/definitions4/VRTid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/VRTid"
+      }
+    },
+    {
+      "$ref": "#/definitions3/MappingMetadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/MappingMetadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/References"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/References"
+      }
+    },
+    {
+      "$ref": "#/definitions3/MappingParent"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/MappingParent"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/MappingMetadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/MappingMetadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/VRTid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/VRTid"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/RemediationAdvice"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/RemediationAdvice"
+      }
+    },
+    {
+      "$ref": "#/definitions4/MappingParent"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/MappingParent"
+      }
+    },
+    {
+      "$ref": "#/definitions3/References"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/References"
+      }
+    }
+  ]
+}

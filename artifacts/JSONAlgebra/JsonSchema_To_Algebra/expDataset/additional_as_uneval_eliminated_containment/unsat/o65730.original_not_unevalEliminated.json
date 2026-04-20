@@ -1,0 +1,1233 @@
+{
+  "allOf": [
+    {
+      "additionalProperties": true,
+      "description": "A text-based data interchange format for *C. elegans* trackers. It is a constrained subset of JSON. It is designed to be both human and machine readable and to facilitate data exchange and inter-operability for worm tracking data that is independent of platform and the language used for implementation.",
+      "patternProperties": {
+        "^@.*": {
+          "description": "Top-Level Custom Feature",
+          "title": "Custom Feature Type 1"
+        }
+      },
+      "properties": {
+        "data": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/data_record"
+            },
+            {
+              "items": {
+                "$ref": "#/definitions3/data_record"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "files": {
+          "additionalProperties": false,
+          "description": "For very long tracking experiments, it may be convenient to split a single experiment across multiple WCON files. To make it easier to reconstruct tracks across files, we support a 'files' object.",
+          "properties": {
+            "current": {
+              "type": "string"
+            },
+            "next": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "prev": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            }
+          },
+          "required": [
+            "current"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Information about experimental conditions and software versions; critical for reproducibility across labs.",
+          "properties": {
+            "age": {
+              "type": "number"
+            },
+            "arena": {
+              "properties": {
+                "orientation": {
+                  "type": "string"
+                },
+                "size": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 2,
+                      "type": "array"
+                    }
+                  ]
+                },
+                "style": {
+                  "default": "petri",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "food": {
+              "type": "string"
+            },
+            "humidity": {
+              "type": "number"
+            },
+            "id": {
+              "type": "string"
+            },
+            "interpolate": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/interpolate_metadata"
+                },
+                {
+                  "items": {
+                    "$ref": "#/definitions3/interpolate_metadata"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "lab": {
+              "type": "object"
+            },
+            "media": {
+              "type": "string"
+            },
+            "protocol": {
+              "$ref": "#/definitions3/string_or_array_of_strings"
+            },
+            "sex": {
+              "enum": [
+                "hermaphrodite",
+                "male"
+              ],
+              "type": "string"
+            },
+            "software": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/software_metadata"
+                },
+                {
+                  "items": {
+                    "$ref": "#/definitions3/software_metadata"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "stage": {
+              "enum": [
+                "L1",
+                "L2",
+                "L3",
+                "L4",
+                "adult",
+                "dauer"
+              ],
+              "type": "string"
+            },
+            "strain": {
+              "type": "string"
+            },
+            "temperature": {
+              "type": "number"
+            },
+            "timestamp": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "who": {
+              "$ref": "#/definitions3/string_or_array_of_strings"
+            }
+          },
+          "type": "object"
+        },
+        "units": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Defines the dimensions (temporal, spatial, etc) of the experiment.",
+          "properties": {
+            "t": {
+              "type": "string"
+            },
+            "x": {
+              "type": "string"
+            },
+            "y": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "t",
+            "x",
+            "y"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "units",
+        "data"
+      ],
+      "title": "Worm tracker Commons Object Notation (WCON)",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    }
+  ],
+  "definitions3": {
+    "array_of_numbers": {
+      "items": {
+        "$ref": "#/definitions3/nullable_number"
+      },
+      "type": "array"
+    },
+    "array_of_numbers_or_arrays": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/array_of_numbers"
+        },
+        {
+          "items": {
+            "$ref": "#/definitions3/array_of_numbers"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "array_or_number": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/nullable_number"
+        },
+        {
+          "items": {
+            "$ref": "#/definitions3/nullable_number"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "data_record": {
+      "additionalProperties": true,
+      "patternProperties": {
+        "^@.*": {
+          "description": "Data Array Time Series Custom Feature",
+          "title": "Custom Feature Type 2"
+        }
+      },
+      "properties": {
+        "cx": {
+          "$ref": "#/definitions3/array_of_numbers"
+        },
+        "cy": {
+          "$ref": "#/definitions3/array_of_numbers"
+        },
+        "head": {
+          "oneOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "enum": [
+                    "L",
+                    "R",
+                    "?"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "enum": [
+                      "L",
+                      "R",
+                      "?"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "ox": {
+          "$ref": "#/definitions3/array_of_numbers"
+        },
+        "oy": {
+          "$ref": "#/definitions3/array_of_numbers"
+        },
+        "ptail": {
+          "$ref": "#/definitions3/array_or_number"
+        },
+        "px": {
+          "$ref": "#/definitions3/array_of_numbers_or_arrays"
+        },
+        "py": {
+          "$ref": "#/definitions3/array_of_numbers_or_arrays"
+        },
+        "t": {
+          "$ref": "#/definitions3/array_of_numbers"
+        },
+        "ventral": {
+          "oneOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "enum": [
+                    "CW",
+                    "CCW",
+                    "?"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "enum": [
+                      "CW",
+                      "CCW",
+                      "?"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "walk": {
+          "items": {
+            "$ref": "#/definitions3/pixel_walk_record"
+          },
+          "type": "array"
+        },
+        "x": {
+          "$ref": "#/definitions3/array_of_numbers_or_arrays"
+        },
+        "y": {
+          "$ref": "#/definitions3/array_of_numbers_or_arrays"
+        }
+      },
+      "required": [
+        "id",
+        "t",
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "interpolate_metadata": {
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "values": {
+          "$ref": "#/definitions3/string_or_array_of_strings"
+        }
+      },
+      "type": "object"
+    },
+    "nullable_number": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pixel_walk_record": {
+      "properties": {
+        "4": {
+          "type": "string"
+        },
+        "n": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "type": "array"
+            }
+          ]
+        },
+        "px": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "software_metadata": {
+      "properties": {
+        "featureID": {
+          "description": "i.e. the lab strain designation followed by an optional suffix (e.g. '@OMG')",
+          "type": "string"
+        },
+        "settings": {},
+        "tracker": {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "description": "Supports semantic versioning (MAJOR.MINOR.PATCH) (http://semver.org/), written as a string, or any other string.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "string_or_array_of_strings": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^@.*": {
+                  "description": "Data Array Time Series Custom Feature",
+                  "title": "Custom Feature Type 2"
+                }
+              },
+              "properties": {
+                "x": {
+                  "$ref": "#/definitions4/array_of_numbers_or_arrays"
+                },
+                "oy": {
+                  "$ref": "#/definitions4/array_of_numbers"
+                },
+                "y": {
+                  "$ref": "#/definitions4/array_of_numbers_or_arrays"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "py": {
+                  "$ref": "#/definitions4/array_of_numbers_or_arrays"
+                },
+                "cx": {
+                  "$ref": "#/definitions4/array_of_numbers"
+                },
+                "t": {
+                  "$ref": "#/definitions4/array_of_numbers"
+                },
+                "head": {
+                  "oneOf": [
+                    {
+                      "oneOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "L",
+                            "R",
+                            "?"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "null"
+                          },
+                          {
+                            "enum": [
+                              "L",
+                              "R",
+                              "?"
+                            ],
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "walk": {
+                  "items": {
+                    "$ref": "#/definitions4/pixel_walk_record"
+                  },
+                  "type": "array"
+                },
+                "ventral": {
+                  "oneOf": [
+                    {
+                      "oneOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "enum": [
+                            "CW",
+                            "CCW",
+                            "?"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "null"
+                          },
+                          {
+                            "enum": [
+                              "CW",
+                              "CCW",
+                              "?"
+                            ],
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "px": {
+                  "$ref": "#/definitions4/array_of_numbers_or_arrays"
+                },
+                "cy": {
+                  "$ref": "#/definitions4/array_of_numbers"
+                },
+                "ptail": {
+                  "$ref": "#/definitions4/array_or_number"
+                },
+                "ox": {
+                  "$ref": "#/definitions4/array_of_numbers"
+                }
+              },
+              "required": [
+                "id",
+                "t",
+                "x",
+                "y"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^ptail$": true,
+                "^ox$": true,
+                "^walk$": true,
+                "^cx$": true,
+                "^@.*": true,
+                "^cy$": true,
+                "^ventral$": true,
+                "^head$": true,
+                "^y$": true,
+                "^x$": true,
+                "^t$": true,
+                "^px$": true,
+                "^oy$": true,
+                "^py$": true,
+                "^id$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "data_record": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A text-based data interchange format for *C. elegans* trackers. It is a constrained subset of JSON. It is designed to be both human and machine readable and to facilitate data exchange and inter-operability for worm tracking data that is independent of platform and the language used for implementation.",
+              "patternProperties": {
+                "^@.*": {
+                  "description": "Top-Level Custom Feature",
+                  "title": "Custom Feature Type 1"
+                }
+              },
+              "properties": {
+                "data": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/data_record"
+                    },
+                    {
+                      "items": {
+                        "$ref": "#/definitions4/data_record"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "files": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "metadata": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "units": {
+                  "$ref": "#/definitions4/modern_5"
+                }
+              },
+              "required": [
+                "units",
+                "data"
+              ],
+              "title": "Worm tracker Commons Object Notation (WCON)",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^metadata$": true,
+                "^files$": true,
+                "^units$": true,
+                "^@.*": true,
+                "^data$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "array_of_numbers_or_arrays": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/array_of_numbers"
+        },
+        {
+          "items": {
+            "$ref": "#/definitions4/array_of_numbers"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "software_metadata": {
+      "properties": {
+        "featureID": {
+          "description": "i.e. the lab strain designation followed by an optional suffix (e.g. '@OMG')",
+          "type": "string"
+        },
+        "settings": true,
+        "tracker": {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "description": "Supports semantic versioning (MAJOR.MINOR.PATCH) (http://semver.org/), written as a string, or any other string.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "For very long tracking experiments, it may be convenient to split a single experiment across multiple WCON files. To make it easier to reconstruct tracks across files, we support a 'files' object.",
+              "properties": {
+                "current": {
+                  "type": "string"
+                },
+                "next": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "prev": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "current"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^current$": true,
+                "^next$": true,
+                "^prev$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "string_or_array_of_strings": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "interpolate_metadata": {
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "values": {
+          "$ref": "#/definitions4/string_or_array_of_strings"
+        }
+      },
+      "type": "object"
+    },
+    "array_or_number": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/nullable_number"
+        },
+        {
+          "items": {
+            "$ref": "#/definitions4/nullable_number"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "nullable_number": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pixel_walk_record": {
+      "properties": {
+        "4": {
+          "type": "string"
+        },
+        "n": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "type": "array"
+            }
+          ]
+        },
+        "px": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Defines the dimensions (temporal, spatial, etc) of the experiment.",
+              "properties": {
+                "t": {
+                  "type": "string"
+                },
+                "x": {
+                  "type": "string"
+                },
+                "y": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "t",
+                "x",
+                "y"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^t$": true,
+                "^x$": true,
+                "^y$": true
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "array_of_numbers": {
+      "items": {
+        "$ref": "#/definitions4/nullable_number"
+      },
+      "type": "array"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Information about experimental conditions and software versions; critical for reproducibility across labs.",
+              "properties": {
+                "stage": {
+                  "enum": [
+                    "L1",
+                    "L2",
+                    "L3",
+                    "L4",
+                    "adult",
+                    "dauer"
+                  ],
+                  "type": "string"
+                },
+                "strain": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "lab": {
+                  "type": "object"
+                },
+                "temperature": {
+                  "type": "number"
+                },
+                "age": {
+                  "type": "number"
+                },
+                "sex": {
+                  "enum": [
+                    "hermaphrodite",
+                    "male"
+                  ],
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "humidity": {
+                  "type": "number"
+                },
+                "who": {
+                  "$ref": "#/definitions4/string_or_array_of_strings"
+                },
+                "software": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/software_metadata"
+                    },
+                    {
+                      "items": {
+                        "$ref": "#/definitions4/software_metadata"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                },
+                "media": {
+                  "type": "string"
+                },
+                "arena": {
+                  "properties": {
+                    "orientation": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 2,
+                          "type": "array"
+                        }
+                      ]
+                    },
+                    "style": {
+                      "default": "petri",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "protocol": {
+                  "$ref": "#/definitions4/string_or_array_of_strings"
+                },
+                "food": {
+                  "type": "string"
+                },
+                "interpolate": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/interpolate_metadata"
+                    },
+                    {
+                      "items": {
+                        "$ref": "#/definitions4/interpolate_metadata"
+                      },
+                      "type": "array"
+                    }
+                  ]
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^food$": true,
+                "^timestamp$": true,
+                "^stage$": true,
+                "^protocol$": true,
+                "^who$": true,
+                "^media$": true,
+                "^age$": true,
+                "^humidity$": true,
+                "^arena$": true,
+                "^id$": true,
+                "^temperature$": true,
+                "^interpolate$": true,
+                "^strain$": true,
+                "^lab$": true,
+                "^sex$": true,
+                "^software$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/string_or_array_of_strings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/string_or_array_of_strings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/software_metadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/software_metadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/array_or_number"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/array_or_number"
+      }
+    },
+    {
+      "$ref": "#/definitions4/nullable_number"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/nullable_number"
+      }
+    },
+    {
+      "$ref": "#/definitions4/pixel_walk_record"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/pixel_walk_record"
+      }
+    },
+    {
+      "$ref": "#/definitions3/pixel_walk_record"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/pixel_walk_record"
+      }
+    },
+    {
+      "$ref": "#/definitions3/software_metadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/software_metadata"
+      }
+    },
+    {
+      "$ref": "#/definitions3/array_of_numbers_or_arrays"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/array_of_numbers_or_arrays"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/interpolate_metadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/interpolate_metadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/array_of_numbers"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/array_of_numbers"
+      }
+    },
+    {
+      "$ref": "#/definitions3/nullable_number"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/nullable_number"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions3/array_of_numbers"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/array_of_numbers"
+      }
+    },
+    {
+      "$ref": "#/definitions4/array_of_numbers_or_arrays"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/array_of_numbers_or_arrays"
+      }
+    },
+    {
+      "$ref": "#/definitions3/array_or_number"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/array_or_number"
+      }
+    },
+    {
+      "$ref": "#/definitions4/data_record"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/data_record"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/interpolate_metadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/interpolate_metadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/string_or_array_of_strings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/string_or_array_of_strings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/data_record"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/data_record"
+      }
+    }
+  ]
+}

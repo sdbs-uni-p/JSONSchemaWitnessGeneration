@@ -1,0 +1,263 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "description",
+          "schema",
+          "tests"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "schema": {},
+          "tests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "description",
+                "data",
+                "valid"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "data": {},
+                "valid": {
+                  "type": "boolean"
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "basic": {
+                      "$ref": "#/definitions3/outputItem"
+                    },
+                    "detailed": {
+                      "$ref": "#/definitions3/outputItem"
+                    },
+                    "verbose": {
+                      "$ref": "#/definitions3/outputItem"
+                    }
+                  },
+                  "required": [
+                    "basic",
+                    "detailed",
+                    "verbose"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "minItems": 1
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions4/modern_1"
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "outputItem": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "keywordLocation": {
+          "type": "string"
+        },
+        "absoluteKeywordLocation": {
+          "type": "string",
+          "format": "uri"
+        },
+        "instanceLocation": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/outputItem"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/outputItem"
+          }
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "description",
+                "schema",
+                "tests"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "schema": true,
+                "tests": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  },
+                  "minItems": 1
+                }
+              },
+              "minItems": 1
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^schema$": true,
+                "^tests$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "description",
+                "data",
+                "valid"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "data": true,
+                "valid": {
+                  "type": "boolean"
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "basic": {
+                      "$ref": "#/definitions4/outputItem"
+                    },
+                    "detailed": {
+                      "$ref": "#/definitions4/outputItem"
+                    },
+                    "verbose": {
+                      "$ref": "#/definitions4/outputItem"
+                    }
+                  },
+                  "required": [
+                    "basic",
+                    "detailed",
+                    "verbose"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^data$": true,
+                "^valid$": true,
+                "^output$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "outputItem": {
+      "type": "object",
+      "properties": {
+        "instanceLocation": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/outputItem"
+          }
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "absoluteKeywordLocation": {
+          "type": "string",
+          "format": "uri"
+        },
+        "keywordLocation": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/outputItem"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/outputItem"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/outputItem"
+      }
+    },
+    {
+      "$ref": "#/definitions3/outputItem"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/outputItem"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

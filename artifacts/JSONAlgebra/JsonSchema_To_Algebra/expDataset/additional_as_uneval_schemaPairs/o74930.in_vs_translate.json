@@ -1,0 +1,592 @@
+[
+  {
+    "id": 2231,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "the shipment id that can be used for requesting info about a shipment or tracking it"
+        },
+        "carrier_tracking_no": {
+          "type": "string",
+          "description": "the original tracking number that can be used on the carriers website"
+        },
+        "carrier": {
+          "type": "string",
+          "enum": [
+            "dhl",
+            "ups",
+            "dpd",
+            "hermes",
+            "gls"
+          ],
+          "description": "acronym of the carrier"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "timestamp the shipment was created"
+        },
+        "tracking_url": {
+          "type": "string",
+          "description": "URL you can send your customers so they can track this shipment"
+        },
+        "label_url": {
+          "type": "string",
+          "description": "URL where you can download the label in pdf format"
+        },
+        "from": {
+          "$ref": "#/definitions2/address",
+          "description": "If missing, the default sender address (if defined in your shipcloud account) will be used"
+        },
+        "to": {
+          "$ref": "#/definitions2/address",
+          "description": "the receivers address"
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions2/package"
+              }
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "identifier for a single package"
+              },
+              "tracking_events": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "timestamp": {
+                      "type": "string",
+                      "description": "timestamp of when this event occured"
+                    },
+                    "location": {
+                      "type": "string",
+                      "description": "location of the package at this moment"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "shipcloud_label_created",
+                        "label_created",
+                        "picked_up",
+                        "delivered",
+                        "not_delivered",
+                        "transit",
+                        "exception",
+                        "out_for_delivery",
+                        "unknown",
+                        "canceled"
+                      ],
+                      "description": "key describing the status"
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "message the carrier sends to describe the package status"
+                    }
+                  },
+                  "required": [
+                    "timestamp",
+                    "location",
+                    "status",
+                    "details"
+                  ],
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": {
+              "not": {}
+            }
+          }
+        },
+        "price": {
+          "type": "number",
+          "description": "price that we're going to charge you (exl. VAT)"
+        },
+        "reference_number": {
+          "type": "string",
+          "description": "a reference number (max. 30 characters) that you want this shipment to be identified with. You can use this afterwards to easier find the shipment in the shipcloud.io backoffice"
+        }
+      },
+      "required": [
+        "id",
+        "carrier_tracking_no",
+        "carrier",
+        "created_at",
+        "tracking_url",
+        "label_url",
+        "from",
+        "to",
+        "packages",
+        "price",
+        "reference_number"
+      ],
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "address": {
+          "type": "object",
+          "properties": {
+            "company": {
+              "type": "string"
+            },
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "street": {
+              "type": "string"
+            },
+            "street_no": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "zip_code": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "first_name",
+            "last_name",
+            "street",
+            "street_no",
+            "city",
+            "zip_code",
+            "country"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "package": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            },
+            "length": {
+              "type": "number"
+            },
+            "weight": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "width",
+            "height",
+            "length",
+            "weight"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "defines package dimensions"
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "timestamp": {
+                      "type": "string",
+                      "description": "timestamp of when this event occured"
+                    },
+                    "location": {
+                      "type": "string",
+                      "description": "location of the package at this moment"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "shipcloud_label_created",
+                        "label_created",
+                        "picked_up",
+                        "delivered",
+                        "not_delivered",
+                        "transit",
+                        "exception",
+                        "out_for_delivery",
+                        "unknown",
+                        "canceled"
+                      ],
+                      "description": "key describing the status"
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "message the carrier sends to describe the package status"
+                    }
+                  },
+                  "required": [
+                    "timestamp",
+                    "location",
+                    "status",
+                    "details"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^timestamp$": {},
+                    "^location$": {},
+                    "^status$": {},
+                    "^details$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "package": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "zip_code": {
+                      "type": "string"
+                    },
+                    "street_no": {
+                      "type": "string"
+                    },
+                    "country": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "street": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "first_name",
+                    "last_name",
+                    "street",
+                    "street_no",
+                    "city",
+                    "zip_code",
+                    "country"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^city$": {},
+                    "^first_name$": {},
+                    "^company$": {},
+                    "^country$": {},
+                    "^last_name$": {},
+                    "^street_no$": {},
+                    "^street$": {},
+                    "^zip_code$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "number"
+                    },
+                    "height": {
+                      "type": "number"
+                    },
+                    "length": {
+                      "type": "number"
+                    },
+                    "weight": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "height",
+                    "length",
+                    "weight"
+                  ],
+                  "description": "defines package dimensions"
+                },
+                {
+                  "patternProperties": {
+                    "^width$": {},
+                    "^height$": {},
+                    "^length$": {},
+                    "^weight$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions2/package"
+                    }
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "identifier for a single package"
+                    },
+                    "tracking_events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_5"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    ".*": {},
+                    "^id$": {},
+                    "^tracking_events$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "carrier": {
+                      "type": "string",
+                      "enum": [
+                        "dhl",
+                        "ups",
+                        "dpd",
+                        "hermes",
+                        "gls"
+                      ],
+                      "description": "acronym of the carrier"
+                    },
+                    "price": {
+                      "type": "number",
+                      "description": "price that we're going to charge you (exl. VAT)"
+                    },
+                    "carrier_tracking_no": {
+                      "type": "string",
+                      "description": "the original tracking number that can be used on the carriers website"
+                    },
+                    "to": {
+                      "$ref": "#/definitions2/address",
+                      "description": "the receivers address"
+                    },
+                    "id": {
+                      "type": "string",
+                      "description": "the shipment id that can be used for requesting info about a shipment or tracking it"
+                    },
+                    "from": {
+                      "$ref": "#/definitions2/address",
+                      "description": "If missing, the default sender address (if defined in your shipcloud account) will be used"
+                    },
+                    "label_url": {
+                      "type": "string",
+                      "description": "URL where you can download the label in pdf format"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "description": "timestamp the shipment was created"
+                    },
+                    "reference_number": {
+                      "type": "string",
+                      "description": "a reference number (max. 30 characters) that you want this shipment to be identified with. You can use this afterwards to easier find the shipment in the shipcloud.io backoffice"
+                    },
+                    "packages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_4"
+                      }
+                    },
+                    "tracking_url": {
+                      "type": "string",
+                      "description": "URL you can send your customers so they can track this shipment"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "carrier_tracking_no",
+                    "carrier",
+                    "created_at",
+                    "tracking_url",
+                    "label_url",
+                    "from",
+                    "to",
+                    "packages",
+                    "price",
+                    "reference_number"
+                  ],
+                  "definitions2": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "company": {
+                          "type": "string"
+                        },
+                        "first_name": {
+                          "type": "string"
+                        },
+                        "last_name": {
+                          "type": "string"
+                        },
+                        "street": {
+                          "type": "string"
+                        },
+                        "street_no": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        },
+                        "country": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "first_name",
+                        "last_name",
+                        "street",
+                        "street_no",
+                        "city",
+                        "zip_code",
+                        "country"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "package": {
+                      "type": "object",
+                      "properties": {
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "length": {
+                          "type": "number"
+                        },
+                        "weight": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "length",
+                        "weight"
+                      ],
+                      "unevaluatedProperties": false,
+                      "description": "defines package dimensions"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^carrier$": {},
+                    "^carrier_tracking_no$": {},
+                    "^tracking_url$": {},
+                    "^to$": {},
+                    "^label_url$": {},
+                    "^created_at$": {},
+                    "^id$": {},
+                    "^packages$": {},
+                    "^price$": {},
+                    "^from$": {},
+                    "^reference_number$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "address": {
+          "$ref": "#/definitions2/modern_1"
+        }
+      },
+      "$ref": "#/definitions2/modern_3"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

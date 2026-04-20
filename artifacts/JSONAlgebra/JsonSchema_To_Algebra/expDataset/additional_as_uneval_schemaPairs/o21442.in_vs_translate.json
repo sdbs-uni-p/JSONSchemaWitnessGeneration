@@ -1,0 +1,2241 @@
+[
+  {
+    "id": 536,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "absolute_fullpath": {
+          "description": "A path with optional query string and/or fragment.",
+          "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?(\\?([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)?(#([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)?$",
+          "type": "string"
+        },
+        "absolute_path": {
+          "description": "A path only. Query string and/or fragment are not allowed.",
+          "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$",
+          "type": "string"
+        },
+        "analytics_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A short identifier we send to Google Analytics for multi-valued fields. This means we avoid the truncated values we would get if we sent the path or slug of eg organisations."
+        },
+        "application_name": {
+          "description": "Applications on GOV.UK only use lowercase letters and dashes",
+          "pattern": "[a-z-]",
+          "type": "string"
+        },
+        "asset_link": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "content_id": {
+              "$ref": "#/definitions2/guid"
+            },
+            "content_type": {
+              "type": "string"
+            },
+            "created_at": {
+              "format": "date-time"
+            },
+            "title": {
+              "type": "string"
+            },
+            "updated_at": {
+              "format": "date-time"
+            },
+            "url": {
+              "_format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "url",
+            "content_type"
+          ],
+          "type": "object"
+        },
+        "change_history": {
+          "items": {
+            "additionalProperties": {
+              "not": {}
+            },
+            "properties": {
+              "note": {
+                "description": "A summary of the change",
+                "type": "string"
+              },
+              "public_timestamp": {
+                "_format": "date-time",
+                "type": "string"
+              },
+              "reason_for_change": {
+                "description": "Why the change is being made. This is multiline text, and will be rendered inside <p> tags. Govspeak is not yet supported here.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "public_timestamp",
+              "note"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "details": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "archive_notice": {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "archived_at": {
+                  "format": "date-time"
+                },
+                "explanation": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "body": {
+              "type": "string"
+            },
+            "change_history": {
+              "$ref": "#/definitions2/change_history"
+            },
+            "change_note": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "emphasised_organisations": {
+              "$ref": "#/definitions2/emphasised_organisations"
+            },
+            "first_public_at": {
+              "_format": "date-time",
+              "type": "string"
+            },
+            "format_display_type": {
+              "enum": [
+                "case_study"
+              ],
+              "type": "string"
+            },
+            "image": {
+              "$ref": "#/definitions2/image"
+            },
+            "tags": {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "browse_pages": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "policies": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "topics": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "withdrawn_notice": {
+              "$ref": "#/definitions2/withdrawn_notice"
+            }
+          },
+          "required": [
+            "body",
+            "first_public_at"
+          ],
+          "type": "object"
+        },
+        "emphasised_organisations": {
+          "description": "The content ids of the organisations that should be displayed first in the list of organisations related to the item, these content ids must be present in the item organisation links hash.",
+          "items": {
+            "$ref": "#/definitions2/guid"
+          },
+          "type": "array"
+        },
+        "frontend_links": {
+          "items": {
+            "additionalProperties": {
+              "not": {}
+            },
+            "properties": {
+              "analytics_identifier": {
+                "$ref": "#/definitions2/analytics_identifier"
+              },
+              "api_path": {
+                "$ref": "#/definitions2/absolute_path"
+              },
+              "api_url": {
+                "_format": "uri",
+                "description": "DEPRECATED: api_path should be used instead of api_url. This is due to values of api_url being tied to an environment which can cause problems when data is synced between environments. In time this field will be removed by the Publishing Platform team.",
+                "type": "string"
+              },
+              "base_path": {
+                "$ref": "#/definitions2/absolute_path"
+              },
+              "content_id": {
+                "$ref": "#/definitions2/guid"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "details": {
+                "additionalProperties": {},
+                "type": "object"
+              },
+              "document_type": {
+                "type": "string"
+              },
+              "links": {
+                "patternProperties": {
+                  "^[a-z_]+$": {
+                    "$ref": "#/definitions2/frontend_links"
+                  }
+                },
+                "type": "object"
+              },
+              "locale": {
+                "$ref": "#/definitions2/locale"
+              },
+              "public_updated_at": {
+                "type": "string"
+              },
+              "schema_name": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "web_url": {
+                "_format": "uri",
+                "description": "DEPRECATED: base_path should be used instead of web_url. This is due to values of web_url being tied to an environment which can cause problems when data is synced between environments. In time this field will be removed by the Publishing Platform team.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "content_id",
+              "title",
+              "base_path",
+              "locale"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "government": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "current": {
+              "description": "Is the government that published this document still the current government.",
+              "type": "boolean"
+            },
+            "slug": {
+              "description": "Government slug, used for analytics, eg '1970-to-1974-conservative-government'.",
+              "type": "string"
+            },
+            "title": {
+              "description": "Name of the government that first published this document, eg '1970 to 1974 Conservative government'.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "slug",
+            "current"
+          ],
+          "type": "object"
+        },
+        "guid": {
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+          "type": "string"
+        },
+        "guid_list": {
+          "items": {
+            "$ref": "#/definitions2/guid"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "image": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "alt_text": {
+              "type": "string"
+            },
+            "caption": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "url": {
+              "_format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "url"
+          ],
+          "type": "object"
+        },
+        "label_value_pair": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "One of many possible values a user can select from",
+          "properties": {
+            "label": {
+              "description": "A human readable label",
+              "type": "string"
+            },
+            "value": {
+              "description": "A value to use for form controls",
+              "type": "string"
+            }
+          },
+          "required": [
+            "label",
+            "value"
+          ],
+          "type": "object"
+        },
+        "locale": {
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bn",
+            "cs",
+            "cy",
+            "de",
+            "dr",
+            "el",
+            "en",
+            "es",
+            "es-419",
+            "et",
+            "fa",
+            "fr",
+            "he",
+            "hi",
+            "hu",
+            "hy",
+            "id",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "lv",
+            "ms",
+            "pl",
+            "ps",
+            "pt",
+            "ro",
+            "ru",
+            "si",
+            "sk",
+            "so",
+            "sq",
+            "sr",
+            "sw",
+            "ta",
+            "th",
+            "tk",
+            "tr",
+            "uk",
+            "ur",
+            "uz",
+            "vi",
+            "zh",
+            "zh-hk",
+            "zh-tw"
+          ],
+          "type": "string"
+        },
+        "multiple_content_types": {
+          "items": {
+            "additionalProperties": {
+              "not": {}
+            },
+            "properties": {
+              "content": {
+                "type": "string"
+              },
+              "content_type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "content_type",
+              "content"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "nation_applicability": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "An object specifying the applicability of a particular nation.",
+          "properties": {
+            "alternative_url": {
+              "description": "An optional alternative URL to link to for more information on this content item pertaining to this nation.",
+              "type": "string"
+            },
+            "applicable": {
+              "description": "Whether the content applies to this nation or not.",
+              "type": "boolean"
+            },
+            "label": {
+              "description": "The pretty-printed, translated label for this nation.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "national_applicability": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "An object specifying the applicable nations for this content item. If it applies to all nations, it should be omitted.",
+          "properties": {
+            "england": {
+              "$ref": "#/definitions2/nation_applicability"
+            },
+            "northern_ireland": {
+              "$ref": "#/definitions2/nation_applicability"
+            },
+            "scotland": {
+              "$ref": "#/definitions2/nation_applicability"
+            },
+            "wales": {
+              "$ref": "#/definitions2/nation_applicability"
+            }
+          },
+          "type": "object"
+        },
+        "political": {
+          "description": "If the content is considered political in nature, reflecting views of the government it was published under.",
+          "type": "boolean"
+        },
+        "redirect_route": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "destination": {
+              "$ref": "#/definitions2/absolute_fullpath"
+            },
+            "path": {
+              "$ref": "#/definitions2/absolute_path"
+            },
+            "segments_mode": {
+              "description": "For prefix redirects, preserve or ignore the rest of the fullpath. For exact, preserve or ignore the querystring.",
+              "enum": [
+                "preserve",
+                "ignore"
+              ]
+            },
+            "type": {
+              "enum": [
+                "prefix",
+                "exact"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "type",
+            "destination"
+          ],
+          "type": "object"
+        },
+        "route": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "prefix",
+                "exact"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "type"
+          ],
+          "type": "object"
+        },
+        "withdrawn_notice": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "explanation": {
+              "type": "string"
+            },
+            "withdrawn_at": {
+              "format": "date-time"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "properties": {
+        "analytics_identifier": {
+          "$ref": "#/definitions2/analytics_identifier"
+        },
+        "base_path": {
+          "$ref": "#/definitions2/absolute_path"
+        },
+        "content_id": {
+          "$ref": "#/definitions2/guid"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "details": {
+          "$ref": "#/definitions2/details"
+        },
+        "document_type": {
+          "type": "string"
+        },
+        "first_published_at": {
+          "_format": "date-time",
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "last_edited_at": {
+          "_format": "date-time",
+          "description": "Last time when the content received a major or minor update.",
+          "type": "string"
+        },
+        "links": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "available_translations": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "child_taxons": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "children": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "document_collections": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "mainstream_browse_pages": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "ordered_related_items": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "organisations": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "parent": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "policies": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "policy_areas": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "related_policies": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "taxons": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "topics": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "world_locations": {
+              "$ref": "#/definitions2/frontend_links"
+            },
+            "worldwide_organisations": {
+              "$ref": "#/definitions2/frontend_links"
+            }
+          },
+          "type": "object"
+        },
+        "locale": {
+          "$ref": "#/definitions2/locale"
+        },
+        "need_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "phase": {
+          "description": "The service design phase of this content item - https://www.gov.uk/service-manual/phases",
+          "enum": [
+            "alpha",
+            "beta",
+            "live"
+          ],
+          "type": "string"
+        },
+        "public_updated_at": {
+          "_format": "date-time",
+          "type": "string"
+        },
+        "publishing_app": {
+          "$ref": "#/definitions2/application_name"
+        },
+        "rendering_app": {
+          "$ref": "#/definitions2/application_name"
+        },
+        "schema_name": {
+          "enum": [
+            "case_study"
+          ],
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updated_at": {
+          "_format": "date-time",
+          "type": "string"
+        },
+        "withdrawn_notice": {
+          "$ref": "#/definitions2/withdrawn_notice"
+        }
+      },
+      "required": [
+        "base_path",
+        "links",
+        "title",
+        "details",
+        "locale",
+        "content_id",
+        "document_type",
+        "schema_name"
+      ],
+      "type": "object"
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "withdrawn_at": {
+                      "format": "date-time"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^explanation$": {},
+                    "^withdrawn_at$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "destination": {
+                      "$ref": "#/definitions2/absolute_fullpath"
+                    },
+                    "path": {
+                      "$ref": "#/definitions2/absolute_path"
+                    },
+                    "segments_mode": {
+                      "description": "For prefix redirects, preserve or ignore the rest of the fullpath. For exact, preserve or ignore the querystring.",
+                      "enum": [
+                        "preserve",
+                        "ignore"
+                      ]
+                    },
+                    "type": {
+                      "enum": [
+                        "prefix",
+                        "exact"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "type",
+                    "destination"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^destination$": {},
+                    "^path$": {},
+                    "^segments_mode$": {},
+                    "^type$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "change_history": {
+          "items": {
+            "$ref": "#/definitions2/modern_1"
+          },
+          "type": "array"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "url": {
+                      "_format": "uri",
+                      "type": "string"
+                    },
+                    "content_type": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "format": "date-time"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "format": "date-time"
+                    },
+                    "content_id": {
+                      "$ref": "#/definitions2/guid"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "content_type"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^updated_at$": {},
+                    "^url$": {},
+                    "^title$": {},
+                    "^content_type$": {},
+                    "^content_id$": {},
+                    "^created_at$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "frontend_links": {
+          "items": {
+            "$ref": "#/definitions2/modern_2"
+          },
+          "type": "array"
+        },
+        "multiple_content_types": {
+          "items": {
+            "$ref": "#/definitions2/modern_4"
+          },
+          "type": "array"
+        },
+        "nation_applicability": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "analytics_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A short identifier we send to Google Analytics for multi-valued fields. This means we avoid the truncated values we would get if we sent the path or slug of eg organisations."
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "current": {
+                      "description": "Is the government that published this document still the current government.",
+                      "type": "boolean"
+                    },
+                    "slug": {
+                      "description": "Government slug, used for analytics, eg '1970-to-1974-conservative-government'.",
+                      "type": "string"
+                    },
+                    "title": {
+                      "description": "Name of the government that first published this document, eg '1970 to 1974 Conservative government'.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "slug",
+                    "current"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^current$": {},
+                    "^slug$": {},
+                    "^title$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "withdrawn_notice": {
+          "$ref": "#/definitions2/modern_6"
+        },
+        "modern_11": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "body": {
+                      "type": "string"
+                    },
+                    "image": {
+                      "$ref": "#/definitions2/image"
+                    },
+                    "tags": {
+                      "$ref": "#/definitions2/modern_12"
+                    },
+                    "change_history": {
+                      "$ref": "#/definitions2/change_history"
+                    },
+                    "change_note": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "first_public_at": {
+                      "_format": "date-time",
+                      "type": "string"
+                    },
+                    "archive_notice": {
+                      "$ref": "#/definitions2/modern_13"
+                    },
+                    "withdrawn_notice": {
+                      "$ref": "#/definitions2/withdrawn_notice"
+                    },
+                    "format_display_type": {
+                      "enum": [
+                        "case_study"
+                      ],
+                      "type": "string"
+                    },
+                    "emphasised_organisations": {
+                      "$ref": "#/definitions2/emphasised_organisations"
+                    }
+                  },
+                  "required": [
+                    "body",
+                    "first_public_at"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^archive_notice$": {},
+                    "^image$": {},
+                    "^emphasised_organisations$": {},
+                    "^format_display_type$": {},
+                    "^change_history$": {},
+                    "^change_note$": {},
+                    "^body$": {},
+                    "^withdrawn_notice$": {},
+                    "^first_public_at$": {},
+                    "^tags$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    },
+                    "content_type": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "content_type",
+                    "content"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^content$": {},
+                    "^content_type$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "absolute_fullpath": {
+          "description": "A path with optional query string and/or fragment.",
+          "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?(\\?([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)?(#([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)?$",
+          "type": "string"
+        },
+        "guid_list": {
+          "items": {
+            "$ref": "#/definitions2/guid"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "An object specifying the applicability of a particular nation.",
+                  "properties": {
+                    "alternative_url": {
+                      "description": "An optional alternative URL to link to for more information on this content item pertaining to this nation.",
+                      "type": "string"
+                    },
+                    "applicable": {
+                      "description": "Whether the content applies to this nation or not.",
+                      "type": "boolean"
+                    },
+                    "label": {
+                      "description": "The pretty-printed, translated label for this nation.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^alternative_url$": {},
+                    "^applicable$": {},
+                    "^label$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_16": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "One of many possible values a user can select from",
+                  "properties": {
+                    "label": {
+                      "description": "A human readable label",
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "A value to use for form controls",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^label$": {},
+                    "^value$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_15": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "prefix",
+                        "exact"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "type"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^path$": {},
+                    "^type$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "guid": {
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+          "type": "string"
+        },
+        "asset_link": {
+          "$ref": "#/definitions2/modern_7"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "note": {
+                      "description": "A summary of the change",
+                      "type": "string"
+                    },
+                    "public_timestamp": {
+                      "_format": "date-time",
+                      "type": "string"
+                    },
+                    "reason_for_change": {
+                      "description": "Why the change is being made. This is multiline text, and will be rendered inside <p> tags. Govspeak is not yet supported here.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "public_timestamp",
+                    "note"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^note$": {},
+                    "^public_timestamp$": {},
+                    "^reason_for_change$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "image": {
+          "$ref": "#/definitions2/modern_8"
+        },
+        "modern_17": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "definitions2": {
+                    "absolute_fullpath": {
+                      "description": "A path with optional query string and/or fragment.",
+                      "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?(\\?([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)?(#([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)?$",
+                      "type": "string"
+                    },
+                    "absolute_path": {
+                      "description": "A path only. Query string and/or fragment are not allowed.",
+                      "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$",
+                      "type": "string"
+                    },
+                    "analytics_identifier": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "A short identifier we send to Google Analytics for multi-valued fields. This means we avoid the truncated values we would get if we sent the path or slug of eg organisations."
+                    },
+                    "application_name": {
+                      "description": "Applications on GOV.UK only use lowercase letters and dashes",
+                      "pattern": "[a-z-]",
+                      "type": "string"
+                    },
+                    "asset_link": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "content_id": {
+                          "$ref": "#/definitions2/guid"
+                        },
+                        "content_type": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "format": "date-time"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "format": "date-time"
+                        },
+                        "url": {
+                          "_format": "uri",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "url",
+                        "content_type"
+                      ],
+                      "type": "object"
+                    },
+                    "change_history": {
+                      "items": {
+                        "unevaluatedProperties": false,
+                        "properties": {
+                          "note": {
+                            "description": "A summary of the change",
+                            "type": "string"
+                          },
+                          "public_timestamp": {
+                            "_format": "date-time",
+                            "type": "string"
+                          },
+                          "reason_for_change": {
+                            "description": "Why the change is being made. This is multiline text, and will be rendered inside <p> tags. Govspeak is not yet supported here.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "public_timestamp",
+                          "note"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "details": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "archive_notice": {
+                          "unevaluatedProperties": false,
+                          "properties": {
+                            "archived_at": {
+                              "format": "date-time"
+                            },
+                            "explanation": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "body": {
+                          "type": "string"
+                        },
+                        "change_history": {
+                          "$ref": "#/definitions2/change_history"
+                        },
+                        "change_note": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "emphasised_organisations": {
+                          "$ref": "#/definitions2/emphasised_organisations"
+                        },
+                        "first_public_at": {
+                          "_format": "date-time",
+                          "type": "string"
+                        },
+                        "format_display_type": {
+                          "enum": [
+                            "case_study"
+                          ],
+                          "type": "string"
+                        },
+                        "image": {
+                          "$ref": "#/definitions2/image"
+                        },
+                        "tags": {
+                          "unevaluatedProperties": false,
+                          "properties": {
+                            "browse_pages": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            },
+                            "policies": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            },
+                            "topics": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "withdrawn_notice": {
+                          "$ref": "#/definitions2/withdrawn_notice"
+                        }
+                      },
+                      "required": [
+                        "body",
+                        "first_public_at"
+                      ],
+                      "type": "object"
+                    },
+                    "emphasised_organisations": {
+                      "description": "The content ids of the organisations that should be displayed first in the list of organisations related to the item, these content ids must be present in the item organisation links hash.",
+                      "items": {
+                        "$ref": "#/definitions2/guid"
+                      },
+                      "type": "array"
+                    },
+                    "frontend_links": {
+                      "items": {
+                        "unevaluatedProperties": false,
+                        "properties": {
+                          "analytics_identifier": {
+                            "$ref": "#/definitions2/analytics_identifier"
+                          },
+                          "api_path": {
+                            "$ref": "#/definitions2/absolute_path"
+                          },
+                          "api_url": {
+                            "_format": "uri",
+                            "description": "DEPRECATED: api_path should be used instead of api_url. This is due to values of api_url being tied to an environment which can cause problems when data is synced between environments. In time this field will be removed by the Publishing Platform team.",
+                            "type": "string"
+                          },
+                          "base_path": {
+                            "$ref": "#/definitions2/absolute_path"
+                          },
+                          "content_id": {
+                            "$ref": "#/definitions2/guid"
+                          },
+                          "description": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "details": {
+                            "unevaluatedProperties": true,
+                            "type": "object"
+                          },
+                          "document_type": {
+                            "type": "string"
+                          },
+                          "links": {
+                            "patternProperties": {
+                              "^[a-z_]+$": {
+                                "$ref": "#/definitions2/frontend_links"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "locale": {
+                            "$ref": "#/definitions2/locale"
+                          },
+                          "public_updated_at": {
+                            "type": "string"
+                          },
+                          "schema_name": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "web_url": {
+                            "_format": "uri",
+                            "description": "DEPRECATED: base_path should be used instead of web_url. This is due to values of web_url being tied to an environment which can cause problems when data is synced between environments. In time this field will be removed by the Publishing Platform team.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "content_id",
+                          "title",
+                          "base_path",
+                          "locale"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "government": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "current": {
+                          "description": "Is the government that published this document still the current government.",
+                          "type": "boolean"
+                        },
+                        "slug": {
+                          "description": "Government slug, used for analytics, eg '1970-to-1974-conservative-government'.",
+                          "type": "string"
+                        },
+                        "title": {
+                          "description": "Name of the government that first published this document, eg '1970 to 1974 Conservative government'.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "slug",
+                        "current"
+                      ],
+                      "type": "object"
+                    },
+                    "guid": {
+                      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+                      "type": "string"
+                    },
+                    "guid_list": {
+                      "items": {
+                        "$ref": "#/definitions2/guid"
+                      },
+                      "type": "array",
+                      "_uniqueItems": true
+                    },
+                    "image": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "alt_text": {
+                          "type": "string"
+                        },
+                        "caption": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "url": {
+                          "_format": "uri",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ],
+                      "type": "object"
+                    },
+                    "label_value_pair": {
+                      "unevaluatedProperties": false,
+                      "description": "One of many possible values a user can select from",
+                      "properties": {
+                        "label": {
+                          "description": "A human readable label",
+                          "type": "string"
+                        },
+                        "value": {
+                          "description": "A value to use for form controls",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value"
+                      ],
+                      "type": "object"
+                    },
+                    "locale": {
+                      "enum": [
+                        "ar",
+                        "az",
+                        "be",
+                        "bg",
+                        "bn",
+                        "cs",
+                        "cy",
+                        "de",
+                        "dr",
+                        "el",
+                        "en",
+                        "es",
+                        "es-419",
+                        "et",
+                        "fa",
+                        "fr",
+                        "he",
+                        "hi",
+                        "hu",
+                        "hy",
+                        "id",
+                        "it",
+                        "ja",
+                        "ka",
+                        "ko",
+                        "lt",
+                        "lv",
+                        "ms",
+                        "pl",
+                        "ps",
+                        "pt",
+                        "ro",
+                        "ru",
+                        "si",
+                        "sk",
+                        "so",
+                        "sq",
+                        "sr",
+                        "sw",
+                        "ta",
+                        "th",
+                        "tk",
+                        "tr",
+                        "uk",
+                        "ur",
+                        "uz",
+                        "vi",
+                        "zh",
+                        "zh-hk",
+                        "zh-tw"
+                      ],
+                      "type": "string"
+                    },
+                    "multiple_content_types": {
+                      "items": {
+                        "unevaluatedProperties": false,
+                        "properties": {
+                          "content": {
+                            "type": "string"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "content_type",
+                          "content"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "nation_applicability": {
+                      "unevaluatedProperties": false,
+                      "description": "An object specifying the applicability of a particular nation.",
+                      "properties": {
+                        "alternative_url": {
+                          "description": "An optional alternative URL to link to for more information on this content item pertaining to this nation.",
+                          "type": "string"
+                        },
+                        "applicable": {
+                          "description": "Whether the content applies to this nation or not.",
+                          "type": "boolean"
+                        },
+                        "label": {
+                          "description": "The pretty-printed, translated label for this nation.",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "national_applicability": {
+                      "unevaluatedProperties": false,
+                      "description": "An object specifying the applicable nations for this content item. If it applies to all nations, it should be omitted.",
+                      "properties": {
+                        "england": {
+                          "$ref": "#/definitions2/nation_applicability"
+                        },
+                        "northern_ireland": {
+                          "$ref": "#/definitions2/nation_applicability"
+                        },
+                        "scotland": {
+                          "$ref": "#/definitions2/nation_applicability"
+                        },
+                        "wales": {
+                          "$ref": "#/definitions2/nation_applicability"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "political": {
+                      "description": "If the content is considered political in nature, reflecting views of the government it was published under.",
+                      "type": "boolean"
+                    },
+                    "redirect_route": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "destination": {
+                          "$ref": "#/definitions2/absolute_fullpath"
+                        },
+                        "path": {
+                          "$ref": "#/definitions2/absolute_path"
+                        },
+                        "segments_mode": {
+                          "description": "For prefix redirects, preserve or ignore the rest of the fullpath. For exact, preserve or ignore the querystring.",
+                          "enum": [
+                            "preserve",
+                            "ignore"
+                          ]
+                        },
+                        "type": {
+                          "enum": [
+                            "prefix",
+                            "exact"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "type",
+                        "destination"
+                      ],
+                      "type": "object"
+                    },
+                    "route": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "prefix",
+                            "exact"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "type"
+                      ],
+                      "type": "object"
+                    },
+                    "withdrawn_notice": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "explanation": {
+                          "type": "string"
+                        },
+                        "withdrawn_at": {
+                          "format": "date-time"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "properties": {
+                    "format": {
+                      "type": "string"
+                    },
+                    "base_path": {
+                      "$ref": "#/definitions2/absolute_path"
+                    },
+                    "public_updated_at": {
+                      "_format": "date-time",
+                      "type": "string"
+                    },
+                    "need_ids": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "locale": {
+                      "$ref": "#/definitions2/locale"
+                    },
+                    "analytics_identifier": {
+                      "$ref": "#/definitions2/analytics_identifier"
+                    },
+                    "rendering_app": {
+                      "$ref": "#/definitions2/application_name"
+                    },
+                    "details": {
+                      "$ref": "#/definitions2/details"
+                    },
+                    "withdrawn_notice": {
+                      "$ref": "#/definitions2/withdrawn_notice"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "_format": "date-time",
+                      "type": "string"
+                    },
+                    "content_id": {
+                      "$ref": "#/definitions2/guid"
+                    },
+                    "document_type": {
+                      "type": "string"
+                    },
+                    "publishing_app": {
+                      "$ref": "#/definitions2/application_name"
+                    },
+                    "first_published_at": {
+                      "_format": "date-time",
+                      "type": "string"
+                    },
+                    "description": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "phase": {
+                      "description": "The service design phase of this content item - https://www.gov.uk/service-manual/phases",
+                      "enum": [
+                        "alpha",
+                        "beta",
+                        "live"
+                      ],
+                      "type": "string"
+                    },
+                    "last_edited_at": {
+                      "_format": "date-time",
+                      "description": "Last time when the content received a major or minor update.",
+                      "type": "string"
+                    },
+                    "schema_name": {
+                      "enum": [
+                        "case_study"
+                      ],
+                      "type": "string"
+                    },
+                    "links": {
+                      "$ref": "#/definitions2/modern_18"
+                    }
+                  },
+                  "required": [
+                    "base_path",
+                    "links",
+                    "title",
+                    "details",
+                    "locale",
+                    "content_id",
+                    "document_type",
+                    "schema_name"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^updated_at$": {},
+                    "^base_path$": {},
+                    "^description$": {},
+                    "^publishing_app$": {},
+                    "^locale$": {},
+                    "^need_ids$": {},
+                    "^links$": {},
+                    "^content_id$": {},
+                    "^document_type$": {},
+                    "^phase$": {},
+                    "^first_published_at$": {},
+                    "^public_updated_at$": {},
+                    "^title$": {},
+                    "^schema_name$": {},
+                    "^format$": {},
+                    "^rendering_app$": {},
+                    "^details$": {},
+                    "^withdrawn_notice$": {},
+                    "^last_edited_at$": {},
+                    "^analytics_identifier$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "base_path": {
+                      "$ref": "#/definitions2/absolute_path"
+                    },
+                    "description": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "public_updated_at": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "$ref": "#/definitions2/locale"
+                    },
+                    "api_path": {
+                      "$ref": "#/definitions2/absolute_path"
+                    },
+                    "details": {
+                      "$ref": "#/definitions2/modern_3"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "content_id": {
+                      "$ref": "#/definitions2/guid"
+                    },
+                    "document_type": {
+                      "type": "string"
+                    },
+                    "schema_name": {
+                      "type": "string"
+                    },
+                    "links": {
+                      "patternProperties": {
+                        "^[a-z_]+$": {
+                          "$ref": "#/definitions2/frontend_links"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "analytics_identifier": {
+                      "$ref": "#/definitions2/analytics_identifier"
+                    },
+                    "api_url": {
+                      "_format": "uri",
+                      "description": "DEPRECATED: api_path should be used instead of api_url. This is due to values of api_url being tied to an environment which can cause problems when data is synced between environments. In time this field will be removed by the Publishing Platform team.",
+                      "type": "string"
+                    },
+                    "web_url": {
+                      "_format": "uri",
+                      "description": "DEPRECATED: base_path should be used instead of web_url. This is due to values of web_url being tied to an environment which can cause problems when data is synced between environments. In time this field will be removed by the Publishing Platform team.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "content_id",
+                    "title",
+                    "base_path",
+                    "locale"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^api_url$": {},
+                    "^web_url$": {},
+                    "^base_path$": {},
+                    "^locale$": {},
+                    "^details$": {},
+                    "^analytics_identifier$": {},
+                    "^links$": {},
+                    "^content_id$": {},
+                    "^document_type$": {},
+                    "^public_updated_at$": {},
+                    "^title$": {},
+                    "^schema_name$": {},
+                    "^api_path$": {},
+                    "^description$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "locale": {
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bn",
+            "cs",
+            "cy",
+            "de",
+            "dr",
+            "el",
+            "en",
+            "es",
+            "es-419",
+            "et",
+            "fa",
+            "fr",
+            "he",
+            "hi",
+            "hu",
+            "hy",
+            "id",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "lv",
+            "ms",
+            "pl",
+            "ps",
+            "pt",
+            "ro",
+            "ru",
+            "si",
+            "sk",
+            "so",
+            "sq",
+            "sr",
+            "sw",
+            "ta",
+            "th",
+            "tk",
+            "tr",
+            "uk",
+            "ur",
+            "uz",
+            "vi",
+            "zh",
+            "zh-hk",
+            "zh-tw"
+          ],
+          "type": "string"
+        },
+        "modern_12": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "browse_pages": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "policies": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "topics": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^browse_pages$": {},
+                    "^policies$": {},
+                    "^topics$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "political": {
+          "description": "If the content is considered political in nature, reflecting views of the government it was published under.",
+          "type": "boolean"
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "alt_text": {
+                      "type": "string"
+                    },
+                    "caption": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "_format": "uri",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^alt_text$": {},
+                    "^caption$": {},
+                    "^url$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "government": {
+          "$ref": "#/definitions2/modern_9"
+        },
+        "modern_18": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "available_translations": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "worldwide_organisations": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "mainstream_browse_pages": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "world_locations": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "related_policies": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "ordered_related_items": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "child_taxons": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "policy_areas": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "taxons": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "organisations": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "document_collections": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "policies": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "parent": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "children": {
+                      "$ref": "#/definitions2/frontend_links"
+                    },
+                    "topics": {
+                      "$ref": "#/definitions2/frontend_links"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^children$": {},
+                    "^child_taxons$": {},
+                    "^taxons$": {},
+                    "^ordered_related_items$": {},
+                    "^organisations$": {},
+                    "^policies$": {},
+                    "^mainstream_browse_pages$": {},
+                    "^policy_areas$": {},
+                    "^parent$": {},
+                    "^available_translations$": {},
+                    "^world_locations$": {},
+                    "^related_policies$": {},
+                    "^topics$": {},
+                    "^worldwide_organisations$": {},
+                    "^document_collections$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_13": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "archived_at": {
+                      "format": "date-time"
+                    },
+                    "explanation": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^archived_at$": {},
+                    "^explanation$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "details": {
+          "$ref": "#/definitions2/modern_11"
+        },
+        "application_name": {
+          "description": "Applications on GOV.UK only use lowercase letters and dashes",
+          "pattern": "[a-z-]",
+          "type": "string"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": {}
+                }
+              ]
+            }
+          ]
+        },
+        "redirect_route": {
+          "$ref": "#/definitions2/modern_10"
+        },
+        "national_applicability": {
+          "$ref": "#/definitions2/modern_14"
+        },
+        "route": {
+          "$ref": "#/definitions2/modern_15"
+        },
+        "modern_14": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "An object specifying the applicable nations for this content item. If it applies to all nations, it should be omitted.",
+                  "properties": {
+                    "england": {
+                      "$ref": "#/definitions2/nation_applicability"
+                    },
+                    "northern_ireland": {
+                      "$ref": "#/definitions2/nation_applicability"
+                    },
+                    "scotland": {
+                      "$ref": "#/definitions2/nation_applicability"
+                    },
+                    "wales": {
+                      "$ref": "#/definitions2/nation_applicability"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^england$": {},
+                    "^northern_ireland$": {},
+                    "^scotland$": {},
+                    "^wales$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "absolute_path": {
+          "description": "A path only. Query string and/or fragment are not allowed.",
+          "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$",
+          "type": "string"
+        },
+        "label_value_pair": {
+          "$ref": "#/definitions2/modern_16"
+        },
+        "emphasised_organisations": {
+          "description": "The content ids of the organisations that should be displayed first in the list of organisations related to the item, these content ids must be present in the item organisation links hash.",
+          "items": {
+            "$ref": "#/definitions2/guid"
+          },
+          "type": "array"
+        }
+      },
+      "$ref": "#/definitions2/modern_17"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

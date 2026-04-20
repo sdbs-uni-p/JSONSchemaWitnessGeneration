@@ -1,0 +1,951 @@
+{
+  "allOf": [
+    {
+      "allOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "__version": {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "dag": {
+              "$ref": "#/definitions3/dag"
+            }
+          },
+          "required": [
+            "__version",
+            "dag"
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "allOf": [
+          {
+            "$ref": "#/definitions4/modern_6"
+          }
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "color": {
+      "pattern": "^#[a-fA-F0-9]{3,6}$",
+      "type": "string"
+    },
+    "dag": {
+      "additionalProperties": false,
+      "properties": {
+        "_access_control": {
+          "$ref": "#/definitions3/dict"
+        },
+        "_concurrency": {
+          "type": "number"
+        },
+        "_dag_id": {
+          "type": "string"
+        },
+        "_default_view": {
+          "type": "string"
+        },
+        "_description": {
+          "type": "string"
+        },
+        "catchup": {
+          "type": "boolean"
+        },
+        "dagrun_timeout": {
+          "$ref": "#/definitions3/timedelta"
+        },
+        "default_args": {
+          "$ref": "#/definitions3/dict"
+        },
+        "doc_md": {
+          "type": "string"
+        },
+        "end_date": {
+          "$ref": "#/definitions3/datetime"
+        },
+        "fileloc": {
+          "type": "string"
+        },
+        "is_paused_upon_creation": {
+          "type": "boolean"
+        },
+        "is_subdag": {
+          "type": "boolean"
+        },
+        "max_active_runs": {
+          "type": "number"
+        },
+        "orientation": {
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/definitions3/dict"
+        },
+        "schedule_interval": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions3/typed_timedelta"
+            },
+            {
+              "$ref": "#/definitions3/typed_relativedelta"
+            }
+          ]
+        },
+        "start_date": {
+          "$ref": "#/definitions3/datetime"
+        },
+        "tags": {
+          "type": "array"
+        },
+        "tasks": {
+          "$ref": "#/definitions3/tasks"
+        },
+        "timezone": {
+          "$ref": "#/definitions3/timezone"
+        }
+      },
+      "required": [
+        "_dag_id",
+        "fileloc",
+        "tasks"
+      ],
+      "type": "object"
+    },
+    "datetime": {
+      "description": "A date time, stored as fractional seconds since the epoch",
+      "type": "number"
+    },
+    "dict": {
+      "description": "A python dictionary containing values of any type",
+      "type": "object"
+    },
+    "extra_links": {
+      "items": {
+        "maxProperties": 1,
+        "minProperties": 1,
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "operator": {
+      "$comment": "A task/operator in a DAG",
+      "additionalProperties": true,
+      "properties": {
+        "_downstream_task_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "_operator_extra_links": {
+          "$ref": "#/definitions3/extra_links"
+        },
+        "_task_module": {
+          "type": "string"
+        },
+        "_task_type": {
+          "type": "string"
+        },
+        "depends_on_past": {
+          "type": "boolean"
+        },
+        "do_xcom_push": {
+          "type": "boolean"
+        },
+        "end_date": {
+          "$ref": "#/definitions3/datetime"
+        },
+        "execution_timeout": {
+          "$ref": "#/definitions3/timedelta"
+        },
+        "executor_config": {
+          "$ref": "#/definitions3/dict"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/definitions3/dict"
+        },
+        "pool": {
+          "type": "string"
+        },
+        "pool_slots": {
+          "type": "number"
+        },
+        "priority_weight": {
+          "type": "number"
+        },
+        "queue": {
+          "type": "string"
+        },
+        "retries": {
+          "type": "number"
+        },
+        "retry_delay": {
+          "$ref": "#/definitions3/timedelta"
+        },
+        "retry_exponential_backoff": {
+          "type": "boolean"
+        },
+        "start_date": {
+          "$ref": "#/definitions3/datetime"
+        },
+        "subdag": {
+          "$ref": "#/definitions3/dag"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "template_fields": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "trigger_rule": {
+          "type": "string"
+        },
+        "ui_color": {
+          "$ref": "#/definitions3/color"
+        },
+        "ui_fgcolor": {
+          "$ref": "#/definitions3/color"
+        },
+        "wait_for_downstream": {
+          "type": "boolean"
+        },
+        "weight_rule": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "_task_type",
+        "_task_module",
+        "task_id",
+        "ui_color",
+        "ui_fgcolor",
+        "template_fields"
+      ],
+      "type": "object"
+    },
+    "tasks": {
+      "additionalProperties": {
+        "$ref": "#/definitions3/operator"
+      },
+      "type": "array"
+    },
+    "timedelta": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "typed_relativedelta": {
+      "description": "A dateutil.relativedelta.relativedelta object",
+      "properties": {
+        "__type": {
+          "const": "relativedelta",
+          "type": "string"
+        },
+        "__var": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "properties": {
+            "weekday": {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "typed_timedelta": {
+      "additionalProperties": false,
+      "properties": {
+        "__type": {
+          "const": "timedelta",
+          "type": "string"
+        },
+        "__var": {
+          "$ref": "#/definitions3/timedelta"
+        }
+      },
+      "required": [
+        "__type",
+        "__var"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "weekday": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "maxItems": 2,
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^weekday$": true
+              },
+              "additionalProperties": {
+                "type": "integer"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "__version": {
+                  "exclusiveMinimum": 0.0,
+                  "type": "integer"
+                },
+                "dag": {
+                  "$ref": "#/definitions4/dag"
+                }
+              },
+              "required": [
+                "__version",
+                "dag"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^__version$": true,
+                "^dag$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "array"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/operator"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "timedelta": {
+      "minimum": 0.0,
+      "type": "number"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "$comment": "A task/operator in a DAG",
+              "properties": {
+                "priority_weight": {
+                  "type": "number"
+                },
+                "params": {
+                  "$ref": "#/definitions4/dict"
+                },
+                "retry_delay": {
+                  "$ref": "#/definitions4/timedelta"
+                },
+                "wait_for_downstream": {
+                  "type": "boolean"
+                },
+                "retry_exponential_backoff": {
+                  "type": "boolean"
+                },
+                "_task_module": {
+                  "type": "string"
+                },
+                "end_date": {
+                  "$ref": "#/definitions4/datetime"
+                },
+                "pool": {
+                  "type": "string"
+                },
+                "template_fields": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "trigger_rule": {
+                  "type": "string"
+                },
+                "task_id": {
+                  "type": "string"
+                },
+                "_downstream_task_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "_operator_extra_links": {
+                  "$ref": "#/definitions4/extra_links"
+                },
+                "start_date": {
+                  "$ref": "#/definitions4/datetime"
+                },
+                "pool_slots": {
+                  "type": "number"
+                },
+                "retries": {
+                  "type": "number"
+                },
+                "queue": {
+                  "type": "string"
+                },
+                "weight_rule": {
+                  "type": "string"
+                },
+                "do_xcom_push": {
+                  "type": "boolean"
+                },
+                "depends_on_past": {
+                  "type": "boolean"
+                },
+                "ui_color": {
+                  "$ref": "#/definitions4/color"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "ui_fgcolor": {
+                  "$ref": "#/definitions4/color"
+                },
+                "executor_config": {
+                  "$ref": "#/definitions4/dict"
+                },
+                "execution_timeout": {
+                  "$ref": "#/definitions4/timedelta"
+                },
+                "_task_type": {
+                  "type": "string"
+                },
+                "subdag": {
+                  "$ref": "#/definitions4/dag"
+                }
+              },
+              "required": [
+                "_task_type",
+                "_task_module",
+                "task_id",
+                "ui_color",
+                "ui_fgcolor",
+                "template_fields"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^depends_on_past$": true,
+                "^execution_timeout$": true,
+                "^_task_module$": true,
+                "^priority_weight$": true,
+                "^retry_delay$": true,
+                "^task_id$": true,
+                "^retry_exponential_backoff$": true,
+                "^pool$": true,
+                "^start_date$": true,
+                "^_operator_extra_links$": true,
+                "^ui_fgcolor$": true,
+                "^weight_rule$": true,
+                "^wait_for_downstream$": true,
+                "^_task_type$": true,
+                "^executor_config$": true,
+                "^ui_color$": true,
+                "^owner$": true,
+                "^trigger_rule$": true,
+                "^do_xcom_push$": true,
+                "^_downstream_task_ids$": true,
+                "^params$": true,
+                "^subdag$": true,
+                "^pool_slots$": true,
+                "^queue$": true,
+                "^retries$": true,
+                "^end_date$": true,
+                "^template_fields$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "color": {
+      "pattern": "^#[a-fA-F0-9]{3,6}$",
+      "type": "string"
+    },
+    "extra_links": {
+      "items": {
+        "maxProperties": 1,
+        "minProperties": 1,
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "tasks": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "operator": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "is_subdag": {
+                  "type": "boolean"
+                },
+                "start_date": {
+                  "$ref": "#/definitions4/datetime"
+                },
+                "tags": {
+                  "type": "array"
+                },
+                "timezone": {
+                  "$ref": "#/definitions4/timezone"
+                },
+                "params": {
+                  "$ref": "#/definitions4/dict"
+                },
+                "schedule_interval": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/definitions4/typed_timedelta"
+                    },
+                    {
+                      "$ref": "#/definitions4/typed_relativedelta"
+                    }
+                  ]
+                },
+                "_dag_id": {
+                  "type": "string"
+                },
+                "default_args": {
+                  "$ref": "#/definitions4/dict"
+                },
+                "_default_view": {
+                  "type": "string"
+                },
+                "tasks": {
+                  "$ref": "#/definitions4/tasks"
+                },
+                "catchup": {
+                  "type": "boolean"
+                },
+                "dagrun_timeout": {
+                  "$ref": "#/definitions4/timedelta"
+                },
+                "is_paused_upon_creation": {
+                  "type": "boolean"
+                },
+                "fileloc": {
+                  "type": "string"
+                },
+                "doc_md": {
+                  "type": "string"
+                },
+                "_concurrency": {
+                  "type": "number"
+                },
+                "end_date": {
+                  "$ref": "#/definitions4/datetime"
+                },
+                "orientation": {
+                  "type": "string"
+                },
+                "_description": {
+                  "type": "string"
+                },
+                "_access_control": {
+                  "$ref": "#/definitions4/dict"
+                },
+                "max_active_runs": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "_dag_id",
+                "fileloc",
+                "tasks"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^is_subdag$": true,
+                "^fileloc$": true,
+                "^_description$": true,
+                "^catchup$": true,
+                "^tasks$": true,
+                "^timezone$": true,
+                "^params$": true,
+                "^_concurrency$": true,
+                "^max_active_runs$": true,
+                "^dagrun_timeout$": true,
+                "^doc_md$": true,
+                "^_dag_id$": true,
+                "^start_date$": true,
+                "^_default_view$": true,
+                "^schedule_interval$": true,
+                "^orientation$": true,
+                "^is_paused_upon_creation$": true,
+                "^_access_control$": true,
+                "^default_args$": true,
+                "^end_date$": true,
+                "^tags$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "dag": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "typed_timedelta": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "dict": {
+      "description": "A python dictionary containing values of any type",
+      "type": "object"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "__type": {
+                  "const": "timedelta",
+                  "type": "string"
+                },
+                "__var": {
+                  "$ref": "#/definitions4/timedelta"
+                }
+              },
+              "required": [
+                "__type",
+                "__var"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^__type$": true,
+                "^__var$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "datetime": {
+      "description": "A date time, stored as fractional seconds since the epoch",
+      "type": "number"
+    },
+    "typed_relativedelta": {
+      "description": "A dateutil.relativedelta.relativedelta object",
+      "properties": {
+        "__type": {
+          "const": "relativedelta",
+          "type": "string"
+        },
+        "__var": {
+          "$ref": "#/definitions4/modern_5"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/dag"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dag"
+      }
+    },
+    {
+      "$ref": "#/definitions3/typed_timedelta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/typed_timedelta"
+      }
+    },
+    {
+      "$ref": "#/definitions4/color"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/color"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dag"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dag"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/color"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/color"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dict"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dict"
+      }
+    },
+    {
+      "$ref": "#/definitions4/typed_relativedelta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/typed_relativedelta"
+      }
+    },
+    {
+      "$ref": "#/definitions4/typed_timedelta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/typed_timedelta"
+      }
+    },
+    {
+      "$ref": "#/definitions4/extra_links"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/extra_links"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tasks"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tasks"
+      }
+    },
+    {
+      "$ref": "#/definitions4/operator"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/operator"
+      }
+    },
+    {
+      "$ref": "#/definitions3/typed_relativedelta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/typed_relativedelta"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tasks"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tasks"
+      }
+    },
+    {
+      "$ref": "#/definitions3/timedelta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/timedelta"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dict"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dict"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/timedelta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/timedelta"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/datetime"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/datetime"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/datetime"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/datetime"
+      }
+    },
+    {
+      "$ref": "#/definitions3/timezone"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/timezone"
+      }
+    },
+    {
+      "$ref": "#/definitions3/extra_links"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/extra_links"
+      }
+    },
+    {
+      "$ref": "#/definitions4/timezone"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/timezone"
+      }
+    },
+    {
+      "$ref": "#/definitions3/operator"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/operator"
+      }
+    }
+  ]
+}

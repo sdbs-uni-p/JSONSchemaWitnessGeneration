@@ -1,0 +1,445 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "schema for an fstab entry",
+      "id": "classpath:///jsonschema/entry-schema.json#",
+      "properties": {
+        "fstype": {
+          "enum": [
+            "ext3",
+            "ext4",
+            "btrfs"
+          ]
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "storage": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/diskDevice"
+            },
+            {
+              "$ref": "#/definitions3/diskUUID"
+            },
+            {
+              "$ref": "#/definitions3/nfs"
+            },
+            {
+              "$ref": "#/definitions3/tmpfs"
+            }
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "storage"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "schema for an fstab entry",
+        "id": "classpath:///jsonschema/entry-schema.json#",
+        "properties": {
+          "fstype": {
+            "enum": [
+              "ext3",
+              "ext4",
+              "btrfs"
+            ]
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "_uniqueItems": true
+          },
+          "readonly": {
+            "type": "boolean"
+          },
+          "storage": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions4/diskDevice"
+              },
+              {
+                "$ref": "#/definitions4/diskUUID"
+              },
+              {
+                "$ref": "#/definitions4/nfs"
+              },
+              {
+                "$ref": "#/definitions4/tmpfs"
+              }
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "storage"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "diskDevice": {
+      "additionalProperties": false,
+      "properties": {
+        "device": {
+          "pattern": "^/dev/[^/]+(/[^/]+)*$",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "disk"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "device"
+      ]
+    },
+    "diskUUID": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "disk"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "label"
+      ]
+    },
+    "nfs": {
+      "additionalProperties": false,
+      "properties": {
+        "remotePath": {
+          "pattern": "^(/[^/]+)+$",
+          "type": "string"
+        },
+        "server": {
+          "oneOf": [
+            {
+              "format": "host-name"
+            },
+            {
+              "format": "ipv4"
+            },
+            {
+              "format": "ipv6"
+            }
+          ],
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "nfs"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "server",
+        "remotePath"
+      ]
+    },
+    "tmpfs": {
+      "additionalProperties": false,
+      "properties": {
+        "sizeInMB": {
+          "maximum": 512,
+          "minimum": 16,
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "tmpfs"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sizeInMB"
+      ]
+    }
+  },
+  "definitions4": {
+    "diskDevice": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "diskUUID": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "device": {
+                  "pattern": "^/dev/[^/]+(/[^/]+)*$",
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "disk"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "device"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^device$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "label": {
+                  "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "disk"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "label"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^label$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "nfs": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "remotePath": {
+                  "pattern": "^(/[^/]+)+$",
+                  "type": "string"
+                },
+                "server": {
+                  "oneOf": [
+                    {
+                      "format": "host-name"
+                    },
+                    {
+                      "format": "ipv4"
+                    },
+                    {
+                      "format": "ipv6"
+                    }
+                  ],
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "nfs"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "server",
+                "remotePath"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^remotePath$": true,
+                "^server$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "sizeInMB": {
+                  "maximum": 512.0,
+                  "minimum": 16.0,
+                  "type": "integer"
+                },
+                "type": {
+                  "enum": [
+                    "tmpfs"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "sizeInMB"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^sizeInMB$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "tmpfs": {
+      "$ref": "#/definitions4/modern_4"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/diskDevice"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/diskDevice"
+      }
+    },
+    {
+      "$ref": "#/definitions4/diskUUID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/diskUUID"
+      }
+    },
+    {
+      "$ref": "#/definitions4/diskDevice"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/diskDevice"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/nfs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/nfs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/nfs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/nfs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tmpfs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tmpfs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/diskUUID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/diskUUID"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tmpfs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tmpfs"
+      }
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "allOf": [
+    {
+      "additionalProperties": true,
+      "properties": {
+        "branch": {
+          "description": "Name of the branch",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "commit": {
+          "maxLength": 100,
+          "title": "Git SHA Commit ID",
+          "type": "string"
+        },
+        "repository": {
+          "$ref": "#/definitions3/repository"
+        },
+        "status": {
+          "description": "Status of the build. 0: success  1: failed",
+          "enum": [
+            0,
+            1
+          ]
+        }
+      },
+      "required": [
+        "repository",
+        "branch",
+        "commit",
+        "status"
+      ],
+      "title": "Schema for Travis Hook payload",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    }
+  ],
+  "definitions3": {
+    "repository": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "title": "SCM repository name (e.g.: spec-python)",
+          "type": "string"
+        },
+        "owner_name": {
+          "maxLength": 100,
+          "title": "Owner/Organization of the SCM repository (e.g. totem)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_name",
+        "name"
+      ]
+    }
+  },
+  "definitions4": {
+    "repository": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "maxLength": 100,
+                  "title": "SCM repository name (e.g.: spec-python)",
+                  "type": "string"
+                },
+                "owner_name": {
+                  "maxLength": 100,
+                  "title": "Owner/Organization of the SCM repository (e.g. totem)",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "owner_name",
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^owner_name$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "branch": {
+                  "description": "Name of the branch",
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                "commit": {
+                  "maxLength": 100,
+                  "title": "Git SHA Commit ID",
+                  "type": "string"
+                },
+                "repository": {
+                  "$ref": "#/definitions4/repository"
+                },
+                "status": {
+                  "description": "Status of the build. 0: success  1: failed",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "required": [
+                "repository",
+                "branch",
+                "commit",
+                "status"
+              ],
+              "title": "Schema for Travis Hook payload",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^branch$": true,
+                "^commit$": true,
+                "^repository$": true,
+                "^status$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/repository"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/repository"
+      }
+    },
+    {
+      "$ref": "#/definitions3/repository"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/repository"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,321 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "$ref": "#/definitions3/shape"
+          },
+          "id": {
+            "$ref": "#/definitions3/guid"
+          },
+          "to": {
+            "$ref": "#/definitions3/shape"
+          },
+          "type": {
+            "enum": [
+              "addition",
+              "removal",
+              "replacement",
+              "mutation"
+            ],
+            "type": "string"
+          },
+          "undoOf": {
+            "$ref": "#/definitions3/guid"
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "maxProperties": 100,
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "undoOf": {
+                  "$ref": "#/definitions4/guid"
+                },
+                "to": {
+                  "$ref": "#/definitions4/shape"
+                },
+                "id": {
+                  "$ref": "#/definitions4/guid"
+                },
+                "from": {
+                  "$ref": "#/definitions4/shape"
+                },
+                "type": {
+                  "enum": [
+                    "addition",
+                    "removal",
+                    "replacement",
+                    "mutation"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "type"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^to$": true,
+                "^undoOf$": true,
+                "^type$": true,
+                "^id$": true,
+                "^from$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "shape": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "guid": {
+      "pattern": "^[a-f][a-f0-9]{31}$",
+      "type": "string"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "children": {
+                  "items": {
+                    "$ref": "#/definitions4/shape"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "enum": [
+                    "text",
+                    "tspan",
+                    "polygon",
+                    "polyline",
+                    "line",
+                    "rect",
+                    "ellipse",
+                    "circle",
+                    "path"
+                  ],
+                  "type": "string"
+                },
+                "bbox": {
+                  "properties": {
+                    "height": {
+                      "type": "number"
+                    },
+                    "width": {
+                      "type": "number"
+                    },
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    }
+                  },
+                  "type": "object"
+                },
+                "text": {
+                  "maxLength": 1000,
+                  "type": "string"
+                },
+                "attr": {
+                  "$ref": "#/definitions4/modern_2"
+                }
+              },
+              "required": [
+                "name",
+                "attr"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^children$": true,
+                "^name$": true,
+                "^text$": true,
+                "^attr$": true,
+                "^bbox$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "guid": {
+      "pattern": "^[a-f][a-f0-9]{31}$",
+      "type": "string"
+    },
+    "shape": {
+      "additionalProperties": false,
+      "properties": {
+        "attr": {
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "maxProperties": 100,
+          "type": "object"
+        },
+        "bbox": {
+          "properties": {
+            "height": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/definitions3/shape"
+          },
+          "type": "array"
+        },
+        "name": {
+          "enum": [
+            "text",
+            "tspan",
+            "polygon",
+            "polyline",
+            "line",
+            "rect",
+            "ellipse",
+            "circle",
+            "path"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1000,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "attr"
+      ],
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/guid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/guid"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/shape"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/shape"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/shape"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/shape"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/guid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/guid"
+      }
+    }
+  ]
+}

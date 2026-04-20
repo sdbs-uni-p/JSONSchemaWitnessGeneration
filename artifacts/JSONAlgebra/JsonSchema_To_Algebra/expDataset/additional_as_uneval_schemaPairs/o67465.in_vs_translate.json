@@ -1,0 +1,488 @@
+[
+  {
+    "id": 1978,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "title": "Playbook syntax definition",
+      "description": "Playbooks are documents which describe the exact set of steps required to successfully start and finish a given software release. When the Release Engine begins a deployment, the actions it takes come directly from playbooks. For more information: http://release-engine.readthedocs.org/en/latest/playbooks.html",
+      "definitions2": {
+        "group": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "hosts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/step_types"
+          }
+        },
+        "step_types": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions2/step_string"
+            },
+            {
+              "$ref": "#/definitions2/step_object"
+            }
+          ]
+        },
+        "step_string": {
+          "type": "string",
+          "pattern": "^[\\w]+:{1}[A-Z][\\w]+$"
+        },
+        "step_object": {
+          "type": "object",
+          "patternProperties": {
+            "^[\\w]+:{1}[A-Z][\\w]+$": {
+              "type": "object",
+              "properties": {
+                "notify": {
+                  "$ref": "#/definitions2/notify"
+                }
+              },
+              "minProperties": 1
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "dynamic": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minItems": 1
+          }
+        },
+        "notify": {
+          "type": "object",
+          "properties": {
+            "started": {
+              "$ref": "#/definitions2/notify_endpoints"
+            },
+            "completed": {
+              "$ref": "#/definitions2/notify_endpoints"
+            },
+            "failed": {
+              "$ref": "#/definitions2/notify_endpoints"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "notify_endpoints": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "execution": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "not": {}
+            },
+            "required": [
+              "hosts",
+              "steps",
+              "description"
+            ],
+            "properties": {
+              "hosts": {
+                "$ref": "#/definitions2/hosts"
+              },
+              "steps": {
+                "$ref": "#/definitions2/steps"
+              },
+              "preflight": {
+                "$ref": "#/definitions2/steps"
+              },
+              "description": {
+                "$ref": "#/definitions2/description"
+              }
+            }
+          }
+        }
+      },
+      "properties": {
+        "execution": {
+          "$ref": "#/definitions2/execution"
+        },
+        "group": {
+          "$ref": "#/definitions2/group"
+        },
+        "name": {
+          "$ref": "#/definitions2/name"
+        }
+      },
+      "required": [
+        "execution",
+        "name",
+        "group"
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "name": {
+          "type": "string"
+        },
+        "notify_endpoints": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[\\w]+:{1}[A-Z][\\w]+$": {
+                      "type": "object",
+                      "properties": {
+                        "notify": {
+                          "$ref": "#/definitions2/notify"
+                        }
+                      },
+                      "minProperties": 1
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^[\\w]+:{1}[A-Z][\\w]+$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "hosts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "step_string": {
+          "type": "string",
+          "pattern": "^[\\w]+:{1}[A-Z][\\w]+$"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "hosts",
+                    "steps",
+                    "description"
+                  ],
+                  "properties": {
+                    "hosts": {
+                      "$ref": "#/definitions2/hosts"
+                    },
+                    "steps": {
+                      "$ref": "#/definitions2/steps"
+                    },
+                    "preflight": {
+                      "$ref": "#/definitions2/steps"
+                    },
+                    "description": {
+                      "$ref": "#/definitions2/description"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^hosts$": {},
+                    "^steps$": {},
+                    "^preflight$": {},
+                    "^description$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/step_types"
+          }
+        },
+        "step_object": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "title": "Playbook syntax definition",
+                  "description": "Playbooks are documents which describe the exact set of steps required to successfully start and finish a given software release. When the Release Engine begins a deployment, the actions it takes come directly from playbooks. For more information: http://release-engine.readthedocs.org/en/latest/playbooks.html",
+                  "definitions2": {
+                    "group": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "hosts": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "steps": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions2/step_types"
+                      }
+                    },
+                    "step_types": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions2/step_string"
+                        },
+                        {
+                          "$ref": "#/definitions2/step_object"
+                        }
+                      ]
+                    },
+                    "step_string": {
+                      "type": "string",
+                      "pattern": "^[\\w]+:{1}[A-Z][\\w]+$"
+                    },
+                    "step_object": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^[\\w]+:{1}[A-Z][\\w]+$": {
+                          "type": "object",
+                          "properties": {
+                            "notify": {
+                              "$ref": "#/definitions2/notify"
+                            }
+                          },
+                          "minProperties": 1
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "dynamic": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minItems": 1
+                      }
+                    },
+                    "notify": {
+                      "type": "object",
+                      "properties": {
+                        "started": {
+                          "$ref": "#/definitions2/notify_endpoints"
+                        },
+                        "completed": {
+                          "$ref": "#/definitions2/notify_endpoints"
+                        },
+                        "failed": {
+                          "$ref": "#/definitions2/notify_endpoints"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "notify_endpoints": {
+                      "type": "object",
+                      "unevaluatedProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "execution": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "unevaluatedProperties": false,
+                        "required": [
+                          "hosts",
+                          "steps",
+                          "description"
+                        ],
+                        "properties": {
+                          "hosts": {
+                            "$ref": "#/definitions2/hosts"
+                          },
+                          "steps": {
+                            "$ref": "#/definitions2/steps"
+                          },
+                          "preflight": {
+                            "$ref": "#/definitions2/steps"
+                          },
+                          "description": {
+                            "$ref": "#/definitions2/description"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "execution": {
+                      "$ref": "#/definitions2/execution"
+                    },
+                    "group": {
+                      "$ref": "#/definitions2/group"
+                    },
+                    "name": {
+                      "$ref": "#/definitions2/name"
+                    }
+                  },
+                  "required": [
+                    "execution",
+                    "name",
+                    "group"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^execution$": {},
+                    "^group$": {},
+                    "^name$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "execution": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/modern_3"
+          }
+        },
+        "notify": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "group": {
+          "type": "string"
+        },
+        "step_types": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions2/step_string"
+            },
+            {
+              "$ref": "#/definitions2/step_object"
+            }
+          ]
+        },
+        "dynamic": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minItems": 1
+          }
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "started": {
+                      "$ref": "#/definitions2/notify_endpoints"
+                    },
+                    "completed": {
+                      "$ref": "#/definitions2/notify_endpoints"
+                    },
+                    "failed": {
+                      "$ref": "#/definitions2/notify_endpoints"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^started$": {},
+                    "^completed$": {},
+                    "^failed$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_5"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

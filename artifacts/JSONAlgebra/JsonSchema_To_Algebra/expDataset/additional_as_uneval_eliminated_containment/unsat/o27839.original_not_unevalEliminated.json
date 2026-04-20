@@ -1,0 +1,429 @@
+{
+  "allOf": [
+    {
+      "errorMessage": {
+        "uniqueItemProperties": "should NOT contain objects with the same id"
+      },
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "egressrule": {
+            "$ref": "#/definitions3/RulesArray"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "ingressrule": {
+            "$ref": "#/definitions3/RulesArray"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "preselected": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "preselected",
+          "ingressrule",
+          "egressrule"
+        ],
+        "type": "object"
+      },
+      "type": "array",
+      "uniqueItemProperties": [
+        "id"
+      ]
+    },
+    {
+      "not": {
+        "errorMessage": {
+          "uniqueItemProperties": "should NOT contain objects with the same id"
+        },
+        "items": {
+          "$ref": "#/definitions4/modern_3"
+        },
+        "type": "array",
+        "uniqueItemProperties": [
+          "id"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "IcmpRule": {
+      "additionalProperties": false,
+      "properties": {
+        "cidr": {
+          "type": "string"
+        },
+        "icmpcode": {
+          "maximum": 255,
+          "minimum": -1,
+          "type": "integer"
+        },
+        "icmptype": {
+          "maximum": 255,
+          "minimum": -1,
+          "type": "integer"
+        },
+        "protocol": {
+          "const": "icmp",
+          "type": "string"
+        },
+        "ruleid": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "ruleid",
+        "protocol",
+        "icmpcode",
+        "icmptype",
+        "cidr"
+      ],
+      "type": "object"
+    },
+    "RulesArray": {
+      "errorMessage": {
+        "uniqueItemProperties": "should NOT contain objects with the same ruleId"
+      },
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions3/TcpUdpRule"
+          },
+          {
+            "$ref": "#/definitions3/IcmpRule"
+          }
+        ]
+      },
+      "type": "array",
+      "uniqueItemProperties": [
+        "ruleid"
+      ]
+    },
+    "TcpUdpPort": {
+      "maximum": 65535,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "TcpUdpRule": {
+      "additionalProperties": false,
+      "properties": {
+        "cidr": {
+          "type": "string"
+        },
+        "endport": {
+          "$ref": "#/definitions3/TcpUdpPort"
+        },
+        "protocol": {
+          "enum": [
+            "tcp",
+            "udp"
+          ],
+          "type": "string"
+        },
+        "ruleid": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "startport": {
+          "$ref": "#/definitions3/TcpUdpPort"
+        }
+      },
+      "required": [
+        "ruleid",
+        "protocol",
+        "startport",
+        "endport",
+        "cidr"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "RulesArray": {
+      "errorMessage": {
+        "uniqueItemProperties": "should NOT contain objects with the same ruleId"
+      },
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions4/TcpUdpRule"
+          },
+          {
+            "$ref": "#/definitions4/IcmpRule"
+          }
+        ]
+      },
+      "type": "array",
+      "uniqueItemProperties": [
+        "ruleid"
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "icmpcode": {
+                  "maximum": 255.0,
+                  "minimum": -1.0,
+                  "type": "integer"
+                },
+                "cidr": {
+                  "type": "string"
+                },
+                "ruleid": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "icmptype": {
+                  "maximum": 255.0,
+                  "minimum": -1.0,
+                  "type": "integer"
+                },
+                "protocol": {
+                  "const": "icmp",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ruleid",
+                "protocol",
+                "icmpcode",
+                "icmptype",
+                "cidr"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^icmptype$": true,
+                "^protocol$": true,
+                "^cidr$": true,
+                "^ruleid$": true,
+                "^icmpcode$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "TcpUdpRule": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "startport": {
+                  "$ref": "#/definitions4/TcpUdpPort"
+                },
+                "cidr": {
+                  "type": "string"
+                },
+                "ruleid": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "endport": {
+                  "$ref": "#/definitions4/TcpUdpPort"
+                },
+                "protocol": {
+                  "enum": [
+                    "tcp",
+                    "udp"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ruleid",
+                "protocol",
+                "startport",
+                "endport",
+                "cidr"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^startport$": true,
+                "^endport$": true,
+                "^protocol$": true,
+                "^cidr$": true,
+                "^ruleid$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "TcpUdpPort": {
+      "maximum": 65535.0,
+      "minimum": 0.0,
+      "type": "integer"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "preselected": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "ingressrule": {
+                  "$ref": "#/definitions4/RulesArray"
+                },
+                "egressrule": {
+                  "$ref": "#/definitions4/RulesArray"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "description",
+                "preselected",
+                "ingressrule",
+                "egressrule"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^name$": true,
+                "^id$": true,
+                "^ingressrule$": true,
+                "^egressrule$": true,
+                "^preselected$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "IcmpRule": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/RulesArray"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/RulesArray"
+      }
+    },
+    {
+      "$ref": "#/definitions3/TcpUdpPort"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/TcpUdpPort"
+      }
+    },
+    {
+      "$ref": "#/definitions4/RulesArray"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/RulesArray"
+      }
+    },
+    {
+      "$ref": "#/definitions3/TcpUdpRule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/TcpUdpRule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/IcmpRule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/IcmpRule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/IcmpRule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/IcmpRule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/TcpUdpPort"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/TcpUdpPort"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/TcpUdpRule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/TcpUdpRule"
+      }
+    }
+  ]
+}

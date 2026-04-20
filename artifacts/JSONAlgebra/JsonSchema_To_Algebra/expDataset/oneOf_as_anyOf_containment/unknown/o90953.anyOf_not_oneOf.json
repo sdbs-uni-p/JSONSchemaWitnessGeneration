@@ -1,0 +1,240 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "A JSON RPC 2.0 response",
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/success"
+        },
+        {
+          "$ref": "#/definitions4/error"
+        },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions4/success"
+              },
+              {
+                "$ref": "#/definitions4/error"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "A JSON RPC 2.0 response",
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/success"
+          },
+          {
+            "$ref": "#/definitions3/error"
+          },
+          {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/success"
+                },
+                {
+                  "$ref": "#/definitions3/error"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "common": {
+      "required": [
+        "id",
+        "jsonrpc"
+      ],
+      "not": {
+        "description": "cannot have result and error at the same time",
+        "required": [
+          "result",
+          "error"
+        ]
+      },
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "note": [
+            "spec says a number which should not contain a fractional part",
+            "We choose integer here, but this is unenforceable with some languages"
+          ]
+        },
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        }
+      }
+    },
+    "success": {
+      "description": "A success. The result member is then required and can be anything.",
+      "allOf": [
+        {
+          "$ref": "#/definitions4/common"
+        },
+        {
+          "required": [
+            "result"
+          ]
+        }
+      ]
+    },
+    "error": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/common"
+        },
+        {
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "note": [
+                    "unenforceable in some languages"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "description": "optional, can be anything"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "common": {
+      "required": [
+        "id",
+        "jsonrpc"
+      ],
+      "not": {
+        "description": "cannot have result and error at the same time",
+        "required": [
+          "result",
+          "error"
+        ]
+      },
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "note": [
+            "spec says a number which should not contain a fractional part",
+            "We choose integer here, but this is unenforceable with some languages"
+          ]
+        },
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        }
+      }
+    },
+    "success": {
+      "description": "A success. The result member is then required and can be anything.",
+      "allOf": [
+        {
+          "$ref": "#/definitions3/common"
+        },
+        {
+          "required": [
+            "result"
+          ]
+        }
+      ]
+    },
+    "error": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/common"
+        },
+        {
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "note": [
+                    "unenforceable in some languages"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "description": "optional, can be anything"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/common"
+    },
+    {
+      "$ref": "#/definitions3/success"
+    },
+    {
+      "$ref": "#/definitions4/common"
+    },
+    {
+      "$ref": "#/definitions3/error"
+    },
+    {
+      "$ref": "#/definitions4/success"
+    },
+    {
+      "$ref": "#/definitions4/error"
+    }
+  ]
+}

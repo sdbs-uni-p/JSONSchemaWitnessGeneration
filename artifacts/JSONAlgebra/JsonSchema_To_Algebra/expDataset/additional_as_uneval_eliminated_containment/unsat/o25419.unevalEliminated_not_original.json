@@ -1,0 +1,161 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "A JSON RPC 2.0 request",
+      "oneOf": [
+        {
+          "description": "An individual request",
+          "$ref": "#/definitions4/request"
+        },
+        {
+          "description": "An array of requests",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/request"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "A JSON RPC 2.0 request",
+        "oneOf": [
+          {
+            "description": "An individual request",
+            "$ref": "#/definitions3/request"
+          },
+          {
+            "description": "An array of requests",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions3/request"
+            },
+            "minItems": 1
+          }
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "request": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "jsonrpc",
+                "method"
+              ],
+              "properties": {
+                "jsonrpc": {
+                  "enum": [
+                    "2.0"
+                  ]
+                },
+                "method": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "number",
+                    "null"
+                  ],
+                  "note": [
+                    "While allowed, null should be avoided: http://www.jsonrpc.org/specification#id1",
+                    "While allowed, a number with a fractional part should be avoided: http://www.jsonrpc.org/specification#id2"
+                  ]
+                },
+                "params": {
+                  "type": [
+                    "array",
+                    "object"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^jsonrpc$": true,
+                "^method$": true,
+                "^id$": true,
+                "^params$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "request": {
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "method"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        },
+        "method": {
+          "type": "string"
+        },
+        "id": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ],
+          "note": [
+            "While allowed, null should be avoided: http://www.jsonrpc.org/specification#id1",
+            "While allowed, a number with a fractional part should be avoided: http://www.jsonrpc.org/specification#id2"
+          ]
+        },
+        "params": {
+          "type": [
+            "array",
+            "object"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/request"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/request"
+      }
+    },
+    {
+      "$ref": "#/definitions4/request"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/request"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1283 @@
+{
+  "allOf": [
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "https://tonytools.win/schemas/dlge.schema.json",
+      "type": "object",
+      "title": "DialogEvent",
+      "description": "A HMLanguages (TonyTools) DLGE JSON file.",
+      "properties": {
+        "langmap": {
+          "type": "string",
+          "title": "Language Map",
+          "description": "Optional language map for if it differs from the default. Overrides any other language map."
+        },
+        "rootContainer": {
+          "$ref": "#/definitions1/modern_4"
+        },
+        "hash": {
+          "type": "string",
+          "title": "Hash",
+          "description": "The hash or path (if available) of the final output file."
+        },
+        "CLNG": {
+          "type": "string",
+          "title": "DialogCascadingLanguageDependencies",
+          "description": "The hash or path (if available) of the CLNG file to use."
+        },
+        "$schema": {
+          "type": "string",
+          "format": "uri",
+          "description": "The schema URL, if you're seeing this you probably already know what it is."
+        },
+        "DITL": {
+          "type": "string",
+          "title": "DialogSoundTemplateList",
+          "description": "The hash or path (if available) of the DITL file to use for soundtags."
+        }
+      },
+      "required": [
+        "hash",
+        "DITL",
+        "CLNG",
+        "rootContainer"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://tonytools.win/schemas/dlge.schema.json",
+        "type": "object",
+        "title": "DialogEvent",
+        "description": "A HMLanguages (TonyTools) DLGE JSON file.",
+        "properties": {
+          "$schema": {
+            "type": "string",
+            "format": "uri",
+            "description": "The schema URL, if you're seeing this you probably already know what it is."
+          },
+          "hash": {
+            "type": "string",
+            "title": "Hash",
+            "description": "The hash or path (if available) of the final output file."
+          },
+          "DITL": {
+            "type": "string",
+            "title": "DialogSoundTemplateList",
+            "description": "The hash or path (if available) of the DITL file to use for soundtags."
+          },
+          "CLNG": {
+            "type": "string",
+            "title": "DialogCascadingLanguageDependencies",
+            "description": "The hash or path (if available) of the CLNG file to use."
+          },
+          "langmap": {
+            "type": "string",
+            "title": "Language Map",
+            "description": "Optional language map for if it differs from the default. Overrides any other language map."
+          },
+          "rootContainer": {
+            "type": "object",
+            "$ref": "#/definitions2/Container",
+            "title": "Root Container",
+            "description": "The root container of the DLGE file.",
+            "properties": {
+              "type": {
+                "$ref": "#/definitions2/Types"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "hash",
+          "DITL",
+          "CLNG",
+          "rootContainer"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions1": {
+    "Random": {
+      "type": "object",
+      "title": "Random Container",
+      "description": "A Random container, picks one of the wav files randomly with respect to their weight.",
+      "properties": {
+        "type": {
+          "const": "Random",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "containers": {
+          "type": "array",
+          "title": "Containers",
+          "description": "The child containers for this container.",
+          "items": {
+            "$ref": "#/definitions1/modern_1"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "containers"
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/WavFile"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "weight": {
+                      "type": [
+                        "number",
+                        "string"
+                      ],
+                      "title": "Random Weight",
+                      "description": "How often this specific line should be chosen (0 to 1, inclusive). Strings will be parsed as hex."
+                    }
+                  },
+                  "required": [
+                    "weight"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^wavName$": true,
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^weight$": true,
+                "^languages$": true,
+                "^defaultWav$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "WavFile": {
+      "type": "object",
+      "title": "WavFile Container",
+      "description": "A WavFile container, defines a whole bunch of things.",
+      "properties": {
+        "defaultFfx": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Default FaceFX Animation",
+          "description": "The default FaceFX animation hash or path (if available) for this container."
+        },
+        "wavName": {
+          "type": "string",
+          "title": "Wav Name",
+          "description": "The name of the wav file (or hash if unavailable) for this container."
+        },
+        "languages": {
+          "type": "object",
+          "title": "Languages",
+          "description": "The languages for this container.",
+          "patternProperties": {
+            "^[a-z]{2}$": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "title": "Subtitle",
+                  "description": "The subtitle for this language."
+                },
+                {
+                  "type": "object",
+                  "title": "Custom Wav and FaceFX",
+                  "description": "The wav and FaceFX animation (plus optional subtitle) for this language.",
+                  "properties": {
+                    "wav": {
+                      "type": "string",
+                      "title": "Wav File",
+                      "description": "The wav hash or path (if available) for this language."
+                    },
+                    "ffx": {
+                      "type": "string",
+                      "title": "FaceFX File",
+                      "description": "The FaceFX animation hash or path (if available) for this language."
+                    },
+                    "subtitle": {
+                      "type": "string",
+                      "title": "Subtitle",
+                      "description": "The subtitle for this language."
+                    }
+                  },
+                  "required": [
+                    "wav",
+                    "ffx"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "const": "WavFile",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "defaultWav": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Default Wav",
+          "description": "The default wav hash or path (if available) for this container."
+        },
+        "soundtag": {
+          "type": "string",
+          "title": "Soundtag",
+          "description": "The soundtag name (or hash if unavailable) for this container."
+        }
+      },
+      "required": [
+        "type",
+        "wavName",
+        "soundtag",
+        "defaultWav",
+        "defaultFfx",
+        "languages"
+      ]
+    },
+    "Sequence": {
+      "type": "object",
+      "title": "Sequence Container",
+      "description": "A Sequence container, \"executes\" all child containers in order.",
+      "properties": {
+        "type": {
+          "const": "Sequence",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "containers": {
+          "type": "array",
+          "title": "Containers",
+          "description": "The child containers for this container.",
+          "items": {
+            "$ref": "#/definitions1/modern_2"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "containers"
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions1/WavFile"
+            },
+            {
+              "patternProperties": {
+                "^wavName$": true,
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions1/Random"
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^containers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions1/Switch"
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^switchKey$": true,
+                "^default$": true,
+                "^containers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/WavFile"
+                },
+                {
+                  "$ref": "#/definitions1/Random"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true,
+                "^containers$": true,
+                "^wavName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/WavFile"
+                },
+                {
+                  "$ref": "#/definitions1/Switch"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^default$": true,
+                "^containers$": true,
+                "^wavName$": true,
+                "^defaultWav$": true,
+                "^switchKey$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Container": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions1/WavFile"
+        },
+        {
+          "$ref": "#/definitions1/Random"
+        },
+        {
+          "$ref": "#/definitions1/Switch"
+        },
+        {
+          "$ref": "#/definitions1/Sequence"
+        }
+      ]
+    },
+    "Types": {
+      "enum": [
+        "WavFile",
+        "Random",
+        "Switch",
+        "Sequence"
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/WavFile"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "cases": {
+                      "type": "array",
+                      "title": "Cases",
+                      "description": "Which cases this container should handle.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "cases"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^wavName$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true,
+                "^cases$": true,
+                "^soundtag$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/Random"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "cases": {
+                      "type": "array",
+                      "title": "Cases",
+                      "description": "Which cases this container should handle.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "cases"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^containers$": true,
+                "^cases$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/WavFile"
+                    },
+                    {
+                      "$ref": "#/definitions1/Random"
+                    }
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "cases": {
+                      "type": "array",
+                      "title": "Cases",
+                      "description": "Which cases this container should handle.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "cases"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true,
+                "^containers$": true,
+                "^wavName$": true,
+                "^cases$": true,
+                "^soundtag$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Switch": {
+      "type": "object",
+      "title": "Switch Container",
+      "description": "A Switch container, jumps to one of the child containers depending on the case value passed to it.",
+      "properties": {
+        "type": {
+          "const": "Switch",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "switchKey": {
+          "type": "string",
+          "title": "Switch Key",
+          "description": "The key for this Switch container, this is what the game looks for."
+        },
+        "default": {
+          "type": "string",
+          "title": "Default",
+          "description": "The default case. This is used if a case is not explicitly handled."
+        },
+        "containers": {
+          "type": "array",
+          "title": "Containers",
+          "description": "The child containers for this container.",
+          "items": {
+            "$ref": "#/definitions1/modern_3"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "switchKey",
+        "default",
+        "containers"
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "$ref": "#/definitions1/WavFile"
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^wavName$": true,
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "$ref": "#/definitions1/Random"
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^containers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "$ref": "#/definitions1/Switch"
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^switchKey$": true,
+                "^default$": true,
+                "^containers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "$ref": "#/definitions1/Sequence"
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^containers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/WavFile"
+                    },
+                    {
+                      "$ref": "#/definitions1/Random"
+                    }
+                  ]
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true,
+                "^containers$": true,
+                "^wavName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/WavFile"
+                    },
+                    {
+                      "$ref": "#/definitions1/Switch"
+                    }
+                  ]
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^default$": true,
+                "^containers$": true,
+                "^wavName$": true,
+                "^defaultWav$": true,
+                "^switchKey$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/WavFile"
+                    },
+                    {
+                      "$ref": "#/definitions1/Sequence"
+                    }
+                  ]
+                },
+                {
+                  "title": "Root Container"
+                },
+                {
+                  "description": "The root container of the DLGE file."
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/Types"
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^soundtag$": true,
+                "^defaultFfx$": true,
+                "^type$": true,
+                "^languages$": true,
+                "^defaultWav$": true,
+                "^containers$": true,
+                "^wavName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions2": {
+    "Types": {
+      "enum": [
+        "WavFile",
+        "Random",
+        "Switch",
+        "Sequence"
+      ]
+    },
+    "Container": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/WavFile"
+        },
+        {
+          "$ref": "#/definitions2/Random"
+        },
+        {
+          "$ref": "#/definitions2/Switch"
+        },
+        {
+          "$ref": "#/definitions2/Sequence"
+        }
+      ]
+    },
+    "WavFile": {
+      "type": "object",
+      "title": "WavFile Container",
+      "description": "A WavFile container, defines a whole bunch of things.",
+      "properties": {
+        "type": {
+          "const": "WavFile",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "wavName": {
+          "type": "string",
+          "title": "Wav Name",
+          "description": "The name of the wav file (or hash if unavailable) for this container."
+        },
+        "soundtag": {
+          "type": "string",
+          "title": "Soundtag",
+          "description": "The soundtag name (or hash if unavailable) for this container."
+        },
+        "defaultWav": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Default Wav",
+          "description": "The default wav hash or path (if available) for this container."
+        },
+        "defaultFfx": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Default FaceFX Animation",
+          "description": "The default FaceFX animation hash or path (if available) for this container."
+        },
+        "languages": {
+          "type": "object",
+          "title": "Languages",
+          "description": "The languages for this container.",
+          "patternProperties": {
+            "^[a-z]{2}$": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "title": "Subtitle",
+                  "description": "The subtitle for this language."
+                },
+                {
+                  "type": "object",
+                  "title": "Custom Wav and FaceFX",
+                  "description": "The wav and FaceFX animation (plus optional subtitle) for this language.",
+                  "properties": {
+                    "wav": {
+                      "type": "string",
+                      "title": "Wav File",
+                      "description": "The wav hash or path (if available) for this language."
+                    },
+                    "ffx": {
+                      "type": "string",
+                      "title": "FaceFX File",
+                      "description": "The FaceFX animation hash or path (if available) for this language."
+                    },
+                    "subtitle": {
+                      "type": "string",
+                      "title": "Subtitle",
+                      "description": "The subtitle for this language."
+                    }
+                  },
+                  "required": [
+                    "wav",
+                    "ffx"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "wavName",
+        "soundtag",
+        "defaultWav",
+        "defaultFfx",
+        "languages"
+      ]
+    },
+    "Random": {
+      "type": "object",
+      "title": "Random Container",
+      "description": "A Random container, picks one of the wav files randomly with respect to their weight.",
+      "properties": {
+        "type": {
+          "const": "Random",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "containers": {
+          "type": "array",
+          "title": "Containers",
+          "description": "The child containers for this container.",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions2/WavFile"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "weight": {
+                    "type": [
+                      "number",
+                      "string"
+                    ],
+                    "title": "Random Weight",
+                    "description": "How often this specific line should be chosen (0 to 1, inclusive). Strings will be parsed as hex."
+                  }
+                },
+                "required": [
+                  "weight"
+                ]
+              }
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "type",
+        "containers"
+      ]
+    },
+    "Switch": {
+      "type": "object",
+      "title": "Switch Container",
+      "description": "A Switch container, jumps to one of the child containers depending on the case value passed to it.",
+      "properties": {
+        "type": {
+          "const": "Switch",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "switchKey": {
+          "type": "string",
+          "title": "Switch Key",
+          "description": "The key for this Switch container, this is what the game looks for."
+        },
+        "default": {
+          "type": "string",
+          "title": "Default",
+          "description": "The default case. This is used if a case is not explicitly handled."
+        },
+        "containers": {
+          "type": "array",
+          "title": "Containers",
+          "description": "The child containers for this container.",
+          "items": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions2/WavFile"
+                  },
+                  {
+                    "$ref": "#/definitions2/Random"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "cases": {
+                    "type": "array",
+                    "title": "Cases",
+                    "description": "Which cases this container should handle.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "cases"
+                ]
+              }
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "type",
+        "switchKey",
+        "default",
+        "containers"
+      ]
+    },
+    "Sequence": {
+      "type": "object",
+      "title": "Sequence Container",
+      "description": "A Sequence container, \"executes\" all child containers in order.",
+      "properties": {
+        "type": {
+          "const": "Sequence",
+          "title": "Container Type",
+          "description": "The type of this container."
+        },
+        "containers": {
+          "type": "array",
+          "title": "Containers",
+          "description": "The child containers for this container.",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions2/WavFile"
+              },
+              {
+                "$ref": "#/definitions2/Random"
+              },
+              {
+                "$ref": "#/definitions2/Switch"
+              }
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "type",
+        "containers"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/Random"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Random"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Types"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Types"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions2/WavFile"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/WavFile"
+      }
+    },
+    {
+      "$ref": "#/definitions1/WavFile"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/WavFile"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Sequence"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Sequence"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Switch"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Switch"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Types"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Types"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Switch"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Switch"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Sequence"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Sequence"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Container"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Container"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Random"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Random"
+      }
+    }
+  ]
+}

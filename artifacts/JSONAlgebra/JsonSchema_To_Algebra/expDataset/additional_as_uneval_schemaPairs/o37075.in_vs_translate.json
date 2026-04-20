@@ -1,0 +1,625 @@
+[
+  {
+    "id": 788,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "description": "JSON Schema for droplit-edge localsettings",
+      "definitions2": {
+        "plugins-array": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions2/plugins-array-item"
+              }
+            ]
+          }
+        },
+        "plugins-array-item": {
+          "description": "Configuration for an individual plugin.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "enabled": {
+              "description": "Set whether the plugin is enabled.",
+              "type": "boolean",
+              "default": true
+            },
+            "localServices": {
+              "description": "List local services that the plugin manages.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "_uniqueItems": true
+            },
+            "name": {
+              "description": "The name of the plugin.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "plugins-object": {
+          "description": "Configuration for an individual plugin.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "description": "Set whether the plugin is enabled.",
+                "type": "boolean",
+                "default": true
+              },
+              "localServices": {
+                "description": "List local services that the plugin manages.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "_uniqueItems": true
+              }
+            }
+          }
+        }
+      },
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "properties": {
+        "config": {
+          "description": "Configures miscellaneous capabilities.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "LinuxNetInterfaceOverride": {
+              "description": "Override the Linux network interface",
+              "type": "string"
+            },
+            "MACAddressOverride": {
+              "description": "Override the MAC address used as the Edge Id.",
+              "type": "string"
+            },
+            "provisioningServiceEnabled": {
+              "description": "Enables the network provisioning service.",
+              "type": "boolean"
+            },
+            "provisioningServicePort": {
+              "description": "Set the port used for network provisioning.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65536,
+              "default": 81
+            }
+          }
+        },
+        "debug": {
+          "description": "Configures debugging options.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "generateHeapDump": {
+              "description": "Periodically generate a heap dump file.",
+              "type": "boolean"
+            },
+            "logToFile": {
+              "description": "Whether to log out to a file.",
+              "type": "boolean",
+              "default": true
+            },
+            "logPath": {
+              "description": "The file path to the file log.",
+              "type": "string"
+            }
+          }
+        },
+        "diagnostics": {
+          "description": "Configures the diagnostics telnet console.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "enabled": {
+              "description": "Determine whether the console should be enabled or not.",
+              "type": "boolean"
+            },
+            "port": {
+              "description": "The port the console is opened on.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65536,
+              "default": 8888
+            }
+          }
+        },
+        "ecosystemId": {
+          "description": "The Ecosystem associated with this Edge device. May be omitted if Ecosystem is determined via the claims process.",
+          "type": "string"
+        },
+        "environmentId": {
+          "description": "The Environment associated with this Edge device. Specifying this allows for multiple Edge devices within the same environment.",
+          "type": "string"
+        },
+        "router": {
+          "description": "Configures the Edge router layer.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "autodiscover": {
+              "description": "Whether or not autodiscover should be enabled.",
+              "type": "boolean"
+            },
+            "autodiscoverCadence": {
+              "description": "The amount of time (in ms) between discovery invocations.",
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "plugins": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/plugins-object"
+            },
+            {
+              "$ref": "#/definitions2/plugins-array"
+            }
+          ]
+        },
+        "transport": {
+          "description": "Configures the Edge transport layer.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "enableHeartbeat": {
+              "description": "Whether or not heartbeat should be enabled. This should only ever be disabled for diagnostic purposes.",
+              "type": "boolean",
+              "default": true
+            },
+            "host": {
+              "description": "The host service uri.",
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "default": {},
+      "required": [
+        "transport"
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configures debugging options.",
+                  "type": "object",
+                  "properties": {
+                    "generateHeapDump": {
+                      "description": "Periodically generate a heap dump file.",
+                      "type": "boolean"
+                    },
+                    "logToFile": {
+                      "description": "Whether to log out to a file.",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "logPath": {
+                      "description": "The file path to the file log.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^generateHeapDump$": {},
+                    "^logToFile$": {},
+                    "^logPath$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configures the Edge transport layer.",
+                  "type": "object",
+                  "properties": {
+                    "enableHeartbeat": {
+                      "description": "Whether or not heartbeat should be enabled. This should only ever be disabled for diagnostic purposes.",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "host": {
+                      "description": "The host service uri.",
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^enableHeartbeat$": {},
+                    "^host$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configuration for an individual plugin.",
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "description": "Set whether the plugin is enabled.",
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "localServices": {
+                      "description": "List local services that the plugin manages.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "_uniqueItems": true
+                    },
+                    "name": {
+                      "description": "The name of the plugin.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^enabled$": {},
+                    "^localServices$": {},
+                    "^name$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configures the diagnostics telnet console.",
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "description": "Determine whether the console should be enabled or not.",
+                      "type": "boolean"
+                    },
+                    "port": {
+                      "description": "The port the console is opened on.",
+                      "type": "integer",
+                      "minimum": 0.0,
+                      "maximum": 65536.0,
+                      "default": 8888
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^enabled$": {},
+                    "^port$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configuration for an individual plugin.",
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "description": "Set whether the plugin is enabled.",
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "localServices": {
+                        "description": "List local services that the plugin manages.",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "_uniqueItems": true
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "plugins-object": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "plugins-array": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions2/plugins-array-item"
+              }
+            ]
+          }
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "JSON Schema for droplit-edge localsettings",
+                  "definitions2": {
+                    "plugins-array": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "$ref": "#/definitions2/plugins-array-item"
+                          }
+                        ]
+                      }
+                    },
+                    "plugins-array-item": {
+                      "description": "Configuration for an individual plugin.",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "enabled": {
+                          "description": "Set whether the plugin is enabled.",
+                          "type": "boolean",
+                          "default": true
+                        },
+                        "localServices": {
+                          "description": "List local services that the plugin manages.",
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "_uniqueItems": true
+                        },
+                        "name": {
+                          "description": "The name of the plugin.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ]
+                    },
+                    "plugins-object": {
+                      "description": "Configuration for an individual plugin.",
+                      "type": "object",
+                      "unevaluatedProperties": {
+                        "type": "object",
+                        "properties": {
+                          "enabled": {
+                            "description": "Set whether the plugin is enabled.",
+                            "type": "boolean",
+                            "default": true
+                          },
+                          "localServices": {
+                            "description": "List local services that the plugin manages.",
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "_uniqueItems": true
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "type": "object",
+                  "properties": {
+                    "ecosystemId": {
+                      "description": "The Ecosystem associated with this Edge device. May be omitted if Ecosystem is determined via the claims process.",
+                      "type": "string"
+                    },
+                    "plugins": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/plugins-object"
+                        },
+                        {
+                          "$ref": "#/definitions2/plugins-array"
+                        }
+                      ]
+                    },
+                    "config": {
+                      "$ref": "#/definitions2/modern_4"
+                    },
+                    "debug": {
+                      "$ref": "#/definitions2/modern_5"
+                    },
+                    "transport": {
+                      "$ref": "#/definitions2/modern_6"
+                    },
+                    "diagnostics": {
+                      "$ref": "#/definitions2/modern_7"
+                    },
+                    "environmentId": {
+                      "description": "The Environment associated with this Edge device. Specifying this allows for multiple Edge devices within the same environment.",
+                      "type": "string"
+                    },
+                    "router": {
+                      "$ref": "#/definitions2/modern_8"
+                    }
+                  },
+                  "default": {},
+                  "required": [
+                    "transport"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^debug$": {},
+                    "^plugins$": {},
+                    "^router$": {},
+                    "^environmentId$": {},
+                    "^transport$": {},
+                    "^ecosystemId$": {},
+                    "^config$": {},
+                    "^diagnostics$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configures miscellaneous capabilities.",
+                  "type": "object",
+                  "properties": {
+                    "LinuxNetInterfaceOverride": {
+                      "description": "Override the Linux network interface",
+                      "type": "string"
+                    },
+                    "MACAddressOverride": {
+                      "description": "Override the MAC address used as the Edge Id.",
+                      "type": "string"
+                    },
+                    "provisioningServiceEnabled": {
+                      "description": "Enables the network provisioning service.",
+                      "type": "boolean"
+                    },
+                    "provisioningServicePort": {
+                      "description": "Set the port used for network provisioning.",
+                      "type": "integer",
+                      "minimum": 0.0,
+                      "maximum": 65536.0,
+                      "default": 81
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^LinuxNetInterfaceOverride$": {},
+                    "^MACAddressOverride$": {},
+                    "^provisioningServiceEnabled$": {},
+                    "^provisioningServicePort$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "plugins-array-item": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Configures the Edge router layer.",
+                  "type": "object",
+                  "properties": {
+                    "autodiscover": {
+                      "description": "Whether or not autodiscover should be enabled.",
+                      "type": "boolean"
+                    },
+                    "autodiscoverCadence": {
+                      "description": "The amount of time (in ms) between discovery invocations.",
+                      "type": "integer",
+                      "minimum": 0.0
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^autodiscover$": {},
+                    "^autodiscoverCadence$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_3"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

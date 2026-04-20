@@ -1,0 +1,598 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "light": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "adafruit_lpd8806",
+                    "epistar_lpd8806"
+                  ]
+                },
+                "num_leds": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "simulate_mode": {
+                  "type": "boolean"
+                },
+                "spidev": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "num_leds"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "console"
+                  ]
+                },
+                "num_leds": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "type",
+                "num_leds"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "ci_server": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "jenkins"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://[0-9a-zA-Z-_.]+:?[0-9]+$"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "type",
+                "url",
+                "pollrate_s"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "circleci",
+                    "buildkite"
+                  ]
+                },
+                "api_token": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "type",
+                "api_token",
+                "username",
+                "pollrate_s"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "travisci"
+                  ]
+                },
+                "username": {
+                  "type": "string"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "type",
+                "username",
+                "pollrate_s"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "bamboo"
+                  ]
+                },
+                "username": {
+                  "$ref": "#/definitions3/nonEmptyString"
+                },
+                "password": {
+                  "$ref": "#/definitions3/nonEmptyString"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "type",
+                "url",
+                "pollrate_s"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "jobs": {
+          "type": "array",
+          "_uniqueItems": true,
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "branch": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "branch"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "light",
+        "ci_server",
+        "jobs"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "light": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions4/modern_1"
+              },
+              {
+                "$ref": "#/definitions4/modern_2"
+              }
+            ]
+          },
+          "ci_server": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions4/modern_3"
+              },
+              {
+                "$ref": "#/definitions4/modern_4"
+              },
+              {
+                "$ref": "#/definitions4/modern_5"
+              },
+              {
+                "$ref": "#/definitions4/modern_6"
+              }
+            ]
+          },
+          "jobs": {
+            "type": "array",
+            "_uniqueItems": true,
+            "minItems": 0,
+            "items": {
+              "$ref": "#/definitions4/modern_7"
+            }
+          }
+        },
+        "required": [
+          "light",
+          "ci_server",
+          "jobs"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "travisci"
+                  ]
+                },
+                "username": {
+                  "type": "string"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1.0
+                }
+              },
+              "required": [
+                "type",
+                "username",
+                "pollrate_s"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^username$": true,
+                "^pollrate_s$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "bamboo"
+                  ]
+                },
+                "password": {
+                  "$ref": "#/definitions4/nonEmptyString"
+                },
+                "username": {
+                  "$ref": "#/definitions4/nonEmptyString"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1.0
+                }
+              },
+              "required": [
+                "type",
+                "url",
+                "pollrate_s"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^username$": true,
+                "^pollrate_s$": true,
+                "^url$": true,
+                "^type$": true,
+                "^password$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "adafruit_lpd8806",
+                    "epistar_lpd8806"
+                  ]
+                },
+                "num_leds": {
+                  "type": "integer",
+                  "minimum": 1.0
+                },
+                "simulate_mode": {
+                  "type": "boolean"
+                },
+                "spidev": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "num_leds"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^num_leds$": true,
+                "^simulate_mode$": true,
+                "^spidev$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "branch": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "branch"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^branch$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "console"
+                  ]
+                },
+                "num_leds": {
+                  "type": "integer",
+                  "minimum": 1.0
+                }
+              },
+              "required": [
+                "type",
+                "num_leds"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^num_leds$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "jenkins"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://[0-9a-zA-Z-_.]+:?[0-9]+$"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1.0
+                }
+              },
+              "required": [
+                "type",
+                "url",
+                "pollrate_s"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^url$": true,
+                "^pollrate_s$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "circleci",
+                    "buildkite"
+                  ]
+                },
+                "api_token": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "pollrate_s": {
+                  "type": "integer",
+                  "minimum": 1.0
+                }
+              },
+              "required": [
+                "type",
+                "api_token",
+                "username",
+                "pollrate_s"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^api_token$": true,
+                "^username$": true,
+                "^pollrate_s$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/nonEmptyString"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/nonEmptyString"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/nonEmptyString"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/nonEmptyString"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

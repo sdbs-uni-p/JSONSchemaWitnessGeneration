@@ -1,0 +1,198 @@
+[
+  {
+    "id": 52,
+    "schema1": {
+      "$id": "validator.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "definitions1": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Validator",
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "edtf",
+                        "edtf_year",
+                        "geometry_point",
+                        "list",
+                        "regex",
+                        "required",
+                        "table"
+                      ]
+                    },
+                    "allowed_values": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "regex": {
+                      "type": "string"
+                    },
+                    "error_message": {
+                      "type": "string"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "anyOf": [
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "list"
+                                }
+                              }
+                            },
+                            {
+                              "required": [
+                                "allowed_values"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "list"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "regex"
+                                }
+                              }
+                            },
+                            {
+                              "required": [
+                                "regex"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "regex"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^type$": {},
+                    "^allowed_values$": {},
+                    "^regex$": {},
+                    "^error_message$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions1/modern_1"
+    },
+    "schema2": {
+      "$id": "validator.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Validator",
+      "additionalProperties": {
+        "not": {}
+      },
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "edtf",
+            "edtf_year",
+            "geometry_point",
+            "list",
+            "regex",
+            "required",
+            "table"
+          ]
+        },
+        "allowed_values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "regex": {
+          "type": "string"
+        },
+        "error_message": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "list"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "allowed_values"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "regex"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "regex"
+            ]
+          }
+        }
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

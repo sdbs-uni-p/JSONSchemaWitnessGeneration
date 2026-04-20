@@ -1,0 +1,1817 @@
+[
+  {
+    "id": 1772,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "https://raw.githubusercontent.com/nataliapc/metacatalog-msx/master/schemas/index.schema.json#",
+      "name": "metacatalog-msx",
+      "title": "",
+      "type": "object",
+      "description": "Schema for 8-bit-computer software metacataloguing",
+      "required": [
+        "header",
+        "catalog",
+        "content"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "header": {
+          "$ref": "#/definitions2/headerType"
+        },
+        "catalog": {
+          "$ref": "#/definitions2/catalogType"
+        },
+        "content": {
+          "$ref": "#/definitions2/contentArrayType"
+        },
+        "extras": {
+          "$ref": "#/definitions2/extrasType"
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "headerType": {
+          "description": "Header definition",
+          "type": "object",
+          "required": [
+            "mimecrc",
+            "mimetype",
+            "version"
+          ],
+          "properties": {
+            "mimecrc": {
+              "$ref": "#/definitions2/crc32Type",
+              "description": "CRC32 of mimetype"
+            },
+            "mimetype": {
+              "type": "string",
+              "pattern": "^application/x-metacatalog-(tape|cartridge|disk)$"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d{1,2}\\.\\d{1,2}$"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "catalogType": {
+          "description": "Catalog info definition",
+          "type": "object",
+          "required": [
+            "id",
+            "updated",
+            "platform",
+            "type",
+            "name",
+            "license"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/definitions2/idCatalogType"
+            },
+            "updated": {
+              "$ref": "#/definitions2/datetimeType"
+            },
+            "platform": {
+              "enum": [
+                "MSX",
+                "MSX2",
+                "MSX2+",
+                "Turbo-R"
+              ]
+            },
+            "type": {
+              "enum": [
+                "game",
+                "application",
+                "demoscene"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "name.original": {
+              "type": "string"
+            },
+            "name.transliterated": {
+              "type": "string"
+            },
+            "company": {
+              "type": "string"
+            },
+            "publisher": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string",
+              "description": "Game serial code"
+            },
+            "license": {
+              "enum": [
+                "unknown",
+                "copyleft",
+                "commercial"
+              ]
+            },
+            "date": {
+              "type": "integer",
+              "minimum": 1982
+            },
+            "country": {
+              "type": "string"
+            },
+            "sound": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "enum": [
+                  "PSG",
+                  "OPLL",
+                  "SCC",
+                  "SCC+",
+                  "MSX-Audio",
+                  "OPL4"
+                ]
+              }
+            },
+            "genre": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "enum": [
+                  "action",
+                  "adventure",
+                  "isometric",
+                  "puzzle",
+                  "shooter",
+                  "arcade",
+                  "platforms",
+                  "strategy",
+                  "others"
+                ]
+              }
+            },
+            "language": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "enum": [
+                  "en",
+                  "jp",
+                  "es",
+                  "nl",
+                  "br",
+                  "fr",
+                  "it"
+                ]
+              }
+            },
+            "controls": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "enum": [
+                  "keyboard",
+                  "joystick",
+                  "mouse"
+                ]
+              }
+            },
+            "developers": {
+              "type": "array",
+              "_uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/developerType"
+              }
+            },
+            "instructions": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "idCatalogType": {
+          "description": "Id for catalogType object",
+          "type": "object",
+          "required": [
+            "string",
+            "crc32",
+            "md5",
+            "sha1"
+          ],
+          "properties": {
+            "string": {
+              "type": "string",
+              "pattern": "^\\w+(|\\.[\\w,]+)*$"
+            },
+            "crc32": {
+              "$ref": "#/definitions2/crc32Type"
+            },
+            "md5": {
+              "$ref": "#/definitions2/md5Type"
+            },
+            "sha1": {
+              "$ref": "#/definitions2/sha1Type"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "developerType": {
+          "description": "Developer name, task and an optional email",
+          "type": "object",
+          "required": [
+            "name",
+            "task"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "contentArrayType": {
+          "description": "Content to catalog.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$rel": "#/definitions2/contentItemType"
+          }
+        },
+        "contentItemType": {
+          "description": "Item file of main content folder",
+          "type": "object",
+          "required": [
+            "id",
+            "mimetype",
+            "file",
+            "hash.sha1"
+          ],
+          "properties": {
+            "id": {
+              "$rel": "#/definitions2/idContentType"
+            },
+            "mimetype": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "description": "Aditional content format info."
+            },
+            "file": {
+              "$ref": "#/definitions2/contentFileType"
+            },
+            "hash.sha1": {
+              "$ref": "#/definitions2/sha1Type"
+            },
+            "start.command": {
+              "type": "string",
+              "description": "BLOAD or RUN commands"
+            },
+            "related.images": {
+              "description": "Im\u00e1genes relacionadas",
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "alternates": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "$rel": "#/definitions2/contentAlternateType"
+              }
+            }
+          },
+          "patternProperties": {
+            "^label(\\.[a-z]{2}){0,1}$": {
+              "type": "string"
+            },
+            "^comment(\\.[a-z]{2}){0,1}$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "contentAlternateType": {
+          "type": "object",
+          "required": [
+            "id",
+            "mimetype",
+            "file",
+            "hash.sha1"
+          ],
+          "properties": {
+            "id": {
+              "$rel": "#/definitions2/idContentType"
+            },
+            "mimetype": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "description": "Aditional content format info."
+            },
+            "file": {
+              "$ref": "#/definitions2/contentFileType"
+            },
+            "hash.sha1": {
+              "$ref": "#/definitions2/sha1Type"
+            }
+          },
+          "patternProperties": {
+            "^comment(\\.[a-z]{2}){0,1}$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "idContentType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^tape\\d+(\\.side[A-Z](\\.part\\d+){0,1}){0,1}$(\\.alt\\d+){0,1}"
+            },
+            {
+              "type": "string",
+              "pattern": "^disk\\d+(\\.alt\\d+){0,1}$"
+            },
+            {
+              "type": "string",
+              "pattern": "^rom\\d+(\\.alt\\d+){0,1}$"
+            }
+          ],
+          "description": "Use https://regex101.com to validate ids"
+        },
+        "extrasType": {
+          "description": "Extra content",
+          "type": "object",
+          "properties": {
+            "maintheme": {
+              "$ref": "#/definitions2/extraFileType"
+            },
+            "images": {
+              "$ref": "#/definitions2/imageArrayType"
+            },
+            "tips": {
+              "type": "array",
+              "_uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/tipsType"
+              }
+            },
+            "cheats": {
+              "type": "array",
+              "_uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/cheatsType"
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "imageArrayType": {
+          "description": "To launchers: get main game image in this order by availability 'screen.loading', 'screen.ingame.menu', 'screen.ingame.1', and the image with true default attribute.",
+          "type": "array",
+          "minItems": 1,
+          "_uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions2/imageItemType"
+          }
+        },
+        "imageItemType": {
+          "type": "object",
+          "required": [
+            "id",
+            "file",
+            "hash.sha1",
+            "label"
+          ],
+          "properties": {
+            "id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^screen\\.(loading|ingame\\.(menu|end|\\d+))$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^scan\\.tape\\d+\\.(inlay(Front|Back)|side[A-B])$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^scan\\.disk\\d+$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^scan\\.rom\\.(inlay(Front|Back))$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^scan\\.manual\\d+$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^custom\\.(coverhd|gamemap)$"
+                }
+              ]
+            },
+            "file": {
+              "$ref": "#/definitions2/imageFileType"
+            },
+            "hash.sha1": {
+              "$ref": "#/definitions2/sha1Type"
+            },
+            "default": {
+              "type": "boolean"
+            }
+          },
+          "patternProperties": {
+            "^label(\\.[a-z]{2}){0,1}$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "tipsType": {
+          "description": "Tips item",
+          "type": "object",
+          "required": [
+            "label",
+            "description"
+          ],
+          "patternProperties": {
+            "^label(\\.[a-z]{2}){0,1}$": {
+              "type": "string"
+            },
+            "^description(\\.[a-z]{2}){0,1}$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "cheatsType": {
+          "description": "Need definition"
+        },
+        "imageFileType": {
+          "type": "string",
+          "pattern": "^extras/[^/]+\\.(jpg|png|gif)$"
+        },
+        "extraFileType": {
+          "type": "string",
+          "pattern": "^extras/[^/]+$"
+        },
+        "contentFileType": {
+          "type": "string",
+          "pattern": "^content/[^/]+\\.(cas|rom|dsk)$"
+        },
+        "datetimeType": {
+          "type": "string",
+          "pattern": "^\\d{4}(-\\d{2}){0,2}( \\d{2}(:\\d{2}){1,2}){0,1}$",
+          "description": "Date-time format 'YYYY-MM-DD [HH:MM:[SS]]'"
+        },
+        "crc32Type": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
+          "description": "To generate CRC32 use: http://hash-functions.online-domain-tools.com/"
+        },
+        "md5Type": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$",
+          "description": "To generate MD5 use: http://hash-functions.online-domain-tools.com/"
+        },
+        "sha1Type": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "To generate SHA1 use: http://hash-functions.online-domain-tools.com/"
+        },
+        "hashType": {
+          "description": "File hash",
+          "type": "object",
+          "required": [
+            "crc32",
+            "md5",
+            "sha1"
+          ],
+          "properties": {
+            "crc32": {
+              "$ref": "#/definitions2/crc32Type"
+            },
+            "md5": {
+              "$ref": "#/definitions2/md5Type"
+            },
+            "sha1": {
+              "$ref": "#/definitions2/sha1Type"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "file",
+                    "hash.sha1",
+                    "label"
+                  ],
+                  "properties": {
+                    "id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^screen\\.(loading|ingame\\.(menu|end|\\d+))$"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^scan\\.tape\\d+\\.(inlay(Front|Back)|side[A-B])$"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^scan\\.disk\\d+$"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^scan\\.rom\\.(inlay(Front|Back))$"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^scan\\.manual\\d+$"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^custom\\.(coverhd|gamemap)$"
+                        }
+                      ]
+                    },
+                    "file": {
+                      "$ref": "#/definitions2/imageFileType"
+                    },
+                    "hash.sha1": {
+                      "$ref": "#/definitions2/sha1Type"
+                    },
+                    "default": {
+                      "type": "boolean"
+                    }
+                  },
+                  "patternProperties": {
+                    "^label(\\.[a-z]{2}){0,1}$": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^file$": {},
+                    "^id$": {},
+                    "^hash.sha1$": {},
+                    "^default$": {},
+                    "^label(\\.[a-z]{2}){0,1}$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Catalog info definition",
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "updated",
+                    "platform",
+                    "type",
+                    "name",
+                    "license"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "genre": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "enum": [
+                          "action",
+                          "adventure",
+                          "isometric",
+                          "puzzle",
+                          "shooter",
+                          "arcade",
+                          "platforms",
+                          "strategy",
+                          "others"
+                        ]
+                      }
+                    },
+                    "country": {
+                      "type": "string"
+                    },
+                    "name.transliterated": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "$ref": "#/definitions2/idCatalogType"
+                    },
+                    "date": {
+                      "type": "integer",
+                      "minimum": 1982.0
+                    },
+                    "publisher": {
+                      "type": "string"
+                    },
+                    "developers": {
+                      "type": "array",
+                      "_uniqueItems": true,
+                      "items": {
+                        "$ref": "#/definitions2/developerType"
+                      }
+                    },
+                    "instructions": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "game",
+                        "application",
+                        "demoscene"
+                      ]
+                    },
+                    "platform": {
+                      "enum": [
+                        "MSX",
+                        "MSX2",
+                        "MSX2+",
+                        "Turbo-R"
+                      ]
+                    },
+                    "controls": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "enum": [
+                          "keyboard",
+                          "joystick",
+                          "mouse"
+                        ]
+                      }
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Game serial code"
+                    },
+                    "license": {
+                      "enum": [
+                        "unknown",
+                        "copyleft",
+                        "commercial"
+                      ]
+                    },
+                    "updated": {
+                      "$ref": "#/definitions2/datetimeType"
+                    },
+                    "language": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "enum": [
+                          "en",
+                          "jp",
+                          "es",
+                          "nl",
+                          "br",
+                          "fr",
+                          "it"
+                        ]
+                      }
+                    },
+                    "sound": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "enum": [
+                          "PSG",
+                          "OPLL",
+                          "SCC",
+                          "SCC+",
+                          "MSX-Audio",
+                          "OPL4"
+                        ]
+                      }
+                    },
+                    "name.original": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^updated$": {},
+                    "^name$": {},
+                    "^type$": {},
+                    "^id$": {},
+                    "^company$": {},
+                    "^language$": {},
+                    "^license$": {},
+                    "^controls$": {},
+                    "^name.transliterated$": {},
+                    "^code$": {},
+                    "^instructions$": {},
+                    "^publisher$": {},
+                    "^name.original$": {},
+                    "^developers$": {},
+                    "^date$": {},
+                    "^sound$": {},
+                    "^platform$": {},
+                    "^genre$": {},
+                    "^country$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "mimetype",
+                    "file",
+                    "hash.sha1"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$rel": "#/definitions2/idContentType"
+                    },
+                    "hash.sha1": {
+                      "$ref": "#/definitions2/sha1Type"
+                    },
+                    "file": {
+                      "$ref": "#/definitions2/contentFileType"
+                    },
+                    "mimetype": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string",
+                      "description": "Aditional content format info."
+                    }
+                  },
+                  "patternProperties": {
+                    "^comment(\\.[a-z]{2}){0,1}$": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^file$": {},
+                    "^format$": {},
+                    "^id$": {},
+                    "^comment(\\.[a-z]{2}){0,1}$": {},
+                    "^mimetype$": {},
+                    "^hash.sha1$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Header definition",
+                  "type": "object",
+                  "required": [
+                    "mimecrc",
+                    "mimetype",
+                    "version"
+                  ],
+                  "properties": {
+                    "mimecrc": {
+                      "$ref": "#/definitions2/crc32Type",
+                      "description": "CRC32 of mimetype"
+                    },
+                    "mimetype": {
+                      "type": "string",
+                      "pattern": "^application/x-metacatalog-(tape|cartridge|disk)$"
+                    },
+                    "version": {
+                      "type": "string",
+                      "pattern": "^\\d+\\.\\d{1,2}\\.\\d{1,2}$"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^mimecrc$": {},
+                    "^mimetype$": {},
+                    "^version$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "headerType": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "idContentType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^tape\\d+(\\.side[A-Z](\\.part\\d+){0,1}){0,1}$(\\.alt\\d+){0,1}"
+            },
+            {
+              "type": "string",
+              "pattern": "^disk\\d+(\\.alt\\d+){0,1}$"
+            },
+            {
+              "type": "string",
+              "pattern": "^rom\\d+(\\.alt\\d+){0,1}$"
+            }
+          ],
+          "description": "Use https://regex101.com to validate ids"
+        },
+        "datetimeType": {
+          "type": "string",
+          "pattern": "^\\d{4}(-\\d{2}){0,2}( \\d{2}(:\\d{2}){1,2}){0,1}$",
+          "description": "Date-time format 'YYYY-MM-DD [HH:MM:[SS]]'"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Extra content",
+                  "type": "object",
+                  "properties": {
+                    "maintheme": {
+                      "$ref": "#/definitions2/extraFileType"
+                    },
+                    "images": {
+                      "$ref": "#/definitions2/imageArrayType"
+                    },
+                    "tips": {
+                      "type": "array",
+                      "_uniqueItems": true,
+                      "items": {
+                        "$ref": "#/definitions2/tipsType"
+                      }
+                    },
+                    "cheats": {
+                      "type": "array",
+                      "_uniqueItems": true,
+                      "items": {
+                        "$ref": "#/definitions2/cheatsType"
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^maintheme$": {},
+                    "^images$": {},
+                    "^tips$": {},
+                    "^cheats$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "tipsType": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "idCatalogType": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "sha1Type": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "To generate SHA1 use: http://hash-functions.online-domain-tools.com/"
+        },
+        "md5Type": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$",
+          "description": "To generate MD5 use: http://hash-functions.online-domain-tools.com/"
+        },
+        "imageItemType": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "contentItemType": {
+          "$ref": "#/definitions2/modern_7"
+        },
+        "modern_11": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "id": "https://raw.githubusercontent.com/nataliapc/metacatalog-msx/master/schemas/index.schema.json#",
+                  "name": "metacatalog-msx",
+                  "title": "",
+                  "type": "object",
+                  "description": "Schema for 8-bit-computer software metacataloguing",
+                  "required": [
+                    "header",
+                    "catalog",
+                    "content"
+                  ],
+                  "properties": {
+                    "catalog": {
+                      "$ref": "#/definitions2/catalogType"
+                    },
+                    "header": {
+                      "$ref": "#/definitions2/headerType"
+                    },
+                    "$schema": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "$ref": "#/definitions2/contentArrayType"
+                    },
+                    "extras": {
+                      "$ref": "#/definitions2/extrasType"
+                    }
+                  },
+                  "definitions2": {
+                    "headerType": {
+                      "description": "Header definition",
+                      "type": "object",
+                      "required": [
+                        "mimecrc",
+                        "mimetype",
+                        "version"
+                      ],
+                      "properties": {
+                        "mimecrc": {
+                          "$ref": "#/definitions2/crc32Type",
+                          "description": "CRC32 of mimetype"
+                        },
+                        "mimetype": {
+                          "type": "string",
+                          "pattern": "^application/x-metacatalog-(tape|cartridge|disk)$"
+                        },
+                        "version": {
+                          "type": "string",
+                          "pattern": "^\\d+\\.\\d{1,2}\\.\\d{1,2}$"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "catalogType": {
+                      "description": "Catalog info definition",
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "updated",
+                        "platform",
+                        "type",
+                        "name",
+                        "license"
+                      ],
+                      "properties": {
+                        "id": {
+                          "$ref": "#/definitions2/idCatalogType"
+                        },
+                        "updated": {
+                          "$ref": "#/definitions2/datetimeType"
+                        },
+                        "platform": {
+                          "enum": [
+                            "MSX",
+                            "MSX2",
+                            "MSX2+",
+                            "Turbo-R"
+                          ]
+                        },
+                        "type": {
+                          "enum": [
+                            "game",
+                            "application",
+                            "demoscene"
+                          ]
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "name.original": {
+                          "type": "string"
+                        },
+                        "name.transliterated": {
+                          "type": "string"
+                        },
+                        "company": {
+                          "type": "string"
+                        },
+                        "publisher": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Game serial code"
+                        },
+                        "license": {
+                          "enum": [
+                            "unknown",
+                            "copyleft",
+                            "commercial"
+                          ]
+                        },
+                        "date": {
+                          "type": "integer",
+                          "minimum": 1982
+                        },
+                        "country": {
+                          "type": "string"
+                        },
+                        "sound": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "enum": [
+                              "PSG",
+                              "OPLL",
+                              "SCC",
+                              "SCC+",
+                              "MSX-Audio",
+                              "OPL4"
+                            ]
+                          }
+                        },
+                        "genre": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "enum": [
+                              "action",
+                              "adventure",
+                              "isometric",
+                              "puzzle",
+                              "shooter",
+                              "arcade",
+                              "platforms",
+                              "strategy",
+                              "others"
+                            ]
+                          }
+                        },
+                        "language": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "enum": [
+                              "en",
+                              "jp",
+                              "es",
+                              "nl",
+                              "br",
+                              "fr",
+                              "it"
+                            ]
+                          }
+                        },
+                        "controls": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "enum": [
+                              "keyboard",
+                              "joystick",
+                              "mouse"
+                            ]
+                          }
+                        },
+                        "developers": {
+                          "type": "array",
+                          "_uniqueItems": true,
+                          "items": {
+                            "$ref": "#/definitions2/developerType"
+                          }
+                        },
+                        "instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "idCatalogType": {
+                      "description": "Id for catalogType object",
+                      "type": "object",
+                      "required": [
+                        "string",
+                        "crc32",
+                        "md5",
+                        "sha1"
+                      ],
+                      "properties": {
+                        "string": {
+                          "type": "string",
+                          "pattern": "^\\w+(|\\.[\\w,]+)*$"
+                        },
+                        "crc32": {
+                          "$ref": "#/definitions2/crc32Type"
+                        },
+                        "md5": {
+                          "$ref": "#/definitions2/md5Type"
+                        },
+                        "sha1": {
+                          "$ref": "#/definitions2/sha1Type"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "developerType": {
+                      "description": "Developer name, task and an optional email",
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "task"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "task": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "contentArrayType": {
+                      "description": "Content to catalog.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$rel": "#/definitions2/contentItemType"
+                      }
+                    },
+                    "contentItemType": {
+                      "description": "Item file of main content folder",
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "mimetype",
+                        "file",
+                        "hash.sha1"
+                      ],
+                      "properties": {
+                        "id": {
+                          "$rel": "#/definitions2/idContentType"
+                        },
+                        "mimetype": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string",
+                          "description": "Aditional content format info."
+                        },
+                        "file": {
+                          "$ref": "#/definitions2/contentFileType"
+                        },
+                        "hash.sha1": {
+                          "$ref": "#/definitions2/sha1Type"
+                        },
+                        "start.command": {
+                          "type": "string",
+                          "description": "BLOAD or RUN commands"
+                        },
+                        "related.images": {
+                          "description": "Im\u00e1genes relacionadas",
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "alternates": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "$rel": "#/definitions2/contentAlternateType"
+                          }
+                        }
+                      },
+                      "patternProperties": {
+                        "^label(\\.[a-z]{2}){0,1}$": {
+                          "type": "string"
+                        },
+                        "^comment(\\.[a-z]{2}){0,1}$": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "contentAlternateType": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "mimetype",
+                        "file",
+                        "hash.sha1"
+                      ],
+                      "properties": {
+                        "id": {
+                          "$rel": "#/definitions2/idContentType"
+                        },
+                        "mimetype": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string",
+                          "description": "Aditional content format info."
+                        },
+                        "file": {
+                          "$ref": "#/definitions2/contentFileType"
+                        },
+                        "hash.sha1": {
+                          "$ref": "#/definitions2/sha1Type"
+                        }
+                      },
+                      "patternProperties": {
+                        "^comment(\\.[a-z]{2}){0,1}$": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "idContentType": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^tape\\d+(\\.side[A-Z](\\.part\\d+){0,1}){0,1}$(\\.alt\\d+){0,1}"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^disk\\d+(\\.alt\\d+){0,1}$"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^rom\\d+(\\.alt\\d+){0,1}$"
+                        }
+                      ],
+                      "description": "Use https://regex101.com to validate ids"
+                    },
+                    "extrasType": {
+                      "description": "Extra content",
+                      "type": "object",
+                      "properties": {
+                        "maintheme": {
+                          "$ref": "#/definitions2/extraFileType"
+                        },
+                        "images": {
+                          "$ref": "#/definitions2/imageArrayType"
+                        },
+                        "tips": {
+                          "type": "array",
+                          "_uniqueItems": true,
+                          "items": {
+                            "$ref": "#/definitions2/tipsType"
+                          }
+                        },
+                        "cheats": {
+                          "type": "array",
+                          "_uniqueItems": true,
+                          "items": {
+                            "$ref": "#/definitions2/cheatsType"
+                          }
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "imageArrayType": {
+                      "description": "To launchers: get main game image in this order by availability 'screen.loading', 'screen.ingame.menu', 'screen.ingame.1', and the image with true default attribute.",
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "$ref": "#/definitions2/imageItemType"
+                      }
+                    },
+                    "imageItemType": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "file",
+                        "hash.sha1",
+                        "label"
+                      ],
+                      "properties": {
+                        "id": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^screen\\.(loading|ingame\\.(menu|end|\\d+))$"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^scan\\.tape\\d+\\.(inlay(Front|Back)|side[A-B])$"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^scan\\.disk\\d+$"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^scan\\.rom\\.(inlay(Front|Back))$"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^scan\\.manual\\d+$"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^custom\\.(coverhd|gamemap)$"
+                            }
+                          ]
+                        },
+                        "file": {
+                          "$ref": "#/definitions2/imageFileType"
+                        },
+                        "hash.sha1": {
+                          "$ref": "#/definitions2/sha1Type"
+                        },
+                        "default": {
+                          "type": "boolean"
+                        }
+                      },
+                      "patternProperties": {
+                        "^label(\\.[a-z]{2}){0,1}$": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "tipsType": {
+                      "description": "Tips item",
+                      "type": "object",
+                      "required": [
+                        "label",
+                        "description"
+                      ],
+                      "patternProperties": {
+                        "^label(\\.[a-z]{2}){0,1}$": {
+                          "type": "string"
+                        },
+                        "^description(\\.[a-z]{2}){0,1}$": {
+                          "type": "string"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "cheatsType": {
+                      "description": "Need definition"
+                    },
+                    "imageFileType": {
+                      "type": "string",
+                      "pattern": "^extras/[^/]+\\.(jpg|png|gif)$"
+                    },
+                    "extraFileType": {
+                      "type": "string",
+                      "pattern": "^extras/[^/]+$"
+                    },
+                    "contentFileType": {
+                      "type": "string",
+                      "pattern": "^content/[^/]+\\.(cas|rom|dsk)$"
+                    },
+                    "datetimeType": {
+                      "type": "string",
+                      "pattern": "^\\d{4}(-\\d{2}){0,2}( \\d{2}(:\\d{2}){1,2}){0,1}$",
+                      "description": "Date-time format 'YYYY-MM-DD [HH:MM:[SS]]'"
+                    },
+                    "crc32Type": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}$",
+                      "description": "To generate CRC32 use: http://hash-functions.online-domain-tools.com/"
+                    },
+                    "md5Type": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "description": "To generate MD5 use: http://hash-functions.online-domain-tools.com/"
+                    },
+                    "sha1Type": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{40}$",
+                      "description": "To generate SHA1 use: http://hash-functions.online-domain-tools.com/"
+                    },
+                    "hashType": {
+                      "description": "File hash",
+                      "type": "object",
+                      "required": [
+                        "crc32",
+                        "md5",
+                        "sha1"
+                      ],
+                      "properties": {
+                        "crc32": {
+                          "$ref": "#/definitions2/crc32Type"
+                        },
+                        "md5": {
+                          "$ref": "#/definitions2/md5Type"
+                        },
+                        "sha1": {
+                          "$ref": "#/definitions2/sha1Type"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^$schema$": {},
+                    "^header$": {},
+                    "^content$": {},
+                    "^catalog$": {},
+                    "^extras$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "developerType": {
+          "$ref": "#/definitions2/modern_8"
+        },
+        "contentFileType": {
+          "type": "string",
+          "pattern": "^content/[^/]+\\.(cas|rom|dsk)$"
+        },
+        "extrasType": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Item file of main content folder",
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "mimetype",
+                    "file",
+                    "hash.sha1"
+                  ],
+                  "properties": {
+                    "start.command": {
+                      "type": "string",
+                      "description": "BLOAD or RUN commands"
+                    },
+                    "alternates": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "$rel": "#/definitions2/contentAlternateType"
+                      }
+                    },
+                    "hash.sha1": {
+                      "$ref": "#/definitions2/sha1Type"
+                    },
+                    "file": {
+                      "$ref": "#/definitions2/contentFileType"
+                    },
+                    "mimetype": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string",
+                      "description": "Aditional content format info."
+                    },
+                    "related.images": {
+                      "description": "Im\u00e1genes relacionadas",
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "id": {
+                      "$rel": "#/definitions2/idContentType"
+                    }
+                  },
+                  "patternProperties": {
+                    "^label(\\.[a-z]{2}){0,1}$": {
+                      "type": "string"
+                    },
+                    "^comment(\\.[a-z]{2}){0,1}$": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^format$": {},
+                    "^alternates$": {},
+                    "^id$": {},
+                    "^start.command$": {},
+                    "^label(\\.[a-z]{2}){0,1}$": {},
+                    "^comment(\\.[a-z]{2}){0,1}$": {},
+                    "^file$": {},
+                    "^related.images$": {},
+                    "^mimetype$": {},
+                    "^hash.sha1$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "contentArrayType": {
+          "description": "Content to catalog.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$rel": "#/definitions2/contentItemType"
+          }
+        },
+        "cheatsType": {
+          "description": "Need definition"
+        },
+        "extraFileType": {
+          "type": "string",
+          "pattern": "^extras/[^/]+$"
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Developer name, task and an optional email",
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "task"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "task": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^name$": {},
+                    "^task$": {},
+                    "^email$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "File hash",
+                  "type": "object",
+                  "required": [
+                    "crc32",
+                    "md5",
+                    "sha1"
+                  ],
+                  "properties": {
+                    "crc32": {
+                      "$ref": "#/definitions2/crc32Type"
+                    },
+                    "md5": {
+                      "$ref": "#/definitions2/md5Type"
+                    },
+                    "sha1": {
+                      "$ref": "#/definitions2/sha1Type"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^crc32$": {},
+                    "^md5$": {},
+                    "^sha1$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "catalogType": {
+          "$ref": "#/definitions2/modern_6"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Tips item",
+                  "type": "object",
+                  "required": [
+                    "label",
+                    "description"
+                  ],
+                  "patternProperties": {
+                    "^label(\\.[a-z]{2}){0,1}$": {
+                      "type": "string"
+                    },
+                    "^description(\\.[a-z]{2}){0,1}$": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^label(\\.[a-z]{2}){0,1}$": {},
+                    "^description(\\.[a-z]{2}){0,1}$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "crc32Type": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
+          "description": "To generate CRC32 use: http://hash-functions.online-domain-tools.com/"
+        },
+        "hashType": {
+          "$ref": "#/definitions2/modern_9"
+        },
+        "imageFileType": {
+          "type": "string",
+          "pattern": "^extras/[^/]+\\.(jpg|png|gif)$"
+        },
+        "contentAlternateType": {
+          "$ref": "#/definitions2/modern_10"
+        },
+        "imageArrayType": {
+          "description": "To launchers: get main game image in this order by availability 'screen.loading', 'screen.ingame.menu', 'screen.ingame.1', and the image with true default attribute.",
+          "type": "array",
+          "minItems": 1,
+          "_uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions2/imageItemType"
+          }
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Id for catalogType object",
+                  "type": "object",
+                  "required": [
+                    "string",
+                    "crc32",
+                    "md5",
+                    "sha1"
+                  ],
+                  "properties": {
+                    "string": {
+                      "type": "string",
+                      "pattern": "^\\w+(|\\.[\\w,]+)*$"
+                    },
+                    "crc32": {
+                      "$ref": "#/definitions2/crc32Type"
+                    },
+                    "md5": {
+                      "$ref": "#/definitions2/md5Type"
+                    },
+                    "sha1": {
+                      "$ref": "#/definitions2/sha1Type"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^string$": {},
+                    "^crc32$": {},
+                    "^md5$": {},
+                    "^sha1$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_11"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

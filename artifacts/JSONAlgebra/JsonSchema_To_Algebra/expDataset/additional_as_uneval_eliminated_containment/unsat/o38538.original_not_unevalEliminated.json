@@ -1,0 +1,673 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$comment": "v0.1.0",
+      "title": "Pipeline Schema",
+      "description": "A dvc.yaml pipeline definition",
+      "type": "object",
+      "properties": {
+        "stages": {
+          "description": "List of stages.",
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z0-9_-]+$": {
+              "description": "The stage",
+              "type": "object",
+              "properties": {
+                "cmd": {
+                  "type": "string",
+                  "description": "Command to run"
+                },
+                "wdir": {
+                  "type": "string",
+                  "description": "Working directory"
+                },
+                "deps": {
+                  "type": "array",
+                  "description": "Dependencies for the stage",
+                  "items": {
+                    "type": "string",
+                    "description": "A dependency for the stage"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "params": {
+                  "type": "array",
+                  "description": "Params for the stage",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Params from default params file"
+                      },
+                      {
+                        "type": "object",
+                        "description": "Params from custom params file",
+                        "patternProperties": {
+                          "^.*$": {
+                            "type": "array",
+                            "description": "Custom params file",
+                            "items": {
+                              "type": "string",
+                              "description": "Params from custom file"
+                            },
+                            "minItems": 1,
+                            "_uniqueItems": true
+                          }
+                        },
+                        "additionalProperties": false,
+                        "maxProperties": 1
+                      }
+                    ]
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "outs": {
+                  "type": "array",
+                  "description": "Outputs of the stage",
+                  "items": {
+                    "$ref": "#/definitions3/Output"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "metrics": {
+                  "type": "array",
+                  "description": "Metrics outputs of the stage",
+                  "items": {
+                    "$ref": "#/definitions3/Output"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "plots": {
+                  "type": "array",
+                  "description": "Plots outputs of the stage",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Plots will be cached by dvc"
+                      },
+                      {
+                        "type": "object",
+                        "description": "Output file",
+                        "patternProperties": {
+                          "^.*$": {
+                            "$ref": "#/definitions3/PlotFlags"
+                          }
+                        },
+                        "maxProperties": 1
+                      }
+                    ]
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "frozen": {
+                  "type": "boolean",
+                  "description": "Assume stage as unchanged",
+                  "default": false
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "Assume stage as unchanged (deprecated)",
+                  "default": false
+                },
+                "always_changed": {
+                  "type": "boolean",
+                  "description": "Assume stage as always changed.",
+                  "default": false
+                },
+                "meta": {
+                  "description": "Additional information/metadata"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "cmd"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "stages"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$comment": "v0.1.0",
+        "title": "Pipeline Schema",
+        "description": "A dvc.yaml pipeline definition",
+        "type": "object",
+        "properties": {
+          "stages": {
+            "$ref": "#/definitions4/modern_4"
+          }
+        },
+        "required": [
+          "stages"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "OutputFlags": {
+      "type": "object",
+      "description": "Output file with more flags",
+      "properties": {
+        "cache": {
+          "description": "Cache outputs by dvc",
+          "type": "boolean",
+          "default": true
+        },
+        "persist": {
+          "description": "Persist outputs among runs",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "PlotFlags": {
+      "description": "Plots file with more flags",
+      "allOf": [
+        {
+          "$ref": "#/definitions3/OutputFlags"
+        }
+      ],
+      "$comment": "Unfortunately, 'additionalProperties' only works props in immediate schema.",
+      "properties": {
+        "cache": {},
+        "persist": {},
+        "x": {
+          "description": "Default field name to use as x-axis data",
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "y": {
+          "description": "Default field name to use as y-axis data",
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "x_label": {
+          "description": "Default label for the x-axis",
+          "type": "string"
+        },
+        "y_label": {
+          "description": "Default label for the y-axis",
+          "type": "string"
+        },
+        "template": {
+          "description": "Default plot template",
+          "type": "string"
+        },
+        "title": {
+          "description": "Default plot title",
+          "type": "string"
+        },
+        "header": {
+          "description": "The target CSV or TSV has a header",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "Output": {
+      "description": "An output of the stage",
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Output will be cached by dvc"
+        },
+        {
+          "type": "object",
+          "description": "Output file",
+          "patternProperties": {
+            "^.*$": {
+              "$ref": "#/definitions3/OutputFlags",
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false,
+          "maxProperties": 1
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Params from custom params file",
+              "patternProperties": {
+                "^.*$": {
+                  "type": "array",
+                  "description": "Custom params file",
+                  "items": {
+                    "type": "string",
+                    "description": "Params from custom file"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                }
+              },
+              "maxProperties": 1
+            },
+            {
+              "patternProperties": {
+                "^.*$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "PlotFlags": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Plots file with more flags",
+              "allOf": [
+                {
+                  "$ref": "#/definitions4/OutputFlags"
+                }
+              ],
+              "$comment": "Unfortunately, 'additionalProperties' only works props in immediate schema.",
+              "properties": {
+                "x": {
+                  "description": "Default field name to use as x-axis data",
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
+                },
+                "y": {
+                  "description": "Default field name to use as y-axis data",
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
+                },
+                "x_label": {
+                  "description": "Default label for the x-axis",
+                  "type": "string"
+                },
+                "cache": true,
+                "y_label": {
+                  "description": "Default label for the y-axis",
+                  "type": "string"
+                },
+                "persist": true,
+                "title": {
+                  "description": "Default plot title",
+                  "type": "string"
+                },
+                "header": {
+                  "description": "The target CSV or TSV has a header",
+                  "type": "boolean",
+                  "default": false
+                },
+                "template": {
+                  "description": "Default plot template",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^x$": true,
+                "^cache$": true,
+                "^header$": true,
+                "^x_label$": true,
+                "^title$": true,
+                "^y_label$": true,
+                "^y$": true,
+                "^template$": true,
+                "^persist$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Output file",
+              "patternProperties": {
+                "^.*$": {
+                  "$ref": "#/definitions4/modern_3"
+                }
+              },
+              "maxProperties": 1
+            },
+            {
+              "patternProperties": {
+                "^.*$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Output": {
+      "description": "An output of the stage",
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Output will be cached by dvc"
+        },
+        {
+          "$ref": "#/definitions4/modern_2"
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions4/OutputFlags"
+            },
+            {
+              "patternProperties": {
+                "^cache$": true,
+                "^persist$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "List of stages.",
+              "type": "object",
+              "patternProperties": {
+                "^[A-Za-z0-9_-]+$": {
+                  "$ref": "#/definitions4/modern_5"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[A-Za-z0-9_-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "The stage",
+              "type": "object",
+              "properties": {
+                "plots": {
+                  "type": "array",
+                  "description": "Plots outputs of the stage",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Plots will be cached by dvc"
+                      },
+                      {
+                        "type": "object",
+                        "description": "Output file",
+                        "patternProperties": {
+                          "^.*$": {
+                            "$ref": "#/definitions4/PlotFlags"
+                          }
+                        },
+                        "maxProperties": 1
+                      }
+                    ]
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "params": {
+                  "type": "array",
+                  "description": "Params for the stage",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Params from default params file"
+                      },
+                      {
+                        "$ref": "#/definitions4/modern_6"
+                      }
+                    ]
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "outs": {
+                  "type": "array",
+                  "description": "Outputs of the stage",
+                  "items": {
+                    "$ref": "#/definitions4/Output"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "cmd": {
+                  "type": "string",
+                  "description": "Command to run"
+                },
+                "meta": {
+                  "description": "Additional information/metadata"
+                },
+                "wdir": {
+                  "type": "string",
+                  "description": "Working directory"
+                },
+                "metrics": {
+                  "type": "array",
+                  "description": "Metrics outputs of the stage",
+                  "items": {
+                    "$ref": "#/definitions4/Output"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "Assume stage as unchanged (deprecated)",
+                  "default": false
+                },
+                "always_changed": {
+                  "type": "boolean",
+                  "description": "Assume stage as always changed.",
+                  "default": false
+                },
+                "frozen": {
+                  "type": "boolean",
+                  "description": "Assume stage as unchanged",
+                  "default": false
+                },
+                "deps": {
+                  "type": "array",
+                  "description": "Dependencies for the stage",
+                  "items": {
+                    "type": "string",
+                    "description": "A dependency for the stage"
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true
+                }
+              },
+              "required": [
+                "cmd"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^metrics$": true,
+                "^wdir$": true,
+                "^frozen$": true,
+                "^deps$": true,
+                "^params$": true,
+                "^meta$": true,
+                "^cmd$": true,
+                "^outs$": true,
+                "^plots$": true,
+                "^always_changed$": true,
+                "^locked$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "OutputFlags": {
+      "type": "object",
+      "description": "Output file with more flags",
+      "properties": {
+        "cache": {
+          "description": "Cache outputs by dvc",
+          "type": "boolean",
+          "default": true
+        },
+        "persist": {
+          "description": "Persist outputs among runs",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/OutputFlags"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/OutputFlags"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/OutputFlags"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/OutputFlags"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Output"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Output"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions3/PlotFlags"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/PlotFlags"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/PlotFlags"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/PlotFlags"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Output"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Output"
+      }
+    }
+  ]
+}

@@ -1,0 +1,380 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "client_address": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/office_address"
+            },
+            {
+              "$ref": "#/definitions3/home_address"
+            }
+          ]
+        },
+        "parts": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/partOne"
+            },
+            {
+              "$ref": "#/definitions3/partTwo"
+            }
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "client_address": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions4/office_address"
+              },
+              {
+                "$ref": "#/definitions4/home_address"
+              }
+            ]
+          },
+          "parts": {
+            "$ref": "#/definitions4/modern_3"
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "address": {
+      "type": "object",
+      "properties": {
+        "street_address": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "street_address",
+        "city",
+        "state"
+      ]
+    },
+    "office_address": {
+      "properties": {
+        "type": {
+          "enum": [
+            "business"
+          ]
+        },
+        "building": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "building"
+      ],
+      "additionalProperties": false
+    },
+    "home_address": {
+      "properties": {
+        "type": {
+          "enum": [
+            "home"
+          ]
+        },
+        "street_address": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "street_address",
+        "city",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "partOne": {
+      "properties": {
+        "one": {
+          "type": "string"
+        }
+      }
+    },
+    "partTwo": {
+      "properties": {
+        "two": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "home"
+                  ]
+                },
+                "street_address": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "street_address",
+                "city",
+                "state"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^street_address$": true,
+                "^city$": true,
+                "^state$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "home_address": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "business"
+                  ]
+                },
+                "building": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "building"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^building$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "office_address": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "partTwo": {
+      "properties": {
+        "two": {
+          "type": "integer"
+        }
+      }
+    },
+    "partOne": {
+      "properties": {
+        "one": {
+          "type": "string"
+        }
+      }
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions4/partOne"
+                },
+                {
+                  "not": {
+                    "$ref": "#/definitions4/partTwo"
+                  }
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^one$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "not": {
+                    "$ref": "#/definitions4/partOne"
+                  }
+                },
+                {
+                  "$ref": "#/definitions4/partTwo"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^two$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street_address": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "street_address",
+        "city",
+        "state"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/partOne"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/partOne"
+      }
+    },
+    {
+      "$ref": "#/definitions3/partOne"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/partOne"
+      }
+    },
+    {
+      "$ref": "#/definitions3/home_address"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/home_address"
+      }
+    },
+    {
+      "$ref": "#/definitions4/office_address"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/office_address"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/partTwo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/partTwo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/partTwo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/partTwo"
+      }
+    },
+    {
+      "$ref": "#/definitions3/office_address"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/office_address"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/home_address"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/home_address"
+      }
+    }
+  ]
+}

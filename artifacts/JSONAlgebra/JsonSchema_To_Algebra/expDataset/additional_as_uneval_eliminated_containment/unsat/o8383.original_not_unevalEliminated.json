@@ -1,0 +1,477 @@
+{
+  "allOf": [
+    {
+      "title": "JSON schema for Clowder configuration files",
+      "$id": "http://json.schemastore.org/clowder.config",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "clowder_configs"
+      ],
+      "properties": {
+        "version": {
+          "description": "Version of config file. Used for migrations to new versions.",
+          "type": "number"
+        },
+        "clowder_configs": {
+          "description": "List of clowder configs",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/clowder"
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$id": "http://json.schemastore.org/clowder.config",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ],
+  "definitions3": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arrayOfNonEmptyStrings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/nonEmptyString"
+      }
+    },
+    "projectPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^/.+"
+    },
+    "jobs": {
+      "description": "Number of jobs to use for parallel commands",
+      "type": "integer",
+      "minimum": 0
+    },
+    "stringArrayUnique": {
+      "type": "array",
+      "_uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions3/nonEmptyString"
+      }
+    },
+    "depth": {
+      "description": "Git clone depth",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "protocol": {
+      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "type": "string",
+      "enum": [
+        "https",
+        "ssh"
+      ]
+    },
+    "defaults": {
+      "description": "A map defining clowder defaults",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "projects": {
+          "description": "Projects and groups to pass to clowder command",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/arrayOfNonEmptyStrings"
+            }
+          ]
+        },
+        "depth": {
+          "$ref": "#/definitions3/depth"
+        },
+        "protocol": {
+          "$ref": "#/definitions3/protocol"
+        },
+        "rebase": {
+          "description": "Whether to rebase when herding",
+          "type": "boolean",
+          "default": false
+        },
+        "jobs": {
+          "$ref": "#/definitions3/jobs"
+        }
+      }
+    },
+    "clowder": {
+      "description": "A map defining a clowder",
+      "type": "object",
+      "required": [
+        "clowder_dir"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Name of clowder",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/nonEmptyString"
+            }
+          ]
+        },
+        "clowder_dir": {
+          "description": "Path to clowder directory",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/projectPath"
+            }
+          ]
+        },
+        "defaults": {
+          "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/defaults"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "stringArrayUnique": {
+      "type": "array",
+      "_uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions4/nonEmptyString"
+      }
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A map defining clowder defaults",
+              "type": "object",
+              "properties": {
+                "rebase": {
+                  "description": "Whether to rebase when herding",
+                  "type": "boolean",
+                  "default": false
+                },
+                "jobs": {
+                  "$ref": "#/definitions4/jobs"
+                },
+                "depth": {
+                  "$ref": "#/definitions4/depth"
+                },
+                "projects": {
+                  "description": "Projects and groups to pass to clowder command",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/arrayOfNonEmptyStrings"
+                    }
+                  ]
+                },
+                "protocol": {
+                  "$ref": "#/definitions4/protocol"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^jobs$": true,
+                "^projects$": true,
+                "^rebase$": true,
+                "^depth$": true,
+                "^protocol$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "jobs": {
+      "description": "Number of jobs to use for parallel commands",
+      "type": "integer",
+      "minimum": 0.0
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "JSON schema for Clowder configuration files",
+              "type": "object",
+              "required": [
+                "version",
+                "clowder_configs"
+              ],
+              "properties": {
+                "version": {
+                  "description": "Version of config file. Used for migrations to new versions.",
+                  "type": "number"
+                },
+                "clowder_configs": {
+                  "description": "List of clowder configs",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/clowder"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^clowder_configs$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "depth": {
+      "description": "Git clone depth",
+      "type": "integer",
+      "minimum": 0.0,
+      "default": 0
+    },
+    "protocol": {
+      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "type": "string",
+      "enum": [
+        "https",
+        "ssh"
+      ]
+    },
+    "arrayOfNonEmptyStrings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/nonEmptyString"
+      }
+    },
+    "defaults": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "projectPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^/.+"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A map defining a clowder",
+              "type": "object",
+              "required": [
+                "clowder_dir"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name of clowder",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/nonEmptyString"
+                    }
+                  ]
+                },
+                "clowder_dir": {
+                  "description": "Path to clowder directory",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/projectPath"
+                    }
+                  ]
+                },
+                "defaults": {
+                  "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/defaults"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^clowder_dir$": true,
+                "^defaults$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "clowder": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/nonEmptyString"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/nonEmptyString"
+      }
+    },
+    {
+      "$ref": "#/definitions4/depth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/depth"
+      }
+    },
+    {
+      "$ref": "#/definitions3/arrayOfNonEmptyStrings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/arrayOfNonEmptyStrings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/protocol"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/protocol"
+      }
+    },
+    {
+      "$ref": "#/definitions4/defaults"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/defaults"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/clowder"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/clowder"
+      }
+    },
+    {
+      "$ref": "#/definitions3/jobs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/jobs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/projectPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/projectPath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/arrayOfNonEmptyStrings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/arrayOfNonEmptyStrings"
+      }
+    },
+    {
+      "$ref": "#/definitions3/projectPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/projectPath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/jobs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/jobs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/depth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/depth"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/defaults"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/defaults"
+      }
+    },
+    {
+      "$ref": "#/definitions4/clowder"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/clowder"
+      }
+    },
+    {
+      "$ref": "#/definitions4/nonEmptyString"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/nonEmptyString"
+      }
+    },
+    {
+      "$ref": "#/definitions3/protocol"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/protocol"
+      }
+    }
+  ]
+}

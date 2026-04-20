@@ -1,0 +1,428 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://www.cornutum.org/tcases/system-test-schema.json",
+      "title": "System Test Model",
+      "description": "Defines test cases for a system (version: ${project.version})",
+      "type": "object",
+      "properties": {
+        "system": {
+          "type": "string"
+        },
+        "has": {
+          "$ref": "#/definitions3/annotation"
+        }
+      },
+      "required": [
+        "system"
+      ],
+      "additionalProperties": {
+        "$ref": "#/definitions3/function"
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "http://www.cornutum.org/tcases/system-test-schema.json",
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ],
+  "definitions3": {
+    "annotation": {
+      "description": "Defines a set of output annotations",
+      "type": "object",
+      "patternProperties": {
+        ".": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1
+    },
+    "function": {
+      "description": "Defines the test cases for a system function",
+      "oneOf": [
+        {
+          "description": "Deprecated: For compatibility with version<=3.0.1",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/testCase"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "testCases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/testCase"
+              }
+            },
+            "has": {
+              "$ref": "#/definitions3/annotation"
+            }
+          },
+          "required": [
+            "testCases"
+          ]
+        }
+      ]
+    },
+    "testCase": {
+      "description": "Defines a test case for a system function",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "name": {
+          "type": "string"
+        },
+        "has": {
+          "$ref": "#/definitions3/annotation"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions3/inputDef"
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "inputDef": {
+      "description": "Defines bindings for a set of input variables of the same type",
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        ".": {
+          "$ref": "#/definitions3/bindingDef"
+        }
+      }
+    },
+    "bindingDef": {
+      "type": "object",
+      "properties": {
+        "has": {
+          "$ref": "#/definitions3/annotation"
+        },
+        "value": {
+          "type": "string"
+        },
+        "NA": {
+          "type": "boolean"
+        },
+        "failure": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "NA": false
+          }
+        },
+        {
+          "required": [
+            "NA"
+          ],
+          "properties": {
+            "value": false,
+            "failure": false
+          }
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Defines a test case for a system function",
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "minimum": 0.0
+                },
+                "name": {
+                  "type": "string"
+                },
+                "has": {
+                  "$ref": "#/definitions4/annotation"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^name$": true,
+                "^has$": true
+              },
+              "additionalProperties": {
+                "$ref": "#/definitions4/inputDef"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "annotation": {
+      "description": "Defines a set of output annotations",
+      "type": "object",
+      "patternProperties": {
+        ".": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "has": {
+                  "$ref": "#/definitions4/annotation"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "NA": {
+                  "type": "boolean"
+                },
+                "failure": {
+                  "type": "boolean"
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "NA": false
+                  }
+                },
+                {
+                  "required": [
+                    "NA"
+                  ],
+                  "properties": {
+                    "value": false,
+                    "failure": false
+                  }
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^has$": true,
+                "^value$": true,
+                "^NA$": true,
+                "^failure$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "testCase": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "bindingDef": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "inputDef": {
+      "description": "Defines bindings for a set of input variables of the same type",
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        ".": {
+          "$ref": "#/definitions4/bindingDef"
+        }
+      }
+    },
+    "function": {
+      "description": "Defines the test cases for a system function",
+      "oneOf": [
+        {
+          "description": "Deprecated: For compatibility with version<=3.0.1",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/testCase"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "testCases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/testCase"
+              }
+            },
+            "has": {
+              "$ref": "#/definitions4/annotation"
+            }
+          },
+          "required": [
+            "testCases"
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "System Test Model",
+              "description": "Defines test cases for a system (version: ${project.version})",
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string"
+                },
+                "has": {
+                  "$ref": "#/definitions4/annotation"
+                }
+              },
+              "required": [
+                "system"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^system$": true,
+                "^has$": true
+              },
+              "additionalProperties": {
+                "$ref": "#/definitions4/function"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/inputDef"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/inputDef"
+      }
+    },
+    {
+      "$ref": "#/definitions3/function"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/function"
+      }
+    },
+    {
+      "$ref": "#/definitions4/function"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/function"
+      }
+    },
+    {
+      "$ref": "#/definitions4/annotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/annotation"
+      }
+    },
+    {
+      "$ref": "#/definitions4/bindingDef"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/bindingDef"
+      }
+    },
+    {
+      "$ref": "#/definitions4/testCase"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/testCase"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/annotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/annotation"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/inputDef"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/inputDef"
+      }
+    },
+    {
+      "$ref": "#/definitions3/bindingDef"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/bindingDef"
+      }
+    },
+    {
+      "$ref": "#/definitions3/testCase"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/testCase"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

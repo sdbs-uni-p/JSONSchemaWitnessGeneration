@@ -1,0 +1,414 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "http://schema.management.azure.com/schemas/2016-11-28/dtlArtifacts.json",
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "targetOsType"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The artifact's title."
+        },
+        "description": {
+          "type": "string",
+          "description": "The artifact's description."
+        },
+        "iconUri": {
+          "type": "string",
+          "description": "An icon to identify and distinguish the artifact in a list. URL referencing the icon must use SSL.",
+          "pattern": "^https://.*|^$"
+        },
+        "tags": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "targetOsType": {
+          "type": "string",
+          "enum": [
+            "Windows",
+            "Linux"
+          ]
+        },
+        "runAzureVMExtension": {
+          "type": "object",
+          "properties": {}
+        },
+        "runCommand": {
+          "type": "object",
+          "required": [
+            "commandToExecute"
+          ],
+          "properties": {
+            "commandToExecute": {
+              "type": "string",
+              "description": "The command to run"
+            }
+          },
+          "additionalProperties": false
+        },
+        "postDeployActions": {
+          "type": "array",
+          "description": "Actions performed after successful completion of either runAzureVMExtension or runCommand.",
+          "items": [
+            {
+              "$ref": "#/definitions4/postDeployAction"
+            }
+          ],
+          "minItems": 1,
+          "_uniqueItems": true
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Input parameter definitions4",
+          "additionalProperties": {
+            "$ref": "#/definitions4/parameter"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "runAzureVMExtension"
+          ]
+        },
+        {
+          "required": [
+            "runCommand"
+          ]
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "http://schema.management.azure.com/schemas/2016-11-28/dtlArtifacts.json",
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "targetOsType"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "runAzureVMExtension"
+            ]
+          },
+          {
+            "required": [
+              "runCommand"
+            ]
+          }
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The artifact's title."
+          },
+          "description": {
+            "type": "string",
+            "description": "The artifact's description."
+          },
+          "iconUri": {
+            "type": "string",
+            "description": "An icon to identify and distinguish the artifact in a list. URL referencing the icon must use SSL.",
+            "pattern": "^https://.*|^$"
+          },
+          "tags": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "targetOsType": {
+            "type": "string",
+            "enum": [
+              "Windows",
+              "Linux"
+            ]
+          },
+          "runAzureVMExtension": {
+            "type": "object",
+            "properties": {}
+          },
+          "runCommand": {
+            "type": "object",
+            "required": [
+              "commandToExecute"
+            ],
+            "properties": {
+              "commandToExecute": {
+                "type": "string",
+                "description": "The command to run"
+              }
+            },
+            "additionalProperties": false
+          },
+          "postDeployActions": {
+            "type": "array",
+            "description": "Actions performed after successful completion of either runAzureVMExtension or runCommand.",
+            "items": [
+              {
+                "$ref": "#/definitions3/postDeployAction"
+              }
+            ],
+            "minItems": 1,
+            "_uniqueItems": true
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Input parameter definitions3",
+            "additionalProperties": {
+              "$ref": "#/definitions3/parameter"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "parameter": {
+      "type": "object",
+      "description": "Input parameter definitions4",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/definitions4/parameterTypes",
+          "description": "Type of input parameter"
+        },
+        "controlType": {
+          "$ref": "#/definitions4/controlTypes",
+          "description": "Type of UI control"
+        },
+        "defaultValue": {
+          "$ref": "#/definitions4/parameterValueTypes",
+          "description": "Default value to be used, if a value is not provided"
+        },
+        "allowedValues": {
+          "type": "array",
+          "description": "Value can only be one of these values"
+        },
+        "minLength": {
+          "type": "integer",
+          "description": "Minimum number of characters that can be used"
+        },
+        "maxLength": {
+          "type": "integer",
+          "description": "Maximum number of characters that can be used"
+        },
+        "allowEmpty": {
+          "type": "boolean",
+          "description": "If an empty value is allowed - false by default"
+        },
+        "description": {
+          "type": "string",
+          "description": "The parameter description"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The parameter display name"
+        }
+      }
+    },
+    "parameterTypes": {
+      "enum": [
+        "string",
+        "securestring",
+        "int",
+        "bool",
+        "object",
+        "array"
+      ]
+    },
+    "controlTypes": {
+      "enum": [
+        "textBox",
+        "passwordBox",
+        "fileContents"
+      ]
+    },
+    "parameterValueTypes": {
+      "type": [
+        "string",
+        "boolean",
+        "integer",
+        "number",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "postDeployAction": {
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "$ref": "#/definitions4/postDeployActionTypes"
+        },
+        "delayStart": {
+          "type": "integer",
+          "defaultValue": 0,
+          "description": "Value in seconds to wait before performing the action."
+        }
+      }
+    },
+    "postDeployActionTypes": {
+      "enum": [
+        "restart",
+        "waitForShutdown",
+        "deallocate"
+      ]
+    }
+  },
+  "definitions3": {
+    "parameter": {
+      "type": "object",
+      "description": "Input parameter definitions3",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/definitions3/parameterTypes",
+          "description": "Type of input parameter"
+        },
+        "controlType": {
+          "$ref": "#/definitions3/controlTypes",
+          "description": "Type of UI control"
+        },
+        "defaultValue": {
+          "$ref": "#/definitions3/parameterValueTypes",
+          "description": "Default value to be used, if a value is not provided"
+        },
+        "allowedValues": {
+          "type": "array",
+          "description": "Value can only be one of these values"
+        },
+        "minLength": {
+          "type": "integer",
+          "description": "Minimum number of characters that can be used"
+        },
+        "maxLength": {
+          "type": "integer",
+          "description": "Maximum number of characters that can be used"
+        },
+        "allowEmpty": {
+          "type": "boolean",
+          "description": "If an empty value is allowed - false by default"
+        },
+        "description": {
+          "type": "string",
+          "description": "The parameter description"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The parameter display name"
+        }
+      }
+    },
+    "parameterTypes": {
+      "enum": [
+        "string",
+        "securestring",
+        "int",
+        "bool",
+        "object",
+        "array"
+      ]
+    },
+    "controlTypes": {
+      "enum": [
+        "textBox",
+        "passwordBox",
+        "fileContents"
+      ]
+    },
+    "parameterValueTypes": {
+      "type": [
+        "string",
+        "boolean",
+        "integer",
+        "number",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "postDeployAction": {
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "$ref": "#/definitions3/postDeployActionTypes"
+        },
+        "delayStart": {
+          "type": "integer",
+          "defaultValue": 0,
+          "description": "Value in seconds to wait before performing the action."
+        }
+      }
+    },
+    "postDeployActionTypes": {
+      "enum": [
+        "restart",
+        "waitForShutdown",
+        "deallocate"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/parameter"
+    },
+    {
+      "$ref": "#/definitions4/postDeployAction"
+    },
+    {
+      "$ref": "#/definitions3/parameterTypes"
+    },
+    {
+      "$ref": "#/definitions4/controlTypes"
+    },
+    {
+      "$ref": "#/definitions3/controlTypes"
+    },
+    {
+      "$ref": "#/definitions3/parameterValueTypes"
+    },
+    {
+      "$ref": "#/definitions3/postDeployAction"
+    },
+    {
+      "$ref": "#/definitions4/postDeployActionTypes"
+    },
+    {
+      "$ref": "#/definitions4/parameter"
+    },
+    {
+      "$ref": "#/definitions3/postDeployActionTypes"
+    },
+    {
+      "$ref": "#/definitions4/parameterTypes"
+    },
+    {
+      "$ref": "#/definitions4/parameterValueTypes"
+    }
+  ]
+}

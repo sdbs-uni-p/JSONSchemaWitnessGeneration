@@ -1,0 +1,139 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-06/schema#",
+      "description": "Test Schema",
+      "type": "object",
+      "properties": {
+        "person": {
+          "$ref": "#/definitions3/personDefinition"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-06/schema#",
+        "$ref": "#/definitions4/modern_2"
+      }
+    }
+  ],
+  "definitions3": {
+    "personDefinition": {
+      "description": "Person",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the person",
+          "type": "string",
+          "minLength": 1
+        },
+        "age": {
+          "description": "The age of the person",
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "age"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Person",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "The name of the person",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "age": {
+                  "description": "The age of the person",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "name",
+                "age"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^age$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Test Schema",
+              "type": "object",
+              "properties": {
+                "person": {
+                  "$ref": "#/definitions4/personDefinition"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^person$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "personDefinition": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/personDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/personDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/personDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/personDefinition"
+      }
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+[
+  {
+    "id": 1928,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Object install-if-different property",
+      "description": "This property handles when an object should be installed on target",
+      "oneOf": [
+        {
+          "title": "sha256sum verification type",
+          "description": "Installs if sha256sum doesn't match",
+          "type": "string",
+          "enum": [
+            "sha256sum"
+          ]
+        },
+        {
+          "title": "Known patterns verification type",
+          "description": "Installs if version of know object type is different",
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "string",
+              "enum": [
+                "linux-kernel",
+                "u-boot"
+              ]
+            }
+          },
+          "required": [
+            "version",
+            "pattern"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        {
+          "title": "Custom pattern verification type",
+          "description": "Installs if version of unknow object type is different",
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "object",
+              "properties": {
+                "regexp": {
+                  "description": "the pattern to match",
+                  "type": "string"
+                },
+                "seek": {
+                  "description": "Where to start reading file.",
+                  "type": "integer",
+                  "default": 0
+                },
+                "buffer-size": {
+                  "description": "How much bytes must be read. If -1, until the end.",
+                  "type": "integer",
+                  "default": -1
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              },
+              "required": [
+                "regexp"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "version",
+            "pattern"
+          ]
+        }
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Known patterns verification type",
+                  "description": "Installs if version of know object type is different",
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    },
+                    "pattern": {
+                      "type": "string",
+                      "enum": [
+                        "linux-kernel",
+                        "u-boot"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "pattern"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^version$": {},
+                    "^pattern$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Custom pattern verification type",
+                  "description": "Installs if version of unknow object type is different",
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    },
+                    "pattern": {
+                      "$ref": "#/definitions2/modern_3"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "pattern"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^version$": {},
+                    "^pattern$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "regexp": {
+                      "description": "the pattern to match",
+                      "type": "string"
+                    },
+                    "seek": {
+                      "description": "Where to start reading file.",
+                      "type": "integer",
+                      "default": 0
+                    },
+                    "buffer-size": {
+                      "description": "How much bytes must be read. If -1, until the end.",
+                      "type": "integer",
+                      "default": -1
+                    }
+                  },
+                  "required": [
+                    "regexp"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^regexp$": {},
+                    "^seek$": {},
+                    "^buffer-size$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "title": "Object install-if-different property",
+      "description": "This property handles when an object should be installed on target",
+      "oneOf": [
+        {
+          "title": "sha256sum verification type",
+          "description": "Installs if sha256sum doesn't match",
+          "type": "string",
+          "enum": [
+            "sha256sum"
+          ]
+        },
+        {
+          "$ref": "#/definitions2/modern_1"
+        },
+        {
+          "$ref": "#/definitions2/modern_2"
+        }
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

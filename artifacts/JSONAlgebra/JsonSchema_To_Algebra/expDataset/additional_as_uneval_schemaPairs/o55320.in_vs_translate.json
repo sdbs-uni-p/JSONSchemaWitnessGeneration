@@ -1,0 +1,707 @@
+[
+  {
+    "id": 1486,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "$comment": "https://mutagen.io/documentation/introduction/configuration",
+      "definitions2": {
+        "sync": {
+          "type": "object",
+          "properties": {
+            "alpha": {
+              "type": "string"
+            },
+            "beta": {
+              "type": "string"
+            },
+            "mode": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization#modes",
+              "enum": [
+                "two-way-safe",
+                "two-way-resolved",
+                "one-way-safe",
+                "one-way-replica"
+              ],
+              "default": "two-way-safe"
+            },
+            "ignore": {
+              "type": "object",
+              "description": "https://mutagen.io/documentation/synchronization/ignores",
+              "properties": {
+                "paths": {
+                  "type": "array"
+                },
+                "vcs": {
+                  "type": "boolean",
+                  "description": "https://mutagen.io/documentation/synchronization/version-control-systems",
+                  "default": true
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "permissions": {
+              "type": "object",
+              "properties": {
+                "defaultFileMode": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "https://mutagen.io/documentation/synchronization/permissions#permissions"
+                },
+                "defaultDirectoryMode": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "https://mutagen.io/documentation/synchronization/permissions#permissions"
+                },
+                "defaultOwner": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "https://mutagen.io/documentation/synchronization/permissions#owners-and-groups"
+                },
+                "defaultGroup": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "https://mutagen.io/documentation/synchronization/permissions#owners-and-groups"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "watch": {
+              "type": "object",
+              "description": "https://mutagen.io/documentation/synchronization/watching",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "description": "https://mutagen.io/documentation/synchronization/watching#modes",
+                  "enum": [
+                    "portable",
+                    "force-poll",
+                    "no-watch"
+                  ]
+                },
+                "pollingInterval": {
+                  "type": "integer",
+                  "description": "https://mutagen.io/documentation/synchronization/watching#polling-interval",
+                  "default": 10
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "symlink": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization/symbolic-links",
+              "enum": [
+                "ignore",
+                "portable",
+                "posix-raw"
+              ],
+              "default": "portable"
+            },
+            "stageMode": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization/staging",
+              "enum": [
+                "mutagen",
+                "neighboring"
+              ],
+              "default": "mutagen"
+            },
+            "probeMode": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization/probing-and-scanning",
+              "enum": [
+                "probe",
+                "assume"
+              ],
+              "default": "probe"
+            },
+            "scanMode": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization/probing-and-scanning",
+              "enum": [
+                "accelerated",
+                "full"
+              ],
+              "default": "accelerated"
+            },
+            "maxStagingFileSize": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization/size-limits",
+              "default": 0
+            },
+            "maxEntryCount": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/synchronization/size-limits",
+              "default": 0
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "forward": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/forwarding"
+            },
+            "destination": {
+              "type": "string",
+              "description": "https://mutagen.io/documentation/forwarding"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      },
+      "properties": {
+        "beforeCreate": {
+          "type": "array",
+          "description": "https://mutagen.io/documentation/projects#setup-and-teardown"
+        },
+        "afterCreate": {
+          "type": "array",
+          "description": "https://mutagen.io/documentation/projects#setup-and-teardown"
+        },
+        "afterTerminate": {
+          "type": "array",
+          "description": "https://mutagen.io/documentation/projects#setup-and-teardown"
+        },
+        "commands": {
+          "type": "object",
+          "description": "Finally, to help with creating common workflows, you can also define commands in projects using the commands section. These commands can be run using the mutagen project run command, for example:\n commands:\n  web-shell: docker-compose exec web bash\n see https://mutagen.io/documentation/projects#custom-commands"
+        },
+        "sync": {
+          "type": "object",
+          "description": "https://mutagen.io/documentation/synchronization",
+          "patternProperties": {
+            "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+              "type": "object",
+              "$ref": "#/definitions2/sync"
+            }
+          },
+          "$ref": "#/definitions2/sync"
+        },
+        "forward": {
+          "type": "object",
+          "description": "https://mutagen.io/documentation/forwarding",
+          "patternProperties": {
+            "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+              "type": "object",
+              "$ref": "#/definitions2/forward"
+            }
+          }
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/forwarding"
+                    },
+                    "destination": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/forwarding"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^source$": {},
+                    "^destination$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "$comment": "https://mutagen.io/documentation/introduction/configuration",
+                  "definitions2": {
+                    "sync": {
+                      "type": "object",
+                      "properties": {
+                        "alpha": {
+                          "type": "string"
+                        },
+                        "beta": {
+                          "type": "string"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization#modes",
+                          "enum": [
+                            "two-way-safe",
+                            "two-way-resolved",
+                            "one-way-safe",
+                            "one-way-replica"
+                          ],
+                          "default": "two-way-safe"
+                        },
+                        "ignore": {
+                          "type": "object",
+                          "description": "https://mutagen.io/documentation/synchronization/ignores",
+                          "properties": {
+                            "paths": {
+                              "type": "array"
+                            },
+                            "vcs": {
+                              "type": "boolean",
+                              "description": "https://mutagen.io/documentation/synchronization/version-control-systems",
+                              "default": true
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        },
+                        "permissions": {
+                          "type": "object",
+                          "properties": {
+                            "defaultFileMode": {
+                              "type": [
+                                "string",
+                                "integer"
+                              ],
+                              "description": "https://mutagen.io/documentation/synchronization/permissions#permissions"
+                            },
+                            "defaultDirectoryMode": {
+                              "type": [
+                                "string",
+                                "integer"
+                              ],
+                              "description": "https://mutagen.io/documentation/synchronization/permissions#permissions"
+                            },
+                            "defaultOwner": {
+                              "type": [
+                                "string",
+                                "integer"
+                              ],
+                              "description": "https://mutagen.io/documentation/synchronization/permissions#owners-and-groups"
+                            },
+                            "defaultGroup": {
+                              "type": [
+                                "string",
+                                "integer"
+                              ],
+                              "description": "https://mutagen.io/documentation/synchronization/permissions#owners-and-groups"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        },
+                        "watch": {
+                          "type": "object",
+                          "description": "https://mutagen.io/documentation/synchronization/watching",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "description": "https://mutagen.io/documentation/synchronization/watching#modes",
+                              "enum": [
+                                "portable",
+                                "force-poll",
+                                "no-watch"
+                              ]
+                            },
+                            "pollingInterval": {
+                              "type": "integer",
+                              "description": "https://mutagen.io/documentation/synchronization/watching#polling-interval",
+                              "default": 10
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        },
+                        "symlink": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization/symbolic-links",
+                          "enum": [
+                            "ignore",
+                            "portable",
+                            "posix-raw"
+                          ],
+                          "default": "portable"
+                        },
+                        "stageMode": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization/staging",
+                          "enum": [
+                            "mutagen",
+                            "neighboring"
+                          ],
+                          "default": "mutagen"
+                        },
+                        "probeMode": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization/probing-and-scanning",
+                          "enum": [
+                            "probe",
+                            "assume"
+                          ],
+                          "default": "probe"
+                        },
+                        "scanMode": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization/probing-and-scanning",
+                          "enum": [
+                            "accelerated",
+                            "full"
+                          ],
+                          "default": "accelerated"
+                        },
+                        "maxStagingFileSize": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization/size-limits",
+                          "default": 0
+                        },
+                        "maxEntryCount": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/synchronization/size-limits",
+                          "default": 0
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "forward": {
+                      "type": "object",
+                      "properties": {
+                        "source": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/forwarding"
+                        },
+                        "destination": {
+                          "type": "string",
+                          "description": "https://mutagen.io/documentation/forwarding"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    }
+                  },
+                  "properties": {
+                    "afterCreate": {
+                      "type": "array",
+                      "description": "https://mutagen.io/documentation/projects#setup-and-teardown"
+                    },
+                    "sync": {
+                      "type": "object",
+                      "description": "https://mutagen.io/documentation/synchronization",
+                      "patternProperties": {
+                        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+                          "type": "object",
+                          "$ref": "#/definitions2/sync"
+                        }
+                      },
+                      "$ref": "#/definitions2/sync"
+                    },
+                    "afterTerminate": {
+                      "type": "array",
+                      "description": "https://mutagen.io/documentation/projects#setup-and-teardown"
+                    },
+                    "commands": {
+                      "type": "object",
+                      "description": "Finally, to help with creating common workflows, you can also define commands in projects using the commands section. These commands can be run using the mutagen project run command, for example:\n commands:\n  web-shell: docker-compose exec web bash\n see https://mutagen.io/documentation/projects#custom-commands"
+                    },
+                    "forward": {
+                      "type": "object",
+                      "description": "https://mutagen.io/documentation/forwarding",
+                      "patternProperties": {
+                        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+                          "type": "object",
+                          "$ref": "#/definitions2/forward"
+                        }
+                      }
+                    },
+                    "beforeCreate": {
+                      "type": "array",
+                      "description": "https://mutagen.io/documentation/projects#setup-and-teardown"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^afterCreate$": {},
+                    "^afterTerminate$": {},
+                    "^sync$": {},
+                    "^beforeCreate$": {},
+                    "^commands$": {},
+                    "^forward$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "scanMode": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/probing-and-scanning",
+                      "enum": [
+                        "accelerated",
+                        "full"
+                      ],
+                      "default": "accelerated"
+                    },
+                    "watch": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    "permissions": {
+                      "$ref": "#/definitions2/modern_3"
+                    },
+                    "stageMode": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/staging",
+                      "enum": [
+                        "mutagen",
+                        "neighboring"
+                      ],
+                      "default": "mutagen"
+                    },
+                    "beta": {
+                      "type": "string"
+                    },
+                    "symlink": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/symbolic-links",
+                      "enum": [
+                        "ignore",
+                        "portable",
+                        "posix-raw"
+                      ],
+                      "default": "portable"
+                    },
+                    "ignore": {
+                      "$ref": "#/definitions2/modern_4"
+                    },
+                    "maxStagingFileSize": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/size-limits",
+                      "default": 0
+                    },
+                    "alpha": {
+                      "type": "string"
+                    },
+                    "probeMode": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/probing-and-scanning",
+                      "enum": [
+                        "probe",
+                        "assume"
+                      ],
+                      "default": "probe"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization#modes",
+                      "enum": [
+                        "two-way-safe",
+                        "two-way-resolved",
+                        "one-way-safe",
+                        "one-way-replica"
+                      ],
+                      "default": "two-way-safe"
+                    },
+                    "maxEntryCount": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/size-limits",
+                      "default": 0
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^scanMode$": {},
+                    "^mode$": {},
+                    "^watch$": {},
+                    "^maxEntryCount$": {},
+                    "^probeMode$": {},
+                    "^symlink$": {},
+                    "^maxStagingFileSize$": {},
+                    "^permissions$": {},
+                    "^ignore$": {},
+                    "^stageMode$": {},
+                    "^alpha$": {},
+                    "^beta$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "forward": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "https://mutagen.io/documentation/synchronization/watching",
+                  "properties": {
+                    "mode": {
+                      "type": "string",
+                      "description": "https://mutagen.io/documentation/synchronization/watching#modes",
+                      "enum": [
+                        "portable",
+                        "force-poll",
+                        "no-watch"
+                      ]
+                    },
+                    "pollingInterval": {
+                      "type": "integer",
+                      "description": "https://mutagen.io/documentation/synchronization/watching#polling-interval",
+                      "default": 10
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^mode$": {},
+                    "^pollingInterval$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "sync": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "defaultFileMode": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ],
+                      "description": "https://mutagen.io/documentation/synchronization/permissions#permissions"
+                    },
+                    "defaultDirectoryMode": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ],
+                      "description": "https://mutagen.io/documentation/synchronization/permissions#permissions"
+                    },
+                    "defaultOwner": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ],
+                      "description": "https://mutagen.io/documentation/synchronization/permissions#owners-and-groups"
+                    },
+                    "defaultGroup": {
+                      "type": [
+                        "string",
+                        "integer"
+                      ],
+                      "description": "https://mutagen.io/documentation/synchronization/permissions#owners-and-groups"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^defaultFileMode$": {},
+                    "^defaultDirectoryMode$": {},
+                    "^defaultOwner$": {},
+                    "^defaultGroup$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "https://mutagen.io/documentation/synchronization/ignores",
+                  "properties": {
+                    "paths": {
+                      "type": "array"
+                    },
+                    "vcs": {
+                      "type": "boolean",
+                      "description": "https://mutagen.io/documentation/synchronization/version-control-systems",
+                      "default": true
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^paths$": {},
+                    "^vcs$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_6"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

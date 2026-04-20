@@ -1,0 +1,592 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Default title",
+      "description": "Default description",
+      "type": "array",
+      "items": {
+        "headerTemplate": "{{ self.fieldTitle }}",
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/textField"
+          },
+          {
+            "$ref": "#/definitions3/selectList"
+          },
+          {
+            "$ref": "#/definitions3/imageUploader"
+          },
+          {
+            "$ref": "#/definitions3/localReference"
+          },
+          {
+            "$ref": "#/definitions3/numberField"
+          }
+        ]
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Default title",
+        "description": "Default description",
+        "type": "array",
+        "items": {
+          "headerTemplate": "{{ self.fieldTitle }}",
+          "anyOf": [
+            {
+              "$ref": "#/definitions4/textField"
+            },
+            {
+              "$ref": "#/definitions4/selectList"
+            },
+            {
+              "$ref": "#/definitions4/imageUploader"
+            },
+            {
+              "$ref": "#/definitions4/localReference"
+            },
+            {
+              "$ref": "#/definitions4/numberField"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "abstractBaseField": {
+      "type": "object",
+      "required": [
+        "fieldTitle",
+        "fieldType"
+      ],
+      "properties": {
+        "propertyOrder": {
+          "type": "number",
+          "options": {
+            "hidden": true
+          }
+        }
+      }
+    },
+    "abstractSearchableField": {
+      "properties": {
+        "isSearchable": {
+          "title": "Filterable/Searchable",
+          "type": "boolean",
+          "format": "checkbox"
+        }
+      }
+    },
+    "abstractRequirableField": {
+      "properties": {
+        "isRequired": {
+          "title": "Required",
+          "type": "boolean",
+          "format": "checkbox"
+        }
+      }
+    },
+    "textField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions3/abstractSearchableField"
+        },
+        {
+          "$ref": "#/definitions3/abstractRequirableField"
+        }
+      ],
+      "title": "Text Field",
+      "properties": {
+        "fieldTitle": {
+          "title": "Text Field Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "textOptions": {
+          "title": "Text Options",
+          "type": "string",
+          "enum": [
+            "text",
+            "textarea",
+            "number",
+            "color",
+            "tel",
+            "datetime",
+            "url"
+          ],
+          "options": {
+            "enum_titles": [
+              "Single line text",
+              "Paragraph text",
+              "Number",
+              "HTML Color",
+              "Telephone number",
+              "Date / Time",
+              "Website URL"
+            ]
+          }
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "text"
+          ]
+        }
+      }
+    },
+    "numberField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions3/abstractSearchableField"
+        },
+        {
+          "$ref": "#/definitions3/abstractRequirableField"
+        }
+      ],
+      "title": "Number Field",
+      "properties": {
+        "fieldTitle": {
+          "title": "Number Field Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "minimum": {
+          "title": "Minimum Value",
+          "type": "number"
+        },
+        "maximum": {
+          "title": "Maximum Value",
+          "type": "number"
+        },
+        "fieldType": {
+          "options": {
+            "hidden": false
+          },
+          "type": "string",
+          "enum": [
+            "number",
+            "integer"
+          ]
+        }
+      }
+    },
+    "selectList": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions3/abstractSearchableField"
+        },
+        {
+          "$ref": "#/definitions3/abstractRequirableField"
+        }
+      ],
+      "title": "Select List",
+      "properties": {
+        "fieldTitle": {
+          "title": "Select List Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "displayType": {
+          "title": "Display Type",
+          "type": "string",
+          "enum": [
+            "select",
+            "checkbox"
+          ],
+          "default": "select"
+        },
+        "fieldOptions": {
+          "title": "Field Options",
+          "type": "array",
+          "format": "table",
+          "_uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "title": "Option value",
+            "type": "string"
+          }
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "selectlist"
+          ]
+        }
+      }
+    },
+    "imageUploader": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions3/abstractRequirableField"
+        }
+      ],
+      "title": "Image Uploader",
+      "properties": {
+        "fieldTitle": {
+          "title": "Image Uploader Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "image"
+          ]
+        }
+      }
+    },
+    "localReference": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions3/abstractRequirableField"
+        }
+      ],
+      "title": "Relationship",
+      "properties": {
+        "fieldTitle": {
+          "title": "Relationship Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "referenceTarget": {
+          "title": "Type of related info to reference",
+          "type": "string",
+          "format": "select",
+          "enumSource": [
+            [
+              "Will be dynamically overwritten"
+            ]
+          ]
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "reference"
+          ]
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "abstractBaseField": {
+      "type": "object",
+      "required": [
+        "fieldTitle",
+        "fieldType"
+      ],
+      "properties": {
+        "propertyOrder": {
+          "type": "number",
+          "options": {
+            "hidden": true
+          }
+        }
+      }
+    },
+    "abstractSearchableField": {
+      "properties": {
+        "isSearchable": {
+          "title": "Filterable/Searchable",
+          "type": "boolean",
+          "format": "checkbox"
+        }
+      }
+    },
+    "abstractRequirableField": {
+      "properties": {
+        "isRequired": {
+          "title": "Required",
+          "type": "boolean",
+          "format": "checkbox"
+        }
+      }
+    },
+    "textField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions4/abstractSearchableField"
+        },
+        {
+          "$ref": "#/definitions4/abstractRequirableField"
+        }
+      ],
+      "title": "Text Field",
+      "properties": {
+        "fieldTitle": {
+          "title": "Text Field Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "textOptions": {
+          "title": "Text Options",
+          "type": "string",
+          "enum": [
+            "text",
+            "textarea",
+            "number",
+            "color",
+            "tel",
+            "datetime",
+            "url"
+          ],
+          "options": {
+            "enum_titles": [
+              "Single line text",
+              "Paragraph text",
+              "Number",
+              "HTML Color",
+              "Telephone number",
+              "Date / Time",
+              "Website URL"
+            ]
+          }
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "text"
+          ]
+        }
+      }
+    },
+    "numberField": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions4/abstractSearchableField"
+        },
+        {
+          "$ref": "#/definitions4/abstractRequirableField"
+        }
+      ],
+      "title": "Number Field",
+      "properties": {
+        "fieldTitle": {
+          "title": "Number Field Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "minimum": {
+          "title": "Minimum Value",
+          "type": "number"
+        },
+        "maximum": {
+          "title": "Maximum Value",
+          "type": "number"
+        },
+        "fieldType": {
+          "options": {
+            "hidden": false
+          },
+          "type": "string",
+          "enum": [
+            "number",
+            "integer"
+          ]
+        }
+      }
+    },
+    "selectList": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions4/abstractSearchableField"
+        },
+        {
+          "$ref": "#/definitions4/abstractRequirableField"
+        }
+      ],
+      "title": "Select List",
+      "properties": {
+        "fieldTitle": {
+          "title": "Select List Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "displayType": {
+          "title": "Display Type",
+          "type": "string",
+          "enum": [
+            "select",
+            "checkbox"
+          ],
+          "default": "select"
+        },
+        "fieldOptions": {
+          "title": "Field Options",
+          "type": "array",
+          "format": "table",
+          "_uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "title": "Option value",
+            "type": "string"
+          }
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "selectlist"
+          ]
+        }
+      }
+    },
+    "imageUploader": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions4/abstractRequirableField"
+        }
+      ],
+      "title": "Image Uploader",
+      "properties": {
+        "fieldTitle": {
+          "title": "Image Uploader Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "image"
+          ]
+        }
+      }
+    },
+    "localReference": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/abstractBaseField"
+        },
+        {
+          "$ref": "#/definitions4/abstractRequirableField"
+        }
+      ],
+      "title": "Relationship",
+      "properties": {
+        "fieldTitle": {
+          "title": "Relationship Title",
+          "type": "string",
+          "minLength": 1
+        },
+        "referenceTarget": {
+          "title": "Type of related info to reference",
+          "type": "string",
+          "format": "select",
+          "enumSource": [
+            [
+              "Will be dynamically overwritten"
+            ]
+          ]
+        },
+        "fieldType": {
+          "options": {
+            "hidden": true
+          },
+          "type": "string",
+          "enum": [
+            "reference"
+          ]
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/abstractBaseField"
+    },
+    {
+      "$ref": "#/definitions4/imageUploader"
+    },
+    {
+      "$ref": "#/definitions3/abstractBaseField"
+    },
+    {
+      "$ref": "#/definitions3/abstractSearchableField"
+    },
+    {
+      "$ref": "#/definitions3/selectList"
+    },
+    {
+      "$ref": "#/definitions3/numberField"
+    },
+    {
+      "$ref": "#/definitions4/abstractRequirableField"
+    },
+    {
+      "$ref": "#/definitions4/selectList"
+    },
+    {
+      "$ref": "#/definitions3/abstractRequirableField"
+    },
+    {
+      "$ref": "#/definitions4/localReference"
+    },
+    {
+      "$ref": "#/definitions3/imageUploader"
+    },
+    {
+      "$ref": "#/definitions4/numberField"
+    },
+    {
+      "$ref": "#/definitions3/textField"
+    },
+    {
+      "$ref": "#/definitions4/textField"
+    },
+    {
+      "$ref": "#/definitions4/abstractSearchableField"
+    },
+    {
+      "$ref": "#/definitions3/localReference"
+    }
+  ]
+}

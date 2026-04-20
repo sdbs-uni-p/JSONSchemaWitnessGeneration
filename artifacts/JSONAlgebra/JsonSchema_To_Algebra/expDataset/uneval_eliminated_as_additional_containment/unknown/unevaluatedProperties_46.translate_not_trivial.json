@@ -1,0 +1,337 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "type": "object",
+        "minProperties": 1,
+        "maxProperties": 1,
+        "additionalProperties": false,
+        "properties": {
+          "file": {
+            "$ref": "#/definitions2/file"
+          },
+          "dir": {
+            "$ref": "#/definitions2/dir"
+          },
+          "and": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          },
+          "or": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "minProperties": 1,
+              "maxProperties": 1,
+              "properties": {
+                "file": {
+                  "$ref": "#/definitions1/file"
+                },
+                "dir": {
+                  "$ref": "#/definitions1/dir"
+                },
+                "and": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#"
+                  }
+                },
+                "or": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^file$": true,
+                "^dir$": true,
+                "^and$": true,
+                "^or$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "dir": {
+      "type": "object",
+      "properties": {
+        "mandatory": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "only_folders": {
+              "type": "boolean"
+            },
+            "or": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions1/dir/properties/rules"
+              }
+            },
+            "dir": {
+              "$ref": "#/definitions1/dir"
+            },
+            "file": {
+              "$ref": "#/definitions1/file"
+            },
+            "and": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions1/dir/properties/rules"
+              }
+            }
+          },
+          "minProperties": 1,
+          "maxProperties": 1,
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "mandatory",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "file": {
+      "type": "object",
+      "properties": {
+        "mandatory": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string"
+            },
+            "matching_file": {
+              "type": "string"
+            },
+            "and": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions1/file/properties/rules"
+              }
+            },
+            "or": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions1/file/properties/rules"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "maxProperties": 1,
+          "minProperties": 1
+        }
+      },
+      "required": [
+        "mandatory",
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "definitions2": {
+    "file": {
+      "type": "object",
+      "properties": {
+        "mandatory": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string"
+            },
+            "matching_file": {
+              "type": "string"
+            },
+            "and": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/file/properties/rules"
+              }
+            },
+            "or": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/file/properties/rules"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "maxProperties": 1,
+          "minProperties": 1
+        }
+      },
+      "required": [
+        "mandatory",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "dir": {
+      "type": "object",
+      "properties": {
+        "mandatory": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "only_folders": {
+              "type": "boolean"
+            },
+            "file": {
+              "$ref": "#/definitions2/file"
+            },
+            "dir": {
+              "$ref": "#/definitions2/dir"
+            },
+            "and": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/dir/properties/rules"
+              }
+            },
+            "or": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/dir/properties/rules"
+              }
+            }
+          },
+          "minProperties": 1,
+          "maxProperties": 1,
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "mandatory",
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/file"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/file"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/file/properties/rules"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/file/properties/rules"
+      }
+    },
+    {
+      "$ref": "#"
+    },
+    {
+      "not": {
+        "$ref": "#"
+      }
+    },
+    {
+      "$ref": "#/definitions2/dir"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/dir"
+      }
+    },
+    {
+      "$ref": "#/definitions2/dir/properties/rules"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/dir/properties/rules"
+      }
+    },
+    {
+      "$ref": "#/definitions1/dir"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/dir"
+      }
+    },
+    {
+      "$ref": "#/definitions1/dir/properties/rules"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/dir/properties/rules"
+      }
+    },
+    {
+      "$ref": "#/definitions2/file"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/file"
+      }
+    },
+    {
+      "$ref": "#/definitions2/file/properties/rules"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/file/properties/rules"
+      }
+    }
+  ]
+}

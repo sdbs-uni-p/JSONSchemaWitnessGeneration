@@ -1,0 +1,476 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "title": "Common Web Platform Feature Group",
+        "description": "A feature or group of features of the web platform and related technologies",
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]+[a-z]$"
+          },
+          "version": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "longName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "constituentFeatures": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/definitions2/query"
+            }
+          },
+          "editorialMetadata": {
+            "$ref": "#/definitions2/editorialMetadata"
+          },
+          "$comment": {
+            "$ref": "#/definitions2/comment2"
+          }
+        },
+        "required": [
+          "identifier",
+          "shortName",
+          "longName",
+          "description",
+          "constituentFeatures"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Feature support data query",
+              "description": "A query for referencing up feature support data",
+              "type": "object",
+              "properties": {
+                "source": {
+                  "oneOf": [
+                    {
+                      "title": "GitHub repository",
+                      "type": "string",
+                      "pattern": "([\\w-]+)\\/([\\w-]+)(#.*)?",
+                      "examples": [
+                        "ddbeck/common-web-feature-mockup"
+                      ]
+                    },
+                    {
+                      "title": "Shorthands",
+                      "description": "A shorthand for known data sources",
+                      "enum": [
+                        "bcd"
+                      ]
+                    }
+                  ]
+                },
+                "query": {
+                  "type": "string"
+                },
+                "ignoreMissing": {
+                  "type": "boolean"
+                },
+                "$comment": {
+                  "$ref": "#/definitions1/comment2"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^source$": true,
+                "^query$": true,
+                "^ignoreMissing$": true,
+                "^$comment$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "query": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Editorial Metadata",
+              "description": "Metadata to support feature group workflows",
+              "type": "object",
+              "properties": {
+                "managers": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/definitions1/manager"
+                  }
+                },
+                "expires": {
+                  "$ref": "#/definitions1/date"
+                },
+                "lastModified": {
+                  "$ref": "#/definitions1/date"
+                },
+                "lastReviewed": {
+                  "$ref": "#/definitions1/date"
+                },
+                "status": {
+                  "enum": [
+                    "proposal",
+                    "active",
+                    "generated",
+                    "frozen",
+                    "pending-deletion"
+                  ]
+                },
+                "$comment": {
+                  "$ref": "#/definitions1/comment2"
+                },
+                "created": {
+                  "$ref": "#/definitions1/date"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^$comment$": true,
+                "^managers$": true,
+                "^created$": true,
+                "^expires$": true,
+                "^status$": true,
+                "^lastReviewed$": true,
+                "^lastModified$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "editorialMetadata": {
+      "$ref": "#/definitions1/modern_2"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Common Web Platform Feature Group",
+              "description": "A feature or group of features of the web platform and related technologies",
+              "type": "object",
+              "properties": {
+                "identifier": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z-]+[a-z]$"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "editorialMetadata": {
+                  "$ref": "#/definitions1/editorialMetadata"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "shortName": {
+                  "type": "string"
+                },
+                "constituentFeatures": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/definitions1/query"
+                  }
+                },
+                "$comment": {
+                  "$ref": "#/definitions1/comment2"
+                },
+                "longName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "identifier",
+                "shortName",
+                "longName",
+                "description",
+                "constituentFeatures"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^description$": true,
+                "^$comment$": true,
+                "^identifier$": true,
+                "^constituentFeatures$": true,
+                "^editorialMetadata$": true,
+                "^longName$": true,
+                "^shortName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "manager": {
+      "oneOf": [
+        {
+          "title": "GitHub user name",
+          "type": "string",
+          "pattern": "@[\\w-]+",
+          "examples": [
+            "@ddbeck"
+          ]
+        },
+        {
+          "title": "Automation",
+          "type": "string",
+          "pattern": "\\[[\\w-]+\\]",
+          "examples": [
+            "[some-bot]"
+          ]
+        }
+      ]
+    },
+    "comment2": {
+      "title": "A comment",
+      "description": "A comment for group authors to describe some internal detail.",
+      "type": "string"
+    }
+  },
+  "definitions2": {
+    "comment2": {
+      "title": "A comment",
+      "description": "A comment for group authors to describe some internal detail.",
+      "type": "string"
+    },
+    "query": {
+      "title": "Feature support data query",
+      "description": "A query for referencing up feature support data",
+      "type": "object",
+      "properties": {
+        "source": {
+          "oneOf": [
+            {
+              "title": "GitHub repository",
+              "type": "string",
+              "pattern": "([\\w-]+)\\/([\\w-]+)(#.*)?",
+              "examples": [
+                "ddbeck/common-web-feature-mockup"
+              ]
+            },
+            {
+              "title": "Shorthands",
+              "description": "A shorthand for known data sources",
+              "enum": [
+                "bcd"
+              ]
+            }
+          ]
+        },
+        "query": {
+          "type": "string"
+        },
+        "ignoreMissing": {
+          "type": "boolean"
+        },
+        "$comment": {
+          "$ref": "#/definitions2/comment2"
+        }
+      },
+      "additionalProperties": false
+    },
+    "editorialMetadata": {
+      "title": "Editorial Metadata",
+      "description": "Metadata to support feature group workflows",
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "proposal",
+            "active",
+            "generated",
+            "frozen",
+            "pending-deletion"
+          ]
+        },
+        "managers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/manager"
+          }
+        },
+        "created": {
+          "$ref": "#/definitions2/date"
+        },
+        "lastReviewed": {
+          "$ref": "#/definitions2/date"
+        },
+        "lastModified": {
+          "$ref": "#/definitions2/date"
+        },
+        "expires": {
+          "$ref": "#/definitions2/date"
+        },
+        "$comment": {
+          "$ref": "#/definitions2/comment2"
+        }
+      },
+      "additionalProperties": false
+    },
+    "manager": {
+      "oneOf": [
+        {
+          "title": "GitHub user name",
+          "type": "string",
+          "pattern": "@[\\w-]+",
+          "examples": [
+            "@ddbeck"
+          ]
+        },
+        {
+          "title": "Automation",
+          "type": "string",
+          "pattern": "\\[[\\w-]+\\]",
+          "examples": [
+            "[some-bot]"
+          ]
+        }
+      ]
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions2/manager"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/manager"
+      }
+    },
+    {
+      "$ref": "#/definitions2/date"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/date"
+      }
+    },
+    {
+      "$ref": "#/definitions1/comment2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/comment2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/date"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/date"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions2/comment2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/comment2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/editorialMetadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/editorialMetadata"
+      }
+    },
+    {
+      "$ref": "#/definitions2/editorialMetadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/editorialMetadata"
+      }
+    },
+    {
+      "$ref": "#/definitions1/query"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/query"
+      }
+    },
+    {
+      "$ref": "#/definitions2/query"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/query"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/manager"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/manager"
+      }
+    }
+  ]
+}

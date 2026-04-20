@@ -1,0 +1,2267 @@
+[
+  {
+    "id": 1207,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "CalculationResponse",
+      "type": "object",
+      "required:": [
+        "incomeTaxYTD",
+        "incomeTaxThisPeriod"
+      ],
+      "definitions2": {
+        "monetary": {
+          "type": "number",
+          "minimum": -100000000.0,
+          "maximum": 100000000.0,
+          "multipleOf": 0.01,
+          "description": "Defines a monetary value (to 2 decimal places), between -99,999,999.99 and 99,999,999.99"
+        },
+        "wholePounds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 99999999,
+          "multipleOf": 1,
+          "description": "Defines amounts given in whole pounds between 0.00 and 99.99"
+        },
+        "percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 99.99,
+          "multipleOf": 0.01,
+          "description": "Defines a percentage rate (to 2 decimal places), between 0.00 and 99.99"
+        },
+        "endOfYearEstimate": {
+          "type": "object",
+          "properties": {
+            "selfEmployment": {
+              "$ref": "#/definitions2/selfEmployment",
+              "description": "An array of self-employment income sources"
+            },
+            "ukProperty": {
+              "$ref": "#/definitions2/ukProperty",
+              "description": "An array of UK property income sources"
+            },
+            "totalTaxableIncome": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Sum of estimated taxable income for all income sources"
+            },
+            "incomeTaxAmount": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Calculated Income tax amount from estimated taxable income"
+            },
+            "nic2": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Calculated NIC Class 2 from estimates"
+            },
+            "nic4": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Calculated NIC Class 4 from estimates"
+            },
+            "totalNicAmount": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Sum of National Insurance amounts"
+            },
+            "incomeTaxNicAmount": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Total of calculated Income Tax and National Insurance from estimated annual taxable income"
+            }
+          }
+        },
+        "selfEmployment": {
+          "description": "An array of annualised estimated income by income source",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The Income Source ID",
+                "type": "string"
+              },
+              "taxableIncome": {
+                "$ref": "#/definitions2/monetary",
+                "description": "Estimated taxable income for source"
+              },
+              "supplied": {
+                "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+                "type": "boolean"
+              },
+              "finalised": {
+                "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "taxableIncome",
+              "supplied"
+            ],
+            "additionalProperties": {
+              "not": {}
+            }
+          }
+        },
+        "ukProperty": {
+          "description": "An array of annualised estimated income by income source",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "taxableIncome": {
+                "$ref": "#/definitions2/monetary",
+                "description": "Estimated taxable income for source"
+              },
+              "supplied": {
+                "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+                "type": "boolean"
+              },
+              "finalised": {
+                "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "taxableIncome",
+              "supplied"
+            ],
+            "additionalProperties": {
+              "not": {}
+            }
+          }
+        }
+      },
+      "properties": {
+        "incomeTaxYTD": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Details the amount of income tax is due based on the year to date figures supplied"
+        },
+        "incomeTaxThisPeriod": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Details the amount of income tax is due this period. This is based on the incomeTaxYTD less the amount in the same data item from the calculation result from the preceding period"
+        },
+        "payFromAllEmployments": {
+          "type": "number",
+          "description": "Pay from all employments"
+        },
+        "benefitsAndExpensesReceived": {
+          "type": "number",
+          "description": "Benefits and expenses received"
+        },
+        "allowableExpenses": {
+          "type": "number",
+          "description": "Allowable expenses"
+        },
+        "payFromAllEmploymentsAfterExpenses": {
+          "type": "number",
+          "description": "Total from all employments"
+        },
+        "shareSchemes": {
+          "type": "number",
+          "description": "Share schemes"
+        },
+        "profitFromSelfEmployment": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Profit from self-employment"
+        },
+        "profitFromPartnerships": {
+          "type": "number",
+          "description": "Profit from partnerships"
+        },
+        "profitFromUkLandAndProperty": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Profit from UK land and property"
+        },
+        "foreignIncome": {
+          "type": "number",
+          "description": "Foreign income"
+        },
+        "dividendsFromForeignCompanies": {
+          "type": "number",
+          "description": "Dividends from foreign companies"
+        },
+        "trustsAndEstates": {
+          "type": "number",
+          "description": "Trusts and estates"
+        },
+        "interestReceivedFromUkBanksAndBuildingSocieties": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Interest received from UK banks and building societies"
+        },
+        "dividendsFromUkCompanies": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Dividends from UK companies (plus 10% tax credits)"
+        },
+        "ukPensionsAndStateBenefits": {
+          "type": "number",
+          "description": "UK pensions and state benefits"
+        },
+        "gainsOnLifeInsurance": {
+          "type": "number",
+          "description": "Gains on life insurance policies etc."
+        },
+        "otherIncome": {
+          "type": "number",
+          "description": "Other income"
+        },
+        "totalIncomeReceived": {
+          "type": "number",
+          "description": "Total income received"
+        },
+        "paymentsIntoARetirementAnnuity": {
+          "type": "number",
+          "description": "Payments into a retirement annuity contract etc."
+        },
+        "foreignTaxOnEstates": {
+          "type": "number",
+          "description": "Foreign tax on estates (tax credit relief not claimed)"
+        },
+        "incomeTaxRelief": {
+          "type": "number",
+          "description": "Amount of total reliefs for deduction"
+        },
+        "incomeTaxReliefReducedToMaximumAllowable": {
+          "type": "number",
+          "description": "Amount of total reliefs for deduction restricted to permitted maximum"
+        },
+        "annuities": {
+          "type": "number",
+          "description": "Amount of annuities for deduction"
+        },
+        "giftOfInvestmentsAndPropertyToCharity": {
+          "type": "number",
+          "description": "Gift of investments and property to charity for deduction"
+        },
+        "personalAllowance": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Reduced personal allowance"
+        },
+        "marriageAllowanceTransfer": {
+          "type": "number",
+          "description": "Marriage allowance transfer"
+        },
+        "blindPersonAllowance": {
+          "type": "number",
+          "description": "Blind person's allowance"
+        },
+        "blindPersonSurplusAllowanceFromSpouse": {
+          "type": "number",
+          "description": "Blind person's surplus allowance from spouse"
+        },
+        "incomeExcluded": {
+          "type": "number",
+          "description": "Amount of income excluded from this calculation"
+        },
+        "totalIncomeAllowancesUsed": {
+          "type": "number",
+          "description": "Total of deductions and allowances used"
+        },
+        "totalIncomeOnWhichTaxIsDue": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Total income on which tax is due"
+        },
+        "payPensionsExtender": {
+          "type": "number",
+          "description": "Basic rate band extension amount relating to pension payments made net"
+        },
+        "giftExtender": {
+          "type": "number",
+          "description": "Basic rate band extension amount relating to gift aid"
+        },
+        "extendedBR": {
+          "type": "number",
+          "description": "Amount for extending basic rate band"
+        },
+        "payPensionsProfitAtBRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of pay, pensions and profit at the basic rate of tax (BRT)"
+        },
+        "incomeTaxOnPayPensionsProfitAtBRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on pay, pensions and profit at the basic rate of tax (BRT)"
+        },
+        "payPensionsProfitAtHRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of pay, pensions and profit at the higher rate of tax (HRT)"
+        },
+        "incomeTaxOnPayPensionsProfitAtHRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on pay, pensions and profit at the higher rate of tax (HRT)"
+        },
+        "payPensionsProfitAtART": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of pay, pensions and profit at the additional higher rate of tax (AHRT)"
+        },
+        "incomeTaxOnPayPensionsProfitAtART": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on pay, pensions and profit at the additional higher rate of tax (AHRT)"
+        },
+        "netPropertyFinanceCosts": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Net property finance costs - from landlords interest relief"
+        },
+        "interestReceivedAtStartingRate": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of interest received from a bank or building society etc. at starting rate (SR)"
+        },
+        "incomeTaxOnInterestReceivedAtStartingRate": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on interest received from a bank or building society etc. at starting rate (SR)"
+        },
+        "interestReceivedAtZeroRate": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of interest received from a bank or building society etc. at zero Rate"
+        },
+        "incomeTaxOnInterestReceivedAtZeroRate": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on interest received from a bank or building society etc. at zero Rate"
+        },
+        "interestReceivedAtBRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of interest received from a bank or building society etc. at basic rate (BRT)"
+        },
+        "incomeTaxOnInterestReceivedAtBRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on interest received from a bank or building society etc. at basic rate (BRT)"
+        },
+        "interestReceivedAtHRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of interest received from a bank or building society etc. at higher rate (HRT)"
+        },
+        "incomeTaxOnInterestReceivedAtHRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on interest received from a bank or building society etc. at higher rate (HRT)"
+        },
+        "interestReceivedAtART": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of interest received from a bank or building society etc. at additional higher rate (AHRT)"
+        },
+        "incomeTaxOnInterestReceivedAtART": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on interest received from a bank or building society etc. at additional higher rate (AHRT)"
+        },
+        "dividendsAtZeroRate": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of dividends from companies etc. at zero rate"
+        },
+        "incomeTaxOnDividendsAtZeroRate": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on dividends from companies etc. at zero rate"
+        },
+        "dividendsAtBRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of dividends from companies etc at basic rate"
+        },
+        "incomeTaxOnDividendsAtBRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on dividends from companies etc at basic rate"
+        },
+        "dividendsAtHRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of Dividends from companies etc at higher rate"
+        },
+        "incomeTaxOnDividendsAtHRT": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on Dividends from companies etc at higher rate"
+        },
+        "dividendsAtART": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Amount of dividends from companies etc at additional higher rate"
+        },
+        "incomeTaxOnDividendsAtART": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax on dividends from companies etc at additional higher rate"
+        },
+        "totalIncomeOnWhichTaxHasBeenCharged": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Total income on which tax is due"
+        },
+        "taxOnOtherIncome": {
+          "type": "number",
+          "description": "Tax on income excluded from this calculation"
+        },
+        "incomeTaxDue": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Income tax due"
+        },
+        "incomeTaxCharged": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Income tax charges"
+        },
+        "deficiencyRelief": {
+          "type": "number",
+          "description": "Deficiency relief"
+        },
+        "topSlicingRelief": {
+          "type": "number",
+          "description": "Top slicing relief"
+        },
+        "ventureCapitalTrustRelief": {
+          "type": "number",
+          "description": "Venture capital trust relief"
+        },
+        "enterpriseInvestmentSchemeRelief": {
+          "type": "number",
+          "description": "Enterprise investment scheme relief"
+        },
+        "seedEnterpriseInvestmentSchemeRelief": {
+          "type": "number",
+          "description": "Seed enterprise investment scheme relief"
+        },
+        "communityInvestmentTaxRelief": {
+          "type": "number",
+          "description": "Community investment tax relief"
+        },
+        "socialInvestmentTaxRelief": {
+          "type": "number",
+          "description": "Social investment tax relief"
+        },
+        "maintenanceAndAlimonyPaid": {
+          "type": "number",
+          "description": "Maintenance and alimony paid"
+        },
+        "marriedCouplesAllowance": {
+          "type": "number",
+          "description": "Married couple's allowance amount"
+        },
+        "marriedCouplesAllowanceRelief": {
+          "type": "number",
+          "description": "Relief on married couple's allowance"
+        },
+        "surplusMarriedCouplesAllowance": {
+          "type": "number",
+          "description": "Married couple's allowance surplus amount from spouse"
+        },
+        "surplusMarriedCouplesAllowanceRelief": {
+          "type": "number",
+          "description": "Relief on married couple's allowance surplus"
+        },
+        "notionalTaxFromLifePolicies": {
+          "type": "number",
+          "description": "Notional tax from gains on life policies etc."
+        },
+        "notionalTaxFromDividendsAndOtherIncome": {
+          "type": "number",
+          "description": "Notional tax from stock dividends and other income"
+        },
+        "foreignTaxCreditRelief": {
+          "type": "number",
+          "description": "Foreign tax credit relief"
+        },
+        "incomeTaxDueAfterAllowancesAndReliefs": {
+          "type": "number",
+          "description": "Income tax due after allowances and reliefs"
+        },
+        "giftAidPaymentsAmount": {
+          "type": "number",
+          "description": "Amount of gift aid payments"
+        },
+        "giftAidTaxDue": {
+          "type": "number",
+          "description": "Tax due on gift aid payments"
+        },
+        "capitalGainsTaxDue": {
+          "type": "number",
+          "description": "Capital gains tax due"
+        },
+        "remittanceForNonDomiciles": {
+          "type": "number",
+          "description": "Remittance basis charge for non-domiciles"
+        },
+        "highIncomeChildBenefitCharge": {
+          "type": "number",
+          "description": "High income child benefit charge"
+        },
+        "totalGiftAidTaxReduced": {
+          "type": "number",
+          "description": "Total of gift aid tax reduction"
+        },
+        "incomeTaxDueAfterGiftAidReduction": {
+          "type": "number",
+          "description": "Income tax due after gift aid"
+        },
+        "annuityAmount": {
+          "type": "number",
+          "description": "Amount of annuity and royalty payments"
+        },
+        "taxDueOnAnnuity": {
+          "type": "number",
+          "description": "Tax annuity and royalty payments"
+        },
+        "taxCreditsOnDividendsFromUkCompanies": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Tax credits on dividends from UK companies (not repayable)"
+        },
+        "incomeTaxDueAfterDividendTaxCredits": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Income tax due after dividend tax credits"
+        },
+        "nationalInsuranceContributionAmount": {
+          "$ref": "#/definitions2/monetary",
+          "description": "National insurance contribution amount"
+        },
+        "nationalInsuranceContributionCharge": {
+          "$ref": "#/definitions2/monetary",
+          "description": "National insurance contribution charge"
+        },
+        "nationalInsuranceContributionSupAmount": {
+          "$ref": "#/definitions2/monetary",
+          "description": "National insurance contribution sup amount"
+        },
+        "nationalInsuranceContributionSupCharge": {
+          "$ref": "#/definitions2/monetary",
+          "description": "National insurance contribution sup charge"
+        },
+        "totalClass4Charge": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Total charge on class 4 national insurance contributions"
+        },
+        "nationalInsuranceClass1Amount": {
+          "type": "number",
+          "description": "National insurance class 1 amount"
+        },
+        "nationalInsuranceClass2Amount": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Charge on class 2 national insurance contributions"
+        },
+        "nicTotal": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Total of class 2 and class 4 national insurance contributions"
+        },
+        "underpaidTaxForPreviousYears": {
+          "type": "number",
+          "description": "Underpaid tax for earlier years in your tax code for 2015-16"
+        },
+        "studentLoanRepayments": {
+          "type": "number",
+          "description": "Student loan repayments"
+        },
+        "pensionChargesGross": {
+          "type": "number",
+          "description": "Total pension saving charges"
+        },
+        "pensionChargesTaxPaid": {
+          "type": "number",
+          "description": "Pension charges tax paid"
+        },
+        "totalPensionSavingCharges": {
+          "type": "number",
+          "description": "Total pension savings charges (\u00a30.00 minus tax treated as paid \u00a30.00)"
+        },
+        "pensionLumpSumAmount": {
+          "type": "number",
+          "description": "Sate pension lump sum payment"
+        },
+        "pensionLumpSumRate": {
+          "type": "number",
+          "description": "State pension lump sum rate"
+        },
+        "statePensionLumpSumAmount": {
+          "type": "number",
+          "description": "State pension lump sum payment amount"
+        },
+        "remittanceBasisChargeForNonDomiciles": {
+          "type": "number",
+          "description": "Remittance basis charge for non-domiciles"
+        },
+        "additionalTaxDueOnPensions": {
+          "type": "number",
+          "description": "Additional tax due on pension payments"
+        },
+        "additionalTaxReliefDueOnPensions": {
+          "type": "number",
+          "description": "Additional tax relief due on pension payments"
+        },
+        "incomeTaxDueAfterPensionDeductions": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Income tax due"
+        },
+        "employmentsPensionsAndBenefits": {
+          "type": "number",
+          "description": "From all employments, UK pensions and state benefits"
+        },
+        "outstandingDebtCollectedThroughPaye": {
+          "type": "number",
+          "description": "Outstanding debt collected through PAYE"
+        },
+        "payeTaxBalance": {
+          "type": "number",
+          "description": "Balance of PAYE tax"
+        },
+        "cisAndTradingIncome": {
+          "type": "number",
+          "description": "CIS and trading income"
+        },
+        "partnerships": {
+          "type": "number",
+          "description": "Partnerships"
+        },
+        "ukLandAndPropertyTaxPaid": {
+          "type": "number",
+          "description": "UK land and property"
+        },
+        "foreignIncomeTaxPaid": {
+          "type": "number",
+          "description": "Foreign income"
+        },
+        "trustAndEstatesTaxPaid": {
+          "type": "number",
+          "description": "Trusts and estates"
+        },
+        "overseasIncomeTaxPaid": {
+          "type": "number",
+          "description": "Overseas income"
+        },
+        "interestReceivedTaxPaid": {
+          "type": "number",
+          "description": "Tax paid on interest received from UK banks and building societies"
+        },
+        "voidISAs": {
+          "type": "number",
+          "description": "Void ISAs"
+        },
+        "otherIncomeTaxPaid": {
+          "type": "number",
+          "description": "Other income"
+        },
+        "underpaidTaxForPriorYear": {
+          "type": "number",
+          "description": "Underpaid tax for previous tax year included in your tax code for this tax year"
+        },
+        "totalTaxDeducted": {
+          "type": "number",
+          "description": "Total tax deducted"
+        },
+        "incomeTaxOverpaid": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Income Tax over paid"
+        },
+        "incomeTaxDueAfterDeductions": {
+          "type": "number",
+          "description": "Total income tax due"
+        },
+        "propertyFinanceTaxDeduction": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Deduction from landlords interest relief"
+        },
+        "taxableCapitalGains": {
+          "type": "number",
+          "description": "Taxable capital gains"
+        },
+        "capitalGainAtEntrepreneurRate": {
+          "type": "number",
+          "description": "Gains that qualify for entrepreneurs' relief"
+        },
+        "incomeTaxOnCapitalGainAtEntrepreneurRate": {
+          "type": "number",
+          "description": "Tax on capital gains that qualify for entrepreneurs' relief"
+        },
+        "capitalGrainsAtLowerRate": {
+          "type": "number",
+          "description": "Gains that qualify for lower rate"
+        },
+        "incomeTaxOnCapitalGainAtLowerRate": {
+          "type": "number",
+          "description": "Tax on capital gains that qualify for lower rate"
+        },
+        "capitalGainAtHigherRate": {
+          "type": "number",
+          "description": "Gains that qualify for higher rate"
+        },
+        "incomeTaxOnCapitalGainAtHigherTax": {
+          "type": "number",
+          "description": "Tax on capital gains that qualify for higher rate"
+        },
+        "capitalGainsTaxAdjustment": {
+          "type": "number",
+          "description": "Capital gains tax adjustment"
+        },
+        "foreignTaxCreditReliefOnCapitalGains": {
+          "type": "number",
+          "description": "Foreign tax credit relief"
+        },
+        "liabilityFromOffShoreTrusts": {
+          "type": "number",
+          "description": "Liability from off-shore trusts"
+        },
+        "taxOnGainsAlreadyCharged": {
+          "type": "number",
+          "description": "Tax on gains already charged"
+        },
+        "totalCapitalGainsTax": {
+          "type": "number",
+          "description": "Total capital gains tax"
+        },
+        "incomeAndCapitalGainsTaxDue": {
+          "type": "number",
+          "description": "Income and capital gains tax due"
+        },
+        "taxRefundedInYear": {
+          "type": "number",
+          "description": "Tax already refunded in the year"
+        },
+        "unpaidTaxCalculatedForEarlierYears": {
+          "type": "number",
+          "description": "Unpaid tax calculated by reference to earlier years"
+        },
+        "marriageAllowanceTransferAmount": {
+          "type": "number",
+          "description": "Marriage allowance transfer amount"
+        },
+        "marriageAllowanceTransferRelief": {
+          "type": "number",
+          "description": "Tax relief on marriage allowance transfer"
+        },
+        "marriageAllowanceTransferMaximumAllowable": {
+          "type": "number",
+          "description": "Maximum marriage allowance transferred"
+        },
+        "nationalRegime": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 16,
+          "description": "This defines the national tax rates and rules to be applied. Values are UK and Scotland"
+        },
+        "allowance": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Allowance"
+        },
+        "limitBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Limit for basic rate"
+        },
+        "limitHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Limit for higher rate"
+        },
+        "rateBRT": {
+          "$ref": "#/definitions2/percent",
+          "description": "Basic rate"
+        },
+        "rateHRT": {
+          "$ref": "#/definitions2/percent",
+          "description": "Higher rate"
+        },
+        "rateART": {
+          "$ref": "#/definitions2/percent",
+          "description": "Above all rate"
+        },
+        "limitAIA": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Limit AIA"
+        },
+        "allowanceBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Allowance for basic rate"
+        },
+        "interestAllowanceHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Allowance on interest at higher rate"
+        },
+        "interestAllowanceBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Allowance on interest at basic rate"
+        },
+        "dividendAllowance": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Allowance on dividends"
+        },
+        "dividendBRT": {
+          "$ref": "#/definitions2/percent",
+          "description": "Dividends at basic rate"
+        },
+        "dividendHRT": {
+          "$ref": "#/definitions2/percent",
+          "description": "Dividends at higher rate"
+        },
+        "dividendART": {
+          "$ref": "#/definitions2/percent",
+          "description": "Dividends at above all"
+        },
+        "class2NICsLimit": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "NICs class 2 limit"
+        },
+        "class2NICsPerWeek": {
+          "$ref": "#/definitions2/monetary",
+          "description": "NICs class 2 per week"
+        },
+        "class4NICsLimitBR": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "NICs class 4 basic rate limit"
+        },
+        "class4NICsLimitHR": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "NICs class 4 higher rate limit"
+        },
+        "class4NICsBRT": {
+          "$ref": "#/definitions2/percent",
+          "description": "NICs class 4 basic rate"
+        },
+        "class4NICsHRT": {
+          "$ref": "#/definitions2/percent",
+          "description": "NICs class 4 higher rate"
+        },
+        "proportionAllowance": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportional personal allowance"
+        },
+        "proportionLimitBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportional limit basic rate"
+        },
+        "proportionLimitHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion limit higher rate"
+        },
+        "proportionalTaxDue": {
+          "$ref": "#/definitions2/monetary",
+          "description": "Proportion tax due"
+        },
+        "proportionInterestAllowanceBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion interest allowance basic rate"
+        },
+        "proportionInterestAllowanceHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion interest allowance higher rate"
+        },
+        "proportionDividendAllowance": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion dividend allowance"
+        },
+        "proportionPayPensionsProfitAtART": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion pay pensions profit at above all rate"
+        },
+        "proportionIncomeTaxOnPayPensionsProfitAtART": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on pay pensions at above all rate"
+        },
+        "proportionPayPensionsProfitAtBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion pay pensions at basic rate"
+        },
+        "proportionIncomeTaxOnPayPensionsProfitAtBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on pay pensions profit at higher rate"
+        },
+        "proportionPayPensionsProfitAtHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion pay pensions profit at higher rate"
+        },
+        "proportionIncomeTaxOnPayPensionsProfitAtHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on pay pensions at higher rate"
+        },
+        "proportionInterestReceivedAtZeroRate": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion interest at zero rate"
+        },
+        "proportionIncomeTaxOnInterestReceivedAtZeroRate": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on interest received at zero rat"
+        },
+        "proportionInterestReceivedAtBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion interest received at basis rate"
+        },
+        "proportionIncomeTaxOnInterestReceivedAtBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on interest received at basic rate"
+        },
+        "proportionInterestReceivedAtHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion interest on higher rate"
+        },
+        "proportionIncomeTaxOnInterestReceivedAtHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on interest on higher rate"
+        },
+        "proportionInterestReceivedAtART": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion interest at above all rate"
+        },
+        "proportionIncomeTaxOnInterestReceivedAtART": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on interest at above all rate"
+        },
+        "proportionDividendsAtZeroRate": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion dividends at zero rate"
+        },
+        "proportionIncomeTaxOnDividendsAtZeroRate": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on dividends at zero rate"
+        },
+        "proportionDividendsAtBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion dividend at basic rate"
+        },
+        "proportionIncomeTaxOnDividendsAtBRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on dividends at basic rate"
+        },
+        "proportionDividendsAtHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion dividend at higher rate"
+        },
+        "proportionIncomeTaxOnDividendsAtHRT": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax on dividend at higher rate"
+        },
+        "proportionDividendsAtART": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion dividends at above all rate"
+        },
+        "proportionIncomeTaxOnDividendsAtART": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion income tax dividends at above all rate"
+        },
+        "proportionClass2NICsLimit": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion class 2 NICs limit"
+        },
+        "proportionClass4NICsLimitBR": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion class 4 NICs basic rate limit"
+        },
+        "proportionClass4NICsLimitHR": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion class 4 NICs higher rate Limit"
+        },
+        "proportionReducedAllowanceLimit": {
+          "$ref": "#/definitions2/wholePounds",
+          "description": "Proportion reduced allowance limit"
+        },
+        "eoyEstimate": {
+          "$ref": "#/definitions2/endOfYearEstimate",
+          "description": "End-of-year estimate"
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "wholePounds": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 99999999.0,
+          "multipleOf": 1.0,
+          "description": "Defines amounts given in whole pounds between 0.00 and 99.99"
+        },
+        "monetary": {
+          "type": "number",
+          "minimum": -100000000.0,
+          "maximum": 100000000.0,
+          "multipleOf": 0.01,
+          "description": "Defines a monetary value (to 2 decimal places), between -99,999,999.99 and 99,999,999.99"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The Income Source ID",
+                      "type": "string"
+                    },
+                    "taxableIncome": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Estimated taxable income for source"
+                    },
+                    "supplied": {
+                      "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+                      "type": "boolean"
+                    },
+                    "finalised": {
+                      "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "taxableIncome",
+                    "supplied"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^id$": {},
+                    "^taxableIncome$": {},
+                    "^supplied$": {},
+                    "^finalised$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "CalculationResponse",
+                  "type": "object",
+                  "required:": [
+                    "incomeTaxYTD",
+                    "incomeTaxThisPeriod"
+                  ],
+                  "definitions2": {
+                    "monetary": {
+                      "type": "number",
+                      "minimum": -100000000.0,
+                      "maximum": 100000000.0,
+                      "multipleOf": 0.01,
+                      "description": "Defines a monetary value (to 2 decimal places), between -99,999,999.99 and 99,999,999.99"
+                    },
+                    "wholePounds": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 99999999,
+                      "multipleOf": 1,
+                      "description": "Defines amounts given in whole pounds between 0.00 and 99.99"
+                    },
+                    "percent": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 99.99,
+                      "multipleOf": 0.01,
+                      "description": "Defines a percentage rate (to 2 decimal places), between 0.00 and 99.99"
+                    },
+                    "endOfYearEstimate": {
+                      "type": "object",
+                      "properties": {
+                        "selfEmployment": {
+                          "$ref": "#/definitions2/selfEmployment",
+                          "description": "An array of self-employment income sources"
+                        },
+                        "ukProperty": {
+                          "$ref": "#/definitions2/ukProperty",
+                          "description": "An array of UK property income sources"
+                        },
+                        "totalTaxableIncome": {
+                          "$ref": "#/definitions2/monetary",
+                          "description": "Sum of estimated taxable income for all income sources"
+                        },
+                        "incomeTaxAmount": {
+                          "$ref": "#/definitions2/monetary",
+                          "description": "Calculated Income tax amount from estimated taxable income"
+                        },
+                        "nic2": {
+                          "$ref": "#/definitions2/monetary",
+                          "description": "Calculated NIC Class 2 from estimates"
+                        },
+                        "nic4": {
+                          "$ref": "#/definitions2/monetary",
+                          "description": "Calculated NIC Class 4 from estimates"
+                        },
+                        "totalNicAmount": {
+                          "$ref": "#/definitions2/monetary",
+                          "description": "Sum of National Insurance amounts"
+                        },
+                        "incomeTaxNicAmount": {
+                          "$ref": "#/definitions2/monetary",
+                          "description": "Total of calculated Income Tax and National Insurance from estimated annual taxable income"
+                        }
+                      }
+                    },
+                    "selfEmployment": {
+                      "description": "An array of annualised estimated income by income source",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "The Income Source ID",
+                            "type": "string"
+                          },
+                          "taxableIncome": {
+                            "$ref": "#/definitions2/monetary",
+                            "description": "Estimated taxable income for source"
+                          },
+                          "supplied": {
+                            "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+                            "type": "boolean"
+                          },
+                          "finalised": {
+                            "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "taxableIncome",
+                          "supplied"
+                        ],
+                        "unevaluatedProperties": false
+                      }
+                    },
+                    "ukProperty": {
+                      "description": "An array of annualised estimated income by income source",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "taxableIncome": {
+                            "$ref": "#/definitions2/monetary",
+                            "description": "Estimated taxable income for source"
+                          },
+                          "supplied": {
+                            "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+                            "type": "boolean"
+                          },
+                          "finalised": {
+                            "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "taxableIncome",
+                          "supplied"
+                        ],
+                        "unevaluatedProperties": false
+                      }
+                    }
+                  },
+                  "properties": {
+                    "proportionIncomeTaxOnDividendsAtHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on dividend at higher rate"
+                    },
+                    "totalClass4Charge": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Total charge on class 4 national insurance contributions"
+                    },
+                    "class4NICsHRT": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "NICs class 4 higher rate"
+                    },
+                    "totalPensionSavingCharges": {
+                      "type": "number",
+                      "description": "Total pension savings charges (\u00a30.00 minus tax treated as paid \u00a30.00)"
+                    },
+                    "incomeTaxRelief": {
+                      "type": "number",
+                      "description": "Amount of total reliefs for deduction"
+                    },
+                    "totalIncomeAllowancesUsed": {
+                      "type": "number",
+                      "description": "Total of deductions and allowances used"
+                    },
+                    "proportionInterestReceivedAtART": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion interest at above all rate"
+                    },
+                    "nationalInsuranceContributionSupAmount": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "National insurance contribution sup amount"
+                    },
+                    "marriageAllowanceTransfer": {
+                      "type": "number",
+                      "description": "Marriage allowance transfer"
+                    },
+                    "interestReceivedAtHRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of interest received from a bank or building society etc. at higher rate (HRT)"
+                    },
+                    "proportionClass2NICsLimit": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion class 2 NICs limit"
+                    },
+                    "incomeTaxOnDividendsAtHRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on Dividends from companies etc at higher rate"
+                    },
+                    "nationalInsuranceContributionSupCharge": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "National insurance contribution sup charge"
+                    },
+                    "incomeTaxOnInterestReceivedAtART": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on interest received from a bank or building society etc. at additional higher rate (AHRT)"
+                    },
+                    "socialInvestmentTaxRelief": {
+                      "type": "number",
+                      "description": "Social investment tax relief"
+                    },
+                    "proportionLimitBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportional limit basic rate"
+                    },
+                    "marriedCouplesAllowanceRelief": {
+                      "type": "number",
+                      "description": "Relief on married couple's allowance"
+                    },
+                    "class2NICsPerWeek": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "NICs class 2 per week"
+                    },
+                    "proportionIncomeTaxOnInterestReceivedAtBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on interest received at basic rate"
+                    },
+                    "incomeTaxDueAfterGiftAidReduction": {
+                      "type": "number",
+                      "description": "Income tax due after gift aid"
+                    },
+                    "payPensionsExtender": {
+                      "type": "number",
+                      "description": "Basic rate band extension amount relating to pension payments made net"
+                    },
+                    "nationalInsuranceClass1Amount": {
+                      "type": "number",
+                      "description": "National insurance class 1 amount"
+                    },
+                    "capitalGainAtHigherRate": {
+                      "type": "number",
+                      "description": "Gains that qualify for higher rate"
+                    },
+                    "proportionReducedAllowanceLimit": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion reduced allowance limit"
+                    },
+                    "interestAllowanceBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Allowance on interest at basic rate"
+                    },
+                    "statePensionLumpSumAmount": {
+                      "type": "number",
+                      "description": "State pension lump sum payment amount"
+                    },
+                    "nationalRegime": {
+                      "type": "string",
+                      "minLength": 2,
+                      "maxLength": 16,
+                      "description": "This defines the national tax rates and rules to be applied. Values are UK and Scotland"
+                    },
+                    "capitalGainsTaxAdjustment": {
+                      "type": "number",
+                      "description": "Capital gains tax adjustment"
+                    },
+                    "rateHRT": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "Higher rate"
+                    },
+                    "notionalTaxFromLifePolicies": {
+                      "type": "number",
+                      "description": "Notional tax from gains on life policies etc."
+                    },
+                    "allowance": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Allowance"
+                    },
+                    "incomeTaxOnCapitalGainAtEntrepreneurRate": {
+                      "type": "number",
+                      "description": "Tax on capital gains that qualify for entrepreneurs' relief"
+                    },
+                    "foreignIncomeTaxPaid": {
+                      "type": "number",
+                      "description": "Foreign income"
+                    },
+                    "topSlicingRelief": {
+                      "type": "number",
+                      "description": "Top slicing relief"
+                    },
+                    "pensionLumpSumRate": {
+                      "type": "number",
+                      "description": "State pension lump sum rate"
+                    },
+                    "underpaidTaxForPriorYear": {
+                      "type": "number",
+                      "description": "Underpaid tax for previous tax year included in your tax code for this tax year"
+                    },
+                    "foreignTaxCreditReliefOnCapitalGains": {
+                      "type": "number",
+                      "description": "Foreign tax credit relief"
+                    },
+                    "payPensionsProfitAtHRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of pay, pensions and profit at the higher rate of tax (HRT)"
+                    },
+                    "class2NICsLimit": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "NICs class 2 limit"
+                    },
+                    "incomeTaxOnCapitalGainAtLowerRate": {
+                      "type": "number",
+                      "description": "Tax on capital gains that qualify for lower rate"
+                    },
+                    "giftExtender": {
+                      "type": "number",
+                      "description": "Basic rate band extension amount relating to gift aid"
+                    },
+                    "incomeTaxOnDividendsAtZeroRate": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on dividends from companies etc. at zero rate"
+                    },
+                    "incomeTaxOnPayPensionsProfitAtHRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on pay, pensions and profit at the higher rate of tax (HRT)"
+                    },
+                    "rateART": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "Above all rate"
+                    },
+                    "marriedCouplesAllowance": {
+                      "type": "number",
+                      "description": "Married couple's allowance amount"
+                    },
+                    "blindPersonSurplusAllowanceFromSpouse": {
+                      "type": "number",
+                      "description": "Blind person's surplus allowance from spouse"
+                    },
+                    "benefitsAndExpensesReceived": {
+                      "type": "number",
+                      "description": "Benefits and expenses received"
+                    },
+                    "limitAIA": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Limit AIA"
+                    },
+                    "nationalInsuranceClass2Amount": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Charge on class 2 national insurance contributions"
+                    },
+                    "incomeTaxYTD": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Details the amount of income tax is due based on the year to date figures supplied"
+                    },
+                    "incomeTaxCharged": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Income tax charges"
+                    },
+                    "enterpriseInvestmentSchemeRelief": {
+                      "type": "number",
+                      "description": "Enterprise investment scheme relief"
+                    },
+                    "overseasIncomeTaxPaid": {
+                      "type": "number",
+                      "description": "Overseas income"
+                    },
+                    "proportionIncomeTaxOnDividendsAtZeroRate": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on dividends at zero rate"
+                    },
+                    "incomeTaxOnDividendsAtART": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on dividends from companies etc at additional higher rate"
+                    },
+                    "capitalGainAtEntrepreneurRate": {
+                      "type": "number",
+                      "description": "Gains that qualify for entrepreneurs' relief"
+                    },
+                    "surplusMarriedCouplesAllowanceRelief": {
+                      "type": "number",
+                      "description": "Relief on married couple's allowance surplus"
+                    },
+                    "annuities": {
+                      "type": "number",
+                      "description": "Amount of annuities for deduction"
+                    },
+                    "dividendsAtZeroRate": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of dividends from companies etc. at zero rate"
+                    },
+                    "additionalTaxDueOnPensions": {
+                      "type": "number",
+                      "description": "Additional tax due on pension payments"
+                    },
+                    "nationalInsuranceContributionAmount": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "National insurance contribution amount"
+                    },
+                    "payFromAllEmploymentsAfterExpenses": {
+                      "type": "number",
+                      "description": "Total from all employments"
+                    },
+                    "nicTotal": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Total of class 2 and class 4 national insurance contributions"
+                    },
+                    "dividendsAtBRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of dividends from companies etc at basic rate"
+                    },
+                    "payeTaxBalance": {
+                      "type": "number",
+                      "description": "Balance of PAYE tax"
+                    },
+                    "proportionDividendsAtZeroRate": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion dividends at zero rate"
+                    },
+                    "cisAndTradingIncome": {
+                      "type": "number",
+                      "description": "CIS and trading income"
+                    },
+                    "incomeTaxOnInterestReceivedAtBRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on interest received from a bank or building society etc. at basic rate (BRT)"
+                    },
+                    "class4NICsLimitBR": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "NICs class 4 basic rate limit"
+                    },
+                    "blindPersonAllowance": {
+                      "type": "number",
+                      "description": "Blind person's allowance"
+                    },
+                    "incomeTaxDue": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Income tax due"
+                    },
+                    "totalIncomeReceived": {
+                      "type": "number",
+                      "description": "Total income received"
+                    },
+                    "communityInvestmentTaxRelief": {
+                      "type": "number",
+                      "description": "Community investment tax relief"
+                    },
+                    "remittanceBasisChargeForNonDomiciles": {
+                      "type": "number",
+                      "description": "Remittance basis charge for non-domiciles"
+                    },
+                    "gainsOnLifeInsurance": {
+                      "type": "number",
+                      "description": "Gains on life insurance policies etc."
+                    },
+                    "totalGiftAidTaxReduced": {
+                      "type": "number",
+                      "description": "Total of gift aid tax reduction"
+                    },
+                    "unpaidTaxCalculatedForEarlierYears": {
+                      "type": "number",
+                      "description": "Unpaid tax calculated by reference to earlier years"
+                    },
+                    "dividendART": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "Dividends at above all"
+                    },
+                    "allowanceBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Allowance for basic rate"
+                    },
+                    "foreignIncome": {
+                      "type": "number",
+                      "description": "Foreign income"
+                    },
+                    "partnerships": {
+                      "type": "number",
+                      "description": "Partnerships"
+                    },
+                    "incomeTaxDueAfterDeductions": {
+                      "type": "number",
+                      "description": "Total income tax due"
+                    },
+                    "proportionIncomeTaxOnPayPensionsProfitAtART": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on pay pensions at above all rate"
+                    },
+                    "seedEnterpriseInvestmentSchemeRelief": {
+                      "type": "number",
+                      "description": "Seed enterprise investment scheme relief"
+                    },
+                    "proportionPayPensionsProfitAtART": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion pay pensions profit at above all rate"
+                    },
+                    "foreignTaxOnEstates": {
+                      "type": "number",
+                      "description": "Foreign tax on estates (tax credit relief not claimed)"
+                    },
+                    "underpaidTaxForPreviousYears": {
+                      "type": "number",
+                      "description": "Underpaid tax for earlier years in your tax code for 2015-16"
+                    },
+                    "incomeTaxOnCapitalGainAtHigherTax": {
+                      "type": "number",
+                      "description": "Tax on capital gains that qualify for higher rate"
+                    },
+                    "incomeTaxOnPayPensionsProfitAtBRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on pay, pensions and profit at the basic rate of tax (BRT)"
+                    },
+                    "pensionLumpSumAmount": {
+                      "type": "number",
+                      "description": "Sate pension lump sum payment"
+                    },
+                    "proportionClass4NICsLimitBR": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion class 4 NICs basic rate limit"
+                    },
+                    "proportionIncomeTaxOnDividendsAtBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on dividends at basic rate"
+                    },
+                    "taxOnGainsAlreadyCharged": {
+                      "type": "number",
+                      "description": "Tax on gains already charged"
+                    },
+                    "studentLoanRepayments": {
+                      "type": "number",
+                      "description": "Student loan repayments"
+                    },
+                    "voidISAs": {
+                      "type": "number",
+                      "description": "Void ISAs"
+                    },
+                    "proportionalTaxDue": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Proportion tax due"
+                    },
+                    "interestReceivedTaxPaid": {
+                      "type": "number",
+                      "description": "Tax paid on interest received from UK banks and building societies"
+                    },
+                    "proportionClass4NICsLimitHR": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion class 4 NICs higher rate Limit"
+                    },
+                    "incomeTaxOnInterestReceivedAtZeroRate": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on interest received from a bank or building society etc. at zero Rate"
+                    },
+                    "incomeAndCapitalGainsTaxDue": {
+                      "type": "number",
+                      "description": "Income and capital gains tax due"
+                    },
+                    "proportionInterestReceivedAtHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion interest on higher rate"
+                    },
+                    "otherIncomeTaxPaid": {
+                      "type": "number",
+                      "description": "Other income"
+                    },
+                    "incomeTaxOnInterestReceivedAtHRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on interest received from a bank or building society etc. at higher rate (HRT)"
+                    },
+                    "foreignTaxCreditRelief": {
+                      "type": "number",
+                      "description": "Foreign tax credit relief"
+                    },
+                    "proportionLimitHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion limit higher rate"
+                    },
+                    "limitBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Limit for basic rate"
+                    },
+                    "netPropertyFinanceCosts": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Net property finance costs - from landlords interest relief"
+                    },
+                    "dividendsAtART": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of dividends from companies etc at additional higher rate"
+                    },
+                    "profitFromPartnerships": {
+                      "type": "number",
+                      "description": "Profit from partnerships"
+                    },
+                    "proportionIncomeTaxOnPayPensionsProfitAtHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on pay pensions at higher rate"
+                    },
+                    "proportionIncomeTaxOnDividendsAtART": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax dividends at above all rate"
+                    },
+                    "taxableCapitalGains": {
+                      "type": "number",
+                      "description": "Taxable capital gains"
+                    },
+                    "eoyEstimate": {
+                      "$ref": "#/definitions2/endOfYearEstimate",
+                      "description": "End-of-year estimate"
+                    },
+                    "proportionDividendAllowance": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion dividend allowance"
+                    },
+                    "totalCapitalGainsTax": {
+                      "type": "number",
+                      "description": "Total capital gains tax"
+                    },
+                    "dividendsFromUkCompanies": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Dividends from UK companies (plus 10% tax credits)"
+                    },
+                    "proportionIncomeTaxOnInterestReceivedAtHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on interest on higher rate"
+                    },
+                    "totalIncomeOnWhichTaxHasBeenCharged": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Total income on which tax is due"
+                    },
+                    "interestReceivedAtStartingRate": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of interest received from a bank or building society etc. at starting rate (SR)"
+                    },
+                    "incomeTaxDueAfterPensionDeductions": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Income tax due"
+                    },
+                    "ventureCapitalTrustRelief": {
+                      "type": "number",
+                      "description": "Venture capital trust relief"
+                    },
+                    "marriageAllowanceTransferMaximumAllowable": {
+                      "type": "number",
+                      "description": "Maximum marriage allowance transferred"
+                    },
+                    "profitFromUkLandAndProperty": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Profit from UK land and property"
+                    },
+                    "dividendHRT": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "Dividends at higher rate"
+                    },
+                    "taxRefundedInYear": {
+                      "type": "number",
+                      "description": "Tax already refunded in the year"
+                    },
+                    "incomeTaxOnPayPensionsProfitAtART": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on pay, pensions and profit at the additional higher rate of tax (AHRT)"
+                    },
+                    "payPensionsProfitAtBRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of pay, pensions and profit at the basic rate of tax (BRT)"
+                    },
+                    "pensionChargesTaxPaid": {
+                      "type": "number",
+                      "description": "Pension charges tax paid"
+                    },
+                    "proportionInterestAllowanceBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion interest allowance basic rate"
+                    },
+                    "incomeTaxReliefReducedToMaximumAllowable": {
+                      "type": "number",
+                      "description": "Amount of total reliefs for deduction restricted to permitted maximum"
+                    },
+                    "employmentsPensionsAndBenefits": {
+                      "type": "number",
+                      "description": "From all employments, UK pensions and state benefits"
+                    },
+                    "extendedBR": {
+                      "type": "number",
+                      "description": "Amount for extending basic rate band"
+                    },
+                    "pensionChargesGross": {
+                      "type": "number",
+                      "description": "Total pension saving charges"
+                    },
+                    "personalAllowance": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Reduced personal allowance"
+                    },
+                    "incomeTaxOverpaid": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Income Tax over paid"
+                    },
+                    "interestReceivedAtZeroRate": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of interest received from a bank or building society etc. at zero Rate"
+                    },
+                    "payPensionsProfitAtART": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of pay, pensions and profit at the additional higher rate of tax (AHRT)"
+                    },
+                    "otherIncome": {
+                      "type": "number",
+                      "description": "Other income"
+                    },
+                    "proportionIncomeTaxOnInterestReceivedAtART": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on interest at above all rate"
+                    },
+                    "marriageAllowanceTransferAmount": {
+                      "type": "number",
+                      "description": "Marriage allowance transfer amount"
+                    },
+                    "interestAllowanceHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Allowance on interest at higher rate"
+                    },
+                    "dividendsAtHRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of Dividends from companies etc at higher rate"
+                    },
+                    "rateBRT": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "Basic rate"
+                    },
+                    "incomeTaxOnDividendsAtBRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on dividends from companies etc at basic rate"
+                    },
+                    "giftAidPaymentsAmount": {
+                      "type": "number",
+                      "description": "Amount of gift aid payments"
+                    },
+                    "propertyFinanceTaxDeduction": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Deduction from landlords interest relief"
+                    },
+                    "dividendBRT": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "Dividends at basic rate"
+                    },
+                    "incomeExcluded": {
+                      "type": "number",
+                      "description": "Amount of income excluded from this calculation"
+                    },
+                    "dividendsFromForeignCompanies": {
+                      "type": "number",
+                      "description": "Dividends from foreign companies"
+                    },
+                    "proportionDividendsAtHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion dividend at higher rate"
+                    },
+                    "totalIncomeOnWhichTaxIsDue": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Total income on which tax is due"
+                    },
+                    "proportionPayPensionsProfitAtBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion pay pensions at basic rate"
+                    },
+                    "trustAndEstatesTaxPaid": {
+                      "type": "number",
+                      "description": "Trusts and estates"
+                    },
+                    "class4NICsLimitHR": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "NICs class 4 higher rate limit"
+                    },
+                    "maintenanceAndAlimonyPaid": {
+                      "type": "number",
+                      "description": "Maintenance and alimony paid"
+                    },
+                    "incomeTaxDueAfterDividendTaxCredits": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Income tax due after dividend tax credits"
+                    },
+                    "incomeTaxDueAfterAllowancesAndReliefs": {
+                      "type": "number",
+                      "description": "Income tax due after allowances and reliefs"
+                    },
+                    "giftAidTaxDue": {
+                      "type": "number",
+                      "description": "Tax due on gift aid payments"
+                    },
+                    "proportionIncomeTaxOnPayPensionsProfitAtBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on pay pensions profit at higher rate"
+                    },
+                    "class4NICsBRT": {
+                      "$ref": "#/definitions2/percent",
+                      "description": "NICs class 4 basic rate"
+                    },
+                    "nationalInsuranceContributionCharge": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "National insurance contribution charge"
+                    },
+                    "additionalTaxReliefDueOnPensions": {
+                      "type": "number",
+                      "description": "Additional tax relief due on pension payments"
+                    },
+                    "paymentsIntoARetirementAnnuity": {
+                      "type": "number",
+                      "description": "Payments into a retirement annuity contract etc."
+                    },
+                    "annuityAmount": {
+                      "type": "number",
+                      "description": "Amount of annuity and royalty payments"
+                    },
+                    "ukPensionsAndStateBenefits": {
+                      "type": "number",
+                      "description": "UK pensions and state benefits"
+                    },
+                    "liabilityFromOffShoreTrusts": {
+                      "type": "number",
+                      "description": "Liability from off-shore trusts"
+                    },
+                    "taxDueOnAnnuity": {
+                      "type": "number",
+                      "description": "Tax annuity and royalty payments"
+                    },
+                    "trustsAndEstates": {
+                      "type": "number",
+                      "description": "Trusts and estates"
+                    },
+                    "profitFromSelfEmployment": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Profit from self-employment"
+                    },
+                    "marriageAllowanceTransferRelief": {
+                      "type": "number",
+                      "description": "Tax relief on marriage allowance transfer"
+                    },
+                    "proportionDividendsAtBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion dividend at basic rate"
+                    },
+                    "interestReceivedAtBRT": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of interest received from a bank or building society etc. at basic rate (BRT)"
+                    },
+                    "incomeTaxOnInterestReceivedAtStartingRate": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax on interest received from a bank or building society etc. at starting rate (SR)"
+                    },
+                    "proportionIncomeTaxOnInterestReceivedAtZeroRate": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion income tax on interest received at zero rat"
+                    },
+                    "dividendAllowance": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Allowance on dividends"
+                    },
+                    "interestReceivedFromUkBanksAndBuildingSocieties": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Interest received from UK banks and building societies"
+                    },
+                    "proportionInterestReceivedAtBRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion interest received at basis rate"
+                    },
+                    "highIncomeChildBenefitCharge": {
+                      "type": "number",
+                      "description": "High income child benefit charge"
+                    },
+                    "taxOnOtherIncome": {
+                      "type": "number",
+                      "description": "Tax on income excluded from this calculation"
+                    },
+                    "capitalGrainsAtLowerRate": {
+                      "type": "number",
+                      "description": "Gains that qualify for lower rate"
+                    },
+                    "taxCreditsOnDividendsFromUkCompanies": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Tax credits on dividends from UK companies (not repayable)"
+                    },
+                    "surplusMarriedCouplesAllowance": {
+                      "type": "number",
+                      "description": "Married couple's allowance surplus amount from spouse"
+                    },
+                    "proportionDividendsAtART": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion dividends at above all rate"
+                    },
+                    "shareSchemes": {
+                      "type": "number",
+                      "description": "Share schemes"
+                    },
+                    "totalTaxDeducted": {
+                      "type": "number",
+                      "description": "Total tax deducted"
+                    },
+                    "payFromAllEmployments": {
+                      "type": "number",
+                      "description": "Pay from all employments"
+                    },
+                    "incomeTaxThisPeriod": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Details the amount of income tax is due this period. This is based on the incomeTaxYTD less the amount in the same data item from the calculation result from the preceding period"
+                    },
+                    "limitHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Limit for higher rate"
+                    },
+                    "interestReceivedAtART": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Amount of interest received from a bank or building society etc. at additional higher rate (AHRT)"
+                    },
+                    "outstandingDebtCollectedThroughPaye": {
+                      "type": "number",
+                      "description": "Outstanding debt collected through PAYE"
+                    },
+                    "ukLandAndPropertyTaxPaid": {
+                      "type": "number",
+                      "description": "UK land and property"
+                    },
+                    "proportionAllowance": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportional personal allowance"
+                    },
+                    "proportionInterestAllowanceHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion interest allowance higher rate"
+                    },
+                    "notionalTaxFromDividendsAndOtherIncome": {
+                      "type": "number",
+                      "description": "Notional tax from stock dividends and other income"
+                    },
+                    "allowableExpenses": {
+                      "type": "number",
+                      "description": "Allowable expenses"
+                    },
+                    "capitalGainsTaxDue": {
+                      "type": "number",
+                      "description": "Capital gains tax due"
+                    },
+                    "proportionInterestReceivedAtZeroRate": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion interest at zero rate"
+                    },
+                    "giftOfInvestmentsAndPropertyToCharity": {
+                      "type": "number",
+                      "description": "Gift of investments and property to charity for deduction"
+                    },
+                    "remittanceForNonDomiciles": {
+                      "type": "number",
+                      "description": "Remittance basis charge for non-domiciles"
+                    },
+                    "proportionPayPensionsProfitAtHRT": {
+                      "$ref": "#/definitions2/wholePounds",
+                      "description": "Proportion pay pensions profit at higher rate"
+                    },
+                    "deficiencyRelief": {
+                      "type": "number",
+                      "description": "Deficiency relief"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^totalIncomeAllowancesUsed$": {},
+                    "^voidISAs$": {},
+                    "^allowanceBRT$": {},
+                    "^proportionDividendAllowance$": {},
+                    "^statePensionLumpSumAmount$": {},
+                    "^incomeTaxDueAfterGiftAidReduction$": {},
+                    "^proportionIncomeTaxOnDividendsAtZeroRate$": {},
+                    "^payeTaxBalance$": {},
+                    "^class4NICsBRT$": {},
+                    "^incomeAndCapitalGainsTaxDue$": {},
+                    "^allowance$": {},
+                    "^capitalGainsTaxDue$": {},
+                    "^incomeTaxOnDividendsAtHRT$": {},
+                    "^totalPensionSavingCharges$": {},
+                    "^proportionReducedAllowanceLimit$": {},
+                    "^dividendBRT$": {},
+                    "^incomeTaxOnCapitalGainAtLowerRate$": {},
+                    "^marriageAllowanceTransferRelief$": {},
+                    "^blindPersonAllowance$": {},
+                    "^interestReceivedAtHRT$": {},
+                    "^incomeTaxOnInterestReceivedAtStartingRate$": {},
+                    "^limitBRT$": {},
+                    "^foreignTaxOnEstates$": {},
+                    "^employmentsPensionsAndBenefits$": {},
+                    "^capitalGrainsAtLowerRate$": {},
+                    "^incomeTaxThisPeriod$": {},
+                    "^propertyFinanceTaxDeduction$": {},
+                    "^giftAidPaymentsAmount$": {},
+                    "^ukPensionsAndStateBenefits$": {},
+                    "^trustsAndEstates$": {},
+                    "^totalGiftAidTaxReduced$": {},
+                    "^foreignTaxCreditReliefOnCapitalGains$": {},
+                    "^nationalInsuranceContributionCharge$": {},
+                    "^topSlicingRelief$": {},
+                    "^nicTotal$": {},
+                    "^capitalGainAtEntrepreneurRate$": {},
+                    "^incomeTaxOnInterestReceivedAtBRT$": {},
+                    "^eoyEstimate$": {},
+                    "^incomeTaxReliefReducedToMaximumAllowable$": {},
+                    "^proportionDividendsAtART$": {},
+                    "^payFromAllEmploymentsAfterExpenses$": {},
+                    "^overseasIncomeTaxPaid$": {},
+                    "^unpaidTaxCalculatedForEarlierYears$": {},
+                    "^incomeTaxRelief$": {},
+                    "^incomeTaxYTD$": {},
+                    "^incomeTaxOnCapitalGainAtHigherTax$": {},
+                    "^incomeTaxOnPayPensionsProfitAtBRT$": {},
+                    "^taxRefundedInYear$": {},
+                    "^pensionLumpSumAmount$": {},
+                    "^marriageAllowanceTransferMaximumAllowable$": {},
+                    "^proportionLimitBRT$": {},
+                    "^nationalInsuranceClass2Amount$": {},
+                    "^incomeTaxOnPayPensionsProfitAtHRT$": {},
+                    "^notionalTaxFromDividendsAndOtherIncome$": {},
+                    "^incomeTaxOnDividendsAtZeroRate$": {},
+                    "^annuities$": {},
+                    "^highIncomeChildBenefitCharge$": {},
+                    "^cisAndTradingIncome$": {},
+                    "^totalTaxDeducted$": {},
+                    "^maintenanceAndAlimonyPaid$": {},
+                    "^incomeExcluded$": {},
+                    "^dividendsAtBRT$": {},
+                    "^payPensionsExtender$": {},
+                    "^taxOnGainsAlreadyCharged$": {},
+                    "^interestReceivedAtStartingRate$": {},
+                    "^proportionIncomeTaxOnPayPensionsProfitAtBRT$": {},
+                    "^foreignIncomeTaxPaid$": {},
+                    "^proportionDividendsAtBRT$": {},
+                    "^interestReceivedAtBRT$": {},
+                    "^taxOnOtherIncome$": {},
+                    "^interestAllowanceHRT$": {},
+                    "^incomeTaxDueAfterPensionDeductions$": {},
+                    "^giftOfInvestmentsAndPropertyToCharity$": {},
+                    "^proportionInterestReceivedAtART$": {},
+                    "^proportionLimitHRT$": {},
+                    "^trustAndEstatesTaxPaid$": {},
+                    "^dividendsFromForeignCompanies$": {},
+                    "^remittanceBasisChargeForNonDomiciles$": {},
+                    "^nationalInsuranceContributionSupCharge$": {},
+                    "^payPensionsProfitAtBRT$": {},
+                    "^proportionPayPensionsProfitAtBRT$": {},
+                    "^interestReceivedTaxPaid$": {},
+                    "^foreignTaxCreditRelief$": {},
+                    "^nationalInsuranceContributionSupAmount$": {},
+                    "^extendedBR$": {},
+                    "^netPropertyFinanceCosts$": {},
+                    "^class4NICsHRT$": {},
+                    "^class2NICsLimit$": {},
+                    "^proportionInterestAllowanceHRT$": {},
+                    "^surplusMarriedCouplesAllowance$": {},
+                    "^proportionIncomeTaxOnInterestReceivedAtBRT$": {},
+                    "^proportionIncomeTaxOnInterestReceivedAtART$": {},
+                    "^interestAllowanceBRT$": {},
+                    "^marriageAllowanceTransferAmount$": {},
+                    "^incomeTaxOverpaid$": {},
+                    "^nationalInsuranceContributionAmount$": {},
+                    "^incomeTaxOnPayPensionsProfitAtART$": {},
+                    "^nationalRegime$": {},
+                    "^blindPersonSurplusAllowanceFromSpouse$": {},
+                    "^interestReceivedAtART$": {},
+                    "^incomeTaxOnInterestReceivedAtZeroRate$": {},
+                    "^limitHRT$": {},
+                    "^incomeTaxOnDividendsAtBRT$": {},
+                    "^shareSchemes$": {},
+                    "^socialInvestmentTaxRelief$": {},
+                    "^incomeTaxOnInterestReceivedAtHRT$": {},
+                    "^incomeTaxDue$": {},
+                    "^capitalGainsTaxAdjustment$": {},
+                    "^dividendsAtART$": {},
+                    "^totalIncomeOnWhichTaxIsDue$": {},
+                    "^ventureCapitalTrustRelief$": {},
+                    "^communityInvestmentTaxRelief$": {},
+                    "^incomeTaxDueAfterDividendTaxCredits$": {},
+                    "^proportionClass4NICsLimitBR$": {},
+                    "^proportionIncomeTaxOnInterestReceivedAtHRT$": {},
+                    "^profitFromPartnerships$": {},
+                    "^payPensionsProfitAtART$": {},
+                    "^ukLandAndPropertyTaxPaid$": {},
+                    "^proportionalTaxDue$": {},
+                    "^underpaidTaxForPriorYear$": {},
+                    "^class2NICsPerWeek$": {},
+                    "^payFromAllEmployments$": {},
+                    "^limitAIA$": {},
+                    "^otherIncomeTaxPaid$": {},
+                    "^pensionChargesGross$": {},
+                    "^dividendsAtHRT$": {},
+                    "^proportionIncomeTaxOnInterestReceivedAtZeroRate$": {},
+                    "^proportionIncomeTaxOnPayPensionsProfitAtART$": {},
+                    "^incomeTaxOnCapitalGainAtEntrepreneurRate$": {},
+                    "^interestReceivedAtZeroRate$": {},
+                    "^taxableCapitalGains$": {},
+                    "^proportionIncomeTaxOnPayPensionsProfitAtHRT$": {},
+                    "^proportionIncomeTaxOnDividendsAtBRT$": {},
+                    "^incomeTaxOnInterestReceivedAtART$": {},
+                    "^marriedCouplesAllowanceRelief$": {},
+                    "^totalCapitalGainsTax$": {},
+                    "^marriedCouplesAllowance$": {},
+                    "^outstandingDebtCollectedThroughPaye$": {},
+                    "^incomeTaxCharged$": {},
+                    "^foreignIncome$": {},
+                    "^proportionIncomeTaxOnDividendsAtART$": {},
+                    "^additionalTaxDueOnPensions$": {},
+                    "^annuityAmount$": {},
+                    "^profitFromUkLandAndProperty$": {},
+                    "^profitFromSelfEmployment$": {},
+                    "^totalIncomeOnWhichTaxHasBeenCharged$": {},
+                    "^liabilityFromOffShoreTrusts$": {},
+                    "^rateHRT$": {},
+                    "^interestReceivedFromUkBanksAndBuildingSocieties$": {},
+                    "^rateBRT$": {},
+                    "^proportionPayPensionsProfitAtART$": {},
+                    "^proportionInterestReceivedAtBRT$": {},
+                    "^dividendHRT$": {},
+                    "^remittanceForNonDomiciles$": {},
+                    "^benefitsAndExpensesReceived$": {},
+                    "^personalAllowance$": {},
+                    "^studentLoanRepayments$": {},
+                    "^proportionDividendsAtHRT$": {},
+                    "^partnerships$": {},
+                    "^gainsOnLifeInsurance$": {},
+                    "^pensionLumpSumRate$": {},
+                    "^otherIncome$": {},
+                    "^paymentsIntoARetirementAnnuity$": {},
+                    "^payPensionsProfitAtHRT$": {},
+                    "^class4NICsLimitHR$": {},
+                    "^dividendAllowance$": {},
+                    "^seedEnterpriseInvestmentSchemeRelief$": {},
+                    "^giftExtender$": {},
+                    "^incomeTaxDueAfterDeductions$": {},
+                    "^proportionInterestReceivedAtHRT$": {},
+                    "^dividendsFromUkCompanies$": {},
+                    "^pensionChargesTaxPaid$": {},
+                    "^proportionIncomeTaxOnDividendsAtHRT$": {},
+                    "^proportionPayPensionsProfitAtHRT$": {},
+                    "^rateART$": {},
+                    "^dividendsAtZeroRate$": {},
+                    "^proportionAllowance$": {},
+                    "^additionalTaxReliefDueOnPensions$": {},
+                    "^proportionClass2NICsLimit$": {},
+                    "^notionalTaxFromLifePolicies$": {},
+                    "^class4NICsLimitBR$": {},
+                    "^underpaidTaxForPreviousYears$": {},
+                    "^capitalGainAtHigherRate$": {},
+                    "^giftAidTaxDue$": {},
+                    "^deficiencyRelief$": {},
+                    "^marriageAllowanceTransfer$": {},
+                    "^totalClass4Charge$": {},
+                    "^proportionInterestReceivedAtZeroRate$": {},
+                    "^surplusMarriedCouplesAllowanceRelief$": {},
+                    "^proportionInterestAllowanceBRT$": {},
+                    "^enterpriseInvestmentSchemeRelief$": {},
+                    "^incomeTaxDueAfterAllowancesAndReliefs$": {},
+                    "^nationalInsuranceClass1Amount$": {},
+                    "^incomeTaxOnDividendsAtART$": {},
+                    "^taxDueOnAnnuity$": {},
+                    "^taxCreditsOnDividendsFromUkCompanies$": {},
+                    "^proportionClass4NICsLimitHR$": {},
+                    "^totalIncomeReceived$": {},
+                    "^allowableExpenses$": {},
+                    "^proportionDividendsAtZeroRate$": {},
+                    "^dividendART$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "percent": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 99.99,
+          "multipleOf": 0.01,
+          "description": "Defines a percentage rate (to 2 decimal places), between 0.00 and 99.99"
+        },
+        "endOfYearEstimate": {
+          "type": "object",
+          "properties": {
+            "ukProperty": {
+              "$ref": "#/definitions2/ukProperty",
+              "description": "An array of UK property income sources"
+            },
+            "nic4": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Calculated NIC Class 4 from estimates"
+            },
+            "incomeTaxAmount": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Calculated Income tax amount from estimated taxable income"
+            },
+            "totalTaxableIncome": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Sum of estimated taxable income for all income sources"
+            },
+            "totalNicAmount": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Sum of National Insurance amounts"
+            },
+            "nic2": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Calculated NIC Class 2 from estimates"
+            },
+            "incomeTaxNicAmount": {
+              "$ref": "#/definitions2/monetary",
+              "description": "Total of calculated Income Tax and National Insurance from estimated annual taxable income"
+            },
+            "selfEmployment": {
+              "$ref": "#/definitions2/selfEmployment",
+              "description": "An array of self-employment income sources"
+            }
+          }
+        },
+        "selfEmployment": {
+          "description": "An array of annualised estimated income by income source",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/modern_2"
+          }
+        },
+        "ukProperty": {
+          "description": "An array of annualised estimated income by income source",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/modern_1"
+          }
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "taxableIncome": {
+                      "$ref": "#/definitions2/monetary",
+                      "description": "Estimated taxable income for source"
+                    },
+                    "supplied": {
+                      "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+                      "type": "boolean"
+                    },
+                    "finalised": {
+                      "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "taxableIncome",
+                    "supplied"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^taxableIncome$": {},
+                    "^supplied$": {},
+                    "^finalised$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_3"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

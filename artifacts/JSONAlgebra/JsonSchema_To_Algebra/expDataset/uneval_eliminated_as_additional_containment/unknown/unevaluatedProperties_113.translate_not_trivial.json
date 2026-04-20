@@ -1,0 +1,201 @@
+{
+  "allOf": [
+    {
+      "$id": "validator.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$id": "validator.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "Validator",
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "edtf",
+              "edtf_year",
+              "geometry_point",
+              "list",
+              "regex",
+              "required",
+              "table"
+            ]
+          },
+          "allowed_values": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "regex": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "list"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "allowed_values"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "regex"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "regex"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Validator",
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "edtf",
+                    "edtf_year",
+                    "geometry_point",
+                    "list",
+                    "regex",
+                    "required",
+                    "table"
+                  ]
+                },
+                "allowed_values": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "regex": {
+                  "type": "string"
+                },
+                "error_message": {
+                  "type": "string"
+                }
+              },
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "type": {
+                              "const": "list"
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "allowed_values"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "type": {
+                            "const": "list"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "type": {
+                              "const": "regex"
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "regex"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "type": {
+                            "const": "regex"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^allowed_values$": true,
+                "^regex$": true,
+                "^error_message$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1936 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "description": "Representation of Wilma stub configuration possibilities",
+      "type": "object",
+      "properties": {
+        "wilmaStubConfiguration": {
+          "type": "object",
+          "properties": {
+            "groupName": {
+              "description": "The name of the Stub Configuration, if it is missing, the name will be considered as: 'Default'",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "default": "Default"
+            },
+            "active": {
+              "description": "Whether the Stub Configuration is active or not, by default: true",
+              "type": "boolean",
+              "default": true
+            },
+            "sequenceDescriptors": {
+              "$ref": "#/definitions3/sequenceDescriptorsDefinition"
+            },
+            "dialogDescriptors": {
+              "$ref": "#/definitions3/dialogDescriptorsDefinition"
+            },
+            "templates": {
+              "$ref": "#/definitions3/templateArrayDefinition"
+            },
+            "interceptors": {
+              "$ref": "#/definitions3/interceptorDefinition"
+            },
+            "conditionSets": {
+              "$ref": "#/definitions3/conditionSetArrayDefinition"
+            },
+            "responseFormatterSets": {
+              "$ref": "#/definitions3/responseFormatterSetsArrayDefinition"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "wilmaStubConfiguration"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$ref": "#/definitions4/modern_18"
+      }
+    }
+  ],
+  "definitions3": {
+    "uniqueNameDefinition": {
+      "description": "Object that hold a name of the object, and in the case object is in an array, its name is unique",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "commentDefinition": {
+      "description": "Object that hold an optional comment text",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "classNameDefinition": {
+      "description": "Class name object",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "parameterDefinition": {
+      "description": "Parameter list of a specific object (like: interceptor, condition descriptor etc).",
+      "type": "array",
+      "items": {
+        "description": "Every parameter in the list has a name-value string pair.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "value": {
+            "description": "",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "conditionSetInvokerDefinition": {
+      "description": "Object that holds a condition set invoker",
+      "type": "object",
+      "properties": {
+        "conditionSetInvoker": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "conditionSetInvoker"
+      ]
+    },
+    "conditionDefinition": {
+      "description": "Describes a single condition that should be evaluated, its result is a boolean value",
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "$ref": "#/definitions3/classNameDefinition"
+            },
+            "negate": {
+              "type": "boolean",
+              "default": false
+            },
+            "parameters": {
+              "$ref": "#/definitions3/parameterDefinition"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "class"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "condition"
+      ]
+    },
+    "conditionArrayDefinition": {
+      "description": "Array of conditions.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/conditionDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "logicalConditionDefinition": {
+      "description": "Logical evaluation on condition(s), like 'and', 'or', and 'not'",
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "and": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions3/conditionDefinition"
+                  },
+                  {
+                    "$ref": "#/definitions3/conditionSetInvokerDefinition"
+                  },
+                  {
+                    "$ref": "#/definitions3/logicalConditionDefinition"
+                  }
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "and"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "or": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions3/conditionDefinition"
+                  },
+                  {
+                    "$ref": "#/definitions3/conditionSetInvokerDefinition"
+                  },
+                  {
+                    "$ref": "#/definitions3/logicalConditionDefinition"
+                  }
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "or"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "not": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/conditionDefinition"
+                },
+                {
+                  "$ref": "#/definitions3/conditionSetInvokerDefinition"
+                },
+                {
+                  "$ref": "#/definitions3/logicalConditionDefinition"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "not"
+          ]
+        }
+      ]
+    },
+    "conditionDescriptorDefinition": {
+      "description": "Describes a complex condition which should be evaluated by the switch engine",
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/conditionDefinition"
+        },
+        {
+          "$ref": "#/definitions3/conditionSetInvokerDefinition"
+        },
+        {
+          "$ref": "#/definitions3/logicalConditionDefinition"
+        }
+      ]
+    },
+    "templateDefinition": {
+      "description": "Describes a single response message template",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        },
+        "type": {
+          "description": "Type of the resource. In case of text, it is embedded (resource contains the value), other case (*file) name of the file",
+          "type": "string",
+          "enum": [
+            "xml",
+            "text",
+            "html",
+            "json",
+            "xmlFile",
+            "textFile",
+            "htmlFile",
+            "jsonFile",
+            "external"
+          ]
+        },
+        "resource": {
+          "description": "Resource is always a String - meaning depends on the type, for example if that is 'external', then resource is a class name",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "resource"
+      ]
+    },
+    "templateArrayDefinition": {
+      "description": "Array of templates.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/templateDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 50
+    },
+    "responseFormatterSetInvokerDefinition": {
+      "description": "Object that holds a response formatter set invoker",
+      "type": "object",
+      "properties": {
+        "responseFormatterSetInvoker": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "responseFormatterSetInvoker"
+      ]
+    },
+    "responseFormatterDefinition": {
+      "description": "Response formatter",
+      "type": "object",
+      "properties": {
+        "responseFormatter": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "$ref": "#/definitions3/classNameDefinition"
+            },
+            "parameters": {
+              "$ref": "#/definitions3/parameterDefinition"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "class"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "responseFormatter"
+      ]
+    },
+    "responseFormatterSetArrayDefinition": {
+      "description": "Describes the formatter method(s) applied on the specific response",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/responseFormatterDefinition"
+          },
+          {
+            "$ref": "#/definitions3/responseFormatterSetInvokerDefinition"
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "responseDescriptorDefinition": {
+      "description": "Describes what answer should be sent back, and in case a template is used, what method should be used to make it up-to-date",
+      "type": "object",
+      "properties": {
+        "delay": {
+          "description": "Optional, default value is 0, delay of the response in seconds, 0 means no delay",
+          "type": "integer",
+          "default": 0,
+          "minimum": 0
+        },
+        "code": {
+          "description": "Optional, response code, default value is 200 (here E500 and others can be specified)",
+          "type": "integer",
+          "default": 200,
+          "minimum": 200
+        },
+        "mimeType": {
+          "description": "Describes the response content type",
+          "type": "string"
+        },
+        "templateName": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        },
+        "responseFormatterSet": {
+          "$ref": "#/definitions3/responseFormatterSetArrayDefinition"
+        },
+        "sequenceDescriptorName": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "mimeType",
+        "templateName"
+      ]
+    },
+    "responseFormatterSetsDefinition": {
+      "description": "An array of response formatter sets",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        },
+        "responseFormatterSet": {
+          "$ref": "#/definitions3/responseFormatterSetArrayDefinition"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "responseFormatterSet"
+      ],
+      "minItems": 1
+    },
+    "responseFormatterSetsArrayDefinition": {
+      "description": "Array of response Formatter sets.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/responseFormatterSetsDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "dialogDescriptorsDefinition": {
+      "description": "Dialog Descriptor Array",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/definitions3/uniqueNameDefinition"
+          },
+          "usage": {
+            "type": "string",
+            "enum": [
+              "always",
+              "timeout",
+              "hitCount",
+              "disabled"
+            ],
+            "default": "always"
+          },
+          "validityValue": {
+            "description": "When usage is 'timeout', after a timeout (specified in minutes in validityValue), the node will be disabled",
+            "type": "integer",
+            "minimum": 0
+          },
+          "comment": {
+            "$ref": "#/definitions3/commentDefinition"
+          },
+          "conditionDescriptor": {
+            "$ref": "#/definitions3/conditionDescriptorDefinition"
+          },
+          "responseDescriptor": {
+            "$ref": "#/definitions3/responseDescriptorDefinition"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "conditionDescriptor",
+          "responseDescriptor"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "interceptorDefinition": {
+      "description": "Interceptors",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the interceptor",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "class": {
+            "description": "The name of the interceptor class, will be used to load the class itself",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "parameters": {
+            "$ref": "#/definitions3/parameterDefinition"
+          }
+        },
+        "required": [
+          "name",
+          "class"
+        ]
+      },
+      "minItems": 1
+    },
+    "conditionSetDefinition": {
+      "description": "Set of conditions",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions3/uniqueNameDefinition"
+        },
+        "conditionDescriptor": {
+          "$ref": "#/definitions3/conditionDescriptorDefinition"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "conditionDescriptor"
+      ],
+      "minItems": 1
+    },
+    "conditionSetArrayDefinition": {
+      "description": "Array of condition sets.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/conditionSetDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "sequenceDescriptorsDefinition": {
+      "description": "Sequence Descriptor Array",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/definitions3/uniqueNameDefinition"
+          },
+          "class": {
+            "$ref": "#/definitions3/classNameDefinition"
+          },
+          "timeout": {
+            "description": "Timeout in milliseconds",
+            "type": "integer"
+          },
+          "conditionDescriptor": {
+            "$ref": "#/definitions3/conditionDescriptorDefinition"
+          },
+          "dialogDescriptorNames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions3/uniqueNameDefinition"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 50
+          },
+          "parameters": {
+            "$ref": "#/definitions3/parameterDefinition"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "class"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 25
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "not": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/conditionDefinition"
+                    },
+                    {
+                      "$ref": "#/definitions4/conditionSetInvokerDefinition"
+                    },
+                    {
+                      "$ref": "#/definitions4/logicalConditionDefinition"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "not"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^not$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "validityValue": {
+                  "description": "When usage is 'timeout', after a timeout (specified in minutes in validityValue), the node will be disabled",
+                  "type": "integer",
+                  "minimum": 0.0
+                },
+                "name": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "conditionDescriptor": {
+                  "$ref": "#/definitions4/conditionDescriptorDefinition"
+                },
+                "usage": {
+                  "type": "string",
+                  "enum": [
+                    "always",
+                    "timeout",
+                    "hitCount",
+                    "disabled"
+                  ],
+                  "default": "always"
+                },
+                "responseDescriptor": {
+                  "$ref": "#/definitions4/responseDescriptorDefinition"
+                },
+                "comment": {
+                  "$ref": "#/definitions4/commentDefinition"
+                }
+              },
+              "required": [
+                "name",
+                "conditionDescriptor",
+                "responseDescriptor"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^validityValue$": true,
+                "^name$": true,
+                "^comment$": true,
+                "^conditionDescriptor$": true,
+                "^usage$": true,
+                "^responseDescriptor$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Describes a single response message template",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "type": {
+                  "description": "Type of the resource. In case of text, it is embedded (resource contains the value), other case (*file) name of the file",
+                  "type": "string",
+                  "enum": [
+                    "xml",
+                    "text",
+                    "html",
+                    "json",
+                    "xmlFile",
+                    "textFile",
+                    "htmlFile",
+                    "jsonFile",
+                    "external"
+                  ]
+                },
+                "resource": {
+                  "description": "Resource is always a String - meaning depends on the type, for example if that is 'external', then resource is a class name",
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "resource"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^type$": true,
+                "^resource$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "templateDefinition": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "responseDescriptorDefinition": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "responseFormatterSetsArrayDefinition": {
+      "description": "Array of response Formatter sets.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/responseFormatterSetsDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Set of conditions",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "conditionDescriptor": {
+                  "$ref": "#/definitions4/conditionDescriptorDefinition"
+                }
+              },
+              "required": [
+                "name",
+                "conditionDescriptor"
+              ],
+              "minItems": 1
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^conditionDescriptor$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "conditionDescriptor": {
+                  "$ref": "#/definitions4/conditionDescriptorDefinition"
+                },
+                "dialogDescriptorNames": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_10"
+                  },
+                  "minItems": 1,
+                  "maxItems": 50
+                },
+                "class": {
+                  "$ref": "#/definitions4/classNameDefinition"
+                },
+                "timeout": {
+                  "description": "Timeout in milliseconds",
+                  "type": "integer"
+                },
+                "parameters": {
+                  "$ref": "#/definitions4/parameterDefinition"
+                }
+              },
+              "required": [
+                "name",
+                "class"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^timeout$": true,
+                "^name$": true,
+                "^class$": true,
+                "^conditionDescriptor$": true,
+                "^parameters$": true,
+                "^dialogDescriptorNames$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "and": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions4/conditionDefinition"
+                      },
+                      {
+                        "$ref": "#/definitions4/conditionSetInvokerDefinition"
+                      },
+                      {
+                        "$ref": "#/definitions4/logicalConditionDefinition"
+                      }
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "and"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^and$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "responseFormatterSetsDefinition": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Response formatter",
+              "type": "object",
+              "properties": {
+                "responseFormatter": {
+                  "$ref": "#/definitions4/modern_12"
+                }
+              },
+              "required": [
+                "responseFormatter"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^responseFormatter$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Describes a single condition that should be evaluated, its result is a boolean value",
+              "type": "object",
+              "properties": {
+                "condition": {
+                  "$ref": "#/definitions4/modern_15"
+                }
+              },
+              "required": [
+                "condition"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^condition$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "conditionArrayDefinition": {
+      "description": "Array of conditions.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/conditionDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "templateArrayDefinition": {
+      "description": "Array of templates.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/templateDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 50
+    },
+    "conditionSetDefinition": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "interceptorDefinition": {
+      "description": "Interceptors",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the interceptor",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "class": {
+            "description": "The name of the interceptor class, will be used to load the class itself",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "parameters": {
+            "$ref": "#/definitions4/parameterDefinition"
+          }
+        },
+        "required": [
+          "name",
+          "class"
+        ]
+      },
+      "minItems": 1
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Object that holds a condition set invoker",
+              "type": "object",
+              "properties": {
+                "conditionSetInvoker": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                }
+              },
+              "required": [
+                "conditionSetInvoker"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^conditionSetInvoker$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "class": {
+                  "$ref": "#/definitions4/classNameDefinition"
+                },
+                "negate": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "parameters": {
+                  "$ref": "#/definitions4/parameterDefinition"
+                }
+              },
+              "required": [
+                "class"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^class$": true,
+                "^negate$": true,
+                "^parameters$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "sequenceDescriptorsDefinition": {
+      "description": "Sequence Descriptor Array",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/modern_9"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "conditionDescriptorDefinition": {
+      "description": "Describes a complex condition which should be evaluated by the switch engine",
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/conditionDefinition"
+        },
+        {
+          "$ref": "#/definitions4/conditionSetInvokerDefinition"
+        },
+        {
+          "$ref": "#/definitions4/logicalConditionDefinition"
+        }
+      ]
+    },
+    "responseFormatterDefinition": {
+      "$ref": "#/definitions4/modern_11"
+    },
+    "responseFormatterSetArrayDefinition": {
+      "description": "Describes the formatter method(s) applied on the specific response",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions4/responseFormatterDefinition"
+          },
+          {
+            "$ref": "#/definitions4/responseFormatterSetInvokerDefinition"
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "responseFormatterSetInvokerDefinition": {
+      "$ref": "#/definitions4/modern_13"
+    },
+    "commentDefinition": {
+      "description": "Object that hold an optional comment text",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "conditionDefinition": {
+      "$ref": "#/definitions4/modern_14"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "An array of response formatter sets",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "responseFormatterSet": {
+                  "$ref": "#/definitions4/responseFormatterSetArrayDefinition"
+                }
+              },
+              "required": [
+                "name",
+                "responseFormatterSet"
+              ],
+              "minItems": 1
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^responseFormatterSet$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "conditionSetInvokerDefinition": {
+      "$ref": "#/definitions4/modern_16"
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Every parameter in the list has a name-value string pair.",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "value": {
+                  "description": "",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Describes what answer should be sent back, and in case a template is used, what method should be used to make it up-to-date",
+              "type": "object",
+              "properties": {
+                "delay": {
+                  "description": "Optional, default value is 0, delay of the response in seconds, 0 means no delay",
+                  "type": "integer",
+                  "default": 0,
+                  "minimum": 0.0
+                },
+                "sequenceDescriptorName": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "templateName": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                },
+                "responseFormatterSet": {
+                  "$ref": "#/definitions4/responseFormatterSetArrayDefinition"
+                },
+                "mimeType": {
+                  "description": "Describes the response content type",
+                  "type": "string"
+                },
+                "code": {
+                  "description": "Optional, response code, default value is 200 (here E500 and others can be specified)",
+                  "type": "integer",
+                  "default": 200,
+                  "minimum": 200.0
+                }
+              },
+              "required": [
+                "mimeType",
+                "templateName"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^code$": true,
+                "^templateName$": true,
+                "^responseFormatterSet$": true,
+                "^delay$": true,
+                "^mimeType$": true,
+                "^sequenceDescriptorName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "class": {
+                  "$ref": "#/definitions4/classNameDefinition"
+                },
+                "parameters": {
+                  "$ref": "#/definitions4/parameterDefinition"
+                }
+              },
+              "required": [
+                "class"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^class$": true,
+                "^parameters$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "logicalConditionDefinition": {
+      "description": "Logical evaluation on condition(s), like 'and', 'or', and 'not'",
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/modern_3"
+        },
+        {
+          "$ref": "#/definitions4/modern_4"
+        },
+        {
+          "$ref": "#/definitions4/modern_5"
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Representation of Wilma stub configuration possibilities",
+              "type": "object",
+              "properties": {
+                "wilmaStubConfiguration": {
+                  "$ref": "#/definitions4/modern_19"
+                }
+              },
+              "required": [
+                "wilmaStubConfiguration"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^wilmaStubConfiguration$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "dialogDescriptorsDefinition": {
+      "description": "Dialog Descriptor Array",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/modern_6"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Object that holds a response formatter set invoker",
+              "type": "object",
+              "properties": {
+                "responseFormatterSetInvoker": {
+                  "$ref": "#/definitions4/uniqueNameDefinition"
+                }
+              },
+              "required": [
+                "responseFormatterSetInvoker"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^responseFormatterSetInvoker$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "parameterDefinition": {
+      "description": "Parameter list of a specific object (like: interceptor, condition descriptor etc).",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/modern_17"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "uniqueNameDefinition": {
+      "description": "Object that hold a name of the object, and in the case object is in an array, its name is unique",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "classNameDefinition": {
+      "description": "Class name object",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "conditionSetArrayDefinition": {
+      "description": "Array of condition sets.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/conditionSetDefinition"
+      },
+      "minItems": 1,
+      "maxItems": 25
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "sequenceDescriptors": {
+                  "$ref": "#/definitions4/sequenceDescriptorsDefinition"
+                },
+                "responseFormatterSets": {
+                  "$ref": "#/definitions4/responseFormatterSetsArrayDefinition"
+                },
+                "interceptors": {
+                  "$ref": "#/definitions4/interceptorDefinition"
+                },
+                "conditionSets": {
+                  "$ref": "#/definitions4/conditionSetArrayDefinition"
+                },
+                "templates": {
+                  "$ref": "#/definitions4/templateArrayDefinition"
+                },
+                "groupName": {
+                  "description": "The name of the Stub Configuration, if it is missing, the name will be considered as: 'Default'",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "default": "Default"
+                },
+                "dialogDescriptors": {
+                  "$ref": "#/definitions4/dialogDescriptorsDefinition"
+                },
+                "active": {
+                  "description": "Whether the Stub Configuration is active or not, by default: true",
+                  "type": "boolean",
+                  "default": true
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^dialogDescriptors$": true,
+                "^conditionSets$": true,
+                "^interceptors$": true,
+                "^sequenceDescriptors$": true,
+                "^templates$": true,
+                "^groupName$": true,
+                "^active$": true,
+                "^responseFormatterSets$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "or": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions4/conditionDefinition"
+                      },
+                      {
+                        "$ref": "#/definitions4/conditionSetInvokerDefinition"
+                      },
+                      {
+                        "$ref": "#/definitions4/logicalConditionDefinition"
+                      }
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "or"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^or$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/responseFormatterSetsDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/responseFormatterSetsDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/responseFormatterDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/responseFormatterDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/conditionSetArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/conditionSetArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/uniqueNameDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/uniqueNameDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/conditionDescriptorDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/conditionDescriptorDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions3/conditionSetArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/conditionSetArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/templateArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/templateArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/conditionDescriptorDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/conditionDescriptorDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/logicalConditionDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/logicalConditionDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/templateDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/templateDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/parameterDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/parameterDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/classNameDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/classNameDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/conditionSetInvokerDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/conditionSetInvokerDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions4/conditionSetDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/conditionSetDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/responseDescriptorDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/responseDescriptorDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/conditionDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/conditionDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/responseDescriptorDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/responseDescriptorDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions3/logicalConditionDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/logicalConditionDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sequenceDescriptorsDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sequenceDescriptorsDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions4/interceptorDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/interceptorDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/responseFormatterSetArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/responseFormatterSetArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/responseFormatterDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/responseFormatterDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/classNameDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/classNameDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dialogDescriptorsDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dialogDescriptorsDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/commentDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/commentDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dialogDescriptorsDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dialogDescriptorsDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/interceptorDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/interceptorDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/responseFormatterSetInvokerDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/responseFormatterSetInvokerDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/conditionSetInvokerDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/conditionSetInvokerDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/templateArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/templateArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/responseFormatterSetArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/responseFormatterSetArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/uniqueNameDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/uniqueNameDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/conditionDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/conditionDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/templateDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/templateDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/commentDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/commentDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/responseFormatterSetsDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/responseFormatterSetsDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/parameterDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/parameterDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sequenceDescriptorsDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sequenceDescriptorsDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/responseFormatterSetInvokerDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/responseFormatterSetInvokerDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/responseFormatterSetsArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/responseFormatterSetsArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/responseFormatterSetsArrayDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/responseFormatterSetsArrayDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/conditionSetDefinition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/conditionSetDefinition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    }
+  ]
+}

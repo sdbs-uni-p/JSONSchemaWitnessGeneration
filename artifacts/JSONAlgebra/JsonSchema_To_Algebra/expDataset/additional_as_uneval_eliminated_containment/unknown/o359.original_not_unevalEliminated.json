@@ -1,0 +1,5010 @@
+{
+  "allOf": [
+    {
+      "id": "http://datafactories.schema.management.azure.com/schemas/2015-09-01/Microsoft.DataFactory.Pipeline.json",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Microsoft.Azure.Management.DataFactories.Models.Pipeline",
+      "description": "A pipeline defines activities.",
+      "type": "object",
+      "required": [
+        "name",
+        "properties"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the pipeline.",
+          "type": "string",
+          "maxLength": 260,
+          "pattern": "^[A-Za-z0-9_][^<>*#.%&:\\\\+?/]*$"
+        },
+        "properties": {
+          "description": "Pipeline properties.",
+          "$ref": "#/definitions3/pipelineProperties"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_29"
+      }
+    }
+  ],
+  "definitions3": {
+    "activityPolicy": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.ActivityPolicy",
+      "description": "Activity policy.",
+      "type": "object",
+      "properties": {
+        "timeout": {
+          "description": "Specifies the timeout for the activity to run. If there is value specified, it takes the value of TimeSpan.FromMilliseconds(-1) which means indefinite timeout.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "delay": {
+          "description": "Delay activity execution so that upstream activities can have extra time to finish.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "concurrency": {
+          "description": "The maximum number of concurrent activity executions.",
+          "type": "integer"
+        },
+        "executionPriorityOrder": {
+          "description": "Execution priority order.  Choose from OldestFirst or NewestFirst.",
+          "type": "string",
+          "enum": [
+            "OldestFirst",
+            "NewestFirst"
+          ]
+        },
+        "retry": {
+          "description": "Total number of short retries for a failed activity.",
+          "type": "integer"
+        },
+        "longRetry": {
+          "description": "Total number of long retries after failed short retries.",
+          "type": "integer"
+        },
+        "longRetryInterval": {
+          "description": "Interval between two long retries.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "style": {
+          "description": "The scheduler style.",
+          "type": "string",
+          "enum": [
+            "NotSpecified",
+            "StartOfInterval",
+            "EndOfInterval"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "activityInput": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.ActivityInput",
+      "description": "An activity input.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "startTime": {
+          "description": "Start time.",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "EndTime.",
+          "type": "string"
+        },
+        "length": {
+          "description": "Length.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "name": {
+          "description": "Referenced table name.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "activityOutput": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.ActivityOutput",
+      "description": "An activity output.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Referenced table name.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "baseActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.BaseActivity",
+      "description": "A pipeline activity.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Activity name.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Activity description.",
+          "type": "string"
+        },
+        "linkedServiceName": {
+          "description": "LinkedService name where the Activity Runs.",
+          "type": "string"
+        },
+        "policy": {
+          "description": "Policy.",
+          "$ref": "#/definitions3/activityPolicy"
+        },
+        "inputs": {
+          "description": "Inputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/activityInput"
+          }
+        },
+        "outputs": {
+          "description": "Outputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/activityOutput"
+          }
+        },
+        "scheduler": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.Scheduler",
+          "description": "The scheduler definition.",
+          "type": "object",
+          "required": [
+            "frequency",
+            "interval"
+          ],
+          "properties": {
+            "frequency": {
+              "description": "Frequency in terms of minute, hour, day, etc.",
+              "type": "string",
+              "enum": [
+                "Minute",
+                "Hour",
+                "Day",
+                "Week",
+                "Month"
+              ]
+            },
+            "interval": {
+              "description": "The interval of running the scheduler.",
+              "type": "integer"
+            },
+            "anchorDateTime": {
+              "description": "The date used as a reference point for calculating slice start and end dates.",
+              "$ref": "#/definitions3/UTC"
+            },
+            "offset": {
+              "description": "The offset relative to the anchor time.",
+              "type": "string",
+              "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+            },
+            "style": {
+              "description": "The scheduler style.",
+              "type": "string",
+              "enum": [
+                "NotSpecified",
+                "StartOfInterval",
+                "EndOfInterval"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "copySource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopySource",
+      "description": "A copy activity source.",
+      "type": "object",
+      "properties": {
+        "sourceRetryCount": {
+          "description": "Source retry count.",
+          "type": "integer"
+        },
+        "sourceRetryWait": {
+          "description": "Source retry wait.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        }
+      }
+    },
+    "azureTableSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableSource",
+      "description": "A copy activity Azure table source.",
+      "type": "object",
+      "properties": {
+        "azureTableSourceQuery": {
+          "description": "Azure table source query.",
+          "type": "string"
+        },
+        "azureTableSourceIgnoreTableNotFound": {
+          "description": "Azure table source ignore table not found.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureTableSource"
+          ]
+        }
+      }
+    },
+    "copySourceTypes": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions3/copySource"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/azureTableSource"
+            },
+            {
+              "$ref": "#/definitions3/blobSource"
+            },
+            {
+              "$ref": "#/definitions3/documentDbCollectionSource"
+            },
+            {
+              "$ref": "#/definitions3/relationalSource"
+            },
+            {
+              "$ref": "#/definitions3/sqlSource"
+            },
+            {
+              "$ref": "#/definitions3/sqlDWSource"
+            },
+            {
+              "$ref": "#/definitions3/fileSystemSource"
+            },
+            {
+              "$ref": "#/definitions3/oracleSource"
+            },
+            {
+              "$ref": "#/definitions3/azureDataLakeStoreSource"
+            },
+            {
+              "$ref": "#/definitions3/cassandraSource"
+            },
+            {
+              "$ref": "#/definitions3/mongoDbSource"
+            },
+            {
+              "$ref": "#/definitions3/webSource"
+            },
+            {
+              "$ref": "#/definitions3/httpSource"
+            }
+          ]
+        }
+      ]
+    },
+    "blobSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.BlobSource",
+      "description": "A copy activity blob source.",
+      "type": "object",
+      "properties": {
+        "treatEmptyAsNull": {
+          "description": "Treat empty as null.",
+          "type": "boolean"
+        },
+        "skipHeaderLineCount": {
+          "description": "Number of header lines to skip from each blob",
+          "type": "integer"
+        },
+        "recursive": {
+          "description": "If true, files under the folder path will be read recursively.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BlobSource"
+          ]
+        }
+      }
+    },
+    "documentDbCollectionSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionSource",
+      "description": "A copy activity Document Database Collection source.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Documents query.",
+          "type": "string"
+        },
+        "nestingSeparator": {
+          "description": "Nested properties separator.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DocumentDbCollectionSource"
+          ]
+        }
+      }
+    },
+    "relationalSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.RelationalSource",
+      "description": "A copy activity source for various relational databases.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Database query.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "RelationalSource"
+          ]
+        }
+      }
+    },
+    "sqlSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlSource",
+      "description": "A copy activity SQL source.",
+      "type": "object",
+      "properties": {
+        "sqlReaderQuery": {
+          "description": "SQL reader query.",
+          "type": "string"
+        },
+        "sqlReaderStoredProcedureName": {
+          "description": "Name of the stored procedure for a SQL Database source. This cannot be used at the same time as SqlReaderQuery.",
+          "type": "string"
+        },
+        "storedProcedureParameters": {
+          "description": "Value and type setting for stored procedure parameters. Example: \"{Parameter1: {value: \"1\", type: \"int\"}}\".",
+          "type": "object",
+          "additionalProperties": {
+            "allOf": [
+              {
+                "$ref": "#/definitions3/storedProcedureParameter"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlSource"
+          ]
+        }
+      }
+    },
+    "sqlDWSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlDWSource",
+      "description": "A copy activity SQL Data Warehouse source.",
+      "type": "object",
+      "properties": {
+        "sqlReaderQuery": {
+          "description": "SQL Data Warehouse reader query.",
+          "type": "string"
+        },
+        "sqlReaderStoredProcedureName": {
+          "description": "Name of the stored procedure for a SQL Data Warehouse source. This cannot be used at the same time as SqlReaderQuery.",
+          "type": "string"
+        },
+        "storedProcedureParameters": {
+          "description": "Value and type setting for stored procedure parameters. Example: \"{Parameter1: {value: \"1\", type: \"int\"}}\".",
+          "type": "object",
+          "additionalProperties": {
+            "allOf": [
+              {
+                "$ref": "#/definitions3/storedProcedureParameter"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlDWSource"
+          ]
+        }
+      }
+    },
+    "fileSystemSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.FileSystemSource",
+      "description": "A copy activity file system source.",
+      "type": "object",
+      "properties": {
+        "recursive": {
+          "description": "If true, files under the folder path will be read recursively.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FileSystemSource"
+          ]
+        }
+      }
+    },
+    "oracleSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.OracleSource",
+      "description": "A copy activity Oracle source.",
+      "type": "object",
+      "properties": {
+        "oracleReaderQuery": {
+          "description": "Oracle reader query.",
+          "type": "string"
+        },
+        "queryTimeout": {
+          "description": "Query timeout",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "OracleSource"
+          ]
+        }
+      }
+    },
+    "webSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.WebSource",
+      "description": "A copy activity source for web page table.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "WebSource"
+          ]
+        }
+      }
+    },
+    "httpSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HttpSource",
+      "description": "A copy activity source for an HTTP file.",
+      "type": "object",
+      "properties": {
+        "httpRequestTimeout": {
+          "description": "Specifies the timeout for a HTTP client to get HTTP response from HTTP server. The default value is equivalent to System.Net.HttpWebRequest.Timeout.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HttpSource"
+          ]
+        }
+      }
+    },
+    "azureDataLakeStoreSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreSource",
+      "description": "A copy activity Azure Data Lake source.",
+      "type": "object",
+      "properties": {
+        "recursive": {
+          "description": "If true, files under the folder path will be read recursively.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureDataLakeStoreSource"
+          ]
+        }
+      }
+    },
+    "cassandraSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CassandraSource",
+      "description": "A copy activity source for a Cassandra database.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Database query. Should be a SQL-92 query expression or Cassandra Query Language (CQL) command.",
+          "type": "string"
+        },
+        "consistencyLevel": {
+          "description": "The consistency level specifies how many Cassandra servers must respond to a read request before returning data to the client application. Cassandra checks the specified number of Cassandra servers for data to satisfy the read request. Must be one of cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.",
+          "$ref": "#/definitions3/cassandraSourceReadConsistencyLevels"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "CassandraSource"
+          ]
+        }
+      }
+    },
+    "cassandraSourceReadConsistencyLevels": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CassandraSourceReadConsistencyLevels",
+      "description": "Consistency level when connecting to the Cassandra database. A property of CassandraSource.",
+      "type": "string",
+      "enum": [
+        "ALL",
+        "EACH_QUORUM",
+        "QUORUM",
+        "LOCAL_QUORUM",
+        "ONE",
+        "TWO",
+        "THREE",
+        "LOCAL_ONE",
+        "SERIAL",
+        "LOCAL_SERIAL"
+      ]
+    },
+    "mongoDbSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.MongoDbSource",
+      "description": "A copy activity source for a MongoDB database.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Database query. Should be a SQL-92 query expression.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "MongoDbSource"
+          ]
+        }
+      }
+    },
+    "azureDataLakeStoreSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreSink",
+      "description": "A copy activity Azure Data Lake Store sink.",
+      "type": "object",
+      "properties": {
+        "copyBehavior": {
+          "description": "The type of copy behavior for copy sink.",
+          "$ref": "#/definitions3/copyBehaviorType"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureDataLakeStoreSink"
+          ]
+        }
+      }
+    },
+    "copySink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopySink",
+      "description": "A copy activity sink.",
+      "type": "object",
+      "properties": {
+        "writeBatchSize": {
+          "description": "Write batch size.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "writeBatchTimeout": {
+          "description": "Write batch timeout.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "sinkRetryCount": {
+          "description": "Sink retry count.",
+          "type": "integer"
+        },
+        "sinkRetryWait": {
+          "description": "Sink retry wait.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        }
+      }
+    },
+    "azureQueueSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureQueueSink",
+      "description": "A copy activity Azure queue sink.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureQueueSink"
+          ]
+        }
+      }
+    },
+    "copySinkTypes": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions3/copySink"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/azureQueueSink"
+            },
+            {
+              "$ref": "#/definitions3/azureSearchIndexSink"
+            },
+            {
+              "$ref": "#/definitions3/azureTableSink"
+            },
+            {
+              "$ref": "#/definitions3/blobSink"
+            },
+            {
+              "$ref": "#/definitions3/documentDbCollectionSink"
+            },
+            {
+              "$ref": "#/definitions3/sqlSink"
+            },
+            {
+              "$ref": "#/definitions3/sqlDWSink"
+            },
+            {
+              "$ref": "#/definitions3/fileSystemSink"
+            },
+            {
+              "$ref": "#/definitions3/oracleSink"
+            },
+            {
+              "$ref": "#/definitions3/azureDataLakeStoreSink"
+            }
+          ]
+        }
+      ]
+    },
+    "copyBehaviorType": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopyBehaviorType",
+      "description": "All available types of copy behavior.",
+      "type": "string",
+      "enum": [
+        "PreserveHierarchy",
+        "FlattenHierarchy",
+        "MergeFiles"
+      ]
+    },
+    "azureSearchIndexSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexSink",
+      "description": "A copy activity Azure Search Index sink.",
+      "type": "object",
+      "properties": {
+        "writeBehavior": {
+          "description": "Specify the write behavior when upserting documents into Azure Search Index.",
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexWriteBehavior",
+          "type": "string",
+          "enum": [
+            "Merge",
+            "Upload"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureSearchIndexSink"
+          ]
+        }
+      }
+    },
+    "azureTableSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableSink",
+      "description": "A copy activity Azure table sink.",
+      "type": "object",
+      "properties": {
+        "azureTableDefaultPartitionKeyValue": {
+          "description": "Azure table default partition key value.",
+          "type": "string"
+        },
+        "azureTablePartitionKeyName": {
+          "description": "Azure table partition key name.",
+          "type": "string"
+        },
+        "azureTableRowKeyName": {
+          "description": "Azure table row key name.",
+          "type": "string"
+        },
+        "azureTableInsertType": {
+          "description": "azure table insert type.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureTableSink"
+          ]
+        }
+      }
+    },
+    "blobSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.BlobSink",
+      "description": "A copy activity blob sink.",
+      "type": "object",
+      "properties": {
+        "blobWriterOverwriteFiles": {
+          "description": "Blob writer overwrite files.",
+          "type": "boolean"
+        },
+        "blobWriterDateTimeFormat": {
+          "description": "Blob writer date time format.",
+          "type": "string"
+        },
+        "blobWriterAddHeader": {
+          "description": "Blob writer add header.",
+          "type": "boolean"
+        },
+        "copyBehavior": {
+          "description": "The type of copy behavior for copy sink.",
+          "$ref": "#/definitions3/copyBehaviorType"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BlobSink"
+          ]
+        }
+      }
+    },
+    "fileSystemSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.FileSystemSink",
+      "description": "A copy activity file system sink.",
+      "type": "object",
+      "properties": {
+        "copyBehavior": {
+          "description": "The type of copy behavior for file system sink.",
+          "$ref": "#/definitions3/copyBehaviorType"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FileSystemSink"
+          ]
+        }
+      }
+    },
+    "documentDbCollectionSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionSink",
+      "description": "A copy activity Document Database Collection sink.",
+      "type": "object",
+      "properties": {
+        "nestingSeparator": {
+          "description": "Nested properties separator.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DocumentDbCollectionSink"
+          ]
+        }
+      }
+    },
+    "sqlSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlSink",
+      "description": "A copy activity SQL sink.",
+      "type": "object",
+      "properties": {
+        "sqlWriterStoredProcedureName": {
+          "description": "Sql writer stored procedure name.",
+          "type": "string"
+        },
+        "sqlWriterTableType": {
+          "description": "Sql writer table type.",
+          "type": "string"
+        },
+        "sliceIdentifierColumnName": {
+          "description": "Name of the SQL column which is used to save slice identifier information, to support idempotent copy.",
+          "type": "string"
+        },
+        "sqlWriterCleanupScript": {
+          "description": "SQL writer cleanup script.",
+          "type": "string"
+        },
+        "storedProcedureParameters": {
+          "description": "Sql stored procedure parameters.",
+          "type": "object",
+          "additionalProperties": {
+            "allOf": [
+              {
+                "$ref": "#/definitions3/storedProcedureParameter"
+              }
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlSink"
+          ]
+        }
+      }
+    },
+    "sqlDWSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlDWSink",
+      "description": "A copy activity SQL data warehouse sink.",
+      "type": "object",
+      "properties": {
+        "sliceIdentifierColumnName": {
+          "description": "Name of the SQL column which is used to save slice identifier information, to support idempotent copy.",
+          "type": "string"
+        },
+        "sqlWriterCleanupScript": {
+          "description": "SQL writer cleanup script.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlDWSink"
+          ]
+        },
+        "allowPolyBase": {
+          "description": "Indicates to use PolyBase to copy data into SQL Data Warehouse when applicable.",
+          "type": "boolean"
+        },
+        "polyBaseSettings": {
+          "description": "Specifies PolyBase-related settings when AllowPolyBase is true.",
+          "$ref": "#/definitions3/polyBaseSettings"
+        }
+      }
+    },
+    "polyBaseSettings": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.PolyBaseSettings",
+      "description": "PolyBase settings.",
+      "type": "object",
+      "properties": {
+        "rejectType": {
+          "description": "Indicates whether the RejectValue property is specified as a literal value or a percentage.",
+          "type": "string",
+          "enum": [
+            "value",
+            "percentage"
+          ]
+        },
+        "rejectValue": {
+          "description": "Specifies the value or the percentage of rows that can be rejected before the query fails.",
+          "type": "number",
+          "minimum": 0
+        },
+        "rejectSampleValue": {
+          "description": "Determines the number of rows to attempt to retrieve before the PolyBase recalculates the percentage of rejected rows.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "useTypeDefault": {
+          "description": "Specifies how to handle missing values in delimited text files when PolyBase retrieves data from the text file.",
+          "type": "boolean"
+        }
+      }
+    },
+    "storedProcedureParameter": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions3/storedProcedureParameterType"
+        }
+      }
+    },
+    "storedProcedureParameterType": {
+      "type": "string",
+      "enum": [
+        "String",
+        "Int",
+        "Decimal",
+        "Guid",
+        "Boolean",
+        "Date"
+      ]
+    },
+    "oracleSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.OracleSink",
+      "description": "A copy activity Oracle sink.",
+      "type": "object",
+      "properties": {
+        "sliceIdentifierColumnName": {
+          "description": "Name of the SQL column which is used to save slice identifier information, to support idempotent copy.",
+          "type": "string"
+        },
+        "sqlWriterCleanupScript": {
+          "description": "SQL writer cleanup script.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "OracleSink"
+          ]
+        }
+      }
+    },
+    "copyTranslator": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopyTranslator",
+      "description": "A copy activity translator.",
+      "type": "object",
+      "properties": {}
+    },
+    "tabularTranslator": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.TabularTranslator",
+      "description": "A copy activity tabular translator.",
+      "type": "object",
+      "properties": {
+        "columnMappings": {
+          "description": "Column mappings.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "TabularTranslator"
+          ]
+        }
+      }
+    },
+    "copyTranslatorTypes": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions3/copyTranslator"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/tabularTranslator"
+            }
+          ]
+        }
+      ]
+    },
+    "copyActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopyActivity",
+      "description": "Copy activity.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "Copy"
+          ]
+        },
+        "typeProperties": {
+          "description": "Copy activity properties.",
+          "type": "object",
+          "required": [
+            "source",
+            "sink"
+          ],
+          "properties": {
+            "source": {
+              "description": "Copy activity source.",
+              "$ref": "#/definitions3/copySourceTypes"
+            },
+            "sink": {
+              "description": "Copy activity sink.",
+              "$ref": "#/definitions3/copySinkTypes"
+            },
+            "translator": {
+              "description": "Copy activity translator. If not specificed, tabular translator is used.",
+              "$ref": "#/definitions3/copyTranslatorTypes"
+            },
+            "enableStaging": {
+              "description": "Specifies whether to copy data via an interim staging. Default value is false.",
+              "type": "boolean"
+            },
+            "stagingSettings": {
+              "description": "Specifies interim staging settings when EnableStaging is true.",
+              "$ref": "#/definitions3/stagingSettings"
+            },
+            "parallelCopies": {
+              "description": "Maximum number of concurrent sessions opened on the source or sink to avoid overloading the data store.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "cloudDataMovementUnits": {
+              "description": "Maximum number of cloud data movement units that can be used to perform this data movement.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "executionLocation": {
+              "description": "The execution region of the Copy Activity. Should be one of the region supported by ADF Data Movement, e.g. \"West US\". ",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "stagingSettings": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.StagingSettings",
+      "description": "Interim staging settings",
+      "type": "object",
+      "required": [
+        "linkedServiceName"
+      ],
+      "properties": {
+        "linkedServiceName": {
+          "description": "Name of the Azure Storage or Storage SAS linked service used for interim staging. Must be specified if copy via staging is enbled.",
+          "type": "string"
+        },
+        "path": {
+          "description": "The path to storage for storing the interim data",
+          "type": "string"
+        },
+        "enableCompression": {
+          "description": "Specifies whether to use compression when copying data via an interim staging. Default value is false.",
+          "type": "boolean"
+        }
+      }
+    },
+    "baseActivityTypes": {
+      "type": "object",
+      "required": [
+        "type",
+        "typeProperties"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions3/baseActivity"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/copyActivity"
+            },
+            {
+              "$ref": "#/definitions3/sqlServerStoredProcedureActivity"
+            },
+            {
+              "$ref": "#/definitions3/azureMLBatchScoringActivity"
+            },
+            {
+              "$ref": "#/definitions3/azureMLBatchExecutionActivity"
+            },
+            {
+              "$ref": "#/definitions3/azureMLUpdateResourceActivity"
+            },
+            {
+              "$ref": "#/definitions3/hdInsightHiveActivity"
+            },
+            {
+              "$ref": "#/definitions3/hdInsightPigActivity"
+            },
+            {
+              "$ref": "#/definitions3/hdInsightMapReduceActivity"
+            },
+            {
+              "$ref": "#/definitions3/hdInsightStreamingActivity"
+            },
+            {
+              "$ref": "#/definitions3/dataLakeAnalyticsUSQLActivity"
+            },
+            {
+              "$ref": "#/definitions3/dotNetActivity"
+            }
+          ]
+        }
+      ]
+    },
+    "hdInsightHiveActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightHiveActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "HDInsight activity properties.",
+          "type": "object",
+          "properties": {
+            "storageLinkedServices": {
+              "description": "Storage linked services.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "arguments": {
+              "description": "User specified arguments to HDInsightActivity.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "getDebugInfo": {
+              "description": "The HDInsightActivityDebugInfoOption settings to use.",
+              "$ref": "#/definitions3/hdInsightActivityDebugInfoOption"
+            },
+            "script": {
+              "description": "script.",
+              "type": "string"
+            },
+            "scriptPath": {
+              "description": "Script path.",
+              "type": "string"
+            },
+            "scriptLinkedService": {
+              "description": "Script linked service.",
+              "type": "string"
+            },
+            "defines": {
+              "description": "Allows user to specify defines for Hive job request.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightHive"
+          ]
+        }
+      }
+    },
+    "hdInsightPigActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightPigActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "HDInsight activity properties.",
+          "type": "object",
+          "properties": {
+            "storageLinkedServices": {
+              "description": "Storage linked services.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "arguments": {
+              "description": "User specified arguments to HDInsightActivity.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "getDebugInfo": {
+              "description": "The HDInsightActivityDebugInfoOption settings to use.",
+              "$ref": "#/definitions3/hdInsightActivityDebugInfoOption"
+            },
+            "script": {
+              "description": "script.",
+              "type": "string"
+            },
+            "scriptPath": {
+              "description": "Script path.",
+              "type": "string"
+            },
+            "scriptLinkedService": {
+              "description": "Script linked service.",
+              "type": "string"
+            },
+            "defines": {
+              "description": "Allows user to specify defines for the Pig job request.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightPig"
+          ]
+        }
+      }
+    },
+    "hdInsightMapReduceActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightMapReduceActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "HDInsight activity properties.",
+          "type": "object",
+          "required": [
+            "className",
+            "jarFilePath"
+          ],
+          "properties": {
+            "storageLinkedServices": {
+              "description": "Storage linked services.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "arguments": {
+              "description": "User specified arguments to HDInsightActivity.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "getDebugInfo": {
+              "description": "The HDInsightActivityDebugInfoOption settings to use.",
+              "$ref": "#/definitions3/hdInsightActivityDebugInfoOption"
+            },
+            "className": {
+              "description": "Class Name.",
+              "type": "string"
+            },
+            "jarFilePath": {
+              "description": "Jar path.",
+              "type": "string"
+            },
+            "jarLinkedService": {
+              "description": "Jar linked service.",
+              "type": "string"
+            },
+            "jarLibs": {
+              "description": "Jar libs.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "defines": {
+              "description": "Allows user to specify defines for mapreduce job request.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightMapReduce"
+          ]
+        }
+      }
+    },
+    "hdInsightStreamingActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightStreamingActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "HDInsight streaming activity properties.",
+          "type": "object",
+          "required": [
+            "mapper",
+            "reducer",
+            "input",
+            "output",
+            "filePaths"
+          ],
+          "properties": {
+            "storageLinkedServices": {
+              "description": "Storage linked services.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "arguments": {
+              "description": "User specified arguments to HDInsightActivity.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "getDebugInfo": {
+              "description": "The HDInsightActivityDebugInfoOption settings to use.",
+              "$ref": "#/definitions3/hdInsightActivityDebugInfoOption"
+            },
+            "mapper": {
+              "description": "Mapper executable name.",
+              "type": "string"
+            },
+            "reducer": {
+              "description": "Reducer executable name.",
+              "type": "string"
+            },
+            "input": {
+              "description": "Input blob path.",
+              "type": "string"
+            },
+            "output": {
+              "description": "Output blob path.",
+              "type": "string"
+            },
+            "filePaths": {
+              "description": "Paths to streaming job files. Can be directories.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "fileLinkedService": {
+              "description": "Linked service where the files are located",
+              "type": "string"
+            },
+            "combiner": {
+              "description": "Combiner executable name.",
+              "type": "string"
+            },
+            "commandEnvironment": {
+              "description": "Commandline environment values",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "defines": {
+              "description": "Allows user to specify defines for streaming job request.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightStreaming"
+          ]
+        }
+      }
+    },
+    "hdInsightActivityDebugInfoOption": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightActivityDebugInfoOption",
+      "description": "All available options on how to get the YARN logs for HDInsight activities.",
+      "type": "string",
+      "enum": [
+        "None",
+        "Always",
+        "Failure"
+      ]
+    },
+    "dotNetActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DotNetActivity",
+      "description": ".NET activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": ".NET activity properties.",
+          "type": "object",
+          "required": [
+            "assemblyName",
+            "entryPoint",
+            "packageFile"
+          ],
+          "properties": {
+            "assemblyName": {
+              "description": "Assembly name.",
+              "type": "string"
+            },
+            "entryPoint": {
+              "description": "Entry point.",
+              "type": "string"
+            },
+            "packageLinkedService": {
+              "description": "Package linkedService.",
+              "type": "string"
+            },
+            "packageFile": {
+              "description": "PackageFile.",
+              "type": "string"
+            },
+            "extendedProperties": {
+              "description": "User defined property bag. There is no restriction on the keys or values that can be used. The user specified .NET activity has the full responsibility to consume and interpret the content defined.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DotNetActivity"
+          ]
+        }
+      }
+    },
+    "sqlServerStoredProcedureActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlServerStoredProcedureActivity",
+      "description": "SQL Stored Procedure activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "SQL Stored Procedure activity properties.",
+          "type": "object",
+          "required": [
+            "storedProcedureName"
+          ],
+          "properties": {
+            "storedProcedureName": {
+              "description": "Stored Procedure Name.",
+              "type": "string"
+            },
+            "storedProcedureParameters": {
+              "description": "User specified property bag used in Stored Procedure. There is no restriction on the keys or values that can be used. User needs to consume and interpret the content accordingly in their customized Stored Procedure.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlServerStoredProcedure"
+          ]
+        }
+      }
+    },
+    "azureMLBatchScoringActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureMLBatchScoringActivity",
+      "description": "Azure ML Web Service batch scoring activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "Azure ML activity properties.",
+          "type": "object",
+          "properties": {
+            "webServiceParameters": {
+              "description": "Key,Value pairs to be passed to the Azure ML Batch Execution Service Endpoint (these are also referred to as GlobalParameters). Keys must match the names of web service parameters defined in published the Azure ML web service. Values may include ADF macros to be resolved at each slice execution time.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureMLBatchScoring"
+          ]
+        }
+      }
+    },
+    "azureMLBatchExecutionActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureMLBatchExecutionActivity",
+      "description": "Azure ML Batch Execution Service activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "properties": {
+            "globalParameters": {
+              "type": "object",
+              "description": "Key,Value pairs to be passed to the Azure ML Batch Execution Service Endpoint Keys must match the names of web service parameters defined in the published Azure ML web service. Values may include ADF functions to be resolved at each slice execution time (See https://msdn.microsoft.com/en-us/library/azure/dn835056.aspx). Values will be passed in the GlobalParameters property of the Azure ML batch execution request.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "webServiceOutputs": {
+              "type": "object",
+              "description": "Key,Value pairs mapping the Azure ML endpoint's Web Service Output names to names of ADF Blob datasets where the batch execution output should be written. This information will be passed in the WebServiceOutputs property of the Azure ML batch execution request. Mapped Datasets must be included in the Activity's Outputs.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "webServiceInput": {
+              "description": "Name of ADF Blob dataset giving the input to the batch execution. This information will be passed in the WebServiceInput property of the Azure ML batch execution request.",
+              "type": "string"
+            },
+            "webServiceInputs": {
+              "type": "object",
+              "description": "Key,Value pairs mapping the Azure ML endpoint's Web Service Input names to names of ADF Blob datasets from where the batch execution input should be read. This information will be passed in the WebServiceInputs property of the Azure ML batch execution request. Mapped Datasets must be included in the Activity's Inputs.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureMLBatchExecution"
+          ]
+        }
+      }
+    },
+    "azureMLUpdateResourceActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureMLUpdateResourceActivity",
+      "description": "Azure ML Update Resource management activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "required": [
+            "trainedModelDatasetName",
+            "trainedModelName"
+          ],
+          "properties": {
+            "trainedModelDatasetName": {
+              "type": "string",
+              "description": "Name of ADF Blob Dataset representing the .ilearner file that will be uploaded by the update operation. The Dataset must be included in this Activity's pipeline Inputs."
+            },
+            "trainedModelName": {
+              "type": "string",
+              "description": "Name of the Trained Model module in the Web Service experiment to be updated."
+            }
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureMLUpdateResource"
+          ]
+        }
+      }
+    },
+    "dataLakeAnalyticsUSQLActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DataLakeAnalyticsUSQLActivity",
+      "description": "Azure Data Lake Analytics U-SQL activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "description": "Data Lake Analytics U-SQL activity properties.",
+          "type": "object",
+          "properties": {
+            "script": {
+              "description": "The U-SQL script. This cannot be used at the same time as ScriptPath and ScriptLinkedService.",
+              "type": "string"
+            },
+            "scriptPath": {
+              "description": "The path to the U-SQL script in the ScriptLinkedService. This needs to be used at the same time as ScriptLinkedService.",
+              "type": "string"
+            },
+            "scriptLinkedService": {
+              "description": "The linked service hosting the U-SQL script. This needs to be used at the same time as ScriptPath.",
+              "type": "string"
+            },
+            "runtimeVersion": {
+              "description": "Runtime version of U-SQL engine to use.",
+              "type": "string"
+            },
+            "compilationMode": {
+              "description": "Compilation mode of U-SQL. Must be one of the USqlCompilationMode",
+              "$ref": "#/definitions3/uSqlCompilationMode"
+            },
+            "degreeOfParallelism": {
+              "description": "The maximum number of nodes that will be used simultaneously to run the job.",
+              "type": "integer"
+            },
+            "priority": {
+              "description": "Determines which jobs out of all that are queued should be selected to run first. The lower the number, the higher the priority (minimum is 0).",
+              "type": "integer"
+            },
+            "parameters": {
+              "description": "Allows user to specify parameters for the U-SQL activity.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DataLakeAnalyticsU-SQL"
+          ]
+        }
+      }
+    },
+    "uSqlCompilationMode": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.USqlCompilationMode",
+      "description": "Compilation mode for a U-SQL activity.",
+      "type": "string",
+      "enum": [
+        "Semantic",
+        "Full",
+        "SingleBox"
+      ]
+    },
+    "pipelineProperties": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.PipelineProperties",
+      "description": "Pipeline properties.",
+      "type": "object",
+      "required": [
+        "activities"
+      ],
+      "properties": {
+        "description": {
+          "description": "Item description.",
+          "type": "string"
+        },
+        "activities": {
+          "description": "Activities that belong to the pipeline.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/baseActivityTypes"
+          }
+        },
+        "start": {
+          "description": "The start time of the pipeline.",
+          "$ref": "#/definitions3/UTC"
+        },
+        "end": {
+          "description": "The end time of the pipeline.",
+          "$ref": "#/definitions3/UTC"
+        },
+        "isPaused": {
+          "description": "The status of the pipline. Pipeline is paused when boolean is set to true.",
+          "type": "boolean"
+        },
+        "hubName": {
+          "description": "The name of the Hub that this pipeline belongs to.",
+          "type": "string"
+        },
+        "pipelineMode": {
+          "description": "The method of scheduling runs for the pipeline. 'Scheduled' indicates that the pipeline will run at a specified time interval according to its active period (start and end time). 'OneTime' indicates that the pipeline will run only once.",
+          "type": "string",
+          "enum": [
+            "Scheduled",
+            "OneTime"
+          ]
+        },
+        "expirationTime": {
+          "description": "Duration of time after creation for which the pipeline is valid and should remain provisioned. The pipeline will be deleted automatically once it reaches the expiration time if it does not have any active or pending runs.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UTC": {
+      "type": "string",
+      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-([012]\\d|3[01])(T((([01]\\d|2[0123]):[0-5]\\d)|(24:00))(:(([0-5]\\d)|60)(\\.\\d{1,}){0,1}){0,1}){0,1}((Z)|([+-]((([01]\\d|2[0123]):[0-5]\\d)|(24:00)))){0,1}){0,1}){0,1}$"
+    }
+  },
+  "definitions4": {
+    "uSqlCompilationMode": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.USqlCompilationMode",
+      "description": "Compilation mode for a U-SQL activity.",
+      "type": "string",
+      "enum": [
+        "Semantic",
+        "Full",
+        "SingleBox"
+      ]
+    },
+    "UTC": {
+      "type": "string",
+      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-([012]\\d|3[01])(T((([01]\\d|2[0123]):[0-5]\\d)|(24:00))(:(([0-5]\\d)|60)(\\.\\d{1,}){0,1}){0,1}){0,1}((Z)|([+-]((([01]\\d|2[0123]):[0-5]\\d)|(24:00)))){0,1}){0,1}){0,1}$"
+    },
+    "hdInsightActivityDebugInfoOption": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightActivityDebugInfoOption",
+      "description": "All available options on how to get the YARN logs for HDInsight activities.",
+      "type": "string",
+      "enum": [
+        "None",
+        "Always",
+        "Failure"
+      ]
+    },
+    "azureDataLakeStoreSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreSource",
+      "description": "A copy activity Azure Data Lake source.",
+      "type": "object",
+      "properties": {
+        "recursive": {
+          "description": "If true, files under the folder path will be read recursively.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureDataLakeStoreSource"
+          ]
+        }
+      }
+    },
+    "modern_24": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Microsoft.Azure.Management.DataFactories.Models.Scheduler",
+              "description": "The scheduler definition.",
+              "type": "object",
+              "required": [
+                "frequency",
+                "interval"
+              ],
+              "properties": {
+                "anchorDateTime": {
+                  "description": "The date used as a reference point for calculating slice start and end dates.",
+                  "$ref": "#/definitions4/UTC"
+                },
+                "style": {
+                  "description": "The scheduler style.",
+                  "type": "string",
+                  "enum": [
+                    "NotSpecified",
+                    "StartOfInterval",
+                    "EndOfInterval"
+                  ]
+                },
+                "interval": {
+                  "description": "The interval of running the scheduler.",
+                  "type": "integer"
+                },
+                "offset": {
+                  "description": "The offset relative to the anchor time.",
+                  "type": "string",
+                  "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                },
+                "frequency": {
+                  "description": "Frequency in terms of minute, hour, day, etc.",
+                  "type": "string",
+                  "enum": [
+                    "Minute",
+                    "Hour",
+                    "Day",
+                    "Week",
+                    "Month"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^style$": true,
+                "^frequency$": true,
+                "^anchorDateTime$": true,
+                "^offset$": true,
+                "^interval$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_22": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "User defined property bag. There is no restriction on the keys or values that can be used. The user specified .NET activity has the full responsibility to consume and interpret the content defined.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Key,Value pairs mapping the Azure ML endpoint's Web Service Output names to names of ADF Blob datasets where the batch execution output should be written. This information will be passed in the WebServiceOutputs property of the Azure ML batch execution request. Mapped Datasets must be included in the Activity's Outputs."
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_21": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": ".NET activity properties.",
+              "type": "object",
+              "required": [
+                "assemblyName",
+                "entryPoint",
+                "packageFile"
+              ],
+              "properties": {
+                "packageLinkedService": {
+                  "description": "Package linkedService.",
+                  "type": "string"
+                },
+                "entryPoint": {
+                  "description": "Entry point.",
+                  "type": "string"
+                },
+                "packageFile": {
+                  "description": "PackageFile.",
+                  "type": "string"
+                },
+                "extendedProperties": {
+                  "$ref": "#/definitions4/modern_22"
+                },
+                "assemblyName": {
+                  "description": "Assembly name.",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^entryPoint$": true,
+                "^packageFile$": true,
+                "^packageLinkedService$": true,
+                "^extendedProperties$": true,
+                "^assemblyName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "HDInsight streaming activity properties.",
+              "type": "object",
+              "required": [
+                "mapper",
+                "reducer",
+                "input",
+                "output",
+                "filePaths"
+              ],
+              "properties": {
+                "mapper": {
+                  "description": "Mapper executable name.",
+                  "type": "string"
+                },
+                "combiner": {
+                  "description": "Combiner executable name.",
+                  "type": "string"
+                },
+                "commandEnvironment": {
+                  "description": "Commandline environment values",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "fileLinkedService": {
+                  "description": "Linked service where the files are located",
+                  "type": "string"
+                },
+                "getDebugInfo": {
+                  "description": "The HDInsightActivityDebugInfoOption settings to use.",
+                  "$ref": "#/definitions4/hdInsightActivityDebugInfoOption"
+                },
+                "input": {
+                  "description": "Input blob path.",
+                  "type": "string"
+                },
+                "output": {
+                  "description": "Output blob path.",
+                  "type": "string"
+                },
+                "filePaths": {
+                  "description": "Paths to streaming job files. Can be directories.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "storageLinkedServices": {
+                  "description": "Storage linked services.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "reducer": {
+                  "description": "Reducer executable name.",
+                  "type": "string"
+                },
+                "defines": {
+                  "$ref": "#/definitions4/modern_6"
+                },
+                "arguments": {
+                  "description": "User specified arguments to HDInsightActivity.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^mapper$": true,
+                "^defines$": true,
+                "^reducer$": true,
+                "^arguments$": true,
+                "^fileLinkedService$": true,
+                "^output$": true,
+                "^input$": true,
+                "^combiner$": true,
+                "^commandEnvironment$": true,
+                "^getDebugInfo$": true,
+                "^storageLinkedServices$": true,
+                "^filePaths$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "cassandraSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CassandraSource",
+      "description": "A copy activity source for a Cassandra database.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Database query. Should be a SQL-92 query expression or Cassandra Query Language (CQL) command.",
+          "type": "string"
+        },
+        "consistencyLevel": {
+          "description": "The consistency level specifies how many Cassandra servers must respond to a read request before returning data to the client application. Cassandra checks the specified number of Cassandra servers for data to satisfy the read request. Must be one of cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.",
+          "$ref": "#/definitions4/cassandraSourceReadConsistencyLevels"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "CassandraSource"
+          ]
+        }
+      }
+    },
+    "stagingSettings": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.StagingSettings",
+      "description": "Interim staging settings",
+      "type": "object",
+      "required": [
+        "linkedServiceName"
+      ],
+      "properties": {
+        "linkedServiceName": {
+          "description": "Name of the Azure Storage or Storage SAS linked service used for interim staging. Must be specified if copy via staging is enbled.",
+          "type": "string"
+        },
+        "path": {
+          "description": "The path to storage for storing the interim data",
+          "type": "string"
+        },
+        "enableCompression": {
+          "description": "Specifies whether to use compression when copying data via an interim staging. Default value is false.",
+          "type": "boolean"
+        }
+      }
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Allows user to specify defines for streaming job request.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "oracleSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.OracleSink",
+      "description": "A copy activity Oracle sink.",
+      "type": "object",
+      "properties": {
+        "sliceIdentifierColumnName": {
+          "description": "Name of the SQL column which is used to save slice identifier information, to support idempotent copy.",
+          "type": "string"
+        },
+        "sqlWriterCleanupScript": {
+          "description": "SQL writer cleanup script.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "OracleSink"
+          ]
+        }
+      }
+    },
+    "hdInsightStreamingActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightStreamingActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_5"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightStreaming"
+          ]
+        }
+      }
+    },
+    "azureTableSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableSink",
+      "description": "A copy activity Azure table sink.",
+      "type": "object",
+      "properties": {
+        "azureTablePartitionKeyName": {
+          "description": "Azure table partition key name.",
+          "type": "string"
+        },
+        "azureTableRowKeyName": {
+          "description": "Azure table row key name.",
+          "type": "string"
+        },
+        "azureTableDefaultPartitionKeyValue": {
+          "description": "Azure table default partition key value.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureTableSink"
+          ]
+        },
+        "azureTableInsertType": {
+          "description": "azure table insert type.",
+          "type": "string"
+        }
+      }
+    },
+    "oracleSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.OracleSource",
+      "description": "A copy activity Oracle source.",
+      "type": "object",
+      "properties": {
+        "oracleReaderQuery": {
+          "description": "Oracle reader query.",
+          "type": "string"
+        },
+        "queryTimeout": {
+          "description": "Query timeout",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "OracleSource"
+          ]
+        }
+      }
+    },
+    "azureSearchIndexSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexSink",
+      "description": "A copy activity Azure Search Index sink.",
+      "type": "object",
+      "properties": {
+        "writeBehavior": {
+          "description": "Specify the write behavior when upserting documents into Azure Search Index.",
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexWriteBehavior",
+          "type": "string",
+          "enum": [
+            "Merge",
+            "Upload"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureSearchIndexSink"
+          ]
+        }
+      }
+    },
+    "storedProcedureParameter": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions4/storedProcedureParameterType"
+        }
+      }
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Key,Value pairs to be passed to the Azure ML Batch Execution Service Endpoint Keys must match the names of web service parameters defined in the published Azure ML web service. Values may include ADF functions to be resolved at each slice execution time (See https://msdn.microsoft.com/en-us/library/azure/dn835056.aspx). Values will be passed in the GlobalParameters property of the Azure ML batch execution request."
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "HDInsight activity properties.",
+              "type": "object",
+              "properties": {
+                "scriptLinkedService": {
+                  "description": "Script linked service.",
+                  "type": "string"
+                },
+                "getDebugInfo": {
+                  "description": "The HDInsightActivityDebugInfoOption settings to use.",
+                  "$ref": "#/definitions4/hdInsightActivityDebugInfoOption"
+                },
+                "script": {
+                  "description": "script.",
+                  "type": "string"
+                },
+                "scriptPath": {
+                  "description": "Script path.",
+                  "type": "string"
+                },
+                "storageLinkedServices": {
+                  "description": "Storage linked services.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "defines": {
+                  "$ref": "#/definitions4/modern_17"
+                },
+                "arguments": {
+                  "description": "User specified arguments to HDInsightActivity.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^defines$": true,
+                "^scriptPath$": true,
+                "^arguments$": true,
+                "^script$": true,
+                "^storageLinkedServices$": true,
+                "^getDebugInfo$": true,
+                "^scriptLinkedService$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "copyActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopyActivity",
+      "description": "Copy activity.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "Copy"
+          ]
+        },
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_7"
+        }
+      }
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Allows user to specify defines for the Pig job request.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "sqlServerStoredProcedureActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlServerStoredProcedureActivity",
+      "description": "SQL Stored Procedure activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_8"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlServerStoredProcedure"
+          ]
+        }
+      }
+    },
+    "blobSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.BlobSource",
+      "description": "A copy activity blob source.",
+      "type": "object",
+      "properties": {
+        "treatEmptyAsNull": {
+          "description": "Treat empty as null.",
+          "type": "boolean"
+        },
+        "skipHeaderLineCount": {
+          "description": "Number of header lines to skip from each blob",
+          "type": "integer"
+        },
+        "recursive": {
+          "description": "If true, files under the folder path will be read recursively.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BlobSource"
+          ]
+        }
+      }
+    },
+    "modern_27": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "HDInsight activity properties.",
+              "type": "object",
+              "required": [
+                "className",
+                "jarFilePath"
+              ],
+              "properties": {
+                "jarLinkedService": {
+                  "description": "Jar linked service.",
+                  "type": "string"
+                },
+                "jarFilePath": {
+                  "description": "Jar path.",
+                  "type": "string"
+                },
+                "jarLibs": {
+                  "description": "Jar libs.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "getDebugInfo": {
+                  "description": "The HDInsightActivityDebugInfoOption settings to use.",
+                  "$ref": "#/definitions4/hdInsightActivityDebugInfoOption"
+                },
+                "className": {
+                  "description": "Class Name.",
+                  "type": "string"
+                },
+                "storageLinkedServices": {
+                  "description": "Storage linked services.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "defines": {
+                  "$ref": "#/definitions4/modern_28"
+                },
+                "arguments": {
+                  "description": "User specified arguments to HDInsightActivity.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^defines$": true,
+                "^arguments$": true,
+                "^storageLinkedServices$": true,
+                "^jarFilePath$": true,
+                "^className$": true,
+                "^getDebugInfo$": true,
+                "^jarLibs$": true,
+                "^jarLinkedService$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Azure ML activity properties.",
+              "type": "object",
+              "properties": {
+                "webServiceParameters": {
+                  "$ref": "#/definitions4/modern_2"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^webServiceParameters$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Copy activity properties.",
+              "type": "object",
+              "required": [
+                "source",
+                "sink"
+              ],
+              "properties": {
+                "stagingSettings": {
+                  "description": "Specifies interim staging settings when EnableStaging is true.",
+                  "$ref": "#/definitions4/stagingSettings"
+                },
+                "source": {
+                  "description": "Copy activity source.",
+                  "$ref": "#/definitions4/copySourceTypes"
+                },
+                "enableStaging": {
+                  "description": "Specifies whether to copy data via an interim staging. Default value is false.",
+                  "type": "boolean"
+                },
+                "sink": {
+                  "description": "Copy activity sink.",
+                  "$ref": "#/definitions4/copySinkTypes"
+                },
+                "parallelCopies": {
+                  "description": "Maximum number of concurrent sessions opened on the source or sink to avoid overloading the data store.",
+                  "type": "integer",
+                  "minimum": 0.0
+                },
+                "cloudDataMovementUnits": {
+                  "description": "Maximum number of cloud data movement units that can be used to perform this data movement.",
+                  "type": "integer",
+                  "minimum": 0.0
+                },
+                "translator": {
+                  "description": "Copy activity translator. If not specificed, tabular translator is used.",
+                  "$ref": "#/definitions4/copyTranslatorTypes"
+                },
+                "executionLocation": {
+                  "description": "The execution region of the Copy Activity. Should be one of the region supported by ADF Data Movement, e.g. \"West US\". ",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^enableStaging$": true,
+                "^cloudDataMovementUnits$": true,
+                "^translator$": true,
+                "^executionLocation$": true,
+                "^stagingSettings$": true,
+                "^parallelCopies$": true,
+                "^sink$": true,
+                "^source$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "azureMLBatchScoringActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureMLBatchScoringActivity",
+      "description": "Azure ML Web Service batch scoring activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_1"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureMLBatchScoring"
+          ]
+        }
+      }
+    },
+    "azureTableSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableSource",
+      "description": "A copy activity Azure table source.",
+      "type": "object",
+      "properties": {
+        "azureTableSourceQuery": {
+          "description": "Azure table source query.",
+          "type": "string"
+        },
+        "azureTableSourceIgnoreTableNotFound": {
+          "description": "Azure table source ignore table not found.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureTableSource"
+          ]
+        }
+      }
+    },
+    "modern_20": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Microsoft.Azure.Management.DataFactories.Models.ActivityPolicy",
+              "description": "Activity policy.",
+              "type": "object",
+              "properties": {
+                "delay": {
+                  "description": "Delay activity execution so that upstream activities can have extra time to finish.",
+                  "type": "string",
+                  "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                },
+                "style": {
+                  "description": "The scheduler style.",
+                  "type": "string",
+                  "enum": [
+                    "NotSpecified",
+                    "StartOfInterval",
+                    "EndOfInterval"
+                  ]
+                },
+                "longRetryInterval": {
+                  "description": "Interval between two long retries.",
+                  "type": "string",
+                  "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                },
+                "concurrency": {
+                  "description": "The maximum number of concurrent activity executions.",
+                  "type": "integer"
+                },
+                "longRetry": {
+                  "description": "Total number of long retries after failed short retries.",
+                  "type": "integer"
+                },
+                "executionPriorityOrder": {
+                  "description": "Execution priority order.  Choose from OldestFirst or NewestFirst.",
+                  "type": "string",
+                  "enum": [
+                    "OldestFirst",
+                    "NewestFirst"
+                  ]
+                },
+                "timeout": {
+                  "description": "Specifies the timeout for the activity to run. If there is value specified, it takes the value of TimeSpan.FromMilliseconds(-1) which means indefinite timeout.",
+                  "type": "string",
+                  "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                },
+                "retry": {
+                  "description": "Total number of short retries for a failed activity.",
+                  "type": "integer"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^retry$": true,
+                "^style$": true,
+                "^timeout$": true,
+                "^executionPriorityOrder$": true,
+                "^longRetryInterval$": true,
+                "^delay$": true,
+                "^longRetry$": true,
+                "^concurrency$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "azureMLBatchExecutionActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureMLBatchExecutionActivity",
+      "description": "Azure ML Batch Execution Service activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "properties": {
+            "globalParameters": {
+              "$ref": "#/definitions4/modern_10"
+            },
+            "webServiceOutputs": {
+              "$ref": "#/definitions4/modern_11"
+            },
+            "webServiceInput": {
+              "description": "Name of ADF Blob dataset giving the input to the batch execution. This information will be passed in the WebServiceInput property of the Azure ML batch execution request.",
+              "type": "string"
+            },
+            "webServiceInputs": {
+              "$ref": "#/definitions4/modern_12"
+            }
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureMLBatchExecution"
+          ]
+        }
+      }
+    },
+    "copySinkTypes": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions4/copySink"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions4/azureQueueSink"
+            },
+            {
+              "$ref": "#/definitions4/azureSearchIndexSink"
+            },
+            {
+              "$ref": "#/definitions4/azureTableSink"
+            },
+            {
+              "$ref": "#/definitions4/blobSink"
+            },
+            {
+              "$ref": "#/definitions4/documentDbCollectionSink"
+            },
+            {
+              "$ref": "#/definitions4/sqlSink"
+            },
+            {
+              "$ref": "#/definitions4/sqlDWSink"
+            },
+            {
+              "$ref": "#/definitions4/fileSystemSink"
+            },
+            {
+              "$ref": "#/definitions4/oracleSink"
+            },
+            {
+              "$ref": "#/definitions4/azureDataLakeStoreSink"
+            }
+          ]
+        }
+      ]
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Allows user to specify defines for Hive job request.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Key,Value pairs to be passed to the Azure ML Batch Execution Service Endpoint (these are also referred to as GlobalParameters). Keys must match the names of web service parameters defined in published the Azure ML web service. Values may include ADF macros to be resolved at each slice execution time.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "copyTranslatorTypes": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions4/copyTranslator"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions4/tabularTranslator"
+            }
+          ]
+        }
+      ]
+    },
+    "copySink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopySink",
+      "description": "A copy activity sink.",
+      "type": "object",
+      "properties": {
+        "writeBatchSize": {
+          "description": "Write batch size.",
+          "type": "integer",
+          "minimum": 0.0
+        },
+        "writeBatchTimeout": {
+          "description": "Write batch timeout.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "sinkRetryCount": {
+          "description": "Sink retry count.",
+          "type": "integer"
+        },
+        "sinkRetryWait": {
+          "description": "Sink retry wait.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        }
+      }
+    },
+    "pipelineProperties": {
+      "$ref": "#/definitions4/modern_13"
+    },
+    "modern_23": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Microsoft.Azure.Management.DataFactories.Models.ActivityInput",
+              "description": "An activity input.",
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "startTime": {
+                  "description": "Start time.",
+                  "type": "string"
+                },
+                "endTime": {
+                  "description": "EndTime.",
+                  "type": "string"
+                },
+                "length": {
+                  "description": "Length.",
+                  "type": "string",
+                  "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                },
+                "name": {
+                  "description": "Referenced table name.",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^startTime$": true,
+                "^endTime$": true,
+                "^length$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "copySource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopySource",
+      "description": "A copy activity source.",
+      "type": "object",
+      "properties": {
+        "sourceRetryCount": {
+          "description": "Source retry count.",
+          "type": "integer"
+        },
+        "sourceRetryWait": {
+          "description": "Source retry wait.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        }
+      }
+    },
+    "hdInsightPigActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightPigActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_14"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightPig"
+          ]
+        }
+      }
+    },
+    "hdInsightHiveActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightHiveActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_16"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightHive"
+          ]
+        }
+      }
+    },
+    "blobSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.BlobSink",
+      "description": "A copy activity blob sink.",
+      "type": "object",
+      "properties": {
+        "blobWriterAddHeader": {
+          "description": "Blob writer add header.",
+          "type": "boolean"
+        },
+        "copyBehavior": {
+          "description": "The type of copy behavior for copy sink.",
+          "$ref": "#/definitions4/copyBehaviorType"
+        },
+        "blobWriterOverwriteFiles": {
+          "description": "Blob writer overwrite files.",
+          "type": "boolean"
+        },
+        "blobWriterDateTimeFormat": {
+          "description": "Blob writer date time format.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BlobSink"
+          ]
+        }
+      }
+    },
+    "sqlDWSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlDWSource",
+      "description": "A copy activity SQL Data Warehouse source.",
+      "type": "object",
+      "properties": {
+        "sqlReaderQuery": {
+          "description": "SQL Data Warehouse reader query.",
+          "type": "string"
+        },
+        "sqlReaderStoredProcedureName": {
+          "description": "Name of the stored procedure for a SQL Data Warehouse source. This cannot be used at the same time as SqlReaderQuery.",
+          "type": "string"
+        },
+        "storedProcedureParameters": {
+          "$ref": "#/definitions4/modern_18"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlDWSource"
+          ]
+        }
+      }
+    },
+    "tabularTranslator": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.TabularTranslator",
+      "description": "A copy activity tabular translator.",
+      "type": "object",
+      "properties": {
+        "columnMappings": {
+          "description": "Column mappings.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "TabularTranslator"
+          ]
+        }
+      }
+    },
+    "sqlDWSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlDWSink",
+      "description": "A copy activity SQL data warehouse sink.",
+      "type": "object",
+      "properties": {
+        "allowPolyBase": {
+          "description": "Indicates to use PolyBase to copy data into SQL Data Warehouse when applicable.",
+          "type": "boolean"
+        },
+        "sqlWriterCleanupScript": {
+          "description": "SQL writer cleanup script.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlDWSink"
+          ]
+        },
+        "sliceIdentifierColumnName": {
+          "description": "Name of the SQL column which is used to save slice identifier information, to support idempotent copy.",
+          "type": "string"
+        },
+        "polyBaseSettings": {
+          "description": "Specifies PolyBase-related settings when AllowPolyBase is true.",
+          "$ref": "#/definitions4/polyBaseSettings"
+        }
+      }
+    },
+    "modern_28": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Allows user to specify defines for mapreduce job request.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "azureMLUpdateResourceActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureMLUpdateResourceActivity",
+      "description": "Azure ML Update Resource management activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "required": [
+            "trainedModelDatasetName",
+            "trainedModelName"
+          ],
+          "properties": {
+            "trainedModelDatasetName": {
+              "type": "string",
+              "description": "Name of ADF Blob Dataset representing the .ilearner file that will be uploaded by the update operation. The Dataset must be included in this Activity's pipeline Inputs."
+            },
+            "trainedModelName": {
+              "type": "string",
+              "description": "Name of the Trained Model module in the Web Service experiment to be updated."
+            }
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureMLUpdateResource"
+          ]
+        }
+      }
+    },
+    "azureQueueSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureQueueSink",
+      "description": "A copy activity Azure queue sink.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureQueueSink"
+          ]
+        }
+      }
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Key,Value pairs mapping the Azure ML endpoint's Web Service Input names to names of ADF Blob datasets from where the batch execution input should be read. This information will be passed in the WebServiceInputs property of the Azure ML batch execution request. Mapped Datasets must be included in the Activity's Inputs."
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "copyTranslator": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopyTranslator",
+      "description": "A copy activity translator.",
+      "type": "object",
+      "properties": {}
+    },
+    "azureDataLakeStoreSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreSink",
+      "description": "A copy activity Azure Data Lake Store sink.",
+      "type": "object",
+      "properties": {
+        "copyBehavior": {
+          "description": "The type of copy behavior for copy sink.",
+          "$ref": "#/definitions4/copyBehaviorType"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "AzureDataLakeStoreSink"
+          ]
+        }
+      }
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "SQL Stored Procedure activity properties.",
+              "type": "object",
+              "required": [
+                "storedProcedureName"
+              ],
+              "properties": {
+                "storedProcedureName": {
+                  "description": "Stored Procedure Name.",
+                  "type": "string"
+                },
+                "storedProcedureParameters": {
+                  "$ref": "#/definitions4/modern_9"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^storedProcedureName$": true,
+                "^storedProcedureParameters$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "mongoDbSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.MongoDbSource",
+      "description": "A copy activity source for a MongoDB database.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Database query. Should be a SQL-92 query expression.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "MongoDbSource"
+          ]
+        }
+      }
+    },
+    "storedProcedureParameterType": {
+      "type": "string",
+      "enum": [
+        "String",
+        "Int",
+        "Decimal",
+        "Guid",
+        "Boolean",
+        "Date"
+      ]
+    },
+    "webSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.WebSource",
+      "description": "A copy activity source for web page table.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "WebSource"
+          ]
+        }
+      }
+    },
+    "cassandraSourceReadConsistencyLevels": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CassandraSourceReadConsistencyLevels",
+      "description": "Consistency level when connecting to the Cassandra database. A property of CassandraSource.",
+      "type": "string",
+      "enum": [
+        "ALL",
+        "EACH_QUORUM",
+        "QUORUM",
+        "LOCAL_QUORUM",
+        "ONE",
+        "TWO",
+        "THREE",
+        "LOCAL_ONE",
+        "SERIAL",
+        "LOCAL_SERIAL"
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "User specified property bag used in Stored Procedure. There is no restriction on the keys or values that can be used. User needs to consume and interpret the content accordingly in their customized Stored Procedure.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_29": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "http://datafactories.schema.management.azure.com/schemas/2015-09-01/Microsoft.DataFactory.Pipeline.json",
+              "title": "Microsoft.Azure.Management.DataFactories.Models.Pipeline",
+              "description": "A pipeline defines activities.",
+              "type": "object",
+              "required": [
+                "name",
+                "properties"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name of the pipeline.",
+                  "type": "string",
+                  "maxLength": 260,
+                  "pattern": "^[A-Za-z0-9_][^<>*#.%&:\\\\+?/]*$"
+                },
+                "properties": {
+                  "description": "Pipeline properties.",
+                  "$ref": "#/definitions4/pipelineProperties"
+                },
+                "$schema": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^properties$": true,
+                "^$schema$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Value and type setting for stored procedure parameters. Example: \"{Parameter1: {value: \"1\", type: \"int\"}}\".",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions4/storedProcedureParameter"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Microsoft.Azure.Management.DataFactories.Models.PipelineProperties",
+              "description": "Pipeline properties.",
+              "type": "object",
+              "required": [
+                "activities"
+              ],
+              "properties": {
+                "expirationTime": {
+                  "description": "Duration of time after creation for which the pipeline is valid and should remain provisioned. The pipeline will be deleted automatically once it reaches the expiration time if it does not have any active or pending runs.",
+                  "type": "string",
+                  "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                },
+                "description": {
+                  "description": "Item description.",
+                  "type": "string"
+                },
+                "end": {
+                  "description": "The end time of the pipeline.",
+                  "$ref": "#/definitions4/UTC"
+                },
+                "start": {
+                  "description": "The start time of the pipeline.",
+                  "$ref": "#/definitions4/UTC"
+                },
+                "hubName": {
+                  "description": "The name of the Hub that this pipeline belongs to.",
+                  "type": "string"
+                },
+                "isPaused": {
+                  "description": "The status of the pipline. Pipeline is paused when boolean is set to true.",
+                  "type": "boolean"
+                },
+                "pipelineMode": {
+                  "description": "The method of scheduling runs for the pipeline. 'Scheduled' indicates that the pipeline will run at a specified time interval according to its active period (start and end time). 'OneTime' indicates that the pipeline will run only once.",
+                  "type": "string",
+                  "enum": [
+                    "Scheduled",
+                    "OneTime"
+                  ]
+                },
+                "activities": {
+                  "description": "Activities that belong to the pipeline.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/baseActivityTypes"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^hubName$": true,
+                "^activities$": true,
+                "^description$": true,
+                "^end$": true,
+                "^expirationTime$": true,
+                "^start$": true,
+                "^isPaused$": true,
+                "^pipelineMode$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "baseActivityTypes": {
+      "type": "object",
+      "required": [
+        "type",
+        "typeProperties"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions4/baseActivity"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions4/copyActivity"
+            },
+            {
+              "$ref": "#/definitions4/sqlServerStoredProcedureActivity"
+            },
+            {
+              "$ref": "#/definitions4/azureMLBatchScoringActivity"
+            },
+            {
+              "$ref": "#/definitions4/azureMLBatchExecutionActivity"
+            },
+            {
+              "$ref": "#/definitions4/azureMLUpdateResourceActivity"
+            },
+            {
+              "$ref": "#/definitions4/hdInsightHiveActivity"
+            },
+            {
+              "$ref": "#/definitions4/hdInsightPigActivity"
+            },
+            {
+              "$ref": "#/definitions4/hdInsightMapReduceActivity"
+            },
+            {
+              "$ref": "#/definitions4/hdInsightStreamingActivity"
+            },
+            {
+              "$ref": "#/definitions4/dataLakeAnalyticsUSQLActivity"
+            },
+            {
+              "$ref": "#/definitions4/dotNetActivity"
+            }
+          ]
+        }
+      ]
+    },
+    "sqlSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlSource",
+      "description": "A copy activity SQL source.",
+      "type": "object",
+      "properties": {
+        "sqlReaderQuery": {
+          "description": "SQL reader query.",
+          "type": "string"
+        },
+        "sqlReaderStoredProcedureName": {
+          "description": "Name of the stored procedure for a SQL Database source. This cannot be used at the same time as SqlReaderQuery.",
+          "type": "string"
+        },
+        "storedProcedureParameters": {
+          "$ref": "#/definitions4/modern_19"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlSource"
+          ]
+        }
+      }
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Data Lake Analytics U-SQL activity properties.",
+              "type": "object",
+              "properties": {
+                "priority": {
+                  "description": "Determines which jobs out of all that are queued should be selected to run first. The lower the number, the higher the priority (minimum is 0).",
+                  "type": "integer"
+                },
+                "runtimeVersion": {
+                  "description": "Runtime version of U-SQL engine to use.",
+                  "type": "string"
+                },
+                "scriptLinkedService": {
+                  "description": "The linked service hosting the U-SQL script. This needs to be used at the same time as ScriptPath.",
+                  "type": "string"
+                },
+                "compilationMode": {
+                  "description": "Compilation mode of U-SQL. Must be one of the USqlCompilationMode",
+                  "$ref": "#/definitions4/uSqlCompilationMode"
+                },
+                "degreeOfParallelism": {
+                  "description": "The maximum number of nodes that will be used simultaneously to run the job.",
+                  "type": "integer"
+                },
+                "script": {
+                  "description": "The U-SQL script. This cannot be used at the same time as ScriptPath and ScriptLinkedService.",
+                  "type": "string"
+                },
+                "parameters": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "scriptPath": {
+                  "description": "The path to the U-SQL script in the ScriptLinkedService. This needs to be used at the same time as ScriptLinkedService.",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^scriptPath$": true,
+                "^compilationMode$": true,
+                "^script$": true,
+                "^degreeOfParallelism$": true,
+                "^parameters$": true,
+                "^priority$": true,
+                "^runtimeVersion$": true,
+                "^scriptLinkedService$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "documentDbCollectionSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionSink",
+      "description": "A copy activity Document Database Collection sink.",
+      "type": "object",
+      "properties": {
+        "nestingSeparator": {
+          "description": "Nested properties separator.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DocumentDbCollectionSink"
+          ]
+        }
+      }
+    },
+    "copySourceTypes": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions4/copySource"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions4/azureTableSource"
+            },
+            {
+              "$ref": "#/definitions4/blobSource"
+            },
+            {
+              "$ref": "#/definitions4/documentDbCollectionSource"
+            },
+            {
+              "$ref": "#/definitions4/relationalSource"
+            },
+            {
+              "$ref": "#/definitions4/sqlSource"
+            },
+            {
+              "$ref": "#/definitions4/sqlDWSource"
+            },
+            {
+              "$ref": "#/definitions4/fileSystemSource"
+            },
+            {
+              "$ref": "#/definitions4/oracleSource"
+            },
+            {
+              "$ref": "#/definitions4/azureDataLakeStoreSource"
+            },
+            {
+              "$ref": "#/definitions4/cassandraSource"
+            },
+            {
+              "$ref": "#/definitions4/mongoDbSource"
+            },
+            {
+              "$ref": "#/definitions4/webSource"
+            },
+            {
+              "$ref": "#/definitions4/httpSource"
+            }
+          ]
+        }
+      ]
+    },
+    "modern_26": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Microsoft.Azure.Management.DataFactories.Models.ActivityOutput",
+              "description": "An activity output.",
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Referenced table name.",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "activityPolicy": {
+      "$ref": "#/definitions4/modern_20"
+    },
+    "dotNetActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DotNetActivity",
+      "description": ".NET activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_21"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DotNetActivity"
+          ]
+        }
+      }
+    },
+    "documentDbCollectionSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionSource",
+      "description": "A copy activity Document Database Collection source.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Documents query.",
+          "type": "string"
+        },
+        "nestingSeparator": {
+          "description": "Nested properties separator.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DocumentDbCollectionSource"
+          ]
+        }
+      }
+    },
+    "polyBaseSettings": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.PolyBaseSettings",
+      "description": "PolyBase settings.",
+      "type": "object",
+      "properties": {
+        "rejectType": {
+          "description": "Indicates whether the RejectValue property is specified as a literal value or a percentage.",
+          "type": "string",
+          "enum": [
+            "value",
+            "percentage"
+          ]
+        },
+        "rejectValue": {
+          "description": "Specifies the value or the percentage of rows that can be rejected before the query fails.",
+          "type": "number",
+          "minimum": 0.0
+        },
+        "rejectSampleValue": {
+          "description": "Determines the number of rows to attempt to retrieve before the PolyBase recalculates the percentage of rejected rows.",
+          "type": "integer",
+          "minimum": 0.0
+        },
+        "useTypeDefault": {
+          "description": "Specifies how to handle missing values in delimited text files when PolyBase retrieves data from the text file.",
+          "type": "boolean"
+        }
+      }
+    },
+    "fileSystemSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.FileSystemSink",
+      "description": "A copy activity file system sink.",
+      "type": "object",
+      "properties": {
+        "copyBehavior": {
+          "description": "The type of copy behavior for file system sink.",
+          "$ref": "#/definitions4/copyBehaviorType"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FileSystemSink"
+          ]
+        }
+      }
+    },
+    "httpSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HttpSource",
+      "description": "A copy activity source for an HTTP file.",
+      "type": "object",
+      "properties": {
+        "httpRequestTimeout": {
+          "description": "Specifies the timeout for a HTTP client to get HTTP response from HTTP server. The default value is equivalent to System.Net.HttpWebRequest.Timeout.",
+          "type": "string",
+          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HttpSource"
+          ]
+        }
+      }
+    },
+    "activityInput": {
+      "$ref": "#/definitions4/modern_23"
+    },
+    "baseActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.BaseActivity",
+      "description": "A pipeline activity.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Activity name.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Activity description.",
+          "type": "string"
+        },
+        "linkedServiceName": {
+          "description": "LinkedService name where the Activity Runs.",
+          "type": "string"
+        },
+        "outputs": {
+          "description": "Outputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/activityOutput"
+          }
+        },
+        "inputs": {
+          "description": "Inputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/activityInput"
+          }
+        },
+        "scheduler": {
+          "$ref": "#/definitions4/modern_24"
+        },
+        "policy": {
+          "description": "Policy.",
+          "$ref": "#/definitions4/activityPolicy"
+        }
+      }
+    },
+    "fileSystemSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.FileSystemSource",
+      "description": "A copy activity file system source.",
+      "type": "object",
+      "properties": {
+        "recursive": {
+          "description": "If true, files under the folder path will be read recursively.",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FileSystemSource"
+          ]
+        }
+      }
+    },
+    "sqlSink": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlSink",
+      "description": "A copy activity SQL sink.",
+      "type": "object",
+      "properties": {
+        "sqlWriterTableType": {
+          "description": "Sql writer table type.",
+          "type": "string"
+        },
+        "sqlWriterCleanupScript": {
+          "description": "SQL writer cleanup script.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SqlSink"
+          ]
+        },
+        "sliceIdentifierColumnName": {
+          "description": "Name of the SQL column which is used to save slice identifier information, to support idempotent copy.",
+          "type": "string"
+        },
+        "storedProcedureParameters": {
+          "$ref": "#/definitions4/modern_25"
+        },
+        "sqlWriterStoredProcedureName": {
+          "description": "Sql writer stored procedure name.",
+          "type": "string"
+        }
+      }
+    },
+    "activityOutput": {
+      "$ref": "#/definitions4/modern_26"
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "HDInsight activity properties.",
+              "type": "object",
+              "properties": {
+                "scriptLinkedService": {
+                  "description": "Script linked service.",
+                  "type": "string"
+                },
+                "getDebugInfo": {
+                  "description": "The HDInsightActivityDebugInfoOption settings to use.",
+                  "$ref": "#/definitions4/hdInsightActivityDebugInfoOption"
+                },
+                "script": {
+                  "description": "script.",
+                  "type": "string"
+                },
+                "scriptPath": {
+                  "description": "Script path.",
+                  "type": "string"
+                },
+                "storageLinkedServices": {
+                  "description": "Storage linked services.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "defines": {
+                  "$ref": "#/definitions4/modern_15"
+                },
+                "arguments": {
+                  "description": "User specified arguments to HDInsightActivity.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^defines$": true,
+                "^scriptPath$": true,
+                "^arguments$": true,
+                "^script$": true,
+                "^storageLinkedServices$": true,
+                "^getDebugInfo$": true,
+                "^scriptLinkedService$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "relationalSource": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.RelationalSource",
+      "description": "A copy activity source for various relational databases.",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Database query.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "RelationalSource"
+          ]
+        }
+      }
+    },
+    "copyBehaviorType": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.CopyBehaviorType",
+      "description": "All available types of copy behavior.",
+      "type": "string",
+      "enum": [
+        "PreserveHierarchy",
+        "FlattenHierarchy",
+        "MergeFiles"
+      ]
+    },
+    "hdInsightMapReduceActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.HDInsightMapReduceActivity",
+      "description": "HDInsight activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_27"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HDInsightMapReduce"
+          ]
+        }
+      }
+    },
+    "modern_25": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Sql stored procedure parameters.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions4/storedProcedureParameter"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Value and type setting for stored procedure parameters. Example: \"{Parameter1: {value: \"1\", type: \"int\"}}\".",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions4/storedProcedureParameter"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dataLakeAnalyticsUSQLActivity": {
+      "title": "Microsoft.Azure.Management.DataFactories.Models.DataLakeAnalyticsUSQLActivity",
+      "description": "Azure Data Lake Analytics U-SQL activity.",
+      "type": "object",
+      "properties": {
+        "typeProperties": {
+          "$ref": "#/definitions4/modern_3"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DataLakeAnalyticsU-SQL"
+          ]
+        }
+      }
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Allows user to specify parameters for the U-SQL activity.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/copySourceTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copySourceTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions3/baseActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/baseActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_25"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_25"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copyTranslator"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copyTranslator"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copyActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copyActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/fileSystemSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/fileSystemSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copySourceTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copySourceTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureDataLakeStoreSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureDataLakeStoreSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureMLBatchExecutionActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureMLBatchExecutionActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureMLBatchExecutionActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureMLBatchExecutionActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/activityOutput"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/activityOutput"
+      }
+    },
+    {
+      "$ref": "#/definitions3/baseActivityTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/baseActivityTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relationalSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relationalSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureTableSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureTableSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/baseActivityTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/baseActivityTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hdInsightActivityDebugInfoOption"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hdInsightActivityDebugInfoOption"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_29"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_29"
+      }
+    },
+    {
+      "$ref": "#/definitions4/uSqlCompilationMode"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/uSqlCompilationMode"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureQueueSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureQueueSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hdInsightPigActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hdInsightPigActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sqlDWSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sqlDWSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copyBehaviorType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copyBehaviorType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hdInsightStreamingActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hdInsightStreamingActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/blobSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/blobSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/mongoDbSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/mongoDbSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copyBehaviorType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copyBehaviorType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureMLBatchScoringActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureMLBatchScoringActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copyActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copyActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/baseActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/baseActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureSearchIndexSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureSearchIndexSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_22"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_22"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copyTranslator"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copyTranslator"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/oracleSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/oracleSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/documentDbCollectionSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/documentDbCollectionSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copySink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copySink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/polyBaseSettings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/polyBaseSettings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/pipelineProperties"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/pipelineProperties"
+      }
+    },
+    {
+      "$ref": "#/definitions4/storedProcedureParameter"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/storedProcedureParameter"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_24"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_24"
+      }
+    },
+    {
+      "$ref": "#/definitions4/activityPolicy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/activityPolicy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/webSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/webSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hdInsightMapReduceActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hdInsightMapReduceActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/fileSystemSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/fileSystemSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/oracleSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/oracleSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/cassandraSourceReadConsistencyLevels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/cassandraSourceReadConsistencyLevels"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureDataLakeStoreSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureDataLakeStoreSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sqlDWSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sqlDWSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copyTranslatorTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copyTranslatorTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions3/stagingSettings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/stagingSettings"
+      }
+    },
+    {
+      "$ref": "#/definitions3/storedProcedureParameterType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/storedProcedureParameterType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/cassandraSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/cassandraSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hdInsightHiveActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hdInsightHiveActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureMLUpdateResourceActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureMLUpdateResourceActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dotNetActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dotNetActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureTableSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureTableSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relationalSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relationalSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/storedProcedureParameterType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/storedProcedureParameterType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/blobSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/blobSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureMLBatchScoringActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureMLBatchScoringActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/httpSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/httpSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureTableSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureTableSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copySinkTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copySinkTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sqlSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sqlSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/storedProcedureParameter"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/storedProcedureParameter"
+      }
+    },
+    {
+      "$ref": "#/definitions3/blobSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/blobSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sqlDWSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sqlDWSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hdInsightActivityDebugInfoOption"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hdInsightActivityDebugInfoOption"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tabularTranslator"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tabularTranslator"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hdInsightHiveActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hdInsightHiveActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copySource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copySource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/uSqlCompilationMode"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/uSqlCompilationMode"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sqlDWSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sqlDWSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/UTC"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/UTC"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_28"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_28"
+      }
+    },
+    {
+      "$ref": "#/definitions4/cassandraSourceReadConsistencyLevels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/cassandraSourceReadConsistencyLevels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copySource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copySource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/oracleSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/oracleSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/documentDbCollectionSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/documentDbCollectionSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureMLUpdateResourceActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureMLUpdateResourceActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/polyBaseSettings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/polyBaseSettings"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hdInsightMapReduceActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hdInsightMapReduceActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureSearchIndexSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureSearchIndexSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/documentDbCollectionSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/documentDbCollectionSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sqlServerStoredProcedureActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sqlServerStoredProcedureActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/copySinkTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/copySinkTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions4/oracleSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/oracleSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_20"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_20"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureDataLakeStoreSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureDataLakeStoreSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/blobSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/blobSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_21"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_21"
+      }
+    },
+    {
+      "$ref": "#/definitions3/activityInput"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/activityInput"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tabularTranslator"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tabularTranslator"
+      }
+    },
+    {
+      "$ref": "#/definitions4/stagingSettings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/stagingSettings"
+      }
+    },
+    {
+      "$ref": "#/definitions3/fileSystemSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/fileSystemSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureTableSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureTableSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sqlSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sqlSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/cassandraSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/cassandraSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azureDataLakeStoreSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azureDataLakeStoreSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sqlServerStoredProcedureActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sqlServerStoredProcedureActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/httpSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/httpSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/activityOutput"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/activityOutput"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hdInsightStreamingActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hdInsightStreamingActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azureQueueSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azureQueueSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_26"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_26"
+      }
+    },
+    {
+      "$ref": "#/definitions4/fileSystemSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/fileSystemSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_23"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_23"
+      }
+    },
+    {
+      "$ref": "#/definitions4/documentDbCollectionSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/documentDbCollectionSink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dataLakeAnalyticsUSQLActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dataLakeAnalyticsUSQLActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/mongoDbSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/mongoDbSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copyTranslatorTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copyTranslatorTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sqlSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sqlSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sqlSink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sqlSink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_27"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_27"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dotNetActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dotNetActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/pipelineProperties"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/pipelineProperties"
+      }
+    },
+    {
+      "$ref": "#/definitions4/UTC"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/UTC"
+      }
+    },
+    {
+      "$ref": "#/definitions3/activityPolicy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/activityPolicy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/activityInput"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/activityInput"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hdInsightPigActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hdInsightPigActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions3/copySink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/copySink"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dataLakeAnalyticsUSQLActivity"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dataLakeAnalyticsUSQLActivity"
+      }
+    },
+    {
+      "$ref": "#/definitions3/webSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/webSource"
+      }
+    }
+  ]
+}

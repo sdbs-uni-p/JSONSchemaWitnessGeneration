@@ -1,0 +1,187 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "additionalProperties": false,
+      "description": "JSON representation of /etc/fstab",
+      "patternProperties": {
+        "^/([^/]+(/[^/]+)*)?$": {
+          "$ref": "#/definitions3/mntent"
+        }
+      },
+      "properties": {
+        "swap": {
+          "$ref": "#/definitions3/mntent"
+        }
+      },
+      "required": [
+        "/",
+        "swap"
+      ],
+      "title": "/etc/fstab",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_2"
+      }
+    }
+  ],
+  "definitions3": {
+    "mntent": {
+      "additionalItems": false,
+      "description": "An fstab entry",
+      "properties": {
+        "device": {
+          "type": "string"
+        },
+        "dump": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "fsck": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "fstype": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "device",
+        "fstype"
+      ],
+      "title": "mntent",
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "An fstab entry",
+              "properties": {
+                "dump": {
+                  "minimum": 0.0,
+                  "type": "integer"
+                },
+                "fstype": {
+                  "type": "string"
+                },
+                "device": {
+                  "type": "string"
+                },
+                "options": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "fsck": {
+                  "minimum": 0.0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "device",
+                "fstype"
+              ],
+              "title": "mntent",
+              "type": "object"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  false,
+                  false
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "JSON representation of /etc/fstab",
+              "patternProperties": {
+                "^/([^/]+(/[^/]+)*)?$": {
+                  "$ref": "#/definitions4/mntent"
+                }
+              },
+              "properties": {
+                "swap": {
+                  "$ref": "#/definitions4/mntent"
+                }
+              },
+              "required": [
+                "/",
+                "swap"
+              ],
+              "title": "/etc/fstab",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^/([^/]+(/[^/]+)*)?$": true,
+                "^swap$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "mntent": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/mntent"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/mntent"
+      }
+    },
+    {
+      "$ref": "#/definitions3/mntent"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/mntent"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

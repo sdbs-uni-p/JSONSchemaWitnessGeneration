@@ -1,0 +1,594 @@
+{
+  "allOf": [
+    {
+      "id": "http://grycap.upv.es/radl/schema#",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "RADL JSON scheme",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/aspect"
+      },
+      "minItems": 1
+    },
+    {
+      "not": {
+        "id": "http://grycap.upv.es/radl/schema#",
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "RADL JSON scheme",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions3/aspect"
+        },
+        "minItems": 1
+      }
+    }
+  ],
+  "definitions4": {
+    "aspect": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/configure"
+        },
+        {
+          "$ref": "#/definitions4/contextualize"
+        },
+        {
+          "$ref": "#/definitions4/deploy"
+        },
+        {
+          "$ref": "#/definitions4/cfeatures"
+        }
+      ]
+    },
+    "idString": {
+      "type": "string",
+      "pattern": "^[a-zA-Z._\\-][a-zA-Z0-9._\\-]*$"
+    },
+    "configure": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "pattern": "^configure$"
+        },
+        "id": {
+          "$ref": "#/definitions4/idString"
+        },
+        "recipe": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            },
+            {
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "id",
+        "recipe"
+      ]
+    },
+    "contextualize": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "pattern": "^contextualize$"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/contextualizeItem"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "class"
+      ]
+    },
+    "contextualizeItem": {
+      "type": "object",
+      "properties": {
+        "system": {
+          "$ref": "#/definitions4/idString"
+        },
+        "configure": {
+          "$ref": "#/definitions4/idString"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "configure"
+      ]
+    },
+    "deploy": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "pattern": "^deploy$"
+        },
+        "system": {
+          "$ref": "#/definitions4/idString"
+        },
+        "vm_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cloud_id": {
+          "$ref": "#/definitions4/idString"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "vm_number"
+      ]
+    },
+    "class": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "$ref": "#/definitions4/idString"
+        },
+        "id": {
+          "$ref": "#/definitions4/idString"
+        }
+      },
+      "required": [
+        "class",
+        "id"
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "$ref": "#/definitions4/idString"
+        },
+        "id": {
+          "$ref": "#/definitions4/idString"
+        },
+        "reference": {
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "id",
+        "reference"
+      ]
+    },
+    "cfeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/reference"
+        },
+        {
+          "$ref": "#/definitions4/cfeaturesNoReference"
+        }
+      ]
+    },
+    "cfeaturesNoReference": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/class"
+        },
+        {
+          "$ref": "#/definitions4/features"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "softs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/softFeatures"
+              }
+            },
+            "reference": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            }
+          }
+        }
+      ],
+      "not": {
+        "$ref": "#/definitions4/configure"
+      }
+    },
+    "features": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z._\\-][a-zA-Z0-9._\\-]*$": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions4/features"
+            },
+            {
+              "$ref": "#/definitions4/reference"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions4/features"
+                  },
+                  {
+                    "$ref": "#/definitions4/reference"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "softFeatures": {
+      "type": "object",
+      "properties": {
+        "weight": {
+          "type": "number",
+          "default": 0
+        },
+        "items": {
+          "$ref": "#/definitions4/features"
+        }
+      }
+    }
+  },
+  "definitions3": {
+    "aspect": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/configure"
+        },
+        {
+          "$ref": "#/definitions3/contextualize"
+        },
+        {
+          "$ref": "#/definitions3/deploy"
+        },
+        {
+          "$ref": "#/definitions3/cfeatures"
+        }
+      ]
+    },
+    "idString": {
+      "type": "string",
+      "pattern": "^[a-zA-Z._\\-][a-zA-Z0-9._\\-]*$"
+    },
+    "configure": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "pattern": "^configure$"
+        },
+        "id": {
+          "$ref": "#/definitions3/idString"
+        },
+        "recipe": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            },
+            {
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "id",
+        "recipe"
+      ]
+    },
+    "contextualize": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "pattern": "^contextualize$"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/contextualizeItem"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "class"
+      ]
+    },
+    "contextualizeItem": {
+      "type": "object",
+      "properties": {
+        "system": {
+          "$ref": "#/definitions3/idString"
+        },
+        "configure": {
+          "$ref": "#/definitions3/idString"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "configure"
+      ]
+    },
+    "deploy": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "pattern": "^deploy$"
+        },
+        "system": {
+          "$ref": "#/definitions3/idString"
+        },
+        "vm_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cloud_id": {
+          "$ref": "#/definitions3/idString"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "vm_number"
+      ]
+    },
+    "class": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "$ref": "#/definitions3/idString"
+        },
+        "id": {
+          "$ref": "#/definitions3/idString"
+        }
+      },
+      "required": [
+        "class",
+        "id"
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "$ref": "#/definitions3/idString"
+        },
+        "id": {
+          "$ref": "#/definitions3/idString"
+        },
+        "reference": {
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "id",
+        "reference"
+      ]
+    },
+    "cfeatures": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/reference"
+        },
+        {
+          "$ref": "#/definitions3/cfeaturesNoReference"
+        }
+      ]
+    },
+    "cfeaturesNoReference": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/class"
+        },
+        {
+          "$ref": "#/definitions3/features"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "softs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/softFeatures"
+              }
+            },
+            "reference": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            }
+          }
+        }
+      ],
+      "not": {
+        "$ref": "#/definitions3/configure"
+      }
+    },
+    "features": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z._\\-][a-zA-Z0-9._\\-]*$": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions3/features"
+            },
+            {
+              "$ref": "#/definitions3/reference"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions3/features"
+                  },
+                  {
+                    "$ref": "#/definitions3/reference"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "softFeatures": {
+      "type": "object",
+      "properties": {
+        "weight": {
+          "type": "number",
+          "default": 0
+        },
+        "items": {
+          "$ref": "#/definitions3/features"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/idString"
+    },
+    {
+      "$ref": "#/definitions3/contextualize"
+    },
+    {
+      "$ref": "#/definitions4/deploy"
+    },
+    {
+      "$ref": "#/definitions3/contextualizeItem"
+    },
+    {
+      "$ref": "#/definitions4/aspect"
+    },
+    {
+      "$ref": "#/definitions4/contextualize"
+    },
+    {
+      "$ref": "#/definitions3/reference"
+    },
+    {
+      "$ref": "#/definitions4/contextualizeItem"
+    },
+    {
+      "$ref": "#/definitions3/softFeatures"
+    },
+    {
+      "$ref": "#/definitions4/cfeatures"
+    },
+    {
+      "$ref": "#/definitions4/configure"
+    },
+    {
+      "$ref": "#/definitions3/aspect"
+    },
+    {
+      "$ref": "#/definitions4/class"
+    },
+    {
+      "$ref": "#/definitions3/class"
+    },
+    {
+      "$ref": "#/definitions3/deploy"
+    },
+    {
+      "$ref": "#/definitions4/features"
+    },
+    {
+      "$ref": "#/definitions4/softFeatures"
+    },
+    {
+      "$ref": "#/definitions4/idString"
+    },
+    {
+      "$ref": "#/definitions3/cfeaturesNoReference"
+    },
+    {
+      "$ref": "#/definitions3/features"
+    },
+    {
+      "$ref": "#/definitions4/cfeaturesNoReference"
+    },
+    {
+      "$ref": "#/definitions4/reference"
+    },
+    {
+      "$ref": "#/definitions3/cfeatures"
+    },
+    {
+      "$ref": "#/definitions3/configure"
+    }
+  ]
+}

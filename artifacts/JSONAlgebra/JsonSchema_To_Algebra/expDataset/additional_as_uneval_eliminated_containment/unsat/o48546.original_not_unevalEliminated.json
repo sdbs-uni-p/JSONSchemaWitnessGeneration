@@ -1,0 +1,100 @@
+{
+  "allOf": [
+    {
+      "properties": {
+        "cipher": {
+          "enum": [
+            "aes-128-ctr"
+          ],
+          "type": "string"
+        },
+        "cipherparams": {
+          "additionalProperties": false,
+          "properties": {
+            "iv": {
+              "pattern": "^([0-9]|[a-f]){32}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "iv"
+          ],
+          "type": "object"
+        },
+        "ciphertext": {
+          "pattern": "^(([0-9]|[a-f]){2}){0,32}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cipher",
+        "cipherparams",
+        "ciphertext"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "properties": {
+          "cipher": {
+            "enum": [
+              "aes-128-ctr"
+            ],
+            "type": "string"
+          },
+          "cipherparams": {
+            "$ref": "#/definitions4/modern_1"
+          },
+          "ciphertext": {
+            "pattern": "^(([0-9]|[a-f]){2}){0,32}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cipher",
+          "cipherparams",
+          "ciphertext"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "iv": {
+                  "pattern": "^([0-9]|[a-f]){32}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "iv"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^iv$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

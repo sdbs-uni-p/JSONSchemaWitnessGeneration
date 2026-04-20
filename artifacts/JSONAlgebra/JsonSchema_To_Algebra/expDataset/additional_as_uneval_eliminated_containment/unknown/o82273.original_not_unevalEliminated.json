@@ -1,0 +1,907 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "tree-sitter grammar specification",
+      "type": "object",
+      "required": [
+        "name",
+        "rules"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "the name of the grammar",
+          "type": "string",
+          "pattern": "^[a-zA-Z_]\\w*"
+        },
+        "rules": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z_]\\w*$": {
+              "$ref": "#/definitions3/rule"
+            }
+          },
+          "additionalProperties": false
+        },
+        "extras": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/rule"
+          }
+        },
+        "externals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/rule"
+          }
+        },
+        "inline": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z_]\\w*$"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-zA-Z_]\\w*$"
+            }
+          }
+        },
+        "word": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_]\\w*"
+        },
+        "supertypes": {
+          "description": "A list of hidden rule names that should be considered supertypes in the generated node types file. See http://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types.",
+          "type": "array",
+          "items": {
+            "description": "the name of a rule in `rules` or `extras`",
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions3": {
+    "blank-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^BLANK$"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "string-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^STRING$"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "pattern-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^PATTERN$"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "symbol-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^SYMBOL$"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "seq-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^SEQ$"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/rule"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "members"
+      ]
+    },
+    "choice-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^CHOICE$"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/rule"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "members"
+      ]
+    },
+    "alias-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^ALIAS$"
+        },
+        "value": {
+          "type": "string"
+        },
+        "named": {
+          "type": "boolean"
+        },
+        "content": {
+          "$ref": "#/definitions3/rule"
+        }
+      },
+      "required": [
+        "type",
+        "named",
+        "content",
+        "value"
+      ]
+    },
+    "repeat-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^REPEAT$"
+        },
+        "content": {
+          "$ref": "#/definitions3/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    },
+    "repeat1-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^REPEAT1$"
+        },
+        "content": {
+          "$ref": "#/definitions3/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    },
+    "token-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(TOKEN|IMMEDIATE_TOKEN)$"
+        },
+        "content": {
+          "$ref": "#/definitions3/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    },
+    "field-rule": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^FIELD$"
+        },
+        "content": {
+          "$ref": "#/definitions3/rule"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "content"
+      ]
+    },
+    "prec-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(PREC|PREC_LEFT|PREC_RIGHT|PREC_DYNAMIC)$"
+        },
+        "value": {
+          "type": "integer"
+        },
+        "content": {
+          "$ref": "#/definitions3/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content",
+        "value"
+      ]
+    },
+    "rule": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/alias-rule"
+        },
+        {
+          "$ref": "#/definitions3/blank-rule"
+        },
+        {
+          "$ref": "#/definitions3/string-rule"
+        },
+        {
+          "$ref": "#/definitions3/pattern-rule"
+        },
+        {
+          "$ref": "#/definitions3/symbol-rule"
+        },
+        {
+          "$ref": "#/definitions3/seq-rule"
+        },
+        {
+          "$ref": "#/definitions3/choice-rule"
+        },
+        {
+          "$ref": "#/definitions3/repeat1-rule"
+        },
+        {
+          "$ref": "#/definitions3/repeat-rule"
+        },
+        {
+          "$ref": "#/definitions3/token-rule"
+        },
+        {
+          "$ref": "#/definitions3/field-rule"
+        },
+        {
+          "$ref": "#/definitions3/prec-rule"
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "choice-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^CHOICE$"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/rule"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "members"
+      ]
+    },
+    "prec-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(PREC|PREC_LEFT|PREC_RIGHT|PREC_DYNAMIC)$"
+        },
+        "value": {
+          "type": "integer"
+        },
+        "content": {
+          "$ref": "#/definitions4/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content",
+        "value"
+      ]
+    },
+    "string-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^STRING$"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z_]\\w*$": {
+                  "$ref": "#/definitions4/rule"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_]\\w*$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "alias-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^ALIAS$"
+        },
+        "value": {
+          "type": "string"
+        },
+        "named": {
+          "type": "boolean"
+        },
+        "content": {
+          "$ref": "#/definitions4/rule"
+        }
+      },
+      "required": [
+        "type",
+        "named",
+        "content",
+        "value"
+      ]
+    },
+    "repeat-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^REPEAT$"
+        },
+        "content": {
+          "$ref": "#/definitions4/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    },
+    "blank-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^BLANK$"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "symbol-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^SYMBOL$"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "repeat1-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^REPEAT1$"
+        },
+        "content": {
+          "$ref": "#/definitions4/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    },
+    "field-rule": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^FIELD$"
+        },
+        "content": {
+          "$ref": "#/definitions4/rule"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "content"
+      ]
+    },
+    "pattern-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^PATTERN$"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "tree-sitter grammar specification",
+              "type": "object",
+              "required": [
+                "name",
+                "rules"
+              ],
+              "properties": {
+                "name": {
+                  "description": "the name of the grammar",
+                  "type": "string",
+                  "pattern": "^[a-zA-Z_]\\w*"
+                },
+                "inline": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z_]\\w*$"
+                  }
+                },
+                "extras": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/rule"
+                  }
+                },
+                "rules": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "word": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z_]\\w*"
+                },
+                "externals": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/rule"
+                  }
+                },
+                "conflicts": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z_]\\w*$"
+                    }
+                  }
+                },
+                "supertypes": {
+                  "description": "A list of hidden rule names that should be considered supertypes in the generated node types file. See http://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types.",
+                  "type": "array",
+                  "items": {
+                    "description": "the name of a rule in `rules` or `extras`",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^externals$": true,
+                "^rules$": true,
+                "^conflicts$": true,
+                "^supertypes$": true,
+                "^name$": true,
+                "^word$": true,
+                "^extras$": true,
+                "^inline$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "token-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(TOKEN|IMMEDIATE_TOKEN)$"
+        },
+        "content": {
+          "$ref": "#/definitions4/rule"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ]
+    },
+    "seq-rule": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^SEQ$"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/rule"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "members"
+      ]
+    },
+    "rule": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/alias-rule"
+        },
+        {
+          "$ref": "#/definitions4/blank-rule"
+        },
+        {
+          "$ref": "#/definitions4/string-rule"
+        },
+        {
+          "$ref": "#/definitions4/pattern-rule"
+        },
+        {
+          "$ref": "#/definitions4/symbol-rule"
+        },
+        {
+          "$ref": "#/definitions4/seq-rule"
+        },
+        {
+          "$ref": "#/definitions4/choice-rule"
+        },
+        {
+          "$ref": "#/definitions4/repeat1-rule"
+        },
+        {
+          "$ref": "#/definitions4/repeat-rule"
+        },
+        {
+          "$ref": "#/definitions4/token-rule"
+        },
+        {
+          "$ref": "#/definitions4/field-rule"
+        },
+        {
+          "$ref": "#/definitions4/prec-rule"
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/choice-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/choice-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/repeat1-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/repeat1-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/string-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/string-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/alias-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/alias-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/blank-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/blank-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/prec-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/prec-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/choice-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/choice-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/string-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/string-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/prec-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/prec-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/alias-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/alias-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/pattern-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/pattern-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/symbol-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/symbol-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/pattern-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/pattern-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/repeat-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/repeat-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/seq-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/seq-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/field-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/field-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/blank-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/blank-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/seq-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/seq-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/token-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/token-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/field-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/field-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions4/repeat-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/repeat-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/symbol-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/symbol-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/token-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/token-rule"
+      }
+    },
+    {
+      "$ref": "#/definitions3/repeat1-rule"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/repeat1-rule"
+      }
+    }
+  ]
+}

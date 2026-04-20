@@ -1,0 +1,601 @@
+{
+  "allOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "accounts": {
+          "properties": {
+            "discourse": {
+              "items": {
+                "$extends": "#/definitions3/Account",
+                "properties": {
+                  "forum": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url",
+                  "key",
+                  "username",
+                  "forum"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "github": {
+              "items": {
+                "$extends": "#/definitions3/Account",
+                "properties": {
+                  "token": {
+                    "minLength": 3,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array",
+              "_uniqueItems": true
+            },
+            "mastodon": {
+              "items": {
+                "$extends": "#/definitions3/Account",
+                "properties": {
+                  "accessToken": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "description": "API base URL for the instance",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "accessToken",
+                  "url"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "twitter": {
+              "items": {
+                "$extends": "#/definitions3/Account",
+                "patternProperties": {
+                  "^(consumer_(key|secret)|access_token_(key|secret))$": {
+                    "minLength": 3,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "consumer_key",
+                  "consumer_secret",
+                  "access_token_key",
+                  "access_token_secret"
+                ],
+                "type": "object"
+              },
+              "type": "array",
+              "_uniqueItems": true
+            }
+          },
+          "type": "object"
+        },
+        "boards": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "githubAccount": {
+                "description": "Name of the GitHub account to use",
+                "type": "string"
+              },
+              "labels": {
+                "additionalProperties": false,
+                "properties": {
+                  "invalid": {
+                    "default": "invalid",
+                    "minLength": 1,
+                    "title": "Label on issues that can not be tweeted",
+                    "type": "string"
+                  },
+                  "ready": {
+                    "default": "ready",
+                    "minLength": 1,
+                    "title": "Label on issues that can be tweeted",
+                    "type": "string"
+                  }
+                },
+                "title": "Label names for labels used by the queue",
+                "type": "object"
+              },
+              "projectName": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "repo": {
+                "pattern": "^[^/]+/[^/]+$",
+                "type": "string"
+              },
+              "schedulingTime": {
+                "additionalProperties": false,
+                "description": "If left out the dates for scheduling will not work, but the configuration is not required",
+                "oneOf": [
+                  {
+                    "required": [
+                      "timezone"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "region"
+                    ]
+                  }
+                ],
+                "properties": {
+                  "format": {
+                    "pattern": "[YMDHmTZ :.-]+",
+                    "type": "string"
+                  },
+                  "region": {
+                    "title": "Timezone region for localized dates",
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "maximum": 13,
+                    "minimum": -11,
+                    "title": "Offset to UTC of dates in issues",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "format"
+                ],
+                "type": "object"
+              },
+              "sources": {
+                "items": {
+                  "properties": {
+                    "columns": {
+                      "patternProperties": {
+                        "^(source|target)$": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": {
+                      "enum": [
+                        "issues",
+                        "mentions",
+                        "publish",
+                        "events",
+                        "feed",
+                        "squad",
+                        "reminder",
+                        "discourse",
+                        "validator"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "type": "object"
+                },
+                "type": "array",
+                "_uniqueItems": true
+              }
+            },
+            "required": [
+              "repo",
+              "githubAccount",
+              "projectName"
+            ],
+            "title": "Instances of the tool",
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array",
+          "_uniqueItems": true
+        }
+      },
+      "required": [
+        "accounts",
+        "boards"
+      ],
+      "title": "Content Queue Config Schema",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    }
+  ],
+  "definitions3": {
+    "Account": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "invalid": {
+                  "default": "invalid",
+                  "minLength": 1,
+                  "title": "Label on issues that can not be tweeted",
+                  "type": "string"
+                },
+                "ready": {
+                  "default": "ready",
+                  "minLength": 1,
+                  "title": "Label on issues that can be tweeted",
+                  "type": "string"
+                }
+              },
+              "title": "Label names for labels used by the queue",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^invalid$": true,
+                "^ready$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "accounts": {
+                  "properties": {
+                    "discourse": {
+                      "items": {
+                        "$extends": "#/definitions4/Account",
+                        "properties": {
+                          "forum": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "username": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "url",
+                          "key",
+                          "username",
+                          "forum"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "github": {
+                      "items": {
+                        "$extends": "#/definitions4/Account",
+                        "properties": {
+                          "token": {
+                            "minLength": 3,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "token"
+                        ],
+                        "type": "object"
+                      },
+                      "minItems": 1,
+                      "type": "array",
+                      "_uniqueItems": true
+                    },
+                    "mastodon": {
+                      "items": {
+                        "$extends": "#/definitions4/Account",
+                        "properties": {
+                          "accessToken": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "description": "API base URL for the instance",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "accessToken",
+                          "url"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "twitter": {
+                      "items": {
+                        "$extends": "#/definitions4/Account",
+                        "patternProperties": {
+                          "^(consumer_(key|secret)|access_token_(key|secret))$": {
+                            "minLength": 3,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "consumer_key",
+                          "consumer_secret",
+                          "access_token_key",
+                          "access_token_secret"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array",
+                      "_uniqueItems": true
+                    }
+                  },
+                  "type": "object"
+                },
+                "boards": {
+                  "items": {
+                    "$ref": "#/definitions4/modern_3"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "_uniqueItems": true
+                }
+              },
+              "required": [
+                "accounts",
+                "boards"
+              ],
+              "title": "Content Queue Config Schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^accounts$": true,
+                "^boards$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "projectName": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "schedulingTime": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "labels": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "sources": {
+                  "items": {
+                    "properties": {
+                      "columns": {
+                        "patternProperties": {
+                          "^(source|target)$": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "type": {
+                        "enum": [
+                          "issues",
+                          "mentions",
+                          "publish",
+                          "events",
+                          "feed",
+                          "squad",
+                          "reminder",
+                          "discourse",
+                          "validator"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "githubAccount": {
+                  "description": "Name of the GitHub account to use",
+                  "type": "string"
+                },
+                "repo": {
+                  "pattern": "^[^/]+/[^/]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "repo",
+                "githubAccount",
+                "projectName"
+              ],
+              "title": "Instances of the tool",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^sources$": true,
+                "^repo$": true,
+                "^schedulingTime$": true,
+                "^githubAccount$": true,
+                "^projectName$": true,
+                "^labels$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Account": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "If left out the dates for scheduling will not work, but the configuration is not required",
+              "oneOf": [
+                {
+                  "required": [
+                    "timezone"
+                  ]
+                },
+                {
+                  "required": [
+                    "region"
+                  ]
+                }
+              ],
+              "properties": {
+                "format": {
+                  "pattern": "[YMDHmTZ :.-]+",
+                  "type": "string"
+                },
+                "region": {
+                  "title": "Timezone region for localized dates",
+                  "type": "string"
+                },
+                "timezone": {
+                  "maximum": 13.0,
+                  "minimum": -11.0,
+                  "title": "Offset to UTC of dates in issues",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "format"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^format$": true,
+                "^region$": true,
+                "^timezone$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

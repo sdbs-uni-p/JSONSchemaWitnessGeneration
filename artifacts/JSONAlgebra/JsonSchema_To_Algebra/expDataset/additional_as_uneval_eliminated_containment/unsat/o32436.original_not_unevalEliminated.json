@@ -1,0 +1,343 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "RCV Election",
+      "description": "A single Ranked Choice Voting (RCV) race",
+      "type": "object",
+      "properties": {
+        "isTest": {
+          "description": "Value that is always true if it exists, could later be used to specify some useful info about the test",
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
+        "counts": {
+          "description": "In a test, this array specifies how many of each of the ballots in votes will appear. Can be used for a compressed form of tests",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "votes": {
+          "description": "all of the votes in the election",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "A unique identifier for each ballot",
+                "type": "integer"
+              },
+              "ranks": {
+                "description": "The rankings on this ballot, ordered from first to last within the list",
+                "type": "array",
+                "items": {
+                  "description": "A rank selection. Is an array because it allows overvotes",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "required": [
+              "id",
+              "ranks"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tiebreak": {
+          "description": "the candidate that should be chosen in each successive tiebreak to give the results as reported in the results value",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "results": {
+          "description": "a record of what happened as the election was tabulated",
+          "type": "object",
+          "properties": {
+            "winner": {
+              "description": "which candidate won the election",
+              "type": "integer"
+            },
+            "record": {
+              "description": "a round by round summary of the results of the election",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tally": {
+                    "description": "the number of first choice selections for some/all of the candidates",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "candidate": {
+                          "type": "integer"
+                        },
+                        "firstChoices": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "candidate",
+                        "firstChoices"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "eliminated": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "winner"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "dependencies": {
+        "isTest": [
+          "results",
+          "tiebreak",
+          "counts"
+        ]
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "RCV Election",
+              "description": "A single Ranked Choice Voting (RCV) race",
+              "type": "object",
+              "properties": {
+                "votes": {
+                  "description": "all of the votes in the election",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  }
+                },
+                "results": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "isTest": {
+                  "description": "Value that is always true if it exists, could later be used to specify some useful info about the test",
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "tiebreak": {
+                  "description": "the candidate that should be chosen in each successive tiebreak to give the results as reported in the results value",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "counts": {
+                  "description": "In a test, this array specifies how many of each of the ballots in votes will appear. Can be used for a compressed form of tests",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "dependencies": {
+                "isTest": [
+                  "results",
+                  "tiebreak",
+                  "counts"
+                ]
+              }
+            },
+            {
+              "patternProperties": {
+                "^isTest$": true,
+                "^votes$": true,
+                "^counts$": true,
+                "^tiebreak$": true,
+                "^results$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "A unique identifier for each ballot",
+                  "type": "integer"
+                },
+                "ranks": {
+                  "description": "The rankings on this ballot, ordered from first to last within the list",
+                  "type": "array",
+                  "items": {
+                    "description": "A rank selection. Is an array because it allows overvotes",
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "ranks"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^ranks$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "a record of what happened as the election was tabulated",
+              "type": "object",
+              "properties": {
+                "winner": {
+                  "description": "which candidate won the election",
+                  "type": "integer"
+                },
+                "record": {
+                  "description": "a round by round summary of the results of the election",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tally": {
+                        "description": "the number of first choice selections for some/all of the candidates",
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions4/modern_4"
+                        }
+                      },
+                      "eliminated": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "winner"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^winner$": true,
+                "^record$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "candidate": {
+                  "type": "integer"
+                },
+                "firstChoices": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "candidate",
+                "firstChoices"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^candidate$": true,
+                "^firstChoices$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    }
+  ]
+}

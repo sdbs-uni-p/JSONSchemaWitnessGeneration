@@ -1,0 +1,888 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "event_type",
+        "owner_id",
+        "product_id",
+        "product_status",
+        "event_timestamp"
+      ],
+      "properties": {
+        "owner_id": {
+          "type": "string"
+        },
+        "event_timestamp": {
+          "type": "string",
+          "_format": "date-time",
+          "description": "Timestamp of when this event was published. Each attempt to publish may result in a new timestamp"
+        },
+        "product_status": {
+          "enum": [
+            "active",
+            "inactive"
+          ]
+        },
+        "event_type": {
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ]
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions4/Product",
+          "description": "The product will be present for CREATE or UPDATE events"
+        }
+      },
+      "additional_properties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "event_type",
+          "owner_id",
+          "product_id",
+          "product_status",
+          "event_timestamp"
+        ],
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "event_type": {
+            "enum": [
+              "create",
+              "update",
+              "delete"
+            ]
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "event_timestamp": {
+            "type": "string",
+            "_format": "date-time",
+            "description": "Timestamp of when this event was published. Each attempt to publish may result in a new timestamp"
+          },
+          "product_status": {
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "product": {
+            "$ref": "#/definitions3/Product",
+            "description": "The product will be present for CREATE or UPDATE events"
+          }
+        },
+        "additional_properties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "discrim",
+                "value"
+              ],
+              "properties": {
+                "discrim": {
+                  "enum": [
+                    "decimal"
+                  ]
+                },
+                "value": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^discrim$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "BooleanValue": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "DatetimeValue": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "discrim",
+                "value"
+              ],
+              "properties": {
+                "discrim": {
+                  "enum": [
+                    "datetime"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "_format": "date-time"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^discrim$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Value": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/ReferenceValue"
+        },
+        {
+          "$ref": "#/definitions4/BooleanValue"
+        },
+        {
+          "$ref": "#/definitions4/StringValue"
+        },
+        {
+          "$ref": "#/definitions4/LocalizedStringValue"
+        },
+        {
+          "$ref": "#/definitions4/IntegerValue"
+        },
+        {
+          "$ref": "#/definitions4/DecimalValue"
+        },
+        {
+          "$ref": "#/definitions4/DatetimeValue"
+        },
+        {
+          "$ref": "#/definitions4/StructuredValue"
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "discrim",
+                "value"
+              ],
+              "properties": {
+                "discrim": {
+                  "enum": [
+                    "integer"
+                  ]
+                },
+                "value": {
+                  "type": "integer",
+                  "minimum": -9.223372036854776e+18,
+                  "maximum": 9.223372036854776e+18
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^discrim$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Product": {
+      "type": "object",
+      "required": [
+        "attributes"
+      ],
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/Attribute"
+          }
+        }
+      }
+    },
+    "Attribute": {
+      "type": "object",
+      "required": [
+        "type",
+        "values"
+      ],
+      "properties": {
+        "type": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+              "description": "This is a UUID value"
+            }
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions4/Value"
+          }
+        }
+      }
+    },
+    "ReferenceValue": {
+      "type": "object",
+      "description": "A reference to an attribute, by ID, in the master-attributes service",
+      "required": [
+        "discrim",
+        "attribute"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "ref"
+          ]
+        },
+        "attribute": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+              "description": "This is a UUID value"
+            }
+          }
+        }
+      }
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "discrim",
+                "value"
+              ],
+              "properties": {
+                "discrim": {
+                  "enum": [
+                    "string"
+                  ]
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^discrim$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "IntegerValue": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "StringValue": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "discrim",
+                "id"
+              ],
+              "properties": {
+                "discrim": {
+                  "enum": [
+                    "localized"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                  "description": "The UUID ID of this text in the localized text service in SPP"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^discrim$": true,
+                "^id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "discrim",
+                "value"
+              ],
+              "properties": {
+                "discrim": {
+                  "enum": [
+                    "boolean"
+                  ]
+                },
+                "value": {
+                  "type": "boolean"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^discrim$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "StructuredValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "values"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "struct"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions4/Attribute"
+          }
+        }
+      }
+    },
+    "DecimalValue": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "LocalizedStringValue": {
+      "$ref": "#/definitions4/modern_6"
+    }
+  },
+  "definitions3": {
+    "Attribute": {
+      "type": "object",
+      "required": [
+        "type",
+        "values"
+      ],
+      "properties": {
+        "type": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+              "description": "This is a UUID value"
+            }
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions3/Value"
+          }
+        }
+      }
+    },
+    "Value": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/ReferenceValue"
+        },
+        {
+          "$ref": "#/definitions3/BooleanValue"
+        },
+        {
+          "$ref": "#/definitions3/StringValue"
+        },
+        {
+          "$ref": "#/definitions3/LocalizedStringValue"
+        },
+        {
+          "$ref": "#/definitions3/IntegerValue"
+        },
+        {
+          "$ref": "#/definitions3/DecimalValue"
+        },
+        {
+          "$ref": "#/definitions3/DatetimeValue"
+        },
+        {
+          "$ref": "#/definitions3/StructuredValue"
+        }
+      ]
+    },
+    "ReferenceValue": {
+      "type": "object",
+      "description": "A reference to an attribute, by ID, in the master-attributes service",
+      "required": [
+        "discrim",
+        "attribute"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "ref"
+          ]
+        },
+        "attribute": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+              "description": "This is a UUID value"
+            }
+          }
+        }
+      }
+    },
+    "BooleanValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "value"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "boolean"
+          ]
+        },
+        "value": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StringValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "value"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "string"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocalizedStringValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "id"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "localized"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description": "The UUID ID of this text in the localized text service in SPP"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IntegerValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "value"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "integer"
+          ]
+        },
+        "value": {
+          "type": "integer",
+          "minimum": -9223372036854775808,
+          "maximum": 9223372036854775807
+        }
+      },
+      "additionalProperties": false
+    },
+    "DecimalValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "value"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "decimal"
+          ]
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DatetimeValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "value"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "datetime"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "_format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StructuredValue": {
+      "type": "object",
+      "required": [
+        "discrim",
+        "values"
+      ],
+      "properties": {
+        "discrim": {
+          "enum": [
+            "struct"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions3/Attribute"
+          }
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "required": [
+        "attributes"
+      ],
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/Attribute"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/DecimalValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/DecimalValue"
+      }
+    },
+    {
+      "$ref": "#/definitions3/BooleanValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/BooleanValue"
+      }
+    },
+    {
+      "$ref": "#/definitions3/StructuredValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/StructuredValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/DatetimeValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/DatetimeValue"
+      }
+    },
+    {
+      "$ref": "#/definitions3/LocalizedStringValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/LocalizedStringValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/DatetimeValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/DatetimeValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Value"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Value"
+      }
+    },
+    {
+      "$ref": "#/definitions4/LocalizedStringValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/LocalizedStringValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/BooleanValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/BooleanValue"
+      }
+    },
+    {
+      "$ref": "#/definitions3/IntegerValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/IntegerValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/StructuredValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/StructuredValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Product"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Product"
+      }
+    },
+    {
+      "$ref": "#/definitions4/DecimalValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/DecimalValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Attribute"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Attribute"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Attribute"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Attribute"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/StringValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/StringValue"
+      }
+    },
+    {
+      "$ref": "#/definitions3/ReferenceValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/ReferenceValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/ReferenceValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/ReferenceValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Product"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Product"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Value"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Value"
+      }
+    },
+    {
+      "$ref": "#/definitions4/StringValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/StringValue"
+      }
+    },
+    {
+      "$ref": "#/definitions4/IntegerValue"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/IntegerValue"
+      }
+    }
+  ]
+}

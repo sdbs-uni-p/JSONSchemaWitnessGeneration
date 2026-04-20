@@ -1,0 +1,121 @@
+[
+  {
+    "id": 779,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "properties": {
+        "booking_reason": {
+          "type": "string"
+        },
+        "slots": {
+          "type": "array",
+          "description": "List of slots representing the start/end date of the bookings",
+          "additionalProperties": {
+            "not": {}
+          },
+          "items": {
+            "type": "object",
+            "properties": {
+              "start_date": {
+                "description": "Unix timestamp representing the start date of the booking",
+                "type": "integer"
+              },
+              "end_date": {
+                "description": "Unix timestamp representing the end date of the booking",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "start_date",
+              "end_date"
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "slots"
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "booking_reason": {
+                      "type": "string"
+                    },
+                    "slots": {
+                      "$ref": "#/definitions2/modern_2"
+                    }
+                  },
+                  "required": [
+                    "slots"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^booking_reason$": {},
+                    "^slots$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "array",
+                  "description": "List of slots representing the start/end date of the bookings",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start_date": {
+                        "description": "Unix timestamp representing the start date of the booking",
+                        "type": "integer"
+                      },
+                      "end_date": {
+                        "description": "Unix timestamp representing the end date of the booking",
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "start_date",
+                      "end_date"
+                    ]
+                  },
+                  "minItems": 1
+                },
+                {
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

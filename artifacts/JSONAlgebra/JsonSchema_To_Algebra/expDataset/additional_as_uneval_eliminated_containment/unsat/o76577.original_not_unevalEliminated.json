@@ -1,0 +1,1277 @@
+{
+  "allOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "virtualServer": {
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "$ref": "#/definitions3/backendType"
+            },
+            "frontend": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/frontendIAppType"
+                },
+                {
+                  "$ref": "#/definitions3/frontendVSType"
+                }
+              ]
+            }
+          },
+          "required": [
+            "backend",
+            "frontend"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "virtualServer"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    }
+  ],
+  "definitions3": {
+    "backendType": {
+      "additionalProperties": false,
+      "properties": {
+        "healthMonitors": {
+          "items": {
+            "$ref": "#/definitions3/healthMonitorType"
+          },
+          "type": "array"
+        },
+        "serviceName": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "servicePort": {
+          "$ref": "#/definitions3/portType"
+        }
+      },
+      "required": [
+        "serviceName",
+        "servicePort"
+      ],
+      "type": "object"
+    },
+    "frontendIAppType": {
+      "additionalProperties": false,
+      "properties": {
+        "iapp": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "iappOptions": {
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "iappPoolMemberTable": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions3/iappAddressType"
+                  },
+                  {
+                    "$ref": "#/definitions3/iappPortType"
+                  },
+                  {
+                    "$ref": "#/definitions3/iappValueType"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            "name": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "columns"
+          ],
+          "type": "object"
+        },
+        "iappTables": {
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": {
+              "$ref": "#/definitions3/iappTableType"
+            }
+          },
+          "type": "object"
+        },
+        "iappVariables": {
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "partition": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "partition",
+        "iapp",
+        "iappOptions",
+        "iappVariables",
+        "iappPoolMemberTable"
+      ],
+      "type": "object"
+    },
+    "frontendVSType": {
+      "additionalProperties": false,
+      "properties": {
+        "balance": {
+          "enum": [
+            "dynamic-ratio-member",
+            "dynamic-ratio-node",
+            "fastest-app-response",
+            "fastest-node",
+            "least-connections-member",
+            "least-connections-node",
+            "least-sessions",
+            "observed-member",
+            "observed-node",
+            "predictive-member",
+            "predictive-node",
+            "ratio-least-connections-member",
+            "ratio-least-connections-node",
+            "ratio-member",
+            "ratio-node",
+            "round-robin",
+            "ratio-session",
+            "weighted-least-connections-member",
+            "weighted-least-connections-node"
+          ],
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "http",
+            "tcp"
+          ],
+          "type": "string"
+        },
+        "partition": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "sslProfile": {
+          "$ref": "#/definitions3/sslProfileType"
+        },
+        "virtualAddress": {
+          "$ref": "#/definitions3/virtualAddressType"
+        }
+      },
+      "required": [
+        "partition",
+        "virtualAddress"
+      ],
+      "type": "object"
+    },
+    "healthMonitorType": {
+      "additionalProperties": false,
+      "properties": {
+        "interval": {
+          "maximum": 86400,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "protocol": {
+          "enum": [
+            "http",
+            "tcp"
+          ],
+          "type": "string"
+        },
+        "send": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "timeout": {
+          "maximum": 86400,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "protocol"
+      ],
+      "type": "object"
+    },
+    "iappAddressType": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "IPAddress"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "iappPortType": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "Port"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "iappTableType": {
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "columns",
+        "rows"
+      ],
+      "type": "object"
+    },
+    "iappValueType": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "portType": {
+      "maximum": 65535,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sslProfileType": {
+      "additionalProperties": false,
+      "properties": {
+        "f5ProfileName": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "f5ProfileName"
+      ],
+      "type": "object"
+    },
+    "virtualAddressType": {
+      "additionalProperties": false,
+      "properties": {
+        "bindAddr": {
+          "anyOf": [
+            {
+              "format": "ipv4"
+            },
+            {
+              "format": "ipv6"
+            }
+          ]
+        },
+        "port": {
+          "$ref": "#/definitions3/portType"
+        }
+      },
+      "required": [
+        "bindAddr",
+        "port"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "Port"
+                  ],
+                  "type": "string"
+                },
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "kind"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^kind$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "IPAddress"
+                  ],
+                  "type": "string"
+                },
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "kind"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^kind$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "healthMonitors": {
+                  "items": {
+                    "$ref": "#/definitions4/healthMonitorType"
+                  },
+                  "type": "array"
+                },
+                "serviceName": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "servicePort": {
+                  "$ref": "#/definitions4/portType"
+                }
+              },
+              "required": [
+                "serviceName",
+                "servicePort"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^healthMonitors$": true,
+                "^serviceName$": true,
+                "^servicePort$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "virtualAddressType": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "bindAddr": {
+                  "anyOf": [
+                    {
+                      "format": "ipv4"
+                    },
+                    {
+                      "format": "ipv6"
+                    }
+                  ]
+                },
+                "port": {
+                  "$ref": "#/definitions4/portType"
+                }
+              },
+              "required": [
+                "bindAddr",
+                "port"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^bindAddr$": true,
+                "^port$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "interval": {
+                  "maximum": 86400.0,
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "protocol": {
+                  "enum": [
+                    "http",
+                    "tcp"
+                  ],
+                  "type": "string"
+                },
+                "send": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "timeout": {
+                  "maximum": 86400.0,
+                  "minimum": 1.0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "protocol"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^protocol$": true,
+                "^send$": true,
+                "^timeout$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "sslProfileType": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "virtualAddress": {
+                  "$ref": "#/definitions4/virtualAddressType"
+                },
+                "sslProfile": {
+                  "$ref": "#/definitions4/sslProfileType"
+                },
+                "partition": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "balance": {
+                  "enum": [
+                    "dynamic-ratio-member",
+                    "dynamic-ratio-node",
+                    "fastest-app-response",
+                    "fastest-node",
+                    "least-connections-member",
+                    "least-connections-node",
+                    "least-sessions",
+                    "observed-member",
+                    "observed-node",
+                    "predictive-member",
+                    "predictive-node",
+                    "ratio-least-connections-member",
+                    "ratio-least-connections-node",
+                    "ratio-member",
+                    "ratio-node",
+                    "round-robin",
+                    "ratio-session",
+                    "weighted-least-connections-member",
+                    "weighted-least-connections-node"
+                  ],
+                  "type": "string"
+                },
+                "mode": {
+                  "enum": [
+                    "http",
+                    "tcp"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "partition",
+                "virtualAddress"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^partition$": true,
+                "^mode$": true,
+                "^virtualAddress$": true,
+                "^balance$": true,
+                "^sslProfile$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "f5ProfileName": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "f5ProfileName"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^f5ProfileName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "iappValueType": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "iappPortType": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "columns": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions4/iappAddressType"
+                      },
+                      {
+                        "$ref": "#/definitions4/iappPortType"
+                      },
+                      {
+                        "$ref": "#/definitions4/iappValueType"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "columns"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^columns$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "portType": {
+      "maximum": 65535.0,
+      "minimum": 1.0,
+      "type": "integer"
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "iappVariables": {
+                  "$ref": "#/definitions4/modern_11"
+                },
+                "iappOptions": {
+                  "$ref": "#/definitions4/modern_12"
+                },
+                "partition": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "iappTables": {
+                  "$ref": "#/definitions4/modern_13"
+                },
+                "iappPoolMemberTable": {
+                  "$ref": "#/definitions4/modern_14"
+                },
+                "iapp": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "partition",
+                "iapp",
+                "iappOptions",
+                "iappVariables",
+                "iappPoolMemberTable"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^partition$": true,
+                "^iapp$": true,
+                "^iappTables$": true,
+                "^iappVariables$": true,
+                "^iappOptions$": true,
+                "^iappPoolMemberTable$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "backend": {
+                  "$ref": "#/definitions4/backendType"
+                },
+                "frontend": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/frontendIAppType"
+                    },
+                    {
+                      "$ref": "#/definitions4/frontendVSType"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "backend",
+                "frontend"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^backend$": true,
+                "^frontend$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "virtualServer": {
+                  "$ref": "#/definitions4/modern_16"
+                }
+              },
+              "required": [
+                "virtualServer"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^virtualServer$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "columns": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "rows": {
+                  "items": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "columns",
+                "rows"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^columns$": true,
+                "^rows$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "iappTableType": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "backendType": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "healthMonitorType": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "frontendVSType": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "frontendIAppType": {
+      "$ref": "#/definitions4/modern_10"
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": {
+                  "$ref": "#/definitions4/iappTableType"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "iappAddressType": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "value": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/backendType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/backendType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/frontendIAppType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/frontendIAppType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/iappTableType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/iappTableType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/iappValueType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/iappValueType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/frontendVSType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/frontendVSType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/backendType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/backendType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sslProfileType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sslProfileType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sslProfileType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sslProfileType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/frontendVSType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/frontendVSType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/iappAddressType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/iappAddressType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/iappPortType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/iappPortType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions3/iappValueType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/iappValueType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/healthMonitorType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/healthMonitorType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/virtualAddressType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/virtualAddressType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/healthMonitorType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/healthMonitorType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/iappAddressType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/iappAddressType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions4/virtualAddressType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/virtualAddressType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/portType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/portType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/portType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/portType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions3/frontendIAppType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/frontendIAppType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/iappTableType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/iappTableType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/iappPortType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/iappPortType"
+      }
+    }
+  ]
+}

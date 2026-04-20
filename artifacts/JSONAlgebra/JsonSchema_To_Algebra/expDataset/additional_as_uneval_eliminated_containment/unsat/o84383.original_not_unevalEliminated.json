@@ -1,0 +1,1867 @@
+{
+  "allOf": [
+    {
+      "id": "https://tredly.com/docs/tredlyfile-json-schema#",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "schema for an JSON Tredlyfile",
+      "type": "object",
+      "required": [
+        "container"
+      ],
+      "properties": {
+        "container": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Unique per partition. Hostname of this container will this value",
+              "type": "string",
+              "pattern": "^[-_a-zA-Z0-9]+$"
+            },
+            "restrictTo": {
+              "description": "The version of Tredly this file is compatible with.",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(\\*|[0-9](?:\\.(\\*|[0-9]{1,}(?:\\.(\\*|[0-9]{1,}))?)?)?)$"
+                },
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 0
+                }
+              ]
+            },
+            "group": {
+              "description": "Add this container to a particular group.",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[-_a-zA-Z0-9]+$"
+                },
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 0
+                }
+              ],
+              "optional": true
+            },
+            "startOrder": {
+              "description": "Order in which this container is started within your container group.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 99,
+              "default": 1
+            },
+            "replicate": {
+              "description": "When set to yes, this allows a container to be replicated within its container group. This is required if 'group' has been set.",
+              "type": "boolean",
+              "default": false
+            },
+            "buildOptions": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "publish": {
+                  "description": "When set to true, on push to a Tredly host this container will be automatically validated and built.",
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "publish"
+              ]
+            },
+            "technicalOptions": {
+              "description": "These options will be set when the container is created.",
+              "type": "object",
+              "optional": true,
+              "additionalProperties": false,
+              "properties": {
+                "securelevel": {
+                  "type": "integer",
+                  "minimum": -1,
+                  "maximum": 3
+                },
+                "devfs_ruleset": {
+                  "$ref": "#/definitions3/positiveInteger"
+                },
+                "enforce_statfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "children.max": {
+                  "$ref": "#/definitions3/positiveInteger"
+                },
+                "allow.set_hostname": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.sysvipc": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.raw_sockets": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.chflags": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.mount": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.mount.devfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.mount.nullfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.mount.procfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.mount.tmpfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.mount.zfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.quotas": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "allow.socket_af": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "exec.prestart": {
+                  "$ref": "#/definitions3/stringPath"
+                },
+                "exec.poststart": {
+                  "$ref": "#/definitions3/stringPath"
+                },
+                "exec.prestop": {
+                  "$ref": "#/definitions3/stringPath"
+                },
+                "exec.stop": {
+                  "$ref": "#/definitions3/stringPath"
+                },
+                "exec.clean": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "exec.timeout": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "exec.fib": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "stop.timeout": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "mount.devfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                },
+                "mount.fdescfs": {
+                  "$ref": "#/definitions3/binaryStringType"
+                }
+              }
+            },
+            "persistentStorage": {
+              "type": "object",
+              "optional": true,
+              "description": "Create a persistent block of storage for this container",
+              "additionalProperties": false,
+              "properties": {
+                "identifier": {
+                  "description": "A unique name to identify this block of persistent storage.",
+                  "type": "string",
+                  "pattern": "^[-_a-zA-Z0-9]+$"
+                },
+                "mountPoint": {
+                  "description": "The path within the container that the persistent storage will be mounted.",
+                  "$ref": "#/definitions3/stringPath"
+                }
+              },
+              "required": [
+                "identifier",
+                "mountPoint"
+              ]
+            },
+            "resourceLimits": {
+              "description": "Limit resources used by this container.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "maxCpu": {
+                  "description": "The total number of cores or percent this container can utilise.",
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+%$"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "$ref": "#/definitions3/resourceUnlimited"
+                    }
+                  ],
+                  "optional": true,
+                  "default": "unlimited"
+                },
+                "maxHdd": {
+                  "description": "The total amount of disk space, in Gigabytes (G) or Megabytes (M), this container.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions3/typeSizeMegabyte"
+                    },
+                    {
+                      "$ref": "#/definitions3/typeSizeGigabyte"
+                    },
+                    {
+                      "$ref": "#/definitions3/resourceUnlimited"
+                    }
+                  ],
+                  "optional": true,
+                  "default": "unlimited"
+                },
+                "maxRam": {
+                  "description": "The total amount of RAM, in Gigabytes (G) or Megabytes (M), this container can utilise.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions3/typeSizeMegabyte"
+                    },
+                    {
+                      "$ref": "#/definitions3/typeSizeGigabyte"
+                    },
+                    {
+                      "$ref": "#/definitions3/resourceUnlimited"
+                    }
+                  ],
+                  "optional": true,
+                  "default": "unlimited"
+                }
+              }
+            },
+            "proxy": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "layer4Proxy": {
+                  "description": "Layer4 proxy allows the container to use the Hosts external IP and forward traffic to your container on specific ports.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "layer7Proxy": {
+                  "description": "Group of properties for URL(s) the container services and responds to.",
+                  "optional": true,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "url": {
+                        "type": "string"
+                      },
+                      "cert": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "enableWebsocket": {
+                        "optional": true,
+                        "type": "boolean",
+                        "default": false
+                      },
+                      "errorResponse": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "maxFileSize": {
+                        "type": "string",
+                        "optional": true,
+                        "pattern": "^[0-9]+(m|g)$",
+                        "default": "1m"
+                      },
+                      "redirects": {
+                        "type": "array",
+                        "optional": true,
+                        "items": {
+                          "type": "object",
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions3/httpRedirect"
+                            },
+                            {
+                              "$ref": "#/definitions3/httpsRedirect"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "url",
+                      "cert"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "layer4Proxy"
+              ]
+            },
+            "firewall": {
+              "type": "object",
+              "optional": true,
+              "properties": {
+                "ipv4Whitelist": {
+                  "type": "array",
+                  "optional": true,
+                  "_uniqueItems": true,
+                  "default": {},
+                  "items": {
+                    "$ref": "#/definitions3/validIpv4WithCidr"
+                  }
+                },
+                "allowPorts": {
+                  "type": "object",
+                  "optional": true,
+                  "additionalProperties": false,
+                  "_uniqueItems": true,
+                  "properties": {
+                    "udp": {
+                      "$ref": "#/definitions3/inOutPorts"
+                    },
+                    "tcp": {
+                      "$ref": "#/definitions3/inOutPorts"
+                    }
+                  }
+                }
+              }
+            },
+            "customDNS": {
+              "type": "array",
+              "_uniqueItems": true,
+              "optional": true,
+              "default": {},
+              "items": {
+                "$ref": "#/definitions3/validIpv4"
+              }
+            },
+            "operations": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "onStart": {
+                  "$ref": "#/definitions3/arrayOfExecOperationsOnly"
+                },
+                "onStop": {
+                  "$ref": "#/definitions3/arrayOfExecOperationsOnly"
+                },
+                "onCreate": {
+                  "$ref": "#/definitions3/arrayOfOperations"
+                },
+                "onDestroy": {
+                  "$ref": "#/definitions3/arrayOfExecOperationsOnly"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "https://tredly.com/docs/tredlyfile-json-schema#",
+        "description": "schema for an JSON Tredlyfile",
+        "type": "object",
+        "required": [
+          "container"
+        ],
+        "properties": {
+          "container": {
+            "type": "object",
+            "properties": {
+              "persistentStorage": {
+                "$ref": "#/definitions4/modern_7"
+              },
+              "buildOptions": {
+                "$ref": "#/definitions4/modern_8"
+              },
+              "customDNS": {
+                "type": "array",
+                "_uniqueItems": true,
+                "optional": true,
+                "default": {},
+                "items": {
+                  "$ref": "#/definitions4/validIpv4"
+                }
+              },
+              "technicalOptions": {
+                "$ref": "#/definitions4/modern_9"
+              },
+              "replicate": {
+                "description": "When set to yes, this allows a container to be replicated within its container group. This is required if 'group' has been set.",
+                "type": "boolean",
+                "default": false
+              },
+              "startOrder": {
+                "description": "Order in which this container is started within your container group.",
+                "type": "integer",
+                "minimum": 1.0,
+                "maximum": 99.0,
+                "default": 1
+              },
+              "proxy": {
+                "$ref": "#/definitions4/modern_10"
+              },
+              "resourceLimits": {
+                "$ref": "#/definitions4/modern_12"
+              },
+              "operations": {
+                "$ref": "#/definitions4/modern_13"
+              },
+              "name": {
+                "description": "Unique per partition. Hostname of this container will this value",
+                "type": "string",
+                "pattern": "^[-_a-zA-Z0-9]+$"
+              },
+              "firewall": {
+                "type": "object",
+                "optional": true,
+                "properties": {
+                  "ipv4Whitelist": {
+                    "type": "array",
+                    "optional": true,
+                    "_uniqueItems": true,
+                    "default": {},
+                    "items": {
+                      "$ref": "#/definitions4/validIpv4WithCidr"
+                    }
+                  },
+                  "allowPorts": {
+                    "$ref": "#/definitions4/modern_14"
+                  }
+                }
+              },
+              "restrictTo": {
+                "description": "The version of Tredly this file is compatible with.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\*|[0-9](?:\\.(\\*|[0-9]{1,}(?:\\.(\\*|[0-9]{1,}))?)?)?)$"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 0
+                  }
+                ]
+              },
+              "group": {
+                "description": "Add this container to a particular group.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[-_a-zA-Z0-9]+$"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 0
+                  }
+                ],
+                "optional": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "validPort": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "validAnyPort": {
+      "type": "string",
+      "enum": [
+        "any"
+      ]
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "binaryStringType": {
+      "type": "string",
+      "enum": [
+        "0",
+        "1"
+      ]
+    },
+    "stringPath": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "typeSizeMegabyte": {
+      "type": "string",
+      "pattern": "^[0-9]+(m|M)(b|B)?$"
+    },
+    "typeSizeGigabyte": {
+      "type": "string",
+      "pattern": "^[0-9]+(g|G)(b|B)?$"
+    },
+    "validIpv4": {
+      "pattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    },
+    "validIpv4WithCidr": {
+      "type": "string",
+      "pattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(/([0-9]|[1-2][0-9]|3[0-2]))?$"
+    },
+    "resourceUnlimited": {
+      "type": "string",
+      "enum": [
+        "unlimited"
+      ]
+    },
+    "inOutPorts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "in": {
+          "type": "array",
+          "_uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions3/validPort"
+              },
+              {
+                "$ref": "#/definitions3/validAnyPort"
+              }
+            ]
+          },
+          "default": {}
+        },
+        "out": {
+          "type": "array",
+          "_uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions3/validPort"
+              },
+              {
+                "$ref": "#/definitions3/validAnyPort"
+              }
+            ]
+          },
+          "default": {}
+        }
+      }
+    },
+    "operationExec": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "exec"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "operationFolderFileMapping": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "fileFolderMapping"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "operationInstallPackage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "installPackage"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "arrayOfOperations": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/operationExec"
+          },
+          {
+            "$ref": "#/definitions3/operationFolderFileMapping"
+          },
+          {
+            "$ref": "#/definitions3/operationInstallPackage"
+          }
+        ]
+      }
+    },
+    "arrayOfExecOperationsOnly": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/operationExec"
+      }
+    },
+    "uriProtocolHttps": {
+      "type": "string",
+      "pattern": "^https:\\/\\/"
+    },
+    "uriProtocolHttp": {
+      "type": "string",
+      "pattern": "^http:\\/\\/"
+    },
+    "httpsRedirect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "$ref": "#/definitions3/uriProtocolHttps"
+        },
+        "cert": {
+          "description": "SSL certificate to apply to a http redirect 'from' URL.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "cert"
+      ]
+    },
+    "httpRedirect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "$ref": "#/definitions3/uriProtocolHttp"
+        },
+        "cert": {
+          "type": "null",
+          "enum": [
+            null
+          ]
+        }
+      },
+      "required": [
+        "url",
+        "cert"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "installPackage"
+                  ]
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "operationFolderFileMapping": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "layer4Proxy": {
+                  "description": "Layer4 proxy allows the container to use the Hosts external IP and forward traffic to your container on specific ports.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "layer7Proxy": {
+                  "description": "Group of properties for URL(s) the container services and responds to.",
+                  "optional": true,
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_11"
+                  }
+                }
+              },
+              "required": [
+                "layer4Proxy"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^layer4Proxy$": true,
+                "^layer7Proxy$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "fileFolderMapping"
+                  ]
+                },
+                "source": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source",
+                "target"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^source$": true,
+                "^target$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "inOutPorts": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "in": {
+                  "type": "array",
+                  "_uniqueItems": true,
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions4/validPort"
+                      },
+                      {
+                        "$ref": "#/definitions4/validAnyPort"
+                      }
+                    ]
+                  },
+                  "default": {}
+                },
+                "out": {
+                  "type": "array",
+                  "_uniqueItems": true,
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions4/validPort"
+                      },
+                      {
+                        "$ref": "#/definitions4/validAnyPort"
+                      }
+                    ]
+                  },
+                  "default": {}
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^in$": true,
+                "^out$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "uriProtocolHttps": {
+      "type": "string",
+      "pattern": "^https:\\/\\/"
+    },
+    "validIpv4": {
+      "pattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    },
+    "typeSizeMegabyte": {
+      "type": "string",
+      "pattern": "^[0-9]+(m|M)(b|B)?$"
+    },
+    "operationInstallPackage": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "optional": true,
+              "_uniqueItems": true,
+              "properties": {
+                "udp": {
+                  "$ref": "#/definitions4/inOutPorts"
+                },
+                "tcp": {
+                  "$ref": "#/definitions4/inOutPorts"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^udp$": true,
+                "^tcp$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "resourceUnlimited": {
+      "type": "string",
+      "enum": [
+        "unlimited"
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "$ref": "#/definitions4/uriProtocolHttp"
+                },
+                "cert": {
+                  "type": "null",
+                  "enum": [
+                    null
+                  ]
+                }
+              },
+              "required": [
+                "url",
+                "cert"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^url$": true,
+                "^cert$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "uriProtocolHttp": {
+      "type": "string",
+      "pattern": "^http:\\/\\/"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "exec"
+                  ]
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "operationExec": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "validIpv4WithCidr": {
+      "type": "string",
+      "pattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(/([0-9]|[1-2][0-9]|3[0-2]))?$"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "optional": true,
+              "description": "Create a persistent block of storage for this container",
+              "properties": {
+                "identifier": {
+                  "description": "A unique name to identify this block of persistent storage.",
+                  "type": "string",
+                  "pattern": "^[-_a-zA-Z0-9]+$"
+                },
+                "mountPoint": {
+                  "description": "The path within the container that the persistent storage will be mounted.",
+                  "$ref": "#/definitions4/stringPath"
+                }
+              },
+              "required": [
+                "identifier",
+                "mountPoint"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^identifier$": true,
+                "^mountPoint$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "arrayOfOperations": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions4/operationExec"
+          },
+          {
+            "$ref": "#/definitions4/operationFolderFileMapping"
+          },
+          {
+            "$ref": "#/definitions4/operationInstallPackage"
+          }
+        ]
+      }
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Limit resources used by this container.",
+              "type": "object",
+              "properties": {
+                "maxCpu": {
+                  "description": "The total number of cores or percent this container can utilise.",
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+%$"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    {
+                      "$ref": "#/definitions4/resourceUnlimited"
+                    }
+                  ],
+                  "optional": true,
+                  "default": "unlimited"
+                },
+                "maxHdd": {
+                  "description": "The total amount of disk space, in Gigabytes (G) or Megabytes (M), this container.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/typeSizeMegabyte"
+                    },
+                    {
+                      "$ref": "#/definitions4/typeSizeGigabyte"
+                    },
+                    {
+                      "$ref": "#/definitions4/resourceUnlimited"
+                    }
+                  ],
+                  "optional": true,
+                  "default": "unlimited"
+                },
+                "maxRam": {
+                  "description": "The total amount of RAM, in Gigabytes (G) or Megabytes (M), this container can utilise.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/typeSizeMegabyte"
+                    },
+                    {
+                      "$ref": "#/definitions4/typeSizeGigabyte"
+                    },
+                    {
+                      "$ref": "#/definitions4/resourceUnlimited"
+                    }
+                  ],
+                  "optional": true,
+                  "default": "unlimited"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^maxCpu$": true,
+                "^maxHdd$": true,
+                "^maxRam$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "typeSizeGigabyte": {
+      "type": "string",
+      "pattern": "^[0-9]+(g|G)(b|B)?$"
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 0.0
+    },
+    "validAnyPort": {
+      "type": "string",
+      "enum": [
+        "any"
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "publish": {
+                  "description": "When set to true, on push to a Tredly host this container will be automatically validated and built.",
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "publish"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^publish$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "httpsRedirect": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "These options will be set when the container is created.",
+              "type": "object",
+              "optional": true,
+              "properties": {
+                "enforce_statfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.sysvipc": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "exec.clean": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "exec.poststart": {
+                  "$ref": "#/definitions4/stringPath"
+                },
+                "devfs_ruleset": {
+                  "$ref": "#/definitions4/positiveInteger"
+                },
+                "exec.fib": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.chflags": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "stop.timeout": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.raw_sockets": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "exec.timeout": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "children.max": {
+                  "$ref": "#/definitions4/positiveInteger"
+                },
+                "allow.set_hostname": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.mount.nullfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "mount.devfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.mount.procfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "securelevel": {
+                  "type": "integer",
+                  "minimum": -1.0,
+                  "maximum": 3.0
+                },
+                "allow.mount.devfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.socket_af": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.mount.tmpfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "exec.stop": {
+                  "$ref": "#/definitions4/stringPath"
+                },
+                "mount.fdescfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.quotas": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "exec.prestop": {
+                  "$ref": "#/definitions4/stringPath"
+                },
+                "allow.mount": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "allow.mount.zfs": {
+                  "$ref": "#/definitions4/binaryStringType"
+                },
+                "exec.prestart": {
+                  "$ref": "#/definitions4/stringPath"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^allow.mount$": true,
+                "^exec.stop$": true,
+                "^allow.socket_af$": true,
+                "^allow.quotas$": true,
+                "^exec.poststart$": true,
+                "^enforce_statfs$": true,
+                "^allow.mount.procfs$": true,
+                "^exec.prestop$": true,
+                "^allow.mount.devfs$": true,
+                "^allow.raw_sockets$": true,
+                "^children.max$": true,
+                "^allow.mount.nullfs$": true,
+                "^exec.fib$": true,
+                "^devfs_ruleset$": true,
+                "^exec.clean$": true,
+                "^exec.timeout$": true,
+                "^securelevel$": true,
+                "^allow.chflags$": true,
+                "^allow.set_hostname$": true,
+                "^allow.sysvipc$": true,
+                "^exec.prestart$": true,
+                "^allow.mount.zfs$": true,
+                "^stop.timeout$": true,
+                "^allow.mount.tmpfs$": true,
+                "^mount.devfs$": true,
+                "^mount.fdescfs$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "httpRedirect": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "onStart": {
+                  "$ref": "#/definitions4/arrayOfExecOperationsOnly"
+                },
+                "onStop": {
+                  "$ref": "#/definitions4/arrayOfExecOperationsOnly"
+                },
+                "onCreate": {
+                  "$ref": "#/definitions4/arrayOfOperations"
+                },
+                "onDestroy": {
+                  "$ref": "#/definitions4/arrayOfExecOperationsOnly"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^onStart$": true,
+                "^onStop$": true,
+                "^onCreate$": true,
+                "^onDestroy$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "validPort": {
+      "type": "integer",
+      "minimum": 1.0,
+      "maximum": 65535.0
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "$ref": "#/definitions4/uriProtocolHttps"
+                },
+                "cert": {
+                  "description": "SSL certificate to apply to a http redirect 'from' URL.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "url",
+                "cert"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^url$": true,
+                "^cert$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "stringPath": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "binaryStringType": {
+      "type": "string",
+      "enum": [
+        "0",
+        "1"
+      ]
+    },
+    "arrayOfExecOperationsOnly": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/operationExec"
+      }
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "cert": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "enableWebsocket": {
+                  "optional": true,
+                  "type": "boolean",
+                  "default": false
+                },
+                "maxFileSize": {
+                  "type": "string",
+                  "optional": true,
+                  "pattern": "^[0-9]+(m|g)$",
+                  "default": "1m"
+                },
+                "redirects": {
+                  "type": "array",
+                  "optional": true,
+                  "items": {
+                    "type": "object",
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions4/httpRedirect"
+                      },
+                      {
+                        "$ref": "#/definitions4/httpsRedirect"
+                      }
+                    ]
+                  }
+                },
+                "errorResponse": {
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "url",
+                "cert"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^redirects$": true,
+                "^enableWebsocket$": true,
+                "^errorResponse$": true,
+                "^cert$": true,
+                "^maxFileSize$": true,
+                "^url$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/inOutPorts"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/inOutPorts"
+      }
+    },
+    {
+      "$ref": "#/definitions4/validIpv4WithCidr"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/validIpv4WithCidr"
+      }
+    },
+    {
+      "$ref": "#/definitions4/inOutPorts"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/inOutPorts"
+      }
+    },
+    {
+      "$ref": "#/definitions3/resourceUnlimited"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/resourceUnlimited"
+      }
+    },
+    {
+      "$ref": "#/definitions4/typeSizeGigabyte"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/typeSizeGigabyte"
+      }
+    },
+    {
+      "$ref": "#/definitions3/validIpv4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/validIpv4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/uriProtocolHttp"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/uriProtocolHttp"
+      }
+    },
+    {
+      "$ref": "#/definitions3/arrayOfOperations"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/arrayOfOperations"
+      }
+    },
+    {
+      "$ref": "#/definitions3/typeSizeMegabyte"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/typeSizeMegabyte"
+      }
+    },
+    {
+      "$ref": "#/definitions4/validPort"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/validPort"
+      }
+    },
+    {
+      "$ref": "#/definitions4/arrayOfOperations"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/arrayOfOperations"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions3/httpRedirect"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/httpRedirect"
+      }
+    },
+    {
+      "$ref": "#/definitions4/operationFolderFileMapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/operationFolderFileMapping"
+      }
+    },
+    {
+      "$ref": "#/definitions3/operationExec"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/operationExec"
+      }
+    },
+    {
+      "$ref": "#/definitions3/operationFolderFileMapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/operationFolderFileMapping"
+      }
+    },
+    {
+      "$ref": "#/definitions3/validIpv4WithCidr"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/validIpv4WithCidr"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/binaryStringType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/binaryStringType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/validIpv4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/validIpv4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/positiveInteger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/positiveInteger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions3/validPort"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/validPort"
+      }
+    },
+    {
+      "$ref": "#/definitions3/uriProtocolHttps"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/uriProtocolHttps"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/arrayOfExecOperationsOnly"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/arrayOfExecOperationsOnly"
+      }
+    },
+    {
+      "$ref": "#/definitions4/operationExec"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/operationExec"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/uriProtocolHttps"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/uriProtocolHttps"
+      }
+    },
+    {
+      "$ref": "#/definitions4/stringPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/stringPath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/stringPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/stringPath"
+      }
+    },
+    {
+      "$ref": "#/definitions3/typeSizeGigabyte"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/typeSizeGigabyte"
+      }
+    },
+    {
+      "$ref": "#/definitions4/validAnyPort"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/validAnyPort"
+      }
+    },
+    {
+      "$ref": "#/definitions4/operationInstallPackage"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/operationInstallPackage"
+      }
+    },
+    {
+      "$ref": "#/definitions4/uriProtocolHttp"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/uriProtocolHttp"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/binaryStringType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/binaryStringType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/arrayOfExecOperationsOnly"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/arrayOfExecOperationsOnly"
+      }
+    },
+    {
+      "$ref": "#/definitions4/resourceUnlimited"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/resourceUnlimited"
+      }
+    },
+    {
+      "$ref": "#/definitions4/httpsRedirect"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/httpsRedirect"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/httpRedirect"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/httpRedirect"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/operationInstallPackage"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/operationInstallPackage"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/positiveInteger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/positiveInteger"
+      }
+    },
+    {
+      "$ref": "#/definitions3/validAnyPort"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/validAnyPort"
+      }
+    },
+    {
+      "$ref": "#/definitions3/httpsRedirect"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/httpsRedirect"
+      }
+    },
+    {
+      "$ref": "#/definitions4/typeSizeMegabyte"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/typeSizeMegabyte"
+      }
+    }
+  ]
+}

@@ -1,0 +1,915 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "shipment": {
+            "properties": {
+              "additional_services": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "enum": [
+                        "advance_notice",
+                        "cash_on_delivery",
+                        "drop_authorization",
+                        "saturday_delivery"
+                      ],
+                      "description": "key to identify the additional service"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number"
+                        },
+                        "bank_code": {
+                          "type": "string"
+                        },
+                        "bank_name": {
+                          "type": "string"
+                        },
+                        "bank_account_holder": {
+                          "type": "string"
+                        },
+                        "bank_account_number": {
+                          "type": "string"
+                        },
+                        "reference1": {
+                          "type": "string",
+                          "description": "Text that should be displayed as the reason for transfer"
+                        },
+                        "currency": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "language": {
+                          "type": "string",
+                          "description": "language the customer should be notified in (ISO-639-1 format)"
+                        },
+                        "sms": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "carrier": {
+                "type": "string",
+                "enum": [
+                  "dhl",
+                  "dpag",
+                  "dpd",
+                  "gls",
+                  "go",
+                  "hermes",
+                  "iloxx",
+                  "tnt",
+                  "ups"
+                ],
+                "description": "acronym of the carrier you want to use"
+              },
+              "create_shipping_label": {
+                "type": "boolean",
+                "description": "determines if a shipping label should be created at the carrier (this means you will be charged when using the production api key)"
+              },
+              "description": {
+                "type": "string",
+                "description": "text that describes the contents of the shipment. This parameter is mandatory if you're using UPS and the following conditions are true: from and to countries are not the same; from and/or to countries are not in the EU; from and to countries are in the EU and the shipments service is not standard"
+              },
+              "from": {
+                "$ref": "#/definitions3/address",
+                "description": "If missing, the default sender address (if defined in your shipcloud account) will be used"
+              },
+              "label": {
+                "$ref": "#/definitions3/label",
+                "description": "label characteristics"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "here you can save additional data that you want to be associated with the shipment. Any combination of key-value pairs is possible",
+                "additionalProperties": true
+              },
+              "notification_email": {
+                "type": "string",
+                "description": "email address that we should notify once there's an update for this shipment"
+              },
+              "package": {
+                "$ref": "#/definitions3/package"
+              },
+              "pickup": {
+                "$ref": "#/definitions3/pickup",
+                "description": "pickup request for this shipment"
+              },
+              "reference_number": {
+                "type": "string",
+                "description": "a reference number (max. 30 characters) that you want this shipment to be identified with. You can use this afterwards to easier find the shipment in the shipcloud.io backoffice"
+              },
+              "service": {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "returns",
+                  "one_day",
+                  "one_day_early",
+                  "same_day"
+                ],
+                "default": "standard",
+                "description": "The service that should be used for the shipment. standard: The standard (ground) service for each carrier. returns: Returns service. one_day: express delivery. one_day_early: express delivery until 10am."
+              },
+              "to": {
+                "$ref": "#/definitions3/address",
+                "description": "the receivers address"
+              }
+            },
+            "required": [
+              "carrier",
+              "package",
+              "service",
+              "to"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "shipment"
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "earliest": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "latest": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "description": "defined time window when the carrier should pickup shipments",
+              "required": [
+                "earliest",
+                "latest"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^earliest$": true,
+                "^latest$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "zip_code": {
+                  "type": "string"
+                },
+                "street_no": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Country as uppercase ISO 3166-1 alpha-2 code"
+                },
+                "company": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "identifier of a previously created address"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "street": {
+                  "type": "string"
+                },
+                "care_of": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "telephone number (mandatory when using UPS and the following terms apply: service is one_day or one_day_early or ship to country is different than ship from country)"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "last_name",
+                "street",
+                "street_no",
+                "city",
+                "zip_code",
+                "country"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^city$": true,
+                "^phone$": true,
+                "^state$": true,
+                "^company$": true,
+                "^country$": true,
+                "^last_name$": true,
+                "^care_of$": true,
+                "^street_no$": true,
+                "^street$": true,
+                "^zip_code$": true,
+                "^first_name$": true,
+                "^id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "label": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "package": {
+                  "$ref": "#/definitions4/package"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "text that describes the contents of the shipment. This parameter is mandatory if you're using UPS and the following conditions are true: from and to countries are not the same; from and/or to countries are not in the EU; from and to countries are in the EU and the shipments service is not standard"
+                },
+                "label": {
+                  "$ref": "#/definitions4/label",
+                  "description": "label characteristics"
+                },
+                "service": {
+                  "type": "string",
+                  "enum": [
+                    "standard",
+                    "returns",
+                    "one_day",
+                    "one_day_early",
+                    "same_day"
+                  ],
+                  "default": "standard",
+                  "description": "The service that should be used for the shipment. standard: The standard (ground) service for each carrier. returns: Returns service. one_day: express delivery. one_day_early: express delivery until 10am."
+                },
+                "to": {
+                  "$ref": "#/definitions4/address",
+                  "description": "the receivers address"
+                },
+                "metadata": {
+                  "$ref": "#/definitions4/modern_8"
+                },
+                "reference_number": {
+                  "type": "string",
+                  "description": "a reference number (max. 30 characters) that you want this shipment to be identified with. You can use this afterwards to easier find the shipment in the shipcloud.io backoffice"
+                },
+                "notification_email": {
+                  "type": "string",
+                  "description": "email address that we should notify once there's an update for this shipment"
+                },
+                "carrier": {
+                  "type": "string",
+                  "enum": [
+                    "dhl",
+                    "dpag",
+                    "dpd",
+                    "gls",
+                    "go",
+                    "hermes",
+                    "iloxx",
+                    "tnt",
+                    "ups"
+                  ],
+                  "description": "acronym of the carrier you want to use"
+                },
+                "pickup": {
+                  "$ref": "#/definitions4/pickup",
+                  "description": "pickup request for this shipment"
+                },
+                "create_shipping_label": {
+                  "type": "boolean",
+                  "description": "determines if a shipping label should be created at the carrier (this means you will be charged when using the production api key)"
+                },
+                "additional_services": {
+                  "$ref": "#/definitions4/modern_9"
+                },
+                "from": {
+                  "$ref": "#/definitions4/address",
+                  "description": "If missing, the default sender address (if defined in your shipcloud account) will be used"
+                }
+              },
+              "required": [
+                "carrier",
+                "package",
+                "service",
+                "to"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^to$": true,
+                "^label$": true,
+                "^create_shipping_label$": true,
+                "^additional_services$": true,
+                "^service$": true,
+                "^notification_email$": true,
+                "^carrier$": true,
+                "^metadata$": true,
+                "^package$": true,
+                "^pickup$": true,
+                "^from$": true,
+                "^reference_number$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "size": {
+                  "type": "string",
+                  "enum": [
+                    "A5",
+                    "A6"
+                  ],
+                  "description": "defines the DIN size that the returned label should have"
+                }
+              },
+              "description": "label specific definitions4"
+            },
+            {
+              "patternProperties": {
+                "^size$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "enum": [
+                      "advance_notice",
+                      "cash_on_delivery",
+                      "drop_authorization",
+                      "saturday_delivery"
+                    ],
+                    "description": "key to identify the additional service"
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "bank_account_number": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "sms": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "number"
+                      },
+                      "bank_name": {
+                        "type": "string"
+                      },
+                      "language": {
+                        "type": "string",
+                        "description": "language the customer should be notified in (ISO-639-1 format)"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "bank_code": {
+                        "type": "string"
+                      },
+                      "reference1": {
+                        "type": "string",
+                        "description": "Text that should be displayed as the reason for transfer"
+                      },
+                      "bank_account_holder": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "pickup_time": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "pickup_address": {
+                  "$ref": "#/definitions4/address",
+                  "description": "address where the shipment should be picked up"
+                }
+              },
+              "required": [
+                "pickup_time"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^pickup_time$": true,
+                "^pickup_address$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "package": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "shipment": {
+                  "$ref": "#/definitions4/modern_7"
+                }
+              },
+              "required": [
+                "shipment"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^shipment$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "pickup": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "here you can save additional data that you want to be associated with the shipment. Any combination of key-value pairs is possible"
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "weight": {
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "text that describes the contents of the package. This parameter is mandatory if you're using UPS with service returns or DHL with service express"
+                },
+                "length": {
+                  "type": "number"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "books",
+                    "bulk",
+                    "letter",
+                    "parcel",
+                    "parcel_letter"
+                  ],
+                  "description": "defines packages of being of a certain type - if no value is given, parcel will be used"
+                },
+                "width": {
+                  "type": "number"
+                },
+                "height": {
+                  "type": "number"
+                },
+                "declared_value": {
+                  "type": "object",
+                  "description": "describing the value of the package contents",
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "width",
+                "height",
+                "length",
+                "weight"
+              ],
+              "description": "defines package dimensions"
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^length$": true,
+                "^type$": true,
+                "^weight$": true,
+                "^height$": true,
+                "^declared_value$": true,
+                "^width$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "address": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "definitions3": {
+    "address": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "identifier of a previously created address"
+        },
+        "company": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "care_of": {
+          "type": "string"
+        },
+        "street": {
+          "type": "string"
+        },
+        "street_no": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "zip_code": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country as uppercase ISO 3166-1 alpha-2 code"
+        },
+        "phone": {
+          "type": "string",
+          "description": "telephone number (mandatory when using UPS and the following terms apply: service is one_day or one_day_early or ship to country is different than ship from country)"
+        }
+      },
+      "required": [
+        "last_name",
+        "street",
+        "street_no",
+        "city",
+        "zip_code",
+        "country"
+      ],
+      "additionalProperties": false
+    },
+    "label": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "string",
+          "enum": [
+            "A5",
+            "A6"
+          ],
+          "description": "defines the DIN size that the returned label should have"
+        }
+      },
+      "additionalProperties": false,
+      "description": "label specific definitions3"
+    },
+    "package": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "length": {
+          "type": "number"
+        },
+        "weight": {
+          "type": "number"
+        },
+        "declared_value": {
+          "type": "object",
+          "description": "describing the value of the package contents",
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "currency": {
+              "type": "string"
+            }
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "text that describes the contents of the package. This parameter is mandatory if you're using UPS with service returns or DHL with service express"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "books",
+            "bulk",
+            "letter",
+            "parcel",
+            "parcel_letter"
+          ],
+          "description": "defines packages of being of a certain type - if no value is given, parcel will be used"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "length",
+        "weight"
+      ],
+      "additionalProperties": false,
+      "description": "defines package dimensions"
+    },
+    "pickup": {
+      "type": "object",
+      "properties": {
+        "pickup_time": {
+          "type": "object",
+          "properties": {
+            "earliest": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "latest": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "description": "defined time window when the carrier should pickup shipments",
+          "required": [
+            "earliest",
+            "latest"
+          ],
+          "additionalProperties": false
+        },
+        "pickup_address": {
+          "$ref": "#/definitions3/address",
+          "description": "address where the shipment should be picked up"
+        }
+      },
+      "required": [
+        "pickup_time"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/address"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/address"
+      }
+    },
+    {
+      "$ref": "#/definitions4/label"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/label"
+      }
+    },
+    {
+      "$ref": "#/definitions3/address"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/address"
+      }
+    },
+    {
+      "$ref": "#/definitions3/package"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/package"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/pickup"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/pickup"
+      }
+    },
+    {
+      "$ref": "#/definitions3/label"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/label"
+      }
+    },
+    {
+      "$ref": "#/definitions4/package"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/package"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/pickup"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/pickup"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

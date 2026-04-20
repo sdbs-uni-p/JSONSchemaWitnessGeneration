@@ -1,0 +1,574 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "projects",
+        "drivers"
+      ],
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/modern_5"
+          }
+        },
+        "drivers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/modern_6"
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "projects",
+          "drivers"
+        ],
+        "properties": {
+          "projects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z\\d\\./-]+$"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "drivers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "project_id": {
+                  "type": "string"
+                },
+                "vendor": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "maintainer": {
+                  "$ref": "#/definitions3/user"
+                },
+                "wiki": {
+                  "type": "string"
+                },
+                "os_versions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions3/self_verification"
+                      },
+                      {
+                        "$ref": "#/definitions3/3rd_party_verification"
+                      },
+                      {
+                        "$ref": "#/definitions3/external_ci_verification"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "project_id",
+                "vendor",
+                "name",
+                "os_versions",
+                "maintainer"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z\\d\\./-]+$"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "maintainer": {
+                  "$ref": "#/definitions4/user"
+                },
+                "project_id": {
+                  "type": "string"
+                },
+                "wiki": {
+                  "type": "string"
+                },
+                "os_versions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions4/self_verification"
+                      },
+                      {
+                        "$ref": "#/definitions4/3rd_party_verification"
+                      },
+                      {
+                        "$ref": "#/definitions4/external_ci_verification"
+                      }
+                    ]
+                  }
+                },
+                "vendor": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "project_id",
+                "vendor",
+                "name",
+                "os_versions",
+                "maintainer"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^wiki$": true,
+                "^os_versions$": true,
+                "^name$": true,
+                "^project_id$": true,
+                "^vendor$": true,
+                "^maintainer$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "pattern": "^[a-z\\d_\\.-]+@([a-z\\d\\.-]+\\.)+[a-z]+$"
+                },
+                "irc": {
+                  "type": "string"
+                },
+                "launchpad_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^email$": true,
+                "^irc$": true,
+                "^launchpad_id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "verification": {
+                  "enum": [
+                    "self_verification"
+                  ]
+                },
+                "os_version": {
+                  "type": "string"
+                },
+                "success": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "verification",
+                "os_version",
+                "success"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^verification$": true,
+                "^os_version$": true,
+                "^success$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "self_verification": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "external_ci_verification": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "3rd_party_verification": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "verification": {
+                  "enum": [
+                    "3rd_party_verification"
+                  ]
+                },
+                "os_version": {
+                  "type": "string"
+                },
+                "success": {
+                  "type": "boolean"
+                },
+                "verifiers": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/user"
+                  }
+                }
+              },
+              "required": [
+                "verification",
+                "os_version",
+                "success",
+                "verifiers"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^verification$": true,
+                "^os_version$": true,
+                "^success$": true,
+                "^verifiers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "user": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "verification": {
+                  "enum": [
+                    "external_ci_verification"
+                  ]
+                },
+                "ci_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verification",
+                "ci_id"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^verification$": true,
+                "^ci_id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "pattern": "^[a-z\\d_\\.-]+@([a-z\\d\\.-]+\\.)+[a-z]+$"
+        },
+        "irc": {
+          "type": "string"
+        },
+        "launchpad_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "self_verification": {
+      "properties": {
+        "verification": {
+          "enum": [
+            "self_verification"
+          ]
+        },
+        "os_version": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "verification",
+        "os_version",
+        "success"
+      ],
+      "additionalProperties": false
+    },
+    "3rd_party_verification": {
+      "properties": {
+        "verification": {
+          "enum": [
+            "3rd_party_verification"
+          ]
+        },
+        "os_version": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "verifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/user"
+          }
+        }
+      },
+      "required": [
+        "verification",
+        "os_version",
+        "success",
+        "verifiers"
+      ],
+      "additionalProperties": false
+    },
+    "external_ci_verification": {
+      "properties": {
+        "verification": {
+          "enum": [
+            "external_ci_verification"
+          ]
+        },
+        "ci_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "verification",
+        "ci_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/user"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/user"
+      }
+    },
+    {
+      "$ref": "#/definitions3/self_verification"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/self_verification"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/external_ci_verification"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/external_ci_verification"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/self_verification"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/self_verification"
+      }
+    },
+    {
+      "$ref": "#/definitions4/3rd_party_verification"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/3rd_party_verification"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/external_ci_verification"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/external_ci_verification"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/user"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/user"
+      }
+    },
+    {
+      "$ref": "#/definitions3/3rd_party_verification"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/3rd_party_verification"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

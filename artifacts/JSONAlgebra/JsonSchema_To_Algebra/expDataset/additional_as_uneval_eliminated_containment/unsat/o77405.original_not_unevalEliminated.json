@@ -1,0 +1,744 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Babbage Model",
+      "type": "object",
+      "format": "valid_hierarchies",
+      "properties": {
+        "fact_table": {
+          "$ref": "#/definitions3/table"
+        },
+        "measures": {
+          "$ref": "#/definitions3/measures"
+        },
+        "dimensions": {
+          "$ref": "#/definitions3/dimensions"
+        },
+        "hierarchies": {
+          "$ref": "#/definitions3/hierarchies"
+        },
+        "joins": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "measures",
+        "dimensions",
+        "fact_table"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Babbage Model",
+        "type": "object",
+        "format": "valid_hierarchies",
+        "properties": {
+          "hierarchies": {
+            "$ref": "#/definitions4/hierarchies"
+          },
+          "measures": {
+            "$ref": "#/definitions4/measures"
+          },
+          "fact_table": {
+            "$ref": "#/definitions4/table"
+          },
+          "dimensions": {
+            "$ref": "#/definitions4/dimensions"
+          },
+          "joins": {
+            "type": "array"
+          }
+        },
+        "required": [
+          "measures",
+          "dimensions",
+          "fact_table"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "label": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 500
+    },
+    "description2": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1000,
+      "default": ""
+    },
+    "column": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 250
+    },
+    "table": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 250,
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_\\-]*[a-zA-Z0-9]$"
+    },
+    "dimensions": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+          "$ref": "#/definitions3/dimension"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dimension": {
+      "type": "object",
+      "format": "attribute_exists",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions3/label"
+        },
+        "description": {
+          "$ref": "#/definitions3/description2"
+        },
+        "label_attribute": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$"
+        },
+        "key_attribute": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$"
+        },
+        "attributes": {
+          "$ref": "#/definitions3/attributes"
+        }
+      },
+      "required": [
+        "label",
+        "attributes",
+        "key_attribute"
+      ]
+    },
+    "attributes": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+          "$ref": "#/definitions3/attribute"
+        }
+      },
+      "additionalProperties": false
+    },
+    "attribute": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions3/label"
+        },
+        "description": {
+          "$ref": "#/definitions3/description2"
+        },
+        "column": {
+          "$ref": "#/definitions3/column"
+        }
+      },
+      "required": [
+        "label",
+        "column"
+      ]
+    },
+    "measures": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+          "$ref": "#/definitions3/measure"
+        }
+      },
+      "additionalProperties": false
+    },
+    "aggregates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "sum",
+          "max",
+          "min",
+          "avg",
+          "count"
+        ]
+      },
+      "default": [
+        "sum"
+      ],
+      "minItems": 1,
+      "_uniqueItems": true
+    },
+    "measure": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions3/label"
+        },
+        "description": {
+          "$ref": "#/definitions3/description2"
+        },
+        "aggregates": {
+          "$ref": "#/definitions3/aggregates"
+        },
+        "column": {
+          "$ref": "#/definitions3/column"
+        }
+      },
+      "required": [
+        "label",
+        "column"
+      ]
+    },
+    "hierarchies": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+          "$ref": "#/definitions3/hierarchy"
+        }
+      },
+      "additionalProperties": false
+    },
+    "hierarchy": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions3/label"
+        },
+        "levels": {
+          "$ref": "#/definitions3/levels"
+        }
+      },
+      "required": [
+        "levels"
+      ]
+    },
+    "levels": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/level"
+      },
+      "minItems": 1,
+      "_uniqueItems": true
+    },
+    "level": {
+      "type": "string"
+    }
+  },
+  "definitions4": {
+    "measure": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions4/label"
+        },
+        "description": {
+          "$ref": "#/definitions4/description2"
+        },
+        "aggregates": {
+          "$ref": "#/definitions4/aggregates"
+        },
+        "column": {
+          "$ref": "#/definitions4/column"
+        }
+      },
+      "required": [
+        "label",
+        "column"
+      ]
+    },
+    "hierarchies": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "description2": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1000,
+      "default": ""
+    },
+    "measures": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+                  "$ref": "#/definitions4/measure"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "hierarchy": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions4/label"
+        },
+        "levels": {
+          "$ref": "#/definitions4/levels"
+        }
+      },
+      "required": [
+        "levels"
+      ]
+    },
+    "attributes": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "column": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 250
+    },
+    "attribute": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions4/label"
+        },
+        "description": {
+          "$ref": "#/definitions4/description2"
+        },
+        "column": {
+          "$ref": "#/definitions4/column"
+        }
+      },
+      "required": [
+        "label",
+        "column"
+      ]
+    },
+    "dimension": {
+      "type": "object",
+      "format": "attribute_exists",
+      "properties": {
+        "label": {
+          "$ref": "#/definitions4/label"
+        },
+        "attributes": {
+          "$ref": "#/definitions4/attributes"
+        },
+        "key_attribute": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$"
+        },
+        "description": {
+          "$ref": "#/definitions4/description2"
+        },
+        "label_attribute": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$"
+        }
+      },
+      "required": [
+        "label",
+        "attributes",
+        "key_attribute"
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+                  "$ref": "#/definitions4/hierarchy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "levels": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/level"
+      },
+      "minItems": 1,
+      "_uniqueItems": true
+    },
+    "label": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 500
+    },
+    "aggregates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "sum",
+          "max",
+          "min",
+          "avg",
+          "count"
+        ]
+      },
+      "default": [
+        "sum"
+      ],
+      "minItems": 1,
+      "_uniqueItems": true
+    },
+    "dimensions": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+                  "$ref": "#/definitions4/attribute"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "table": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 250,
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_\\-]*[a-zA-Z0-9]$"
+    },
+    "level": {
+      "type": "string"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": {
+                  "$ref": "#/definitions4/dimension"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/aggregates"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/aggregates"
+      }
+    },
+    {
+      "$ref": "#/definitions4/description2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/description2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/aggregates"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/aggregates"
+      }
+    },
+    {
+      "$ref": "#/definitions4/measure"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/measure"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dimension"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dimension"
+      }
+    },
+    {
+      "$ref": "#/definitions3/attributes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/attributes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/measures"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/measures"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dimension"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dimension"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hierarchies"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hierarchies"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hierarchies"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hierarchies"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/table"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/table"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dimensions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dimensions"
+      }
+    },
+    {
+      "$ref": "#/definitions3/measures"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/measures"
+      }
+    },
+    {
+      "$ref": "#/definitions4/levels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/levels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dimensions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dimensions"
+      }
+    },
+    {
+      "$ref": "#/definitions3/level"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/level"
+      }
+    },
+    {
+      "$ref": "#/definitions3/column"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/column"
+      }
+    },
+    {
+      "$ref": "#/definitions4/column"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/column"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/table"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/table"
+      }
+    },
+    {
+      "$ref": "#/definitions3/hierarchy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hierarchy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/label"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/label"
+      }
+    },
+    {
+      "$ref": "#/definitions4/attributes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/attributes"
+      }
+    },
+    {
+      "$ref": "#/definitions3/label"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/label"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/level"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/level"
+      }
+    },
+    {
+      "$ref": "#/definitions3/measure"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/measure"
+      }
+    },
+    {
+      "$ref": "#/definitions3/description2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/description2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/levels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/levels"
+      }
+    },
+    {
+      "$ref": "#/definitions3/attribute"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/attribute"
+      }
+    },
+    {
+      "$ref": "#/definitions4/attribute"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/attribute"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hierarchy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hierarchy"
+      }
+    }
+  ]
+}

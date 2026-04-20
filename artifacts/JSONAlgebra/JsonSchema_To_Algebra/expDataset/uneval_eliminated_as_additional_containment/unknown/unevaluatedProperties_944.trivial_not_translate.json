@@ -1,0 +1,7153 @@
+{
+  "allOf": [
+    {
+      "$id": "rt",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "miniRT",
+      "description": "scene for miniRT",
+      "$ref": "#/definitions2/root"
+    },
+    {
+      "not": {
+        "$id": "rt",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "miniRT",
+        "description": "scene for miniRT",
+        "$ref": "#/definitions1/root"
+      }
+    }
+  ],
+  "definitions2": {
+    "root": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "camera": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "position": {
+              "$ref": "#/definitions2/position"
+            },
+            "direction": {
+              "$ref": "#/definitions2/direction"
+            },
+            "rotation": {
+              "$ref": "#/definitions2/rotation"
+            },
+            "lookAt": {
+              "$ref": "#/definitions2/position"
+            }
+          },
+          "not": {
+            "oneOf": [
+              {
+                "required": [
+                  "direction",
+                  "rotation"
+                ]
+              },
+              {
+                "required": [
+                  "rotation",
+                  "lookAt"
+                ]
+              },
+              {
+                "required": [
+                  "direction",
+                  "lookAt"
+                ]
+              }
+            ]
+          },
+          "$ref": "#/definitions2/has-optional-position"
+        },
+        "viewport": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "description": "size of the viewport [width, height]",
+                "exclusiveMinimum": 0
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "oneOf": [
+            {
+              "properties": {
+                "fovX": {
+                  "description": "field of view for X axis, default is auto",
+                  "$ref": "#/definitions2/angle-fov-plane"
+                },
+                "fovY": {
+                  "description": "field of view for Y axis, default is auto",
+                  "$ref": "#/definitions2/angle-fov-plane"
+                }
+              },
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "fovX"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "fovY"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "nearDistance": {
+                          "type": "number",
+                          "description": "distance between ray origin and camera",
+                          "minimum": 0
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "nearPlane": {
+                          "type": "number",
+                          "description": "distance between ray origin plane and camera",
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  ],
+                  "not": {
+                    "required": [
+                      "nearDistance",
+                      "nearPlane"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "properties": {
+                "curveFovX": {
+                  "description": "field of view for X axis, default is auto",
+                  "$ref": "#/definitions2/angle"
+                },
+                "curveFovY": {
+                  "description": "field of view for Y axis, default is auto",
+                  "$ref": "#/definitions2/angle"
+                },
+                "nearDistance": {
+                  "type": "number",
+                  "description": "distance between ray origin and camera",
+                  "minimum": 0
+                }
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "curveFovX"
+                  ]
+                },
+                {
+                  "required": [
+                    "curveFovY"
+                  ]
+                }
+              ]
+            },
+            {
+              "properties": {
+                "width": {
+                  "type": "number",
+                  "description": "orthogonal camera viewport width, default is auto",
+                  "exclusiveMinimum": 0
+                },
+                "height": {
+                  "type": "number",
+                  "description": "orthogonal camera viewport height, default is auto",
+                  "exclusiveMinimum": 0
+                },
+                "near": {
+                  "type": "number",
+                  "description": "distance between ray origin plane and camera, default is 0",
+                  "minimum": 0
+                }
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "width"
+                  ]
+                },
+                {
+                  "required": [
+                    "height"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/object"
+          }
+        },
+        "defs": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/map"
+              },
+              {
+                "$ref": "#/definitions2/material"
+              },
+              {
+                "$ref": "#/definitions2/csg-model"
+              },
+              {
+                "$ref": "#/definitions2/object"
+              }
+            ],
+            "not": {
+              "$ref": "#/definitions2/ref"
+            }
+          }
+        },
+        "renderOptions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "superSampling": {
+              "type": "integer",
+              "description": "super sampling rate, default is 2 (4x slow)",
+              "minimum": 1
+            },
+            "shadow": {
+              "type": "boolean",
+              "description": "default is true"
+            },
+            "reflectionLimit": {
+              "type": "integer",
+              "description": "maximum reflection count (up to 2^(n+m)x slow), default is 3",
+              "minimum": 0
+            },
+            "refractionLimit": {
+              "type": "integer",
+              "description": "maximum refraction count (up to 2^(n+m)x slow), default is 2",
+              "minimum": 0
+            },
+            "rayStrategy": {
+              "type": "string",
+              "description": "texture, or type of blend operation",
+              "enum": [
+                "add"
+              ]
+            },
+            "hdr": {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "description": "set to false to disable HDR, true to default options"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "gamma": {
+                      "type": "number",
+                      "description": "gamma parameter for HDR rendering, default is 2.2",
+                      "exclusiveMinimum": 0
+                    },
+                    "exposure": {
+                      "type": "number",
+                      "description": "exposure parameter for HDR rendering, default is 1",
+                      "exclusiveMinimum": 0
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "viewport"
+      ]
+    },
+    "angle": {
+      "oneOf": [
+        {
+          "type": "number",
+          "description": "angle in rotation count"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "radian": {
+              "type": "number",
+              "description": "angle in radian"
+            }
+          },
+          "required": [
+            "radian"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "degree": {
+              "type": "number",
+              "description": "angle in degree"
+            }
+          },
+          "required": [
+            "degree"
+          ]
+        }
+      ]
+    },
+    "angle-fov-plane": {
+      "oneOf": [
+        {
+          "type": "number",
+          "description": "angle in rotation count",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 0.5
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "radian": {
+              "type": "number",
+              "description": "angle in radian",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 3.141592653589793
+            }
+          },
+          "required": [
+            "radian"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "degree": {
+              "type": "number",
+              "description": "angle in degree",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 180
+            }
+          },
+          "required": [
+            "degree"
+          ]
+        }
+      ]
+    },
+    "angle-spot": {
+      "oneOf": [
+        {
+          "type": "number",
+          "description": "angle in rotation count",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "radian": {
+              "type": "number",
+              "description": "angle in radian",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 6.283185307179586
+            }
+          },
+          "required": [
+            "radian"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "degree": {
+              "type": "number",
+              "description": "angle in degree",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 360
+            }
+          },
+          "required": [
+            "degree"
+          ]
+        }
+      ]
+    },
+    "position": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "coordinates of the position [x, y, z]"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "direction": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "direction normal for [x, y, z]",
+        "minimum": -1,
+        "maximum": 1
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "rotation": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "additionalItems": {
+        "type": "number",
+        "description": "rotation angle for [yaw, pitch, roll]"
+      },
+      "items": [
+        {
+          "description": "rotation angle for yaw",
+          "$ref": "#/definitions2/angle"
+        },
+        {
+          "description": "rotation angle for pitch",
+          "$ref": "#/definitions2/angle"
+        },
+        {
+          "description": "rotation angle for roll",
+          "$ref": "#/definitions2/angle"
+        }
+      ]
+    },
+    "transform": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/transform-1"
+        },
+        {
+          "$ref": "#/definitions2/transform-n"
+        }
+      ]
+    },
+    "transform-n": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions2/transform-1"
+      }
+    },
+    "transform-1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/transform-translate"
+        },
+        {
+          "$ref": "#/definitions2/transform-scale"
+        },
+        {
+          "$ref": "#/definitions2/transform-rotate"
+        }
+      ]
+    },
+    "transform-translate": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "translate": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "description": "translate distance [x, y, z]"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          },
+          "required": [
+            "translate"
+          ]
+        },
+        {
+          "properties": {
+            "translateX": {
+              "type": "number"
+            },
+            "translateY": {
+              "type": "number"
+            },
+            "translateZ": {
+              "type": "number"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "translateX"
+              ]
+            },
+            {
+              "required": [
+                "translateY"
+              ]
+            },
+            {
+              "required": [
+                "translateZ"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "transform-scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "scale": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "description": "scale [x, y, z]"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          },
+          "required": [
+            "scale"
+          ]
+        },
+        {
+          "properties": {
+            "scaleX": {
+              "type": "number"
+            },
+            "scaleY": {
+              "type": "number"
+            },
+            "scaleZ": {
+              "type": "number"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "scaleX"
+              ]
+            },
+            {
+              "required": [
+                "scaleY"
+              ]
+            },
+            {
+              "required": [
+                "scaleZ"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "transform-rotate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "origin": {
+          "$ref": "#/definitions2/position"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "rotate": {
+              "$ref": "#/definitions2/rotation"
+            }
+          },
+          "required": [
+            "rotate"
+          ]
+        },
+        {
+          "properties": {
+            "rotateX": {
+              "$ref": "#/definitions2/angle"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "rotateX"
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "rotateY": {
+              "$ref": "#/definitions2/angle"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "rotateY"
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "rotateZ": {
+              "$ref": "#/definitions2/angle"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "rotateZ"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "has-optional-position": {
+      "properties": {
+        "position": {
+          "$ref": "#/definitions2/position"
+        }
+      }
+    },
+    "has-optional-rotation": {
+      "properties": {
+        "rotation": {
+          "$ref": "#/definitions2/rotation"
+        }
+      }
+    },
+    "has-optional-transform": {
+      "properties": {
+        "transform": {
+          "$ref": "#/definitions2/transform"
+        }
+      }
+    },
+    "ldr-color": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "color value [red, green, blue] in low dynamic range",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "hdr-color": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "color value [red, green, blue] in high dynamic range",
+        "minimum": 0
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "texture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "union": [
+            "texture"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "description": "path to texture .bmp file"
+        },
+        "size": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "description": "size of texture [width, height], default is [1, 1]",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "offset": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "description": "offset of texture [x, y], default is [0, 0]",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "shear": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "description": "shear of texture [x, y], default is [0, 0]",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "nearest": {
+          "type": "boolean",
+          "description": "filter mode - true: nearest, false: linear. default is false"
+        },
+        "mirror": {
+          "type": "boolean",
+          "description": "address mode - true: mirror, false: wrap. default is false"
+        }
+      },
+      "required": [
+        "type",
+        "path"
+      ]
+    },
+    "blend-add": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "add"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/map",
+            "minItems": 2
+          }
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ]
+    },
+    "blend-multiply": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "multiply"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/map",
+            "minItems": 2
+          }
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ]
+    },
+    "blend-maximum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "maximum"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/map",
+            "minItems": 2
+          }
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ]
+    },
+    "blend-minimum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "minimum"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/map",
+            "minItems": 2
+          }
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ]
+    },
+    "blend-subtract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "subtract"
+          ]
+        },
+        "from": {
+          "$ref": "#/definitions2/map"
+        },
+        "subtract": {
+          "$ref": "#/definitions2/map"
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ]
+    },
+    "blend-translate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "translate"
+          ]
+        },
+        "original": {
+          "$ref": "#/definitions2/map"
+        },
+        "translate": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "description": "translate distance [x, y]"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "type",
+        "original",
+        "translate"
+      ]
+    },
+    "blend-scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "scale"
+          ]
+        },
+        "original": {
+          "$ref": "#/definitions2/map"
+        },
+        "scale": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "description": "scale [x, y]"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "type",
+        "original",
+        "scale"
+      ]
+    },
+    "blend-filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "texture, or type of blend operation",
+          "enum": [
+            "filter"
+          ]
+        },
+        "original": {
+          "$ref": "#/definitions2/map"
+        },
+        "filter": {
+          "description": "4x3 matrix to transform 1x4 matrix [r, g, b, 1] into [r, g, b]",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 12,
+              "maxItems": 12
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "original",
+        "filter"
+      ]
+    },
+    "blend": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/blend-add"
+        },
+        {
+          "$ref": "#/definitions2/blend-multiply"
+        },
+        {
+          "$ref": "#/definitions2/blend-maximum"
+        },
+        {
+          "$ref": "#/definitions2/blend-minimum"
+        },
+        {
+          "$ref": "#/definitions2/blend-subtract"
+        },
+        {
+          "$ref": "#/definitions2/blend-translate"
+        },
+        {
+          "$ref": "#/definitions2/blend-scale"
+        },
+        {
+          "$ref": "#/definitions2/blend-filter"
+        }
+      ]
+    },
+    "map": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/texture"
+        },
+        {
+          "$ref": "#/definitions2/blend"
+        },
+        {
+          "$ref": "#/definitions2/ldr-color"
+        }
+      ]
+    },
+    "material": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ambient": {
+          "$ref": "#/definitions2/map"
+        },
+        "diffuse": {
+          "$ref": "#/definitions2/map"
+        },
+        "specular": {
+          "$ref": "#/definitions2/map"
+        },
+        "specularLobe": {
+          "type": "number"
+        },
+        "normal": {
+          "$ref": "#/definitions2/map"
+        }
+      }
+    },
+    "material-no-map": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ambient": {
+          "$ref": "#/definitions2/ldr-color"
+        },
+        "diffuse": {
+          "$ref": "#/definitions2/ldr-color"
+        },
+        "specular": {
+          "$ref": "#/definitions2/ldr-color"
+        },
+        "specularLobe": {
+          "type": "number"
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of object",
+          "enum": [
+            "group"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/object"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-sphere": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of solid geometry",
+          "enum": [
+            "sphere"
+          ]
+        },
+        "radius": {
+          "type": "number",
+          "description": "radius of sphere",
+          "exclusiveMinimum": 0
+        },
+        "material": {
+          "$ref": "#/definitions2/material"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-position"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-rotation"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-cone": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of solid geometry",
+          "enum": [
+            "cone"
+          ]
+        },
+        "radius": {
+          "type": "number",
+          "description": "radius of cone bottom",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "description": "cone height",
+          "exclusiveMinimum": 0
+        },
+        "material": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/material"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/material",
+                "description": "material for [side, bottom]"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-position"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-rotation"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-cylinder": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of solid geometry",
+          "enum": [
+            "cylinder"
+          ]
+        },
+        "radius": {
+          "type": "number",
+          "description": "radius of cylinder bottom",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "description": "cylinder height",
+          "exclusiveMinimum": 0
+        },
+        "material": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/material"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/material",
+                "description": "material for [side, top, bottom]"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-position"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-rotation"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-cube": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of solid geometry",
+          "enum": [
+            "cube"
+          ]
+        },
+        "size": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "description": "size [x, y, z]",
+                "exclusiveMinimum": 0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          ]
+        },
+        "material": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/material"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/material",
+                "description": "material for [top, bottom, left, right, front, back]"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-position"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-rotation"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-torus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of solid geometry",
+          "enum": [
+            "torus"
+          ]
+        },
+        "majorRadius": {
+          "type": "number",
+          "description": "major radius of torus",
+          "exclusiveMinimum": 0
+        },
+        "minorRadius": {
+          "type": "number",
+          "description": "minor radius of torus",
+          "exclusiveMinimum": 0
+        },
+        "material": {
+          "$ref": "#/definitions2/material"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-position"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-rotation"
+        },
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-plane": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "coefficients": {
+          "x^4": {
+            "type": "number"
+          },
+          "y^4": {
+            "type": "number"
+          },
+          "z^4": {
+            "type": "number"
+          },
+          "x^3y": {
+            "type": "number"
+          },
+          "x^3z": {
+            "type": "number"
+          },
+          "xy^3": {
+            "type": "number"
+          },
+          "y^3z": {
+            "type": "number"
+          },
+          "xz^3": {
+            "type": "number"
+          },
+          "yz^3": {
+            "type": "number"
+          },
+          "x^2y^2": {
+            "type": "number"
+          },
+          "y^2z^2": {
+            "type": "number"
+          },
+          "x^2z^2": {
+            "type": "number"
+          },
+          "x^2yz": {
+            "type": "number"
+          },
+          "xy^2z": {
+            "type": "number"
+          },
+          "xyz^2": {
+            "type": "number"
+          },
+          "x^3": {
+            "type": "number"
+          },
+          "y^3": {
+            "type": "number"
+          },
+          "z^3": {
+            "type": "number"
+          },
+          "x^2y": {
+            "type": "number"
+          },
+          "x^2z": {
+            "type": "number"
+          },
+          "xy^2": {
+            "type": "number"
+          },
+          "y^2z": {
+            "type": "number"
+          },
+          "xz^2": {
+            "type": "number"
+          },
+          "yz^2": {
+            "type": "number"
+          },
+          "xyz": {
+            "type": "number"
+          },
+          "x^2": {
+            "type": "number"
+          },
+          "y^2": {
+            "type": "number"
+          },
+          "z^2": {
+            "type": "number"
+          },
+          "xy": {
+            "type": "number"
+          },
+          "yz": {
+            "type": "number"
+          },
+          "xz": {
+            "type": "number"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "z": {
+            "type": "number"
+          },
+          "1": {
+            "type": "number"
+          }
+        },
+        "isInside": {
+          "type": "boolean"
+        },
+        "material": {
+          "$ref": "#/definitions2/material-no-map"
+        }
+      },
+      "required": [
+        "coefficients"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "primitive-model": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/primitive-sphere"
+        },
+        {
+          "$ref": "#/definitions2/primitive-cone"
+        },
+        {
+          "$ref": "#/definitions2/primitive-cylinder"
+        },
+        {
+          "$ref": "#/definitions2/primitive-cube"
+        },
+        {
+          "$ref": "#/definitions2/primitive-torus"
+        },
+        {
+          "$ref": "#/definitions2/primitive-plane"
+        }
+      ]
+    },
+    "csg-union": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of operation",
+          "enum": [
+            "union"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "description": "operand of operation",
+          "items": {
+            "$ref": "#/definitions2/csg-model"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "csg-intersection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of operation",
+          "enum": [
+            "intersection"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "description": "operand of operation",
+          "items": {
+            "$ref": "#/definitions2/csg-model"
+          },
+          "minItems": 2
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "csg-difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of operation",
+          "enum": [
+            "difference"
+          ]
+        },
+        "from": {
+          "$ref": "#/definitions2/csg-model"
+        },
+        "subtract": {
+          "$ref": "#/definitions2/csg-model"
+        }
+      },
+      "required": [
+        "type",
+        "from",
+        "subtract"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/has-optional-transform"
+        }
+      ]
+    },
+    "constructive-model": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/csg-union"
+        },
+        {
+          "$ref": "#/definitions2/csg-intersection"
+        },
+        {
+          "$ref": "#/definitions2/csg-difference"
+        }
+      ]
+    },
+    "csg-model": {
+      "oneOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/primitive-model"
+            },
+            {
+              "$ref": "#/definitions2/constructive-model"
+            }
+          ]
+        },
+        {
+          "$ref": "#/definitions2/ref"
+        }
+      ]
+    },
+    "csg-object": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of object",
+          "enum": [
+            "csg"
+          ]
+        },
+        "model": {
+          "$ref": "#/definitions2/csg-model"
+        },
+        "transparent": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "description": "set to false to make non-transparent",
+              "enum": [
+                false
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "transparency": {
+                  "type": "number",
+                  "description": "transparency",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                },
+                "color": {
+                  "description": "transmission filter color",
+                  "$ref": "#/definitions2/ldr-color"
+                },
+                "opticalDensity": {
+                  "type": "number",
+                  "description": "index of refraction",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "transparency"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "model"
+      ]
+    },
+    "obj-object": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of object",
+          "enum": [
+            "obj"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "description": "path to .obj file"
+        }
+      },
+      "required": [
+        "type",
+        "path"
+      ]
+    },
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "string",
+          "description": "reference, key of defs"
+        }
+      },
+      "required": [
+        "ref"
+      ]
+    },
+    "model": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/csg-object"
+        },
+        {
+          "$ref": "#/definitions2/obj-object"
+        }
+      ]
+    },
+    "light-point": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of light",
+          "enum": [
+            "point"
+          ]
+        },
+        "color": {
+          "$ref": "#/definitions2/hdr-color"
+        },
+        "position": {
+          "$ref": "#/definitions2/position"
+        },
+        "range": {
+          "type": "number",
+          "description": "default is infinity",
+          "exclusiveMinimum": 0
+        },
+        "attenuation": {
+          "type": "boolean",
+          "description": "whether use attenuation, default is true"
+        }
+      },
+      "required": [
+        "type",
+        "color",
+        "position"
+      ]
+    },
+    "light-directional": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of light",
+          "enum": [
+            "directional"
+          ]
+        },
+        "color": {
+          "$ref": "#/definitions2/hdr-color"
+        },
+        "direction": {
+          "$ref": "#/definitions2/direction"
+        }
+      },
+      "required": [
+        "type",
+        "color",
+        "direction"
+      ]
+    },
+    "light-spot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "type of light",
+          "enum": [
+            "spot"
+          ]
+        },
+        "color": {
+          "$ref": "#/definitions2/hdr-color"
+        },
+        "position": {
+          "$ref": "#/definitions2/position"
+        },
+        "angle": {
+          "description": "angle for the spot light",
+          "$ref": "#/definitions2/angle-spot"
+        },
+        "direction": {
+          "$ref": "#/definitions2/direction"
+        },
+        "range": {
+          "type": "number",
+          "description": "default is infinity",
+          "exclusiveMinimum": 0
+        },
+        "attenuation": {
+          "type": "boolean",
+          "description": "whether use attenuation, default is true"
+        }
+      },
+      "required": [
+        "type",
+        "color",
+        "position",
+        "angle",
+        "direction"
+      ]
+    },
+    "light": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/light-point"
+        },
+        {
+          "$ref": "#/definitions2/light-directional"
+        },
+        {
+          "$ref": "#/definitions2/light-spot"
+        }
+      ]
+    },
+    "object": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/group"
+        },
+        {
+          "$ref": "#/definitions2/model"
+        },
+        {
+          "$ref": "#/definitions2/light"
+        },
+        {
+          "$ref": "#/definitions2/ref"
+        }
+      ]
+    }
+  },
+  "definitions1": {
+    "blend-multiply": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "modern_42": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "scale": {
+                          "type": "array",
+                          "items": {
+                            "type": "number",
+                            "description": "scale [x, y, z]"
+                          },
+                          "minItems": 3,
+                          "maxItems": 3
+                        }
+                      },
+                      "required": [
+                        "scale"
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "scaleX": {
+                            "type": "number"
+                          },
+                          "scaleY": {
+                            "type": "number"
+                          },
+                          "scaleZ": {
+                            "type": "number"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "scaleX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "scaleY"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "scaleZ"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^scale$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "scale": {
+                            "type": "array",
+                            "items": {
+                              "type": "number",
+                              "description": "scale [x, y, z]"
+                            },
+                            "minItems": 3,
+                            "maxItems": 3
+                          }
+                        },
+                        "required": [
+                          "scale"
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "scaleX": {
+                          "type": "number"
+                        },
+                        "scaleY": {
+                          "type": "number"
+                        },
+                        "scaleZ": {
+                          "type": "number"
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "scaleX"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "scaleY"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "scaleZ"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^scaleX$": true,
+                "^scaleY$": true,
+                "^scaleZ$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_41": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of operation",
+                  "enum": [
+                    "intersection"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "description": "operand of operation",
+                  "items": {
+                    "$ref": "#/definitions1/csg-model"
+                  },
+                  "minItems": 2
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true,
+                "^transform$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_35": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "minimum"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/map",
+                    "minItems": 2
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_24": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of operation",
+                  "enum": [
+                    "union"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "description": "operand of operation",
+                  "items": {
+                    "$ref": "#/definitions1/csg-model"
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true,
+                "^transform$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_21": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "$ref": "#/definitions1/position"
+                },
+                "direction": {
+                  "$ref": "#/definitions1/direction"
+                },
+                "rotation": {
+                  "$ref": "#/definitions1/rotation"
+                },
+                "lookAt": {
+                  "$ref": "#/definitions1/position"
+                }
+              },
+              "not": {
+                "oneOf": [
+                  {
+                    "required": [
+                      "direction",
+                      "rotation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "rotation",
+                      "lookAt"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "direction",
+                      "lookAt"
+                    ]
+                  }
+                ]
+              },
+              "$ref": "#/definitions1/has-optional-position"
+            },
+            {
+              "patternProperties": {
+                "^position$": true,
+                "^direction$": true,
+                "^rotation$": true,
+                "^lookAt$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ambient": {
+                  "$ref": "#/definitions1/ldr-color"
+                },
+                "diffuse": {
+                  "$ref": "#/definitions1/ldr-color"
+                },
+                "specular": {
+                  "$ref": "#/definitions1/ldr-color"
+                },
+                "specularLobe": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^ambient$": true,
+                "^diffuse$": true,
+                "^specular$": true,
+                "^specularLobe$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "blend-maximum": {
+      "$ref": "#/definitions1/modern_14"
+    },
+    "modern_32": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "origin": {
+                      "$ref": "#/definitions1/position"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "rotate": {
+                          "$ref": "#/definitions1/rotation"
+                        }
+                      },
+                      "required": [
+                        "rotate"
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateX": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateX"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateY": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateZ": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateZ"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^origin$": true,
+                "^rotate$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "origin": {
+                      "$ref": "#/definitions1/position"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "rotate": {
+                            "$ref": "#/definitions1/rotation"
+                          }
+                        },
+                        "required": [
+                          "rotate"
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "rotateX": {
+                          "$ref": "#/definitions1/angle"
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "rotateX"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateY": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateZ": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateZ"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^origin$": true,
+                "^rotateX$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "origin": {
+                      "$ref": "#/definitions1/position"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "rotate": {
+                            "$ref": "#/definitions1/rotation"
+                          }
+                        },
+                        "required": [
+                          "rotate"
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateX": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateX"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "rotateY": {
+                          "$ref": "#/definitions1/angle"
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "rotateY"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateZ": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateZ"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^origin$": true,
+                "^rotateY$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "origin": {
+                      "$ref": "#/definitions1/position"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "rotate": {
+                            "$ref": "#/definitions1/rotation"
+                          }
+                        },
+                        "required": [
+                          "rotate"
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateX": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateX"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "rotateY": {
+                            "$ref": "#/definitions1/angle"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "rotateY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "rotateZ": {
+                          "$ref": "#/definitions1/angle"
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "rotateZ"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^origin$": true,
+                "^rotateZ$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "obj-object": {
+      "$ref": "#/definitions1/modern_15"
+    },
+    "primitive-cube": {
+      "$ref": "#/definitions1/modern_16"
+    },
+    "transform-translate": {
+      "$ref": "#/definitions1/modern_17"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "translate"
+                  ]
+                },
+                "original": {
+                  "$ref": "#/definitions1/map"
+                },
+                "translate": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "description": "translate distance [x, y]"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "required": [
+                "type",
+                "original",
+                "translate"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^original$": true,
+                "^translate$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ldr-color": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "color value [red, green, blue] in low dynamic range",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "degree": {
+                  "type": "number",
+                  "description": "angle in degree",
+                  "exclusiveMinimum": 0.0,
+                  "exclusiveMaximum": 180.0
+                }
+              },
+              "required": [
+                "degree"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^degree$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_43": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of solid geometry",
+                  "enum": [
+                    "cone"
+                  ]
+                },
+                "radius": {
+                  "type": "number",
+                  "description": "radius of cone bottom",
+                  "exclusiveMinimum": 0.0
+                },
+                "height": {
+                  "type": "number",
+                  "description": "cone height",
+                  "exclusiveMinimum": 0.0
+                },
+                "material": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/material"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions1/material",
+                        "description": "material for [side, bottom]"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-position"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-rotation"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^material$": true,
+                "^type$": true,
+                "^height$": true,
+                "^transform$": true,
+                "^radius$": true,
+                "^rotation$": true,
+                "^position$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "blend-scale": {
+      "$ref": "#/definitions1/modern_2"
+    },
+    "modern_37": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "nearest": {
+                  "type": "boolean",
+                  "description": "filter mode - true: nearest, false: linear. default is false"
+                },
+                "offset": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "description": "offset of texture [x, y], default is [0, 0]",
+                    "exclusiveMinimum": 0.0
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "mirror": {
+                  "type": "boolean",
+                  "description": "address mode - true: mirror, false: wrap. default is false"
+                },
+                "path": {
+                  "type": "string",
+                  "description": "path to texture .bmp file"
+                },
+                "size": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "description": "size of texture [width, height], default is [1, 1]",
+                    "exclusiveMinimum": 0.0
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "shear": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "description": "shear of texture [x, y], default is [0, 0]",
+                    "exclusiveMinimum": 0.0
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "type": {
+                  "type": "string",
+                  "union": [
+                    "texture"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "path"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^shear$": true,
+                "^offset$": true,
+                "^path$": true,
+                "^size$": true,
+                "^nearest$": true,
+                "^mirror$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of solid geometry",
+                  "enum": [
+                    "cube"
+                  ]
+                },
+                "size": {
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "number",
+                        "description": "size [x, y, z]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    },
+                    {
+                      "type": "number",
+                      "exclusiveMinimum": 0.0
+                    }
+                  ]
+                },
+                "material": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/material"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions1/material",
+                        "description": "material for [top, bottom, left, right, front, back]"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-position"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-rotation"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^transform$": true,
+                "^material$": true,
+                "^type$": true,
+                "^rotation$": true,
+                "^position$": true,
+                "^size$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "blend-filter": {
+      "$ref": "#/definitions1/modern_18"
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of object",
+                  "enum": [
+                    "obj"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "description": "path to .obj file"
+                }
+              },
+              "required": [
+                "type",
+                "path"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^path$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "map": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/texture"
+        },
+        {
+          "$ref": "#/definitions1/blend"
+        },
+        {
+          "$ref": "#/definitions1/ldr-color"
+        }
+      ]
+    },
+    "root": {
+      "$ref": "#/definitions1/modern_19"
+    },
+    "csg-union": {
+      "$ref": "#/definitions1/modern_24"
+    },
+    "model": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/csg-object"
+        },
+        {
+          "$ref": "#/definitions1/obj-object"
+        }
+      ]
+    },
+    "modern_27": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "description": "reference, key of defs"
+                }
+              },
+              "required": [
+                "ref"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^ref$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "multiply"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/map",
+                    "minItems": 2
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "transform-1": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/transform-translate"
+        },
+        {
+          "$ref": "#/definitions1/transform-scale"
+        },
+        {
+          "$ref": "#/definitions1/transform-rotate"
+        }
+      ]
+    },
+    "angle": {
+      "oneOf": [
+        {
+          "type": "number",
+          "description": "angle in rotation count"
+        },
+        {
+          "$ref": "#/definitions1/modern_25"
+        },
+        {
+          "$ref": "#/definitions1/modern_26"
+        }
+      ]
+    },
+    "constructive-model": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/csg-union"
+        },
+        {
+          "$ref": "#/definitions1/csg-intersection"
+        },
+        {
+          "$ref": "#/definitions1/csg-difference"
+        }
+      ]
+    },
+    "primitive-torus": {
+      "$ref": "#/definitions1/modern_3"
+    },
+    "modern_34": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "normal": {
+                  "$ref": "#/definitions1/map"
+                },
+                "specularLobe": {
+                  "type": "number"
+                },
+                "diffuse": {
+                  "$ref": "#/definitions1/map"
+                },
+                "specular": {
+                  "$ref": "#/definitions1/map"
+                },
+                "ambient": {
+                  "$ref": "#/definitions1/map"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^ambient$": true,
+                "^diffuse$": true,
+                "^specular$": true,
+                "^specularLobe$": true,
+                "^normal$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_31": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of solid geometry",
+                  "enum": [
+                    "cylinder"
+                  ]
+                },
+                "radius": {
+                  "type": "number",
+                  "description": "radius of cylinder bottom",
+                  "exclusiveMinimum": 0.0
+                },
+                "height": {
+                  "type": "number",
+                  "description": "cylinder height",
+                  "exclusiveMinimum": 0.0
+                },
+                "material": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/material"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions1/material",
+                        "description": "material for [side, top, bottom]"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-position"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-rotation"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^material$": true,
+                "^type$": true,
+                "^height$": true,
+                "^transform$": true,
+                "^radius$": true,
+                "^rotation$": true,
+                "^position$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of object",
+                  "enum": [
+                    "csg"
+                  ]
+                },
+                "model": {
+                  "$ref": "#/definitions1/csg-model"
+                },
+                "transparent": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "set to false to make non-transparent",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    {
+                      "$ref": "#/definitions1/modern_8"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "model"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^model$": true,
+                "^transparent$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_38": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of object",
+                  "enum": [
+                    "group"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/object"
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true,
+                "^transform$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "blend-subtract": {
+      "$ref": "#/definitions1/modern_4"
+    },
+    "modern_20": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "fovX": {
+                              "description": "field of view for X axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            },
+                            "fovY": {
+                              "description": "field of view for Y axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            }
+                          }
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "required": [
+                                "fovX"
+                              ]
+                            },
+                            {
+                              "allOf": [
+                                {
+                                  "properties": {
+                                    "nearDistance": {
+                                      "type": "number",
+                                      "description": "distance between ray origin and camera",
+                                      "minimum": 0.0
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "required": [
+                                      "nearDistance",
+                                      "nearPlane"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^size$": true,
+                "^fovX$": true,
+                "^fovY$": true,
+                "^nearDistance$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "fovX": {
+                              "description": "field of view for X axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            },
+                            "fovY": {
+                              "description": "field of view for Y axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            }
+                          }
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "required": [
+                                "fovX"
+                              ]
+                            },
+                            {
+                              "allOf": [
+                                {
+                                  "properties": {
+                                    "nearPlane": {
+                                      "type": "number",
+                                      "description": "distance between ray origin plane and camera",
+                                      "minimum": 0.0
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "required": [
+                                      "nearDistance",
+                                      "nearPlane"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^size$": true,
+                "^fovX$": true,
+                "^fovY$": true,
+                "^nearPlane$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "fovX": {
+                              "description": "field of view for X axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            },
+                            "fovY": {
+                              "description": "field of view for Y axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            }
+                          }
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "required": [
+                                "fovX"
+                              ]
+                            },
+                            {
+                              "allOf": [
+                                {
+                                  "allOf": [
+                                    {
+                                      "properties": {
+                                        "nearDistance": {
+                                          "type": "number",
+                                          "description": "distance between ray origin and camera",
+                                          "minimum": 0.0
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "properties": {
+                                        "nearPlane": {
+                                          "type": "number",
+                                          "description": "distance between ray origin plane and camera",
+                                          "minimum": 0.0
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "not": {
+                                    "required": [
+                                      "nearDistance",
+                                      "nearPlane"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^nearDistance$": true,
+                "^fovX$": true,
+                "^fovY$": true,
+                "^nearPlane$": true,
+                "^size$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "fovX": {
+                              "description": "field of view for X axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            },
+                            "fovY": {
+                              "description": "field of view for Y axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            }
+                          }
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "required": [
+                                "fovY"
+                              ]
+                            },
+                            {
+                              "allOf": [
+                                {
+                                  "properties": {
+                                    "nearDistance": {
+                                      "type": "number",
+                                      "description": "distance between ray origin and camera",
+                                      "minimum": 0.0
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "required": [
+                                      "nearDistance",
+                                      "nearPlane"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^size$": true,
+                "^fovX$": true,
+                "^fovY$": true,
+                "^nearDistance$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "fovX": {
+                              "description": "field of view for X axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            },
+                            "fovY": {
+                              "description": "field of view for Y axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            }
+                          }
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "required": [
+                                "fovY"
+                              ]
+                            },
+                            {
+                              "allOf": [
+                                {
+                                  "properties": {
+                                    "nearPlane": {
+                                      "type": "number",
+                                      "description": "distance between ray origin plane and camera",
+                                      "minimum": 0.0
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "required": [
+                                      "nearDistance",
+                                      "nearPlane"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^size$": true,
+                "^fovX$": true,
+                "^fovY$": true,
+                "^nearPlane$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "fovX": {
+                              "description": "field of view for X axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            },
+                            "fovY": {
+                              "description": "field of view for Y axis, default is auto",
+                              "$ref": "#/definitions1/angle-fov-plane"
+                            }
+                          }
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "required": [
+                                "fovY"
+                              ]
+                            },
+                            {
+                              "allOf": [
+                                {
+                                  "allOf": [
+                                    {
+                                      "properties": {
+                                        "nearDistance": {
+                                          "type": "number",
+                                          "description": "distance between ray origin and camera",
+                                          "minimum": 0.0
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "properties": {
+                                        "nearPlane": {
+                                          "type": "number",
+                                          "description": "distance between ray origin plane and camera",
+                                          "minimum": 0.0
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "not": {
+                                    "required": [
+                                      "nearDistance",
+                                      "nearPlane"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^nearDistance$": true,
+                "^fovX$": true,
+                "^fovY$": true,
+                "^nearPlane$": true,
+                "^size$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "fovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle-fov-plane"
+                          },
+                          "fovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle-fov-plane"
+                          }
+                        },
+                        "allOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "required": [
+                                  "fovX"
+                                ]
+                              },
+                              {
+                                "required": [
+                                  "fovY"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "anyOf": [
+                              {
+                                "properties": {
+                                  "nearDistance": {
+                                    "type": "number",
+                                    "description": "distance between ray origin and camera",
+                                    "minimum": 0.0
+                                  }
+                                }
+                              },
+                              {
+                                "properties": {
+                                  "nearPlane": {
+                                    "type": "number",
+                                    "description": "distance between ray origin plane and camera",
+                                    "minimum": 0.0
+                                  }
+                                }
+                              }
+                            ],
+                            "not": {
+                              "required": [
+                                "nearDistance",
+                                "nearPlane"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "curveFovX": {
+                          "description": "field of view for X axis, default is auto",
+                          "$ref": "#/definitions1/angle"
+                        },
+                        "curveFovY": {
+                          "description": "field of view for Y axis, default is auto",
+                          "$ref": "#/definitions1/angle"
+                        },
+                        "nearDistance": {
+                          "type": "number",
+                          "description": "distance between ray origin and camera",
+                          "minimum": 0.0
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "curveFovX"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "curveFovY"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "width": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport width, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "orthogonal camera viewport height, default is auto",
+                            "exclusiveMinimum": 0.0
+                          },
+                          "near": {
+                            "type": "number",
+                            "description": "distance between ray origin plane and camera, default is 0",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "width"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "height"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^size$": true,
+                "^curveFovX$": true,
+                "^curveFovY$": true,
+                "^nearDistance$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "description": "size of the viewport [width, height]",
+                        "exclusiveMinimum": 0.0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "size"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "fovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle-fov-plane"
+                          },
+                          "fovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle-fov-plane"
+                          }
+                        },
+                        "allOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "required": [
+                                  "fovX"
+                                ]
+                              },
+                              {
+                                "required": [
+                                  "fovY"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "anyOf": [
+                              {
+                                "properties": {
+                                  "nearDistance": {
+                                    "type": "number",
+                                    "description": "distance between ray origin and camera",
+                                    "minimum": 0.0
+                                  }
+                                }
+                              },
+                              {
+                                "properties": {
+                                  "nearPlane": {
+                                    "type": "number",
+                                    "description": "distance between ray origin plane and camera",
+                                    "minimum": 0.0
+                                  }
+                                }
+                              }
+                            ],
+                            "not": {
+                              "required": [
+                                "nearDistance",
+                                "nearPlane"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "curveFovX": {
+                            "description": "field of view for X axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "curveFovY": {
+                            "description": "field of view for Y axis, default is auto",
+                            "$ref": "#/definitions1/angle"
+                          },
+                          "nearDistance": {
+                            "type": "number",
+                            "description": "distance between ray origin and camera",
+                            "minimum": 0.0
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "curveFovX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "curveFovY"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "width": {
+                          "type": "number",
+                          "description": "orthogonal camera viewport width, default is auto",
+                          "exclusiveMinimum": 0.0
+                        },
+                        "height": {
+                          "type": "number",
+                          "description": "orthogonal camera viewport height, default is auto",
+                          "exclusiveMinimum": 0.0
+                        },
+                        "near": {
+                          "type": "number",
+                          "description": "distance between ray origin plane and camera, default is 0",
+                          "minimum": 0.0
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "width"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "height"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^size$": true,
+                "^width$": true,
+                "^height$": true,
+                "^near$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ref": {
+      "$ref": "#/definitions1/modern_27"
+    },
+    "direction": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "direction normal for [x, y, z]",
+        "minimum": -1.0,
+        "maximum": 1.0
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "rotation": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "additionalItems": {
+        "type": "number",
+        "description": "rotation angle for [yaw, pitch, roll]"
+      },
+      "items": [
+        {
+          "description": "rotation angle for yaw",
+          "$ref": "#/definitions1/angle"
+        },
+        {
+          "description": "rotation angle for pitch",
+          "$ref": "#/definitions1/angle"
+        },
+        {
+          "description": "rotation angle for roll",
+          "$ref": "#/definitions1/angle"
+        }
+      ]
+    },
+    "modern_23": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "gamma": {
+                  "type": "number",
+                  "description": "gamma parameter for HDR rendering, default is 2.2",
+                  "exclusiveMinimum": 0.0
+                },
+                "exposure": {
+                  "type": "number",
+                  "description": "exposure parameter for HDR rendering, default is 1",
+                  "exclusiveMinimum": 0.0
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^gamma$": true,
+                "^exposure$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "hdr-color": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "color value [red, green, blue] in high dynamic range",
+        "minimum": 0.0
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "translate": {
+                          "type": "array",
+                          "items": {
+                            "type": "number",
+                            "description": "translate distance [x, y, z]"
+                          },
+                          "minItems": 3,
+                          "maxItems": 3
+                        }
+                      },
+                      "required": [
+                        "translate"
+                      ]
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "translateX": {
+                            "type": "number"
+                          },
+                          "translateY": {
+                            "type": "number"
+                          },
+                          "translateZ": {
+                            "type": "number"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "required": [
+                              "translateX"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "translateY"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "translateZ"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^translate$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "translate": {
+                            "type": "array",
+                            "items": {
+                              "type": "number",
+                              "description": "translate distance [x, y, z]"
+                            },
+                            "minItems": 3,
+                            "maxItems": 3
+                          }
+                        },
+                        "required": [
+                          "translate"
+                        ]
+                      }
+                    },
+                    {
+                      "properties": {
+                        "translateX": {
+                          "type": "number"
+                        },
+                        "translateY": {
+                          "type": "number"
+                        },
+                        "translateZ": {
+                          "type": "number"
+                        }
+                      },
+                      "anyOf": [
+                        {
+                          "required": [
+                            "translateX"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "translateY"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "translateZ"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^translateX$": true,
+                "^translateY$": true,
+                "^translateZ$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "scale"
+                  ]
+                },
+                "original": {
+                  "$ref": "#/definitions1/map"
+                },
+                "scale": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "description": "scale [x, y]"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "required": [
+                "type",
+                "original",
+                "scale"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^original$": true,
+                "^scale$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "primitive-sphere": {
+      "$ref": "#/definitions1/modern_28"
+    },
+    "modern_28": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of solid geometry",
+                  "enum": [
+                    "sphere"
+                  ]
+                },
+                "radius": {
+                  "type": "number",
+                  "description": "radius of sphere",
+                  "exclusiveMinimum": 0.0
+                },
+                "material": {
+                  "$ref": "#/definitions1/material"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-position"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-rotation"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^material$": true,
+                "^type$": true,
+                "^transform$": true,
+                "^radius$": true,
+                "^rotation$": true,
+                "^position$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "object": {
+      "$ref": "#/definitions1/modern_29"
+    },
+    "has-optional-rotation": {
+      "properties": {
+        "rotation": {
+          "$ref": "#/definitions1/rotation"
+        }
+      }
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "degree": {
+                  "type": "number",
+                  "description": "angle in degree",
+                  "exclusiveMinimum": 0.0,
+                  "exclusiveMaximum": 360.0
+                }
+              },
+              "required": [
+                "degree"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^degree$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "csg-difference": {
+      "$ref": "#/definitions1/modern_30"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "transparency": {
+                  "type": "number",
+                  "description": "transparency",
+                  "exclusiveMinimum": 0.0,
+                  "exclusiveMaximum": 1.0
+                },
+                "color": {
+                  "description": "transmission filter color",
+                  "$ref": "#/definitions1/ldr-color"
+                },
+                "opticalDensity": {
+                  "type": "number",
+                  "description": "index of refraction",
+                  "exclusiveMinimum": 0.0
+                }
+              },
+              "required": [
+                "transparency"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^transparency$": true,
+                "^color$": true,
+                "^opticalDensity$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "material-no-map": {
+      "$ref": "#/definitions1/modern_5"
+    },
+    "csg-model": {
+      "oneOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "#/definitions1/primitive-model"
+            },
+            {
+              "$ref": "#/definitions1/constructive-model"
+            }
+          ]
+        },
+        {
+          "$ref": "#/definitions1/ref"
+        }
+      ]
+    },
+    "modern_39": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "coefficients": {
+                  "x^4": {
+                    "type": "number"
+                  },
+                  "y^4": {
+                    "type": "number"
+                  },
+                  "z^4": {
+                    "type": "number"
+                  },
+                  "x^3y": {
+                    "type": "number"
+                  },
+                  "x^3z": {
+                    "type": "number"
+                  },
+                  "xy^3": {
+                    "type": "number"
+                  },
+                  "y^3z": {
+                    "type": "number"
+                  },
+                  "xz^3": {
+                    "type": "number"
+                  },
+                  "yz^3": {
+                    "type": "number"
+                  },
+                  "x^2y^2": {
+                    "type": "number"
+                  },
+                  "y^2z^2": {
+                    "type": "number"
+                  },
+                  "x^2z^2": {
+                    "type": "number"
+                  },
+                  "x^2yz": {
+                    "type": "number"
+                  },
+                  "xy^2z": {
+                    "type": "number"
+                  },
+                  "xyz^2": {
+                    "type": "number"
+                  },
+                  "x^3": {
+                    "type": "number"
+                  },
+                  "y^3": {
+                    "type": "number"
+                  },
+                  "z^3": {
+                    "type": "number"
+                  },
+                  "x^2y": {
+                    "type": "number"
+                  },
+                  "x^2z": {
+                    "type": "number"
+                  },
+                  "xy^2": {
+                    "type": "number"
+                  },
+                  "y^2z": {
+                    "type": "number"
+                  },
+                  "xz^2": {
+                    "type": "number"
+                  },
+                  "yz^2": {
+                    "type": "number"
+                  },
+                  "xyz": {
+                    "type": "number"
+                  },
+                  "x^2": {
+                    "type": "number"
+                  },
+                  "y^2": {
+                    "type": "number"
+                  },
+                  "z^2": {
+                    "type": "number"
+                  },
+                  "xy": {
+                    "type": "number"
+                  },
+                  "yz": {
+                    "type": "number"
+                  },
+                  "xz": {
+                    "type": "number"
+                  },
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  },
+                  "z": {
+                    "type": "number"
+                  },
+                  "1": {
+                    "type": "number"
+                  }
+                },
+                "isInside": {
+                  "type": "boolean"
+                },
+                "material": {
+                  "$ref": "#/definitions1/material-no-map"
+                }
+              },
+              "required": [
+                "coefficients"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^coefficients$": true,
+                "^isInside$": true,
+                "^material$": true,
+                "^transform$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "primitive-cylinder": {
+      "$ref": "#/definitions1/modern_31"
+    },
+    "transform-rotate": {
+      "$ref": "#/definitions1/modern_32"
+    },
+    "has-optional-position": {
+      "properties": {
+        "position": {
+          "$ref": "#/definitions1/position"
+        }
+      }
+    },
+    "modern_30": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of operation",
+                  "enum": [
+                    "difference"
+                  ]
+                },
+                "from": {
+                  "$ref": "#/definitions1/csg-model"
+                },
+                "subtract": {
+                  "$ref": "#/definitions1/csg-model"
+                }
+              },
+              "required": [
+                "type",
+                "from",
+                "subtract"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^from$": true,
+                "^subtract$": true,
+                "^transform$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "light-point": {
+      "$ref": "#/definitions1/modern_33"
+    },
+    "blend-translate": {
+      "$ref": "#/definitions1/modern_6"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "radian": {
+                  "type": "number",
+                  "description": "angle in radian",
+                  "exclusiveMinimum": 0.0,
+                  "exclusiveMaximum": 3.141592653589793
+                }
+              },
+              "required": [
+                "radian"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^radian$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_29": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions1/group"
+                },
+                {
+                  "$ref": "#/definitions1/model"
+                },
+                {
+                  "$ref": "#/definitions1/light"
+                },
+                {
+                  "$ref": "#/definitions1/ref"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "filter"
+                  ]
+                },
+                "original": {
+                  "$ref": "#/definitions1/map"
+                },
+                "filter": {
+                  "description": "4x3 matrix to transform 1x4 matrix [r, g, b, 1] into [r, g, b]",
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 12,
+                      "maxItems": 12
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
+                        "minItems": 3,
+                        "maxItems": 3
+                      },
+                      "minItems": 4,
+                      "maxItems": 4
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "original",
+                "filter"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^original$": true,
+                "^filter$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "csg-object": {
+      "$ref": "#/definitions1/modern_7"
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "add"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/map",
+                    "minItems": 2
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of solid geometry",
+                  "enum": [
+                    "torus"
+                  ]
+                },
+                "majorRadius": {
+                  "type": "number",
+                  "description": "major radius of torus",
+                  "exclusiveMinimum": 0.0
+                },
+                "minorRadius": {
+                  "type": "number",
+                  "description": "minor radius of torus",
+                  "exclusiveMinimum": 0.0
+                },
+                "material": {
+                  "$ref": "#/definitions1/material"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/has-optional-position"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-rotation"
+                },
+                {
+                  "$ref": "#/definitions1/has-optional-transform"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^transform$": true,
+                "^majorRadius$": true,
+                "^material$": true,
+                "^type$": true,
+                "^minorRadius$": true,
+                "^rotation$": true,
+                "^position$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "angle-fov-plane": {
+      "oneOf": [
+        {
+          "type": "number",
+          "description": "angle in rotation count",
+          "exclusiveMinimum": 0.0,
+          "exclusiveMaximum": 0.5
+        },
+        {
+          "$ref": "#/definitions1/modern_9"
+        },
+        {
+          "$ref": "#/definitions1/modern_10"
+        }
+      ]
+    },
+    "position": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "description": "coordinates of the position [x, y, z]"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "modern_22": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "hdr": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "set to false to disable HDR, true to default options"
+                    },
+                    {
+                      "$ref": "#/definitions1/modern_23"
+                    }
+                  ]
+                },
+                "shadow": {
+                  "type": "boolean",
+                  "description": "default is true"
+                },
+                "rayStrategy": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "add"
+                  ]
+                },
+                "superSampling": {
+                  "type": "integer",
+                  "description": "super sampling rate, default is 2 (4x slow)",
+                  "minimum": 1.0
+                },
+                "refractionLimit": {
+                  "type": "integer",
+                  "description": "maximum refraction count (up to 2^(n+m)x slow), default is 2",
+                  "minimum": 0.0
+                },
+                "reflectionLimit": {
+                  "type": "integer",
+                  "description": "maximum reflection count (up to 2^(n+m)x slow), default is 3",
+                  "minimum": 0.0
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^refractionLimit$": true,
+                "^rayStrategy$": true,
+                "^shadow$": true,
+                "^hdr$": true,
+                "^reflectionLimit$": true,
+                "^superSampling$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "material": {
+      "$ref": "#/definitions1/modern_34"
+    },
+    "blend-minimum": {
+      "$ref": "#/definitions1/modern_35"
+    },
+    "has-optional-transform": {
+      "properties": {
+        "transform": {
+          "$ref": "#/definitions1/transform"
+        }
+      }
+    },
+    "modern_33": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "attenuation": {
+                  "type": "boolean",
+                  "description": "whether use attenuation, default is true"
+                },
+                "color": {
+                  "$ref": "#/definitions1/hdr-color"
+                },
+                "range": {
+                  "type": "number",
+                  "description": "default is infinity",
+                  "exclusiveMinimum": 0.0
+                },
+                "position": {
+                  "$ref": "#/definitions1/position"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "type of light",
+                  "enum": [
+                    "point"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "color",
+                "position"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^attenuation$": true,
+                "^color$": true,
+                "^type$": true,
+                "^range$": true,
+                "^position$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "angle-spot": {
+      "oneOf": [
+        {
+          "type": "number",
+          "description": "angle in rotation count",
+          "exclusiveMinimum": 0.0,
+          "exclusiveMaximum": 1.0
+        },
+        {
+          "$ref": "#/definitions1/modern_11"
+        },
+        {
+          "$ref": "#/definitions1/modern_12"
+        }
+      ]
+    },
+    "modern_26": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "degree": {
+                  "type": "number",
+                  "description": "angle in degree"
+                }
+              },
+              "required": [
+                "degree"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^degree$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_36": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "type of light",
+                  "enum": [
+                    "directional"
+                  ]
+                },
+                "color": {
+                  "$ref": "#/definitions1/hdr-color"
+                },
+                "direction": {
+                  "$ref": "#/definitions1/direction"
+                }
+              },
+              "required": [
+                "type",
+                "color",
+                "direction"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^color$": true,
+                "^direction$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "blend-add": {
+      "$ref": "#/definitions1/modern_13"
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "radian": {
+                  "type": "number",
+                  "description": "angle in radian",
+                  "exclusiveMinimum": 0.0,
+                  "exclusiveMaximum": 6.283185307179586
+                }
+              },
+              "required": [
+                "radian"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^radian$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "maximum"
+                  ]
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/map",
+                    "minItems": 2
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^children$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "transform-n": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/transform-1"
+      }
+    },
+    "light": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/light-point"
+        },
+        {
+          "$ref": "#/definitions1/light-directional"
+        },
+        {
+          "$ref": "#/definitions1/light-spot"
+        }
+      ]
+    },
+    "transform": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/transform-1"
+        },
+        {
+          "$ref": "#/definitions1/transform-n"
+        }
+      ]
+    },
+    "light-directional": {
+      "$ref": "#/definitions1/modern_36"
+    },
+    "texture": {
+      "$ref": "#/definitions1/modern_37"
+    },
+    "group": {
+      "$ref": "#/definitions1/modern_38"
+    },
+    "primitive-plane": {
+      "$ref": "#/definitions1/modern_39"
+    },
+    "light-spot": {
+      "$ref": "#/definitions1/modern_40"
+    },
+    "csg-intersection": {
+      "$ref": "#/definitions1/modern_41"
+    },
+    "blend": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/blend-add"
+        },
+        {
+          "$ref": "#/definitions1/blend-multiply"
+        },
+        {
+          "$ref": "#/definitions1/blend-maximum"
+        },
+        {
+          "$ref": "#/definitions1/blend-minimum"
+        },
+        {
+          "$ref": "#/definitions1/blend-subtract"
+        },
+        {
+          "$ref": "#/definitions1/blend-translate"
+        },
+        {
+          "$ref": "#/definitions1/blend-scale"
+        },
+        {
+          "$ref": "#/definitions1/blend-filter"
+        }
+      ]
+    },
+    "modern_25": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "radian": {
+                  "type": "number",
+                  "description": "angle in radian"
+                }
+              },
+              "required": [
+                "radian"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^radian$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_40": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "attenuation": {
+                  "type": "boolean",
+                  "description": "whether use attenuation, default is true"
+                },
+                "angle": {
+                  "description": "angle for the spot light",
+                  "$ref": "#/definitions1/angle-spot"
+                },
+                "direction": {
+                  "$ref": "#/definitions1/direction"
+                },
+                "color": {
+                  "$ref": "#/definitions1/hdr-color"
+                },
+                "range": {
+                  "type": "number",
+                  "description": "default is infinity",
+                  "exclusiveMinimum": 0.0
+                },
+                "position": {
+                  "$ref": "#/definitions1/position"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "type of light",
+                  "enum": [
+                    "spot"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "color",
+                "position",
+                "angle",
+                "direction"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^attenuation$": true,
+                "^color$": true,
+                "^type$": true,
+                "^range$": true,
+                "^angle$": true,
+                "^position$": true,
+                "^direction$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "primitive-model": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/primitive-sphere"
+        },
+        {
+          "$ref": "#/definitions1/primitive-cone"
+        },
+        {
+          "$ref": "#/definitions1/primitive-cylinder"
+        },
+        {
+          "$ref": "#/definitions1/primitive-cube"
+        },
+        {
+          "$ref": "#/definitions1/primitive-torus"
+        },
+        {
+          "$ref": "#/definitions1/primitive-plane"
+        }
+      ]
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "viewport": {
+                  "$ref": "#/definitions1/modern_20"
+                },
+                "camera": {
+                  "$ref": "#/definitions1/modern_21"
+                },
+                "renderOptions": {
+                  "$ref": "#/definitions1/modern_22"
+                },
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/object"
+                  }
+                },
+                "defs": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions1/map"
+                      },
+                      {
+                        "$ref": "#/definitions1/material"
+                      },
+                      {
+                        "$ref": "#/definitions1/csg-model"
+                      },
+                      {
+                        "$ref": "#/definitions1/object"
+                      }
+                    ],
+                    "not": {
+                      "$ref": "#/definitions1/ref"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "viewport"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^defs$": true,
+                "^viewport$": true,
+                "^objects$": true,
+                "^renderOptions$": true,
+                "^camera$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "texture, or type of blend operation",
+                  "enum": [
+                    "subtract"
+                  ]
+                },
+                "from": {
+                  "$ref": "#/definitions1/map"
+                },
+                "subtract": {
+                  "$ref": "#/definitions1/map"
+                }
+              },
+              "required": [
+                "type",
+                "children"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^from$": true,
+                "^subtract$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "transform-scale": {
+      "$ref": "#/definitions1/modern_42"
+    },
+    "primitive-cone": {
+      "$ref": "#/definitions1/modern_43"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_22"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_22"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-plane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-plane"
+      }
+    },
+    {
+      "$ref": "#/definitions2/map"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/map"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_36"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_36"
+      }
+    },
+    {
+      "$ref": "#/definitions1/has-optional-position"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/has-optional-position"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_21"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_21"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-add"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-add"
+      }
+    },
+    {
+      "$ref": "#/definitions1/direction"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/direction"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-filter"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-filter"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-multiply"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-multiply"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-sphere"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-sphere"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-maximum"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-maximum"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-cylinder"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-cylinder"
+      }
+    },
+    {
+      "$ref": "#/definitions1/has-optional-transform"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/has-optional-transform"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_38"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_38"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-multiply"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-multiply"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-scale"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-scale"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend"
+      }
+    },
+    {
+      "$ref": "#/definitions2/model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/model"
+      }
+    },
+    {
+      "$ref": "#/definitions2/angle-fov-plane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/angle-fov-plane"
+      }
+    },
+    {
+      "$ref": "#/definitions1/csg-union"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/csg-union"
+      }
+    },
+    {
+      "$ref": "#/definitions2/transform-translate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/transform-translate"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_25"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_25"
+      }
+    },
+    {
+      "$ref": "#/definitions2/light-directional"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/light-directional"
+      }
+    },
+    {
+      "$ref": "#/definitions1/angle-spot"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/angle-spot"
+      }
+    },
+    {
+      "$ref": "#/definitions2/object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/object"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_24"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_24"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_35"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_35"
+      }
+    },
+    {
+      "$ref": "#/definitions1/csg-intersection"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/csg-intersection"
+      }
+    },
+    {
+      "$ref": "#/definitions2/transform"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/transform"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-scale"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-scale"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_34"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_34"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_43"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_43"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_30"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_30"
+      }
+    },
+    {
+      "$ref": "#/definitions2/group"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/group"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-subtract"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-subtract"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions1/group"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/group"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-add"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-add"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-plane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-plane"
+      }
+    },
+    {
+      "$ref": "#/definitions1/light"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/light"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-torus"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-torus"
+      }
+    },
+    {
+      "$ref": "#/definitions1/map"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/map"
+      }
+    },
+    {
+      "$ref": "#/definitions1/model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/model"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_40"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_40"
+      }
+    },
+    {
+      "$ref": "#/definitions1/transform-scale"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/transform-scale"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions2/transform-n"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/transform-n"
+      }
+    },
+    {
+      "$ref": "#/definitions2/has-optional-position"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/has-optional-position"
+      }
+    },
+    {
+      "$ref": "#/definitions2/transform-scale"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/transform-scale"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-torus"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-torus"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-cube"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-cube"
+      }
+    },
+    {
+      "$ref": "#/definitions2/rotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/rotation"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ref"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ref"
+      }
+    },
+    {
+      "$ref": "#/definitions1/root"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/root"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-minimum"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-minimum"
+      }
+    },
+    {
+      "$ref": "#/definitions2/angle-spot"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/angle-spot"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_33"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_33"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions1/rotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/rotation"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_20"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_20"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-filter"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-filter"
+      }
+    },
+    {
+      "$ref": "#/definitions1/material"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/material"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_28"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_28"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_41"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_41"
+      }
+    },
+    {
+      "$ref": "#/definitions2/hdr-color"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/hdr-color"
+      }
+    },
+    {
+      "$ref": "#/definitions1/angle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/angle"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_23"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_23"
+      }
+    },
+    {
+      "$ref": "#/definitions1/transform-1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/transform-1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions1/object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/object"
+      }
+    },
+    {
+      "$ref": "#/definitions1/light-point"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/light-point"
+      }
+    },
+    {
+      "$ref": "#/definitions1/transform"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/transform"
+      }
+    },
+    {
+      "$ref": "#/definitions1/ref"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/ref"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-translate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-translate"
+      }
+    },
+    {
+      "$ref": "#/definitions2/csg-intersection"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/csg-intersection"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_27"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_27"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_37"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_37"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-model"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-cube"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-cube"
+      }
+    },
+    {
+      "$ref": "#/definitions1/angle-fov-plane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/angle-fov-plane"
+      }
+    },
+    {
+      "$ref": "#/definitions1/csg-difference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/csg-difference"
+      }
+    },
+    {
+      "$ref": "#/definitions1/csg-object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/csg-object"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions1/position"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/position"
+      }
+    },
+    {
+      "$ref": "#/definitions2/has-optional-rotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/has-optional-rotation"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_31"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_31"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-cylinder"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-cylinder"
+      }
+    },
+    {
+      "$ref": "#/definitions2/position"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/position"
+      }
+    },
+    {
+      "$ref": "#/definitions2/transform-1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/transform-1"
+      }
+    },
+    {
+      "$ref": "#/definitions2/obj-object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/obj-object"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_29"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_29"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_42"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_42"
+      }
+    },
+    {
+      "$ref": "#/definitions2/material"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/material"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ldr-color"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ldr-color"
+      }
+    },
+    {
+      "$ref": "#/definitions1/constructive-model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/constructive-model"
+      }
+    },
+    {
+      "$ref": "#/definitions2/texture"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/texture"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_26"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_26"
+      }
+    },
+    {
+      "$ref": "#/definitions1/transform-n"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/transform-n"
+      }
+    },
+    {
+      "$ref": "#/definitions2/csg-object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/csg-object"
+      }
+    },
+    {
+      "$ref": "#/definitions1/obj-object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/obj-object"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-cone"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-cone"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend"
+      }
+    },
+    {
+      "$ref": "#/definitions2/root"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/root"
+      }
+    },
+    {
+      "$ref": "#/definitions2/light"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/light"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_39"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_39"
+      }
+    },
+    {
+      "$ref": "#/definitions2/csg-model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/csg-model"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions1/material-no-map"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/material-no-map"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-minimum"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-minimum"
+      }
+    },
+    {
+      "$ref": "#/definitions1/transform-rotate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/transform-rotate"
+      }
+    },
+    {
+      "$ref": "#/definitions2/has-optional-transform"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/has-optional-transform"
+      }
+    },
+    {
+      "$ref": "#/definitions2/transform-rotate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/transform-rotate"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-model"
+      }
+    },
+    {
+      "$ref": "#/definitions1/light-spot"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/light-spot"
+      }
+    },
+    {
+      "$ref": "#/definitions1/hdr-color"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/hdr-color"
+      }
+    },
+    {
+      "$ref": "#/definitions1/blend-subtract"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/blend-subtract"
+      }
+    },
+    {
+      "$ref": "#/definitions2/direction"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/direction"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/has-optional-rotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/has-optional-rotation"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_32"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_32"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions2/material-no-map"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/material-no-map"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions2/angle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/angle"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-maximum"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-maximum"
+      }
+    },
+    {
+      "$ref": "#/definitions1/transform-translate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/transform-translate"
+      }
+    },
+    {
+      "$ref": "#/definitions2/blend-translate"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/blend-translate"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions1/light-directional"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/light-directional"
+      }
+    },
+    {
+      "$ref": "#/definitions2/constructive-model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/constructive-model"
+      }
+    },
+    {
+      "$ref": "#/definitions1/csg-model"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/csg-model"
+      }
+    },
+    {
+      "$ref": "#/definitions2/csg-difference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/csg-difference"
+      }
+    },
+    {
+      "$ref": "#/definitions1/ldr-color"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/ldr-color"
+      }
+    },
+    {
+      "$ref": "#/definitions1/texture"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/texture"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions2/light-point"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/light-point"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions2/light-spot"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/light-spot"
+      }
+    },
+    {
+      "$ref": "#/definitions2/primitive-cone"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/primitive-cone"
+      }
+    },
+    {
+      "$ref": "#/definitions1/primitive-sphere"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/primitive-sphere"
+      }
+    },
+    {
+      "$ref": "#/definitions2/csg-union"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/csg-union"
+      }
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "locks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "committer": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "email"
+                    ]
+                  },
+                  "commit_sha": {
+                    "type": "string"
+                  },
+                  "locked_at": {
+                    "type": "string"
+                  },
+                  "unlocked_at": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "path",
+                  "commit_sha",
+                  "locked_at"
+                ],
+                "additionalItems": false
+              }
+            },
+            "next_cursor": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "locks"
+          ]
+        },
+        {
+          "properties": {
+            "locks": {
+              "type": "null"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/definitions4/modern_1"
+          },
+          {
+            "$ref": "#/definitions4/modern_3"
+          }
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "locks": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  }
+                },
+                "next_cursor": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "locks"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^locks$": true,
+                "^next_cursor$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "unlocked_at": {
+                  "type": "string"
+                },
+                "committer": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "email"
+                  ]
+                },
+                "locked_at": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "commit_sha": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "path",
+                "commit_sha",
+                "locked_at"
+              ]
+            },
+            {
+              "items": {
+                "anyOf": [
+                  false,
+                  false
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "locks": {
+                  "type": "null"
+                },
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^locks$": true,
+                "^error$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

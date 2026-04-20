@@ -1,0 +1,131 @@
+[
+  {
+    "id": 928,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "rootArray": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "someString": {
+                  "type": "string"
+                },
+                "anotherString": {
+                  "type": "string"
+                },
+                "someArray": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              },
+              "required": [
+                "someString",
+                "anotherString",
+                "someArray"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      },
+      "required": [
+        "rootArray"
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "rootArray": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions2/modern_2"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "rootArray"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^rootArray$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "someString": {
+                      "type": "string"
+                    },
+                    "anotherString": {
+                      "type": "string"
+                    },
+                    "someArray": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "someString",
+                    "anotherString",
+                    "someArray"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^someString$": {},
+                    "^anotherString$": {},
+                    "^someArray$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

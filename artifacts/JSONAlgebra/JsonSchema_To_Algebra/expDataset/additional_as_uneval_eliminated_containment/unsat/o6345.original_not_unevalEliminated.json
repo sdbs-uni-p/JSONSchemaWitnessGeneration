@@ -1,0 +1,2585 @@
+{
+  "allOf": [
+    {
+      "anyOf": [
+        {
+          "$ref": "#/definitions3/SkaffoldConfig"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions4/SkaffoldConfig"
+          }
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "Artifact": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "imageName",
+            "workspace"
+          ],
+          "properties": {
+            "imageName": {
+              "type": "string"
+            },
+            "workspace": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "imageName",
+            "workspace",
+            "docker"
+          ],
+          "properties": {
+            "docker": {
+              "$ref": "#/definitions3/DockerArtifact"
+            },
+            "imageName": {
+              "type": "string"
+            },
+            "workspace": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "imageName",
+            "workspace",
+            "bazel"
+          ],
+          "properties": {
+            "bazel": {
+              "$ref": "#/definitions3/BazelArtifact"
+            },
+            "imageName": {
+              "type": "string"
+            },
+            "workspace": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "description": "represents items that need to be built, along with the context in which they should be built.",
+      "x-intellij-html-description": "represents items that need to be built, along with the context in which they should be built."
+    },
+    "BazelArtifact": {
+      "additionalProperties": false,
+      "preferredOrder": [
+        "target"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        }
+      }
+    },
+    "BuildConfig": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "artifacts",
+            "tagPolicy"
+          ],
+          "properties": {
+            "artifacts": {
+              "items": {
+                "$ref": "#/definitions3/Artifact"
+              },
+              "type": "array"
+            },
+            "tagPolicy": {
+              "$ref": "#/definitions3/TagPolicy"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "artifacts",
+            "tagPolicy",
+            "local"
+          ],
+          "properties": {
+            "artifacts": {
+              "items": {
+                "$ref": "#/definitions3/Artifact"
+              },
+              "type": "array"
+            },
+            "local": {
+              "$ref": "#/definitions3/LocalBuild"
+            },
+            "tagPolicy": {
+              "$ref": "#/definitions3/TagPolicy"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "artifacts",
+            "tagPolicy",
+            "googleCloudBuild"
+          ],
+          "properties": {
+            "artifacts": {
+              "items": {
+                "$ref": "#/definitions3/Artifact"
+              },
+              "type": "array"
+            },
+            "googleCloudBuild": {
+              "$ref": "#/definitions3/GoogleCloudBuild"
+            },
+            "tagPolicy": {
+              "$ref": "#/definitions3/TagPolicy"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "artifacts",
+            "tagPolicy",
+            "kaniko"
+          ],
+          "properties": {
+            "artifacts": {
+              "items": {
+                "$ref": "#/definitions3/Artifact"
+              },
+              "type": "array"
+            },
+            "kaniko": {
+              "$ref": "#/definitions3/KanikoBuild"
+            },
+            "tagPolicy": {
+              "$ref": "#/definitions3/TagPolicy"
+            }
+          }
+        }
+      ],
+      "description": "contains all the configuration for the build steps",
+      "x-intellij-html-description": "contains all the configuration for the build steps"
+    },
+    "DateTimeTagger": {
+      "additionalProperties": false,
+      "description": "contains the configuration for the DateTime tagger.",
+      "preferredOrder": [
+        "format",
+        "timezone"
+      ],
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        }
+      },
+      "x-intellij-html-description": "contains the configuration for the DateTime tagger."
+    },
+    "DeployConfig": {
+      "anyOf": [
+        {
+          "additionalProperties": false
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "helm"
+          ],
+          "properties": {
+            "helm": {
+              "$ref": "#/definitions3/HelmDeploy"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "kubectl"
+          ],
+          "properties": {
+            "kubectl": {
+              "$ref": "#/definitions3/KubectlDeploy"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "kustomize"
+          ],
+          "properties": {
+            "kustomize": {
+              "$ref": "#/definitions3/KustomizeDeploy"
+            }
+          }
+        }
+      ],
+      "description": "contains all the configuration needed by the deploy steps",
+      "x-intellij-html-description": "contains all the configuration needed by the deploy steps"
+    },
+    "DockerArtifact": {
+      "additionalProperties": false,
+      "preferredOrder": [
+        "dockerfilePath",
+        "buildArgs",
+        "cacheFrom",
+        "target"
+      ],
+      "properties": {
+        "buildArgs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": "{}",
+          "type": "object"
+        },
+        "cacheFrom": {
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "dockerfilePath": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      }
+    },
+    "EnvTemplateTagger": {
+      "additionalProperties": false,
+      "description": "contains the configuration for the envTemplate tagger.",
+      "preferredOrder": [
+        "template"
+      ],
+      "properties": {
+        "template": {
+          "type": "string"
+        }
+      },
+      "x-intellij-html-description": "contains the configuration for the envTemplate tagger."
+    },
+    "GitTagger": {
+      "description": "contains the configuration for the git tagger.",
+      "x-intellij-html-description": "contains the configuration for the git tagger."
+    },
+    "GoogleCloudBuild": {
+      "additionalProperties": false,
+      "description": "contains the fields needed to do a remote build on Google Cloud Build.",
+      "preferredOrder": [
+        "projectId",
+        "diskSizeGb",
+        "machineType",
+        "timeout",
+        "dockerImage"
+      ],
+      "properties": {
+        "diskSizeGb": {
+          "type": "integer"
+        },
+        "dockerImage": {
+          "type": "string"
+        },
+        "machineType": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "string"
+        }
+      },
+      "x-intellij-html-description": "contains the fields needed to do a remote build on Google Cloud Build."
+    },
+    "HelmConventionConfig": {
+      "description": "represents image config in the syntax of image.repository and image.tag",
+      "x-intellij-html-description": "represents image config in the syntax of image.repository and image.tag"
+    },
+    "HelmDeploy": {
+      "additionalProperties": false,
+      "description": "contains the configuration needed for deploying with helm",
+      "preferredOrder": [
+        "releases"
+      ],
+      "properties": {
+        "releases": {
+          "items": {
+            "$ref": "#/definitions3/HelmRelease"
+          },
+          "type": "array"
+        }
+      },
+      "x-intellij-html-description": "contains the configuration needed for deploying with helm"
+    },
+    "HelmFQNConfig": {
+      "additionalProperties": false,
+      "description": "represents image config to use the FullyQualifiedImageName as param to set",
+      "preferredOrder": [
+        "property"
+      ],
+      "properties": {
+        "property": {
+          "type": "string"
+        }
+      },
+      "x-intellij-html-description": "represents image config to use the FullyQualifiedImageName as param to set"
+    },
+    "HelmImageStrategy": {
+      "anyOf": [
+        {
+          "additionalProperties": false
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "fqn"
+          ],
+          "properties": {
+            "fqn": {
+              "$ref": "#/definitions3/HelmFQNConfig"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "preferredOrder": [
+            "helm"
+          ],
+          "properties": {
+            "helm": {
+              "$ref": "#/definitions3/HelmConventionConfig"
+            }
+          }
+        }
+      ]
+    },
+    "HelmPackaged": {
+      "additionalProperties": false,
+      "description": "represents parameters for packaging helm chart.",
+      "preferredOrder": [
+        "version",
+        "appVersion"
+      ],
+      "properties": {
+        "appVersion": {
+          "description": "set the appVersion on the chart to this version",
+          "type": "string",
+          "x-intellij-html-description": "set the appVersion on the chart to this version"
+        },
+        "version": {
+          "description": "sets the version on the chart to this semver version.",
+          "type": "string",
+          "x-intellij-html-description": "sets the version on the chart to this semver version."
+        }
+      },
+      "x-intellij-html-description": "represents parameters for packaging helm chart."
+    },
+    "HelmRelease": {
+      "additionalProperties": false,
+      "preferredOrder": [
+        "name",
+        "chartPath",
+        "valuesFilePath",
+        "values",
+        "namespace",
+        "version",
+        "setValues",
+        "setValueTemplates",
+        "wait",
+        "recreatePods",
+        "overrides",
+        "packaged",
+        "imageStrategy"
+      ],
+      "properties": {
+        "chartPath": {
+          "type": "string"
+        },
+        "imageStrategy": {
+          "$ref": "#/definitions3/HelmImageStrategy"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "overrides": {},
+        "packaged": {
+          "$ref": "#/definitions3/HelmPackaged"
+        },
+        "recreatePods": {
+          "default": "false",
+          "type": "boolean"
+        },
+        "setValueTemplates": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": "{}",
+          "type": "object"
+        },
+        "setValues": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": "{}",
+          "type": "object"
+        },
+        "values": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": "{}",
+          "type": "object"
+        },
+        "valuesFilePath": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "wait": {
+          "default": "false",
+          "type": "boolean"
+        }
+      }
+    },
+    "KanikoBuild": {
+      "additionalProperties": false,
+      "description": "contains the fields needed to do a on-cluster build using the kaniko image",
+      "preferredOrder": [
+        "gcsBucket",
+        "pullSecret",
+        "pullSecretName",
+        "namespace",
+        "timeout"
+      ],
+      "properties": {
+        "gcsBucket": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "pullSecret": {
+          "type": "string"
+        },
+        "pullSecretName": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "string"
+        }
+      },
+      "x-intellij-html-description": "contains the fields needed to do a on-cluster build using the kaniko image"
+    },
+    "KubectlDeploy": {
+      "additionalProperties": false,
+      "description": "contains the configuration needed for deploying with `kubectl apply`",
+      "preferredOrder": [
+        "manifests",
+        "remoteManifests",
+        "flags"
+      ],
+      "properties": {
+        "flags": {
+          "$ref": "#/definitions3/KubectlFlags"
+        },
+        "manifests": {
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "remoteManifests": {
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "x-intellij-html-description": "contains the configuration needed for deploying with <code>kubectl apply</code>"
+    },
+    "KubectlFlags": {
+      "additionalProperties": false,
+      "description": "describes additional options flags that are passed on the command line to kubectl either on every command (Global), on creations (Apply) or deletions (Delete).",
+      "preferredOrder": [
+        "global",
+        "apply",
+        "delete"
+      ],
+      "properties": {
+        "apply": {
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "delete": {
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "global": {
+          "default": "[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "x-intellij-html-description": "describes additional options flags that are passed on the command line to kubectl either on every command (Global), on creations (Apply) or deletions (Delete)."
+    },
+    "KustomizeDeploy": {
+      "additionalProperties": false,
+      "preferredOrder": [
+        "kustomizePath",
+        "flags"
+      ],
+      "properties": {
+        "flags": {
+          "$ref": "#/definitions3/KubectlFlags"
+        },
+        "kustomizePath": {
+          "type": "string"
+        }
+      }
+    },
+    "LocalBuild": {
+      "additionalProperties": false,
+      "description": "contains the fields needed to do a build on the local docker daemon and optionally push to a repository.",
+      "preferredOrder": [
+        "skipPush",
+        "useDockerCLI",
+        "useBuildkit"
+      ],
+      "properties": {
+        "skipPush": {
+          "type": "boolean"
+        },
+        "useBuildkit": {
+          "default": "false",
+          "type": "boolean"
+        },
+        "useDockerCLI": {
+          "default": "false",
+          "type": "boolean"
+        }
+      },
+      "x-intellij-html-description": "contains the fields needed to do a build on the local docker daemon and optionally push to a repository."
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "description": "additional configuration that overrides default configuration when it is activated.",
+      "preferredOrder": [
+        "name",
+        "build",
+        "deploy"
+      ],
+      "properties": {
+        "build": {
+          "$ref": "#/definitions3/BuildConfig"
+        },
+        "deploy": {
+          "$ref": "#/definitions3/DeployConfig"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "x-intellij-html-description": "additional configuration that overrides default configuration when it is activated."
+    },
+    "ShaTagger": {
+      "description": "contains the configuration for the SHA tagger.",
+      "x-intellij-html-description": "contains the configuration for the SHA tagger."
+    },
+    "SkaffoldConfig": {
+      "additionalProperties": false,
+      "preferredOrder": [
+        "apiVersion",
+        "kind",
+        "build",
+        "deploy",
+        "profiles"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "build": {
+          "$ref": "#/definitions3/BuildConfig"
+        },
+        "deploy": {
+          "$ref": "#/definitions3/DeployConfig"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "profiles": {
+          "items": {
+            "$ref": "#/definitions3/Profile"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "TagPolicy": {
+      "additionalProperties": false,
+      "description": "contains all the configuration for the tagging step",
+      "preferredOrder": [
+        "gitCommit",
+        "sha256",
+        "envTemplate",
+        "dateTime"
+      ],
+      "properties": {
+        "dateTime": {
+          "$ref": "#/definitions3/DateTimeTagger"
+        },
+        "envTemplate": {
+          "$ref": "#/definitions3/EnvTemplateTagger"
+        },
+        "gitCommit": {
+          "$ref": "#/definitions3/GitTagger"
+        },
+        "sha256": {
+          "$ref": "#/definitions3/ShaTagger"
+        }
+      },
+      "x-intellij-html-description": "contains all the configuration for the tagging step"
+    }
+  },
+  "definitions4": {
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the configuration for the envTemplate tagger.",
+              "preferredOrder": [
+                "template"
+              ],
+              "properties": {
+                "template": {
+                  "type": "string"
+                }
+              },
+              "x-intellij-html-description": "contains the configuration for the envTemplate tagger."
+            },
+            {
+              "patternProperties": {
+                "^template$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "KustomizeDeploy": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "modern_28": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the fields needed to do a on-cluster build using the kaniko image",
+              "preferredOrder": [
+                "gcsBucket",
+                "pullSecret",
+                "pullSecretName",
+                "namespace",
+                "timeout"
+              ],
+              "properties": {
+                "pullSecret": {
+                  "type": "string"
+                },
+                "pullSecretName": {
+                  "type": "string"
+                },
+                "gcsBucket": {
+                  "type": "string"
+                },
+                "timeout": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "x-intellij-html-description": "contains the fields needed to do a on-cluster build using the kaniko image"
+            },
+            {
+              "patternProperties": {
+                "^gcsBucket$": true,
+                "^pullSecret$": true,
+                "^timeout$": true,
+                "^namespace$": true,
+                "^pullSecretName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_30": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "artifacts",
+                "tagPolicy"
+              ],
+              "properties": {
+                "artifacts": {
+                  "items": {
+                    "$ref": "#/definitions4/Artifact"
+                  },
+                  "type": "array"
+                },
+                "tagPolicy": {
+                  "$ref": "#/definitions4/TagPolicy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^artifacts$": true,
+                "^tagPolicy$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "describes additional options flags that are passed on the command line to kubectl either on every command (Global), on creations (Apply) or deletions (Delete).",
+              "preferredOrder": [
+                "global",
+                "apply",
+                "delete"
+              ],
+              "properties": {
+                "apply": {
+                  "default": "[]",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "delete": {
+                  "default": "[]",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "global": {
+                  "default": "[]",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "x-intellij-html-description": "describes additional options flags that are passed on the command line to kubectl either on every command (Global), on creations (Apply) or deletions (Delete)."
+            },
+            {
+              "patternProperties": {
+                "^apply$": true,
+                "^delete$": true,
+                "^global$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ShaTagger": {
+      "description": "contains the configuration for the SHA tagger.",
+      "x-intellij-html-description": "contains the configuration for the SHA tagger."
+    },
+    "DockerArtifact": {
+      "$ref": "#/definitions4/modern_20"
+    },
+    "modern_21": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "default": "{}",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "default": "{}",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "GoogleCloudBuild": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_32": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "artifacts",
+                "tagPolicy",
+                "googleCloudBuild"
+              ],
+              "properties": {
+                "artifacts": {
+                  "items": {
+                    "$ref": "#/definitions4/Artifact"
+                  },
+                  "type": "array"
+                },
+                "googleCloudBuild": {
+                  "$ref": "#/definitions4/GoogleCloudBuild"
+                },
+                "tagPolicy": {
+                  "$ref": "#/definitions4/TagPolicy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^artifacts$": true,
+                "^googleCloudBuild$": true,
+                "^tagPolicy$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "apiVersion",
+                "kind",
+                "build",
+                "deploy",
+                "profiles"
+              ],
+              "properties": {
+                "build": {
+                  "$ref": "#/definitions4/BuildConfig"
+                },
+                "deploy": {
+                  "$ref": "#/definitions4/DeployConfig"
+                },
+                "profiles": {
+                  "items": {
+                    "$ref": "#/definitions4/Profile"
+                  },
+                  "type": "array"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "apiVersion": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^profiles$": true,
+                "^kind$": true,
+                "^apiVersion$": true,
+                "^deploy$": true,
+                "^build$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "HelmRelease": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "helm"
+              ],
+              "properties": {
+                "helm": {
+                  "$ref": "#/definitions4/HelmDeploy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^helm$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "additionalProperties": false
+    },
+    "EnvTemplateTagger": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "modern_27": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "additional configuration that overrides default configuration when it is activated.",
+              "preferredOrder": [
+                "name",
+                "build",
+                "deploy"
+              ],
+              "properties": {
+                "build": {
+                  "$ref": "#/definitions4/BuildConfig"
+                },
+                "deploy": {
+                  "$ref": "#/definitions4/DeployConfig"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "x-intellij-html-description": "additional configuration that overrides default configuration when it is activated."
+            },
+            {
+              "patternProperties": {
+                "^build$": true,
+                "^deploy$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the fields needed to do a remote build on Google Cloud Build.",
+              "preferredOrder": [
+                "projectId",
+                "diskSizeGb",
+                "machineType",
+                "timeout",
+                "dockerImage"
+              ],
+              "properties": {
+                "projectId": {
+                  "type": "string"
+                },
+                "diskSizeGb": {
+                  "type": "integer"
+                },
+                "machineType": {
+                  "type": "string"
+                },
+                "dockerImage": {
+                  "type": "string"
+                },
+                "timeout": {
+                  "type": "string"
+                }
+              },
+              "x-intellij-html-description": "contains the fields needed to do a remote build on Google Cloud Build."
+            },
+            {
+              "patternProperties": {
+                "^machineType$": true,
+                "^timeout$": true,
+                "^dockerImage$": true,
+                "^projectId$": true,
+                "^diskSizeGb$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_34": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the fields needed to do a build on the local docker daemon and optionally push to a repository.",
+              "preferredOrder": [
+                "skipPush",
+                "useDockerCLI",
+                "useBuildkit"
+              ],
+              "properties": {
+                "skipPush": {
+                  "type": "boolean"
+                },
+                "useBuildkit": {
+                  "default": "false",
+                  "type": "boolean"
+                },
+                "useDockerCLI": {
+                  "default": "false",
+                  "type": "boolean"
+                }
+              },
+              "x-intellij-html-description": "contains the fields needed to do a build on the local docker daemon and optionally push to a repository."
+            },
+            {
+              "patternProperties": {
+                "^skipPush$": true,
+                "^useBuildkit$": true,
+                "^useDockerCLI$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "DateTimeTagger": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "modern_31": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "artifacts",
+                "tagPolicy",
+                "local"
+              ],
+              "properties": {
+                "artifacts": {
+                  "items": {
+                    "$ref": "#/definitions4/Artifact"
+                  },
+                  "type": "array"
+                },
+                "local": {
+                  "$ref": "#/definitions4/LocalBuild"
+                },
+                "tagPolicy": {
+                  "$ref": "#/definitions4/TagPolicy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^artifacts$": true,
+                "^local$": true,
+                "^tagPolicy$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the configuration for the DateTime tagger.",
+              "preferredOrder": [
+                "format",
+                "timezone"
+              ],
+              "properties": {
+                "format": {
+                  "type": "string"
+                },
+                "timezone": {
+                  "type": "string"
+                }
+              },
+              "x-intellij-html-description": "contains the configuration for the DateTime tagger."
+            },
+            {
+              "patternProperties": {
+                "^format$": true,
+                "^timezone$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "GitTagger": {
+      "description": "contains the configuration for the git tagger.",
+      "x-intellij-html-description": "contains the configuration for the git tagger."
+    },
+    "HelmDeploy": {
+      "$ref": "#/definitions4/modern_22"
+    },
+    "modern_20": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "dockerfilePath",
+                "buildArgs",
+                "cacheFrom",
+                "target"
+              ],
+              "properties": {
+                "buildArgs": {
+                  "$ref": "#/definitions4/modern_21"
+                },
+                "cacheFrom": {
+                  "default": "[]",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "dockerfilePath": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^buildArgs$": true,
+                "^cacheFrom$": true,
+                "^dockerfilePath$": true,
+                "^target$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "HelmConventionConfig": {
+      "description": "represents image config in the syntax of image.repository and image.tag",
+      "x-intellij-html-description": "represents image config in the syntax of image.repository and image.tag"
+    },
+    "modern_23": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^target$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "kubectl"
+              ],
+              "properties": {
+                "kubectl": {
+                  "$ref": "#/definitions4/KubectlDeploy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^kubectl$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "name",
+                "chartPath",
+                "valuesFilePath",
+                "values",
+                "namespace",
+                "version",
+                "setValues",
+                "setValueTemplates",
+                "wait",
+                "recreatePods",
+                "overrides",
+                "packaged",
+                "imageStrategy"
+              ],
+              "properties": {
+                "wait": {
+                  "default": "false",
+                  "type": "boolean"
+                },
+                "imageStrategy": {
+                  "$ref": "#/definitions4/HelmImageStrategy"
+                },
+                "overrides": true,
+                "version": {
+                  "type": "string"
+                },
+                "chartPath": {
+                  "type": "string"
+                },
+                "setValueTemplates": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "values": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "setValues": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "valuesFilePath": {
+                  "type": "string"
+                },
+                "packaged": {
+                  "$ref": "#/definitions4/HelmPackaged"
+                },
+                "namespace": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "recreatePods": {
+                  "default": "false",
+                  "type": "boolean"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^recreatePods$": true,
+                "^setValueTemplates$": true,
+                "^overrides$": true,
+                "^imageStrategy$": true,
+                "^name$": true,
+                "^values$": true,
+                "^chartPath$": true,
+                "^packaged$": true,
+                "^valuesFilePath$": true,
+                "^wait$": true,
+                "^namespace$": true,
+                "^setValues$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "BazelArtifact": {
+      "$ref": "#/definitions4/modern_23"
+    },
+    "Artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/modern_24"
+        },
+        {
+          "$ref": "#/definitions4/modern_25"
+        },
+        {
+          "$ref": "#/definitions4/modern_26"
+        }
+      ],
+      "description": "represents items that need to be built, along with the context in which they should be built.",
+      "x-intellij-html-description": "represents items that need to be built, along with the context in which they should be built."
+    },
+    "modern_12": {
+      "additionalProperties": false
+    },
+    "Profile": {
+      "$ref": "#/definitions4/modern_27"
+    },
+    "KanikoBuild": {
+      "$ref": "#/definitions4/modern_28"
+    },
+    "KubectlDeploy": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "modern_35": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "represents image config to use the FullyQualifiedImageName as param to set",
+              "preferredOrder": [
+                "property"
+              ],
+              "properties": {
+                "property": {
+                  "type": "string"
+                }
+              },
+              "x-intellij-html-description": "represents image config to use the FullyQualifiedImageName as param to set"
+            },
+            {
+              "patternProperties": {
+                "^property$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "SkaffoldConfig": {
+      "$ref": "#/definitions4/modern_10"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "kustomizePath",
+                "flags"
+              ],
+              "properties": {
+                "flags": {
+                  "$ref": "#/definitions4/KubectlFlags"
+                },
+                "kustomizePath": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^flags$": true,
+                "^kustomizePath$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "KubectlFlags": {
+      "$ref": "#/definitions4/modern_11"
+    },
+    "modern_24": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "imageName",
+                "workspace"
+              ],
+              "properties": {
+                "imageName": {
+                  "type": "string"
+                },
+                "workspace": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^imageName$": true,
+                "^workspace$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "HelmImageStrategy": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/modern_12"
+        },
+        {
+          "$ref": "#/definitions4/modern_13"
+        },
+        {
+          "$ref": "#/definitions4/modern_14"
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the configuration needed for deploying with `kubectl apply`",
+              "preferredOrder": [
+                "manifests",
+                "remoteManifests",
+                "flags"
+              ],
+              "properties": {
+                "flags": {
+                  "$ref": "#/definitions4/KubectlFlags"
+                },
+                "manifests": {
+                  "default": "[]",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "remoteManifests": {
+                  "default": "[]",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "x-intellij-html-description": "contains the configuration needed for deploying with <code>kubectl apply</code>"
+            },
+            {
+              "patternProperties": {
+                "^flags$": true,
+                "^manifests$": true,
+                "^remoteManifests$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_29": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "represents parameters for packaging helm chart.",
+              "preferredOrder": [
+                "version",
+                "appVersion"
+              ],
+              "properties": {
+                "appVersion": {
+                  "description": "set the appVersion on the chart to this version",
+                  "type": "string",
+                  "x-intellij-html-description": "set the appVersion on the chart to this version"
+                },
+                "version": {
+                  "description": "sets the version on the chart to this semver version.",
+                  "type": "string",
+                  "x-intellij-html-description": "sets the version on the chart to this semver version."
+                }
+              },
+              "x-intellij-html-description": "represents parameters for packaging helm chart."
+            },
+            {
+              "patternProperties": {
+                "^appVersion$": true,
+                "^version$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "kustomize"
+              ],
+              "properties": {
+                "kustomize": {
+                  "$ref": "#/definitions4/KustomizeDeploy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^kustomize$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "DeployConfig": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/modern_15"
+        },
+        {
+          "$ref": "#/definitions4/modern_16"
+        },
+        {
+          "$ref": "#/definitions4/modern_17"
+        },
+        {
+          "$ref": "#/definitions4/modern_18"
+        }
+      ],
+      "description": "contains all the configuration needed by the deploy steps",
+      "x-intellij-html-description": "contains all the configuration needed by the deploy steps"
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "fqn"
+              ],
+              "properties": {
+                "fqn": {
+                  "$ref": "#/definitions4/HelmFQNConfig"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^fqn$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "HelmPackaged": {
+      "$ref": "#/definitions4/modern_29"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "default": "{}",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "BuildConfig": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/modern_30"
+        },
+        {
+          "$ref": "#/definitions4/modern_31"
+        },
+        {
+          "$ref": "#/definitions4/modern_32"
+        },
+        {
+          "$ref": "#/definitions4/modern_33"
+        }
+      ],
+      "description": "contains all the configuration for the build steps",
+      "x-intellij-html-description": "contains all the configuration for the build steps"
+    },
+    "LocalBuild": {
+      "$ref": "#/definitions4/modern_34"
+    },
+    "HelmFQNConfig": {
+      "$ref": "#/definitions4/modern_35"
+    },
+    "modern_22": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains the configuration needed for deploying with helm",
+              "preferredOrder": [
+                "releases"
+              ],
+              "properties": {
+                "releases": {
+                  "items": {
+                    "$ref": "#/definitions4/HelmRelease"
+                  },
+                  "type": "array"
+                }
+              },
+              "x-intellij-html-description": "contains the configuration needed for deploying with helm"
+            },
+            {
+              "patternProperties": {
+                "^releases$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_33": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "artifacts",
+                "tagPolicy",
+                "kaniko"
+              ],
+              "properties": {
+                "artifacts": {
+                  "items": {
+                    "$ref": "#/definitions4/Artifact"
+                  },
+                  "type": "array"
+                },
+                "kaniko": {
+                  "$ref": "#/definitions4/KanikoBuild"
+                },
+                "tagPolicy": {
+                  "$ref": "#/definitions4/TagPolicy"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^artifacts$": true,
+                "^kaniko$": true,
+                "^tagPolicy$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_26": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "imageName",
+                "workspace",
+                "bazel"
+              ],
+              "properties": {
+                "bazel": {
+                  "$ref": "#/definitions4/BazelArtifact"
+                },
+                "imageName": {
+                  "type": "string"
+                },
+                "workspace": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^bazel$": true,
+                "^imageName$": true,
+                "^workspace$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "helm"
+              ],
+              "properties": {
+                "helm": {
+                  "$ref": "#/definitions4/HelmConventionConfig"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^helm$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "TagPolicy": {
+      "$ref": "#/definitions4/modern_19"
+    },
+    "modern_25": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "preferredOrder": [
+                "imageName",
+                "workspace",
+                "docker"
+              ],
+              "properties": {
+                "docker": {
+                  "$ref": "#/definitions4/DockerArtifact"
+                },
+                "imageName": {
+                  "type": "string"
+                },
+                "workspace": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^docker$": true,
+                "^imageName$": true,
+                "^workspace$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "contains all the configuration for the tagging step",
+              "preferredOrder": [
+                "gitCommit",
+                "sha256",
+                "envTemplate",
+                "dateTime"
+              ],
+              "properties": {
+                "dateTime": {
+                  "$ref": "#/definitions4/DateTimeTagger"
+                },
+                "envTemplate": {
+                  "$ref": "#/definitions4/EnvTemplateTagger"
+                },
+                "gitCommit": {
+                  "$ref": "#/definitions4/GitTagger"
+                },
+                "sha256": {
+                  "$ref": "#/definitions4/ShaTagger"
+                }
+              },
+              "x-intellij-html-description": "contains all the configuration for the tagging step"
+            },
+            {
+              "patternProperties": {
+                "^dateTime$": true,
+                "^envTemplate$": true,
+                "^gitCommit$": true,
+                "^sha256$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "default": "{}",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_25"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_25"
+      }
+    },
+    {
+      "$ref": "#/definitions4/EnvTemplateTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/EnvTemplateTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions3/HelmRelease"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/HelmRelease"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_31"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_31"
+      }
+    },
+    {
+      "$ref": "#/definitions4/BuildConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/BuildConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/DateTimeTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/DateTimeTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/SkaffoldConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/SkaffoldConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions3/HelmConventionConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/HelmConventionConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_32"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_32"
+      }
+    },
+    {
+      "$ref": "#/definitions4/HelmRelease"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/HelmRelease"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_29"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_29"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/DockerArtifact"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/DockerArtifact"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_33"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_33"
+      }
+    },
+    {
+      "$ref": "#/definitions3/DateTimeTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/DateTimeTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_22"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_22"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_24"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_24"
+      }
+    },
+    {
+      "$ref": "#/definitions4/KanikoBuild"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/KanikoBuild"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Profile"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Profile"
+      }
+    },
+    {
+      "$ref": "#/definitions4/HelmFQNConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/HelmFQNConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/HelmPackaged"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/HelmPackaged"
+      }
+    },
+    {
+      "$ref": "#/definitions3/GoogleCloudBuild"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/GoogleCloudBuild"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Artifact"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Artifact"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions3/BuildConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/BuildConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/EnvTemplateTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/EnvTemplateTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/KubectlFlags"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/KubectlFlags"
+      }
+    },
+    {
+      "$ref": "#/definitions4/KustomizeDeploy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/KustomizeDeploy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/HelmDeploy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/HelmDeploy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/GoogleCloudBuild"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/GoogleCloudBuild"
+      }
+    },
+    {
+      "$ref": "#/definitions4/KubectlDeploy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/KubectlDeploy"
+      }
+    },
+    {
+      "$ref": "#/definitions3/HelmDeploy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/HelmDeploy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_28"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_28"
+      }
+    },
+    {
+      "$ref": "#/definitions3/DeployConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/DeployConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_30"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_30"
+      }
+    },
+    {
+      "$ref": "#/definitions4/TagPolicy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/TagPolicy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/GitTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/GitTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions3/HelmImageStrategy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/HelmImageStrategy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/KubectlDeploy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/KubectlDeploy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Profile"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Profile"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_20"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_20"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/DockerArtifact"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/DockerArtifact"
+      }
+    },
+    {
+      "$ref": "#/definitions3/LocalBuild"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/LocalBuild"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/DeployConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/DeployConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_21"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_21"
+      }
+    },
+    {
+      "$ref": "#/definitions3/KanikoBuild"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/KanikoBuild"
+      }
+    },
+    {
+      "$ref": "#/definitions3/SkaffoldConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/SkaffoldConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_34"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_34"
+      }
+    },
+    {
+      "$ref": "#/definitions4/LocalBuild"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/LocalBuild"
+      }
+    },
+    {
+      "$ref": "#/definitions3/KubectlFlags"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/KubectlFlags"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Artifact"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Artifact"
+      }
+    },
+    {
+      "$ref": "#/definitions4/HelmImageStrategy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/HelmImageStrategy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions3/BazelArtifact"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/BazelArtifact"
+      }
+    },
+    {
+      "$ref": "#/definitions3/ShaTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/ShaTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions3/TagPolicy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/TagPolicy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_26"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_26"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_23"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_23"
+      }
+    },
+    {
+      "$ref": "#/definitions4/ShaTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/ShaTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_27"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_27"
+      }
+    },
+    {
+      "$ref": "#/definitions4/BazelArtifact"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/BazelArtifact"
+      }
+    },
+    {
+      "$ref": "#/definitions3/GitTagger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/GitTagger"
+      }
+    },
+    {
+      "$ref": "#/definitions3/HelmPackaged"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/HelmPackaged"
+      }
+    },
+    {
+      "$ref": "#/definitions3/KustomizeDeploy"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/KustomizeDeploy"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/HelmConventionConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/HelmConventionConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions3/HelmFQNConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/HelmFQNConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_35"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_35"
+      }
+    }
+  ]
+}

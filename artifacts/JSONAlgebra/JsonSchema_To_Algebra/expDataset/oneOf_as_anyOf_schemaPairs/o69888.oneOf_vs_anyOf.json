@@ -1,0 +1,1303 @@
+[
+  {
+    "id": 643,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "definitions2": {
+        "adapter": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object"
+            },
+            "imports": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "eventstoreAdapter": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object",
+              "properties": {
+                "snapshotBucketSize": {
+                  "type": "integer"
+                },
+                "additionalProperties": {}
+              }
+            },
+            "imports": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "resourceInstance": {
+          "type": "string"
+        },
+        "resourceConstructor": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object"
+            },
+            "imports": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "resourceBypass": {
+          "type": "object",
+          "properties": {
+            "options": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "subscribeAdapter": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "aggregate": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "commands": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "projection": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "serializeState": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "deserializeState": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "encryption": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "dependencies": {
+            "serializeState": [
+              "deserializeState"
+            ],
+            "deserializeState": [
+              "serializeState"
+            ]
+          },
+          "required": [
+            "name",
+            "commands"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "viewModel": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "projection": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "serializeState": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "deserializeState": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "validator": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "encryption": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "projection"
+          ],
+          "dependencies": {
+            "serializeState": [
+              "deserializeState"
+            ],
+            "deserializeState": [
+              "serializeState"
+            ]
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "readModel": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "projection": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "resolvers": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "connectorName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "projection",
+            "resolvers",
+            "connectorName"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "saga": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "source": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "sideEffects": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "connectorName": {
+              "type": "string"
+            },
+            "schedulerName": {
+              "type": "string"
+            },
+            "encryption": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "source",
+            "connectorName"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "schedulerAdapter": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "adapter": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "connectorName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "adapter",
+            "connectorName"
+          ]
+        },
+        "apiHandler": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "method": {
+              "type": "string"
+            },
+            "handler": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "handler"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "jwtCookie": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "maxAge": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "maxAge"
+          ]
+        },
+        "eventBroker": {
+          "type": "object",
+          "properties": {
+            "launchBroker": {
+              "type": "boolean"
+            },
+            "publisherAddress": {
+              "type": "string"
+            },
+            "consumerAddress": {
+              "type": "string"
+            },
+            "databaseFile": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "launchBroker",
+            "publisherAddress",
+            "consumerAddress",
+            "databaseFile"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "customConstants": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "clientFullEntryProperties": {
+          "type": "object",
+          "properties": {
+            "moduleType": {
+              "type": "string"
+            },
+            "outputFile": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "clientFullEntry": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions2/clientFullEntryProperties"
+            }
+          ],
+          "additionalItems": false
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "clientEntries": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/clientFullEntry"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "target": {
+              "type": "string",
+              "enum": [
+                "local",
+                "cloud"
+              ]
+            },
+            "port": {
+              "type": [
+                "integer",
+                "string"
+              ]
+            },
+            "rootPath": {
+              "type": "string"
+            },
+            "distDir": {
+              "type": "string"
+            },
+            "staticDir": {
+              "type": "string"
+            },
+            "staticPath": {
+              "type": "string"
+            },
+            "aggregates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/aggregate"
+              }
+            },
+            "viewModels": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/viewModel"
+              }
+            },
+            "readModels": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/readModel"
+              }
+            },
+            "sagas": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/saga"
+              }
+            },
+            "apiHandlers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/apiHandler"
+              }
+            },
+            "readModelConnectors": {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/resourceInstance"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceConstructor"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceBypass"
+                  }
+                ]
+              }
+            },
+            "clientImports": {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/resourceInstance"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceConstructor"
+                  }
+                ]
+              }
+            },
+            "serverImports": {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/resourceInstance"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceConstructor"
+                  }
+                ]
+              }
+            },
+            "schedulers": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions2/schedulerAdapter"
+              }
+            },
+            "eventstoreAdapter": {
+              "$ref": "#/definitions2/eventstoreAdapter"
+            },
+            "subscribeAdapter": {
+              "$ref": "#/definitions2/subscribeAdapter"
+            },
+            "jwtCookie": {
+              "$ref": "#/definitions2/jwtCookie"
+            },
+            "eventBroker": {
+              "$ref": "#/definitions2/eventBroker"
+            },
+            "mode": {
+              "type": "string"
+            },
+            "customConstants": {
+              "$ref": "#/definitions2/customConstants"
+            },
+            "uploadAdapter": {
+              "$ref": "#/definitions2/adapter"
+            }
+          },
+          "required": [
+            "clientEntries",
+            "clientImports",
+            "serverImports",
+            "apiHandlers",
+            "port",
+            "rootPath",
+            "distDir",
+            "staticDir",
+            "staticPath",
+            "aggregates",
+            "viewModels",
+            "readModels",
+            "readModelConnectors",
+            "schedulers",
+            "eventstoreAdapter",
+            "subscribeAdapter",
+            "eventBroker",
+            "customConstants",
+            "target",
+            "jwtCookie",
+            "sagas",
+            "mode"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      },
+      "$ref": "#/definitions2/config"
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "definitions2": {
+        "adapter": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object"
+            },
+            "imports": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "eventstoreAdapter": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object",
+              "properties": {
+                "snapshotBucketSize": {
+                  "type": "integer"
+                },
+                "additionalProperties": {}
+              }
+            },
+            "imports": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "resourceInstance": {
+          "type": "string"
+        },
+        "resourceConstructor": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object"
+            },
+            "imports": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "resourceBypass": {
+          "type": "object",
+          "properties": {
+            "options": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "subscribeAdapter": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "module",
+            "options"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "aggregate": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "commands": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "projection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "serializeState": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "deserializeState": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "encryption": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "dependencies": {
+            "serializeState": [
+              "deserializeState"
+            ],
+            "deserializeState": [
+              "serializeState"
+            ]
+          },
+          "required": [
+            "name",
+            "commands"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "viewModel": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "projection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "serializeState": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "deserializeState": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "validator": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "encryption": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "projection"
+          ],
+          "dependencies": {
+            "serializeState": [
+              "deserializeState"
+            ],
+            "deserializeState": [
+              "serializeState"
+            ]
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "readModel": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "projection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "resolvers": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "connectorName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "projection",
+            "resolvers",
+            "connectorName"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "saga": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "sideEffects": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "connectorName": {
+              "type": "string"
+            },
+            "schedulerName": {
+              "type": "string"
+            },
+            "encryption": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "source",
+            "connectorName"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "schedulerAdapter": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "adapter": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            },
+            "connectorName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "adapter",
+            "connectorName"
+          ]
+        },
+        "apiHandler": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "method": {
+              "type": "string"
+            },
+            "handler": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/resourceInstance"
+                },
+                {
+                  "$ref": "#/definitions2/resourceConstructor"
+                }
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "handler"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "jwtCookie": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "maxAge": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "maxAge"
+          ]
+        },
+        "eventBroker": {
+          "type": "object",
+          "properties": {
+            "launchBroker": {
+              "type": "boolean"
+            },
+            "publisherAddress": {
+              "type": "string"
+            },
+            "consumerAddress": {
+              "type": "string"
+            },
+            "databaseFile": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "launchBroker",
+            "publisherAddress",
+            "consumerAddress",
+            "databaseFile"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "customConstants": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "clientFullEntryProperties": {
+          "type": "object",
+          "properties": {
+            "moduleType": {
+              "type": "string"
+            },
+            "outputFile": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "clientFullEntry": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions2/clientFullEntryProperties"
+            }
+          ],
+          "additionalItems": false
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "clientEntries": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions2/clientFullEntry"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "target": {
+              "type": "string",
+              "enum": [
+                "local",
+                "cloud"
+              ]
+            },
+            "port": {
+              "type": [
+                "integer",
+                "string"
+              ]
+            },
+            "rootPath": {
+              "type": "string"
+            },
+            "distDir": {
+              "type": "string"
+            },
+            "staticDir": {
+              "type": "string"
+            },
+            "staticPath": {
+              "type": "string"
+            },
+            "aggregates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/aggregate"
+              }
+            },
+            "viewModels": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/viewModel"
+              }
+            },
+            "readModels": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/readModel"
+              }
+            },
+            "sagas": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/saga"
+              }
+            },
+            "apiHandlers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/apiHandler"
+              }
+            },
+            "readModelConnectors": {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions2/resourceInstance"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceConstructor"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceBypass"
+                  }
+                ]
+              }
+            },
+            "clientImports": {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions2/resourceInstance"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceConstructor"
+                  }
+                ]
+              }
+            },
+            "serverImports": {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions2/resourceInstance"
+                  },
+                  {
+                    "$ref": "#/definitions2/resourceConstructor"
+                  }
+                ]
+              }
+            },
+            "schedulers": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions2/schedulerAdapter"
+              }
+            },
+            "eventstoreAdapter": {
+              "$ref": "#/definitions2/eventstoreAdapter"
+            },
+            "subscribeAdapter": {
+              "$ref": "#/definitions2/subscribeAdapter"
+            },
+            "jwtCookie": {
+              "$ref": "#/definitions2/jwtCookie"
+            },
+            "eventBroker": {
+              "$ref": "#/definitions2/eventBroker"
+            },
+            "mode": {
+              "type": "string"
+            },
+            "customConstants": {
+              "$ref": "#/definitions2/customConstants"
+            },
+            "uploadAdapter": {
+              "$ref": "#/definitions2/adapter"
+            }
+          },
+          "required": [
+            "clientEntries",
+            "clientImports",
+            "serverImports",
+            "apiHandlers",
+            "port",
+            "rootPath",
+            "distDir",
+            "staticDir",
+            "staticPath",
+            "aggregates",
+            "viewModels",
+            "readModels",
+            "readModelConnectors",
+            "schedulers",
+            "eventstoreAdapter",
+            "subscribeAdapter",
+            "eventBroker",
+            "customConstants",
+            "target",
+            "jwtCookie",
+            "sagas",
+            "mode"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      },
+      "$ref": "#/definitions2/config"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

@@ -1,0 +1,204 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "https://flynn.io/schema/examples/base#",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "response"
+      ],
+      "properties": {
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method",
+            "url",
+            "headers"
+          ],
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "_format": "uri"
+            },
+            "headers": {
+              "type": "object"
+            },
+            "params": {
+              "type": "object"
+            },
+            "body": {
+              "type": "object"
+            }
+          }
+        },
+        "response": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "headers"
+          ],
+          "properties": {
+            "headers": {
+              "type": "object"
+            },
+            "body": {}
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "https://flynn.io/schema/examples/base#",
+              "type": "object",
+              "required": [
+                "request",
+                "response"
+              ],
+              "properties": {
+                "request": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "response": {
+                  "$ref": "#/definitions4/modern_3"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^request$": true,
+                "^response$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "method",
+                "url",
+                "headers"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "_format": "uri"
+                },
+                "params": {
+                  "type": "object"
+                },
+                "headers": {
+                  "type": "object"
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^headers$": true,
+                "^method$": true,
+                "^body$": true,
+                "^url$": true,
+                "^params$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "headers"
+              ],
+              "properties": {
+                "headers": {
+                  "type": "object"
+                },
+                "body": true
+              }
+            },
+            {
+              "patternProperties": {
+                "^headers$": true,
+                "^body$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

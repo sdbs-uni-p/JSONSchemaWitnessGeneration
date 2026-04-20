@@ -1,0 +1,719 @@
+{
+  "allOf": [
+    {
+      "title": "Multi code model generator",
+      "description": "The scheme describes the data models and methods structure for the generation of a uniform code using various programming languages",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "imports": {
+          "type": "array",
+          "description": "The physical path to the other module types for use. Example: ../data/time.json",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "file",
+              "type"
+            ]
+          },
+          "minItems": 1,
+          "_uniqueItems": true,
+          "messages": {
+            "_uniqueItems": "Error unique imports"
+          }
+        },
+        "consts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "$ref": "#/definitions3/simpleTypes"
+                    },
+                    "value": {}
+                  }
+                },
+                "required": [
+                  "name",
+                  "type",
+                  "value"
+                ],
+                "minItems": 1
+              }
+            }
+          },
+          "required": [
+            "name",
+            "items"
+          ]
+        },
+        "enums": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "minItems": 1
+              }
+            }
+          },
+          "required": [
+            "name",
+            "items"
+          ]
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attrs": {
+                "$ref": "#/definitions3/attrType"
+              },
+              "name": {
+                "type": "string"
+              },
+              "basetype": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "attrs": {
+                      "$ref": "#/definitions3/attrType"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "$ref": "#/definitions3/typeBoth"
+                    },
+                    "array": {
+                      "type": "boolean"
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "type"
+                ],
+                "minItems": 1
+              }
+            }
+          },
+          "required": [
+            "name",
+            "items"
+          ]
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "basetype": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "methods": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "args": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "$ref": "#/definitions3/typeBoth"
+                          },
+                          "array": {
+                            "type": "boolean"
+                          },
+                          "arrayparams": {
+                            "type": "boolean",
+                            "description": "Rest Parameters. ts: func(...data[])"
+                          }
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "type"
+                      ],
+                      "minItems": 1
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "$ref": "#/definitions3/typeBoth"
+                        },
+                        "array": {
+                          "type": "boolean"
+                        },
+                        "description": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "minItems": 1
+                }
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions3": {
+    "simpleTypes": {
+      "enum": [
+        "boolean",
+        "integer",
+        "integer64",
+        "float",
+        "string",
+        "any"
+      ]
+    },
+    "stringOrArr": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "attrType": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "^.+$": {
+            "$ref": "#/definitions3/stringOrArr"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    "typeBoth": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions3/simpleTypes"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "stringOrArr": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Multi code model generator",
+              "description": "The scheme describes the data models and methods structure for the generation of a uniform code using various programming languages",
+              "type": "object",
+              "properties": {
+                "contracts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "basetype": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "methods": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "args": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "array": {
+                                    "type": "boolean"
+                                  },
+                                  "type": {
+                                    "$ref": "#/definitions4/typeBoth"
+                                  },
+                                  "arrayparams": {
+                                    "type": "boolean",
+                                    "description": "Rest Parameters. ts: func(...data[])"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "type"
+                              ],
+                              "minItems": 1
+                            },
+                            "result": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "$ref": "#/definitions4/typeBoth"
+                                },
+                                "array": {
+                                  "type": "boolean"
+                                },
+                                "description": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "minItems": 1
+                        }
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "items"
+                  ]
+                },
+                "models": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "array": {
+                              "type": "boolean"
+                            },
+                            "attrs": {
+                              "$ref": "#/definitions4/attrType"
+                            },
+                            "type": {
+                              "$ref": "#/definitions4/typeBoth"
+                            },
+                            "required": {
+                              "type": "boolean",
+                              "default": true
+                            }
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "type"
+                        ],
+                        "minItems": 1
+                      },
+                      "basetype": {
+                        "type": "string"
+                      },
+                      "attrs": {
+                        "$ref": "#/definitions4/attrType"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "items"
+                  ]
+                },
+                "$schema": {
+                  "type": "string"
+                },
+                "imports": {
+                  "type": "array",
+                  "description": "The physical path to the other module types for use. Example: ../data/time.json",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "file",
+                      "type"
+                    ]
+                  },
+                  "minItems": 1,
+                  "_uniqueItems": true,
+                  "messages": {
+                    "_uniqueItems": "Error unique imports"
+                  }
+                },
+                "consts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "$ref": "#/definitions4/simpleTypes"
+                            },
+                            "value": true
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "type",
+                          "value"
+                        ],
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "items"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^consts$": true,
+                "^$schema$": true,
+                "^contracts$": true,
+                "^imports$": true,
+                "^models$": true,
+                "^enums$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "typeBoth": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/simpleTypes"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "simpleTypes": {
+      "enum": [
+        "boolean",
+        "integer",
+        "integer64",
+        "float",
+        "string",
+        "any"
+      ]
+    },
+    "attrType": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "^.+$": {
+            "$ref": "#/definitions4/stringOrArr"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/typeBoth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/typeBoth"
+      }
+    },
+    {
+      "$ref": "#/definitions3/typeBoth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/typeBoth"
+      }
+    },
+    {
+      "$ref": "#/definitions4/attrType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/attrType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/stringOrArr"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/stringOrArr"
+      }
+    },
+    {
+      "$ref": "#/definitions3/simpleTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/simpleTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/stringOrArr"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/stringOrArr"
+      }
+    },
+    {
+      "$ref": "#/definitions3/attrType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/attrType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/simpleTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/simpleTypes"
+      }
+    }
+  ]
+}

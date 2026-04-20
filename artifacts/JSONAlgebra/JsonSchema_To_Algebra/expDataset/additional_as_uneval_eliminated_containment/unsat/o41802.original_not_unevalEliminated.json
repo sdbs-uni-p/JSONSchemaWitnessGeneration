@@ -1,0 +1,145 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "rootSourceString": {
+          "type": "string"
+        },
+        "rootSourceArray": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "someSourceString": {
+                  "type": "string"
+                },
+                "anotherSourceString": {
+                  "type": "string"
+                },
+                "someSourceArray": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "someSourceString",
+                "anotherSourceString",
+                "someSourceArray"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "rootSourceArray"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rootSourceString": {
+                  "type": "string"
+                },
+                "rootSourceArray": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions4/modern_2"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "rootSourceArray"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^rootSourceString$": true,
+                "^rootSourceArray$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "someSourceString": {
+                  "type": "string"
+                },
+                "anotherSourceString": {
+                  "type": "string"
+                },
+                "someSourceArray": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "someSourceString",
+                "anotherSourceString",
+                "someSourceArray"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^someSourceString$": true,
+                "^anotherSourceString$": true,
+                "^someSourceArray$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

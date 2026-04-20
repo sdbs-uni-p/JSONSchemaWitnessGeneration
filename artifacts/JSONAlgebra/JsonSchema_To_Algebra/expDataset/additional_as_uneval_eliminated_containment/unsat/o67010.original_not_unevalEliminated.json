@@ -1,0 +1,139 @@
+{
+  "allOf": [
+    {
+      "patternProperties": {
+        "^fritzbox(\\..*)?$": {
+          "$ref": "#/definitions3/login"
+        },
+        "^influx(\\..*)?$": {
+          "$ref": "#/definitions3/login"
+        },
+        "^tr064(\\..*)?$": {
+          "$ref": "#/definitions3/login"
+        }
+      },
+      "type": "object"
+    },
+    {
+      "not": {
+        "patternProperties": {
+          "^fritzbox(\\..*)?$": {
+            "$ref": "#/definitions4/login"
+          },
+          "^influx(\\..*)?$": {
+            "$ref": "#/definitions4/login"
+          },
+          "^tr064(\\..*)?$": {
+            "$ref": "#/definitions4/login"
+          }
+        },
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "login": {
+      "additionalProperties": false,
+      "properties": {
+        "pass": {
+          "type": "string"
+        },
+        "selfsigned": {
+          "enum": [
+            "true",
+            "false"
+          ],
+          "type": "string"
+        },
+        "uri": {
+          "format": "uri",
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "user",
+        "pass"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "pass": {
+                  "type": "string"
+                },
+                "selfsigned": {
+                  "enum": [
+                    "true",
+                    "false"
+                  ],
+                  "type": "string"
+                },
+                "uri": {
+                  "format": "uri",
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "uri",
+                "user",
+                "pass"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^pass$": true,
+                "^selfsigned$": true,
+                "^uri$": true,
+                "^user$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "login": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/login"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/login"
+      }
+    },
+    {
+      "$ref": "#/definitions3/login"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/login"
+      }
+    }
+  ]
+}

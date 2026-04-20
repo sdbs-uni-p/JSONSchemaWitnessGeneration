@@ -1,0 +1,437 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "config"
+      ],
+      "properties": {
+        "applications": {
+          "type": "object",
+          "description": "Links application names (keys) to settings (values)",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "description": "Application settings",
+              "additionalProperties": false,
+              "properties": {
+                "repository": {
+                  "type": "string"
+                },
+                "archive-url": {
+                  "type": "string",
+                  "description": "Optional url where the application archive was downloaded"
+                },
+                "cliconfig-override": {
+                  "type": "string",
+                  "description": "Overrides cliconfig with a file from another directory"
+                },
+                "overrides": {
+                  "type": "object",
+                  "description": "Overrides for the applications .cliconfig.json"
+                }
+              }
+            }
+          }
+        },
+        "vhosts": {
+          "type": "object",
+          "description": "Links a vhost name (keys) to settings (values)",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "description": "Vhost settings",
+              "required": [
+                "application"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "application": {
+                  "type": "string"
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          }
+        },
+        "repositories": {
+          "type": "object",
+          "description": "Already configured repositories. A hash of repository names (keys) and configured settings (values)",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "description": "Initialized repositories",
+              "required": [
+                "identity-file",
+                "ssh-alias"
+              ],
+              "properties": {
+                "identity-file": {
+                  "type": "string",
+                  "description": "SSH private key file for deploy"
+                },
+                "ssh-alias": {
+                  "type": "string",
+                  "description": "SSH alias to connect to the repository"
+                }
+              }
+            }
+          }
+        },
+        "config": {
+          "type": "object",
+          "description": "Clic options",
+          "additionalProperties": false,
+          "properties": {
+            "applications-dir": {
+              "type": "string",
+              "description": "Path to the applications directory",
+              "default": "$HOME/apps"
+            },
+            "vhosts-dir": {
+              "type": "string",
+              "description": "Path to the vhosts directory",
+              "default": "$HOME/public_html"
+            },
+            "ssh-dir": {
+              "type": "string",
+              "description": " Path to .ssh directory, to store generated keys and change ssh configuration",
+              "default": "$HOME/.ssh"
+            },
+            "clic-dir": {
+              "type": "string",
+              "description": "Path to directory where clic stores its files",
+              "default": "$HOME/.clic"
+            }
+          }
+        },
+        "global-vars": {
+          "type": "object",
+          "description": "This is a hash of variable names (keys) and values (values).",
+          "patternProperties": {
+            "^[a-zA-Z_][a-zA-Z_0-9]*$": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Already configured repositories. A hash of repository names (keys) and configured settings (values)",
+              "patternProperties": {
+                ".*": {
+                  "type": "object",
+                  "description": "Initialized repositories",
+                  "required": [
+                    "identity-file",
+                    "ssh-alias"
+                  ],
+                  "properties": {
+                    "identity-file": {
+                      "type": "string",
+                      "description": "SSH private key file for deploy"
+                    },
+                    "ssh-alias": {
+                      "type": "string",
+                      "description": "SSH alias to connect to the repository"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Links a vhost name (keys) to settings (values)",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions4/modern_7"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "config"
+              ],
+              "properties": {
+                "applications": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "config": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "global-vars": {
+                  "type": "object",
+                  "description": "This is a hash of variable names (keys) and values (values).",
+                  "patternProperties": {
+                    "^[a-zA-Z_][a-zA-Z_0-9]*$": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "repositories": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "vhosts": {
+                  "$ref": "#/definitions4/modern_6"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^vhosts$": true,
+                "^config$": true,
+                "^repositories$": true,
+                "^global-vars$": true,
+                "^applications$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Vhost settings",
+              "required": [
+                "application"
+              ],
+              "properties": {
+                "application": {
+                  "type": "string"
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^application$": true,
+                "^disabled$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Links application names (keys) to settings (values)",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions4/modern_3"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Application settings",
+              "properties": {
+                "repository": {
+                  "type": "string"
+                },
+                "archive-url": {
+                  "type": "string",
+                  "description": "Optional url where the application archive was downloaded"
+                },
+                "cliconfig-override": {
+                  "type": "string",
+                  "description": "Overrides cliconfig with a file from another directory"
+                },
+                "overrides": {
+                  "type": "object",
+                  "description": "Overrides for the applications .cliconfig.json"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^repository$": true,
+                "^archive-url$": true,
+                "^cliconfig-override$": true,
+                "^overrides$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Clic options",
+              "properties": {
+                "applications-dir": {
+                  "type": "string",
+                  "description": "Path to the applications directory",
+                  "default": "$HOME/apps"
+                },
+                "vhosts-dir": {
+                  "type": "string",
+                  "description": "Path to the vhosts directory",
+                  "default": "$HOME/public_html"
+                },
+                "ssh-dir": {
+                  "type": "string",
+                  "description": " Path to .ssh directory, to store generated keys and change ssh configuration",
+                  "default": "$HOME/.ssh"
+                },
+                "clic-dir": {
+                  "type": "string",
+                  "description": "Path to directory where clic stores its files",
+                  "default": "$HOME/.clic"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^applications-dir$": true,
+                "^vhosts-dir$": true,
+                "^ssh-dir$": true,
+                "^clic-dir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

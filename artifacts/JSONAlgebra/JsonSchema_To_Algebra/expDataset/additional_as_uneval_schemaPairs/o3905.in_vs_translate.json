@@ -1,0 +1,1237 @@
+[
+  {
+    "id": 827,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Annotation Model",
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/HttpEndpointOverride"
+              },
+              {
+                "$ref": "#/definitions2/HttpParameterOverride"
+              }
+            ]
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/DirectListInput"
+              },
+              {
+                "$ref": "#/definitions2/CsvInput"
+              },
+              {
+                "$ref": "#/definitions2/ExtractedInput"
+              },
+              {
+                "$ref": "#/definitions2/CounterInput"
+              }
+            ]
+          }
+        },
+        "endpoint-annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/EndpointAnnotation"
+          }
+        }
+      },
+      "definitions2": {
+        "EndpointAnnotation": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "overrides": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/HttpEndpointOverride"
+                  },
+                  {
+                    "$ref": "#/definitions2/HttpParameterOverride"
+                  }
+                ]
+              }
+            },
+            "parameter-annotations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/ParameterAnnotation"
+              }
+            }
+          },
+          "required": [
+            "endpoint"
+          ]
+        },
+        "ParameterAnnotation": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "parameter": {
+              "type": "string"
+            },
+            "input": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/DirectListInput"
+                },
+                {
+                  "$ref": "#/definitions2/CsvInput"
+                },
+                {
+                  "$ref": "#/definitions2/ExtractedInput"
+                },
+                {
+                  "$ref": "#/definitions2/CounterInput"
+                }
+              ]
+            },
+            "overrides": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/HttpParameterOverride"
+                  }
+                ]
+              }
+            }
+          },
+          "required": [
+            "parameter",
+            "input"
+          ]
+        },
+        "DirectListInput": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "@type": {
+              "type": "string",
+              "enum": [
+                "direct"
+              ],
+              "default": "direct"
+            },
+            "id": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "associated": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/DirectListInput"
+                  },
+                  {
+                    "$ref": "#/definitions2/CsvInput"
+                  }
+                ]
+              }
+            }
+          },
+          "required": [
+            "@type",
+            "data"
+          ]
+        },
+        "CsvInput": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "@type": {
+              "type": "string",
+              "enum": [
+                "csv"
+              ],
+              "default": "csv"
+            },
+            "id": {
+              "type": "string"
+            },
+            "file": {
+              "type": "string"
+            },
+            "column": {
+              "type": "integer"
+            },
+            "separator": {
+              "type": "string",
+              "default": ";"
+            },
+            "associated": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/DirectListInput"
+                  },
+                  {
+                    "$ref": "#/definitions2/CsvInput"
+                  }
+                ]
+              }
+            }
+          },
+          "required": [
+            "@type",
+            "file",
+            "column"
+          ]
+        },
+        "ExtractedInput": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "@type": {
+              "type": "string",
+              "enum": [
+                "extracted"
+              ],
+              "default": "extracted"
+            },
+            "id": {
+              "type": "string"
+            },
+            "initial": {
+              "type": "string"
+            },
+            "extractions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/RegExExtraction"
+              }
+            }
+          },
+          "required": [
+            "@type",
+            "extractions"
+          ]
+        },
+        "RegExExtraction": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "from": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "string"
+            },
+            "response-key": {
+              "type": "string",
+              "default": "<default>"
+            },
+            "template": {
+              "type": "string",
+              "default": "(1)"
+            },
+            "match-number": {
+              "type": "integer",
+              "default": 1
+            },
+            "fallback": {
+              "type": "string",
+              "default": "NOT FOUND"
+            }
+          },
+          "required": [
+            "from",
+            "pattern"
+          ]
+        },
+        "CounterInput": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "@type": {
+              "type": "string",
+              "enum": [
+                "counter"
+              ],
+              "default": "counter"
+            },
+            "id": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string",
+              "enum": [
+                "GLOBAL",
+                "USER",
+                "USER_ITERATION"
+              ]
+            },
+            "start": {
+              "type": "integer"
+            },
+            "increment": {
+              "type": "integer"
+            },
+            "maximum": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "@type",
+            "scope",
+            "start",
+            "increment",
+            "maximum"
+          ]
+        },
+        "HttpEndpointOverride": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "HttpEndpoint.domain": {
+              "type": "string"
+            },
+            "HttpEndpoint.port": {
+              "type": "string"
+            },
+            "HttpEndpoint.encoding": {
+              "type": "string"
+            },
+            "HttpEndpoint.protocol": {
+              "type": "string"
+            },
+            "HttpEndpoint.header": {
+              "type": "string"
+            }
+          }
+        },
+        "HttpParameterOverride": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "HttpParameter.encoded": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "pattern": {
+                      "type": "string"
+                    },
+                    "fallback": {
+                      "type": "string",
+                      "default": "NOT FOUND"
+                    },
+                    "response-key": {
+                      "type": "string",
+                      "default": "<default>"
+                    },
+                    "match-number": {
+                      "type": "integer",
+                      "default": 1
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "template": {
+                      "type": "string",
+                      "default": "(1)"
+                    }
+                  },
+                  "required": [
+                    "from",
+                    "pattern"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^template$": {},
+                    "^match-number$": {},
+                    "^id$": {},
+                    "^pattern$": {},
+                    "^from$": {},
+                    "^fallback$": {},
+                    "^response-key$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Annotation Model",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "overrides": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/HttpEndpointOverride"
+                          },
+                          {
+                            "$ref": "#/definitions2/HttpParameterOverride"
+                          }
+                        ]
+                      }
+                    },
+                    "inputs": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/DirectListInput"
+                          },
+                          {
+                            "$ref": "#/definitions2/CsvInput"
+                          },
+                          {
+                            "$ref": "#/definitions2/ExtractedInput"
+                          },
+                          {
+                            "$ref": "#/definitions2/CounterInput"
+                          }
+                        ]
+                      }
+                    },
+                    "endpoint-annotations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/EndpointAnnotation"
+                      }
+                    }
+                  },
+                  "definitions2": {
+                    "EndpointAnnotation": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "endpoint": {
+                          "type": "string"
+                        },
+                        "overrides": {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "$ref": "#/definitions2/HttpEndpointOverride"
+                              },
+                              {
+                                "$ref": "#/definitions2/HttpParameterOverride"
+                              }
+                            ]
+                          }
+                        },
+                        "parameter-annotations": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/ParameterAnnotation"
+                          }
+                        }
+                      },
+                      "required": [
+                        "endpoint"
+                      ]
+                    },
+                    "ParameterAnnotation": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "parameter": {
+                          "type": "string"
+                        },
+                        "input": {
+                          "oneOf": [
+                            {
+                              "$ref": "#/definitions2/DirectListInput"
+                            },
+                            {
+                              "$ref": "#/definitions2/CsvInput"
+                            },
+                            {
+                              "$ref": "#/definitions2/ExtractedInput"
+                            },
+                            {
+                              "$ref": "#/definitions2/CounterInput"
+                            }
+                          ]
+                        },
+                        "overrides": {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "$ref": "#/definitions2/HttpParameterOverride"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "parameter",
+                        "input"
+                      ]
+                    },
+                    "DirectListInput": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "@type": {
+                          "type": "string",
+                          "enum": [
+                            "direct"
+                          ],
+                          "default": "direct"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "associated": {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "$ref": "#/definitions2/DirectListInput"
+                              },
+                              {
+                                "$ref": "#/definitions2/CsvInput"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "@type",
+                        "data"
+                      ]
+                    },
+                    "CsvInput": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "@type": {
+                          "type": "string",
+                          "enum": [
+                            "csv"
+                          ],
+                          "default": "csv"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "file": {
+                          "type": "string"
+                        },
+                        "column": {
+                          "type": "integer"
+                        },
+                        "separator": {
+                          "type": "string",
+                          "default": ";"
+                        },
+                        "associated": {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "$ref": "#/definitions2/DirectListInput"
+                              },
+                              {
+                                "$ref": "#/definitions2/CsvInput"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "@type",
+                        "file",
+                        "column"
+                      ]
+                    },
+                    "ExtractedInput": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "@type": {
+                          "type": "string",
+                          "enum": [
+                            "extracted"
+                          ],
+                          "default": "extracted"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "initial": {
+                          "type": "string"
+                        },
+                        "extractions": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/RegExExtraction"
+                          }
+                        }
+                      },
+                      "required": [
+                        "@type",
+                        "extractions"
+                      ]
+                    },
+                    "RegExExtraction": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "string"
+                        },
+                        "pattern": {
+                          "type": "string"
+                        },
+                        "response-key": {
+                          "type": "string",
+                          "default": "<default>"
+                        },
+                        "template": {
+                          "type": "string",
+                          "default": "(1)"
+                        },
+                        "match-number": {
+                          "type": "integer",
+                          "default": 1
+                        },
+                        "fallback": {
+                          "type": "string",
+                          "default": "NOT FOUND"
+                        }
+                      },
+                      "required": [
+                        "from",
+                        "pattern"
+                      ]
+                    },
+                    "CounterInput": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "@type": {
+                          "type": "string",
+                          "enum": [
+                            "counter"
+                          ],
+                          "default": "counter"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "string",
+                          "enum": [
+                            "GLOBAL",
+                            "USER",
+                            "USER_ITERATION"
+                          ]
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "increment": {
+                          "type": "integer"
+                        },
+                        "maximum": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "@type",
+                        "scope",
+                        "start",
+                        "increment",
+                        "maximum"
+                      ]
+                    },
+                    "HttpEndpointOverride": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "HttpEndpoint.domain": {
+                          "type": "string"
+                        },
+                        "HttpEndpoint.port": {
+                          "type": "string"
+                        },
+                        "HttpEndpoint.encoding": {
+                          "type": "string"
+                        },
+                        "HttpEndpoint.protocol": {
+                          "type": "string"
+                        },
+                        "HttpEndpoint.header": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "HttpParameterOverride": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "HttpParameter.encoded": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^id$": {},
+                    "^overrides$": {},
+                    "^inputs$": {},
+                    "^endpoint-annotations$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "HttpEndpointOverride": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "@type": {
+                      "type": "string",
+                      "enum": [
+                        "direct"
+                      ],
+                      "default": "direct"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "associated": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/DirectListInput"
+                          },
+                          {
+                            "$ref": "#/definitions2/CsvInput"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "@type",
+                    "data"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^@type$": {},
+                    "^id$": {},
+                    "^data$": {},
+                    "^associated$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "CounterInput": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "HttpParameter.encoded": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^HttpParameter.encoded$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "HttpEndpoint.encoding": {
+                      "type": "string"
+                    },
+                    "HttpEndpoint.domain": {
+                      "type": "string"
+                    },
+                    "HttpEndpoint.port": {
+                      "type": "string"
+                    },
+                    "HttpEndpoint.protocol": {
+                      "type": "string"
+                    },
+                    "HttpEndpoint.header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^HttpEndpoint.encoding$": {},
+                    "^HttpEndpoint.protocol$": {},
+                    "^HttpEndpoint.domain$": {},
+                    "^HttpEndpoint.header$": {},
+                    "^HttpEndpoint.port$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "CsvInput": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "endpoint": {
+                      "type": "string"
+                    },
+                    "overrides": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/HttpEndpointOverride"
+                          },
+                          {
+                            "$ref": "#/definitions2/HttpParameterOverride"
+                          }
+                        ]
+                      }
+                    },
+                    "parameter-annotations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/ParameterAnnotation"
+                      }
+                    }
+                  },
+                  "required": [
+                    "endpoint"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^id$": {},
+                    "^endpoint$": {},
+                    "^overrides$": {},
+                    "^parameter-annotations$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string",
+                      "enum": [
+                        "GLOBAL",
+                        "USER",
+                        "USER_ITERATION"
+                      ]
+                    },
+                    "maximum": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "@type": {
+                      "type": "string",
+                      "enum": [
+                        "counter"
+                      ],
+                      "default": "counter"
+                    },
+                    "start": {
+                      "type": "integer"
+                    },
+                    "increment": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "@type",
+                    "scope",
+                    "start",
+                    "increment",
+                    "maximum"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^increment$": {},
+                    "^maximum$": {},
+                    "^format$": {},
+                    "^@type$": {},
+                    "^start$": {},
+                    "^scope$": {},
+                    "^id$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "RegExExtraction": {
+          "$ref": "#/definitions2/modern_6"
+        },
+        "HttpParameterOverride": {
+          "$ref": "#/definitions2/modern_7"
+        },
+        "ExtractedInput": {
+          "$ref": "#/definitions2/modern_8"
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "separator": {
+                      "type": "string",
+                      "default": ";"
+                    },
+                    "associated": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/DirectListInput"
+                          },
+                          {
+                            "$ref": "#/definitions2/CsvInput"
+                          }
+                        ]
+                      }
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "column": {
+                      "type": "integer"
+                    },
+                    "file": {
+                      "type": "string"
+                    },
+                    "@type": {
+                      "type": "string",
+                      "enum": [
+                        "csv"
+                      ],
+                      "default": "csv"
+                    }
+                  },
+                  "required": [
+                    "@type",
+                    "file",
+                    "column"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^associated$": {},
+                    "^file$": {},
+                    "^@type$": {},
+                    "^id$": {},
+                    "^separator$": {},
+                    "^column$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "DirectListInput": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "ParameterAnnotation": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "@type": {
+                      "type": "string",
+                      "enum": [
+                        "extracted"
+                      ],
+                      "default": "extracted"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "initial": {
+                      "type": "string"
+                    },
+                    "extractions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/RegExExtraction"
+                      }
+                    }
+                  },
+                  "required": [
+                    "@type",
+                    "extractions"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^@type$": {},
+                    "^id$": {},
+                    "^initial$": {},
+                    "^extractions$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "EndpointAnnotation": {
+          "$ref": "#/definitions2/modern_9"
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "parameter": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/DirectListInput"
+                        },
+                        {
+                          "$ref": "#/definitions2/CsvInput"
+                        },
+                        {
+                          "$ref": "#/definitions2/ExtractedInput"
+                        },
+                        {
+                          "$ref": "#/definitions2/CounterInput"
+                        }
+                      ]
+                    },
+                    "overrides": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/HttpParameterOverride"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "parameter",
+                    "input"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^id$": {},
+                    "^parameter$": {},
+                    "^input$": {},
+                    "^overrides$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_10"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

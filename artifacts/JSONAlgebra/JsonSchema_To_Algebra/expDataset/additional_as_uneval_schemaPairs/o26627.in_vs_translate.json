@@ -1,0 +1,141 @@
+[
+  {
+    "id": 623,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Policy",
+      "description": "document containing permission statements",
+      "type": "object",
+      "properties": {
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "effect": {
+                "type": "string",
+                "pattern": "^allow|deny$"
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z]+:\\w+$"
+                }
+              },
+              "resources": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^brn:(\\w+):(\\w+):(\\w*):(\\*|[\\w\\-]*\\*?)$"
+                }
+              }
+            },
+            "required": [
+              "effect",
+              "actions",
+              "resources"
+            ],
+            "additionalProperties": {
+              "not": {}
+            }
+          }
+        }
+      },
+      "required": [
+        "statements"
+      ],
+      "additionalProperties": {
+        "not": {}
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Policy",
+                  "description": "document containing permission statements",
+                  "type": "object",
+                  "properties": {
+                    "statements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_2"
+                      }
+                    }
+                  },
+                  "required": [
+                    "statements"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^statements$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "effect": {
+                      "type": "string",
+                      "pattern": "^allow|deny$"
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[a-z]+:\\w+$"
+                      }
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^brn:(\\w+):(\\w+):(\\w*):(\\*|[\\w\\-]*\\*?)$"
+                      }
+                    }
+                  },
+                  "required": [
+                    "effect",
+                    "actions",
+                    "resources"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^effect$": {},
+                    "^actions$": {},
+                    "^resources$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

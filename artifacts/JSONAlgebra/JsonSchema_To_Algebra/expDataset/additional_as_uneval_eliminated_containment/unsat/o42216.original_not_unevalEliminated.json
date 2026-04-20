@@ -1,0 +1,442 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "redmine": {
+          "$ref": "#/definitions3/redmine-configuration"
+        },
+        "git-lab": {
+          "$ref": "#/definitions3/git-lab-configuration"
+        }
+      },
+      "required": [
+        "redmine",
+        "git-lab"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "redmine": {
+            "$ref": "#/definitions4/redmine-configuration"
+          },
+          "git-lab": {
+            "$ref": "#/definitions4/git-lab-configuration"
+          }
+        },
+        "required": [
+          "redmine",
+          "git-lab"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "redmine-configuration": {
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Your Redmine username (must be an administrator)."
+        },
+        "password": {
+          "type": "string",
+          "description": "Your Redmine password."
+        },
+        "base-uri": {
+          "type": "string",
+          "description": "The base URL of your Redmine installation."
+        }
+      },
+      "required": [
+        "username",
+        "password",
+        "base-uri"
+      ],
+      "additionalProperties": false
+    },
+    "git-lab-configuration": {
+      "properties": {
+        "private-token": {
+          "type": "string",
+          "description": "Your GitLab private token (can be found in your account settings)."
+        },
+        "base-uri": {
+          "type": "string",
+          "description": "The base URL of your GitLab installation (incl. API prefix)."
+        },
+        "labels-mapping": {
+          "$ref": "#/definitions3/labels-mapping",
+          "description": "Describes how to map Redmine ticket meta data to GitLab issue labels."
+        },
+        "users-mapping": {
+          "$ref": "#/definitions3/users-mapping",
+          "description": "Describes how to map an assignee's Redmine user ID to his GitLab user ID."
+        }
+      },
+      "required": [
+        "private-token",
+        "base-uri"
+      ],
+      "additionalProperties": false
+    },
+    "labels-mapping": {
+      "properties": {
+        "tracker": {
+          "$ref": "#/definitions3/simple-label-mapping",
+          "description": "Labels to assign to tickets of a specific tracker."
+        },
+        "status": {
+          "$ref": "#/definitions3/simple-label-mapping",
+          "description": "Labels to assign to tickets with a specific status."
+        },
+        "priority": {
+          "$ref": "#/definitions3/simple-label-mapping",
+          "description": "Labels to assign to tickets with a specific priority."
+        },
+        "custom-field": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions3/simple-label-mapping"
+            }
+          },
+          "description": "Labels to assign to tickets with one or more specific custom field value(s)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "simple-label-mapping": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "users-mapping": {
+      "type": "object",
+      "patternProperties": {
+        "^\\d+$": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "Your Redmine username (must be an administrator)."
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Your Redmine password."
+                },
+                "base-uri": {
+                  "type": "string",
+                  "description": "The base URL of your Redmine installation."
+                }
+              },
+              "required": [
+                "username",
+                "password",
+                "base-uri"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^username$": true,
+                "^password$": true,
+                "^base-uri$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "labels-mapping": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "tracker": {
+                  "$ref": "#/definitions4/simple-label-mapping",
+                  "description": "Labels to assign to tickets of a specific tracker."
+                },
+                "status": {
+                  "$ref": "#/definitions4/simple-label-mapping",
+                  "description": "Labels to assign to tickets with a specific status."
+                },
+                "priority": {
+                  "$ref": "#/definitions4/simple-label-mapping",
+                  "description": "Labels to assign to tickets with a specific priority."
+                },
+                "custom-field": {
+                  "patternProperties": {
+                    ".*": {
+                      "$ref": "#/definitions4/simple-label-mapping"
+                    }
+                  },
+                  "description": "Labels to assign to tickets with one or more specific custom field value(s)."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^tracker$": true,
+                "^status$": true,
+                "^priority$": true,
+                "^custom-field$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "users-mapping": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^\\d+$": {
+                  "type": "integer",
+                  "minimum": 1.0
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^\\d+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "git-lab-configuration": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "simple-label-mapping": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "private-token": {
+                  "type": "string",
+                  "description": "Your GitLab private token (can be found in your account settings)."
+                },
+                "base-uri": {
+                  "type": "string",
+                  "description": "The base URL of your GitLab installation (incl. API prefix)."
+                },
+                "labels-mapping": {
+                  "$ref": "#/definitions4/labels-mapping",
+                  "description": "Describes how to map Redmine ticket meta data to GitLab issue labels."
+                },
+                "users-mapping": {
+                  "$ref": "#/definitions4/users-mapping",
+                  "description": "Describes how to map an assignee's Redmine user ID to his GitLab user ID."
+                }
+              },
+              "required": [
+                "private-token",
+                "base-uri"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^private-token$": true,
+                "^base-uri$": true,
+                "^labels-mapping$": true,
+                "^users-mapping$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "redmine-configuration": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/simple-label-mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/simple-label-mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/git-lab-configuration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/git-lab-configuration"
+      }
+    },
+    {
+      "$ref": "#/definitions3/simple-label-mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/simple-label-mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions3/git-lab-configuration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/git-lab-configuration"
+      }
+    },
+    {
+      "$ref": "#/definitions3/redmine-configuration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/redmine-configuration"
+      }
+    },
+    {
+      "$ref": "#/definitions4/redmine-configuration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/redmine-configuration"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/users-mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/users-mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/labels-mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/labels-mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/labels-mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/labels-mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions3/users-mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/users-mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

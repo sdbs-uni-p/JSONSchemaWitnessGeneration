@@ -1,0 +1,1415 @@
+[
+  {
+    "id": 816,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "https://tabris.com/api-schema.json",
+      "title": "Tabris.js API Definition JSON Schema",
+      "definitions2": {
+        "api": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "enum": [
+                "core",
+                "service",
+                "widget",
+                "popup",
+                "net",
+                "data"
+              ]
+            },
+            "title": {
+              "description": "The title of the document. Will default to object or type name.",
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "namespace": {
+              "enum": [
+                "global",
+                "tabris",
+                false
+              ]
+            },
+            "module": {
+              "enum": [
+                "tabris",
+                "tabris-decorators"
+              ]
+            },
+            "markdown_only": {
+              "type": "boolean"
+            },
+            "type": {
+              "description": "Name of the class/interface",
+              "type": "string"
+            },
+            "jsxChildren": {
+              "items": {
+                "type": "string"
+              }
+            },
+            "interface": {
+              "description": "Makes this type an interface. Will be rendered inline where referenced in documentation.",
+              "type": "boolean",
+              "default": false
+            },
+            "object": {
+              "description": "Name of the instance (for singletons)",
+              "type": "string"
+            },
+            "extends": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "generics": {
+              "$ref": "#/definitions2/genericsDef"
+            },
+            "constructor": {
+              "properties": {
+                "access": {
+                  "enum": [
+                    "public",
+                    "protected",
+                    "private"
+                  ]
+                },
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/parameter"
+                  }
+                }
+              },
+              "required": [
+                "access"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "properties": {
+              "description": "Change events will be generated automatically if type extends NativeObject",
+              "type": "object",
+              "patternProperties": {
+                "(^[_\\$]?[a-z]\\w+$)|(^\\[.*\\]$)": {
+                  "$ref": "#/definitions2/property"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "methods": {
+              "type": "object",
+              "patternProperties": {
+                "(^[_\\$]?[a-z]\\w+$)|(^\\[.*\\]$|^\\$$)": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions2/method"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/method"
+                      }
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "events": {
+              "type": "object",
+              "patternProperties": {
+                "^[a-z]\\w+$": {
+                  "$ref": "#/definitions2/event"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "statics": {
+              "$ref": "#/definitions2/statics"
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "dependencies": {
+            "extends": [
+              "type"
+            ],
+            "object": [
+              "type"
+            ],
+            "generics": [
+              "type"
+            ],
+            "constructor": [
+              "type"
+            ],
+            "events": [
+              "type"
+            ]
+          },
+          "allOf": [
+            {
+              "$comment": "Where is the API located?",
+              "anyOf": [
+                {
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "required": [
+                    "object"
+                  ]
+                },
+                {
+                  "required": [
+                    "namespace"
+                  ]
+                }
+              ]
+            },
+            {
+              "$comment": "What is the document named?",
+              "anyOf": [
+                {
+                  "required": [
+                    "title"
+                  ]
+                },
+                {
+                  "required": [
+                    "object"
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            }
+          ],
+          "not": {
+            "$comment": "Interfaces do not support constructor or statics",
+            "properties": {
+              "interface": {
+                "enum": [
+                  true
+                ]
+              }
+            },
+            "required": [
+              "interface"
+            ],
+            "anyOf": [
+              {
+                "required": [
+                  "constructor"
+                ]
+              },
+              {
+                "required": [
+                  "statics"
+                ]
+              }
+            ]
+          },
+          "required": [
+            "category"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "typeReference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "interface": {
+                  "type": "string"
+                },
+                "generics": {
+                  "$ref": "#/definitions2/generics"
+                }
+              },
+              "required": [
+                "interface",
+                "generics"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "union": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/typeReference"
+                  }
+                }
+              },
+              "required": [
+                "union"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "tuple": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/typeReference"
+                  }
+                }
+              },
+              "required": [
+                "tuple"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "map": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-zA-Z]*$": {
+                      "$ref": "#/definitions2/property"
+                    }
+                  },
+                  "minProperties": 1,
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              },
+              "required": [
+                "map"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "map": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-z]\\w+$": {
+                      "$ref": "#/definitions2/typeReference"
+                    }
+                  },
+                  "minProperties": 1,
+                  "maxProperties": 1,
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                },
+                "indexType": {
+                  "enum": [
+                    "string",
+                    "number",
+                    "SelectorString"
+                  ]
+                }
+              },
+              "required": [
+                "map",
+                "indexType"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "callback": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions2/typeReference"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "name"
+                    ],
+                    "additionalProperties": {
+                      "not": {}
+                    }
+                  }
+                },
+                "returns": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions2/typeReference"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              },
+              "required": [
+                "callback"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          ]
+        },
+        "generics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/typeReference"
+          },
+          "minItems": 1
+        },
+        "genericsDef": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "default": {
+                "$ref": "#/definitions2/typeReference"
+              },
+              "extends": {
+                "$ref": "#/definitions2/typeReference"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": {
+              "not": {}
+            }
+          },
+          "minItems": 1
+        },
+        "statics": {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "patternProperties": {
+                "(^_?[a-z]\\w+$)|(^\\[.*\\]$)": {
+                  "$ref": "#/definitions2/property"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "methods": {
+              "type": "object",
+              "patternProperties": {
+                "(^_?[a-z]\\w+$)|(^\\[.*\\]$)": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions2/method"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/method"
+                      }
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "property": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "changeEventDescription": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "ts_type": {
+              "description": "Overrides \"type\" for TypeScript declarations",
+              "$ref": "#/definitions2/typeReference"
+            },
+            "ts_only": {
+              "description": "Exclude this property from documentation",
+              "type": "boolean"
+            },
+            "protected": {
+              "description": "Mark property as protected",
+              "type": "boolean"
+            },
+            "optional": {
+              "description": "Is the property optional?",
+              "type": "boolean",
+              "default": false
+            },
+            "private": {
+              "description": "Mark property as private",
+              "type": "boolean"
+            },
+            "jsxContentProperty": {
+              "description": "JSX child elements of the matching type are mapped to this property",
+              "type": "boolean"
+            },
+            "platforms": {
+              "$ref": "#/definitions2/platforms"
+            },
+            "readonly": {
+              "description": "Indicates that this property can not be set. However, if the property is not a \"const\", it may change by itself. Defaults to false",
+              "type": "boolean"
+            },
+            "const": {
+              "description": "Indicates that this property can not change during the lifetime of this object. However, if there is a public constructor and the property is not \"readonly\", it can be set via constructor. No change events will be generated for this property. Defaults to false",
+              "type": "boolean"
+            },
+            "noChangeEvent": {
+              "type": "boolean",
+              "description": "This property does not produce change events. Implied by 'const'."
+            },
+            "default": {
+              "description": "Default value of this property"
+            },
+            "values": {
+              "description": "Limits the possible values of this property",
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              }
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "event": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "eventObject": {
+              "type": "string",
+              "description": "The name of the generated event object interface for TypeScript declaration. Defaults to \"{TypeName}{EventName}Event\". Useful for merging multiple identical event interfaces."
+            },
+            "platforms": {
+              "$ref": "#/definitions2/platforms"
+            },
+            "parameters": {
+              "type": "object",
+              "patternProperties": {
+                "^_?[a-z]\\w+$": {
+                  "$ref": "#/definitions2/property"
+                }
+              }
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "method": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/parameter"
+              }
+            },
+            "returns": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "docs_only": {
+              "type": "boolean"
+            },
+            "ts_only": {
+              "type": "boolean"
+            },
+            "ts_returns": {
+              "description": "Overrides \"returns\" for TypeScript declarations",
+              "$ref": "#/definitions2/typeReference"
+            },
+            "description": {
+              "type": "string"
+            },
+            "generics": {
+              "$ref": "#/definitions2/genericsDef"
+            },
+            "platforms": {
+              "$ref": "#/definitions2/platforms"
+            },
+            "protected": {
+              "type": "boolean"
+            },
+            "private": {
+              "type": "boolean"
+            },
+            "provisional": {
+              "type": "boolean"
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "parameter": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "ts_type": {
+              "description": "Overrides \"type\" for TypeScript declarations",
+              "$ref": "#/definitions2/typeReference"
+            },
+            "optional": {
+              "description": "Defaults to false",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name",
+            "type"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "platforms": {
+          "type": "object",
+          "properties": {
+            "ios": {
+              "type": "boolean",
+              "description": "Defaults to true"
+            },
+            "android": {
+              "type": "boolean",
+              "description": "Defaults to true"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "link": {
+          "required": [
+            "title",
+            "path"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "snippet": {
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "snippet": {
+              "type": "string"
+            },
+            "repo": {
+              "enum": [
+                "tabris",
+                "tabris-decorators"
+              ]
+            }
+          },
+          "required": [
+            "snippet"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/link"
+              },
+              {
+                "$ref": "#/definitions2/snippet"
+              }
+            ]
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/api"
+        }
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "https://tabris.com/api-schema.json",
+      "definitions2": {
+        "api": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "enum": [
+                "core",
+                "service",
+                "widget",
+                "popup",
+                "net",
+                "data"
+              ]
+            },
+            "title": {
+              "description": "The title of the document. Will default to object or type name.",
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "namespace": {
+              "enum": [
+                "global",
+                "tabris",
+                false
+              ]
+            },
+            "module": {
+              "enum": [
+                "tabris",
+                "tabris-decorators"
+              ]
+            },
+            "markdown_only": {
+              "type": "boolean"
+            },
+            "type": {
+              "description": "Name of the class/interface",
+              "type": "string"
+            },
+            "jsxChildren": {
+              "items": {
+                "type": "string"
+              }
+            },
+            "interface": {
+              "description": "Makes this type an interface. Will be rendered inline where referenced in documentation.",
+              "type": "boolean",
+              "default": false
+            },
+            "object": {
+              "description": "Name of the instance (for singletons)",
+              "type": "string"
+            },
+            "extends": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "generics": {
+              "$ref": "#/definitions2/genericsDef"
+            },
+            "constructor": {
+              "properties": {
+                "access": {
+                  "enum": [
+                    "public",
+                    "protected",
+                    "private"
+                  ]
+                },
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/parameter"
+                  }
+                }
+              },
+              "required": [
+                "access"
+              ],
+              "unevaluatedProperties": false
+            },
+            "properties": {
+              "description": "Change events will be generated automatically if type extends NativeObject",
+              "type": "object",
+              "patternProperties": {
+                "(^[_\\$]?[a-z]\\w+$)|(^\\[.*\\]$)": {
+                  "$ref": "#/definitions2/property"
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "methods": {
+              "type": "object",
+              "patternProperties": {
+                "(^[_\\$]?[a-z]\\w+$)|(^\\[.*\\]$|^\\$$)": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions2/method"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/method"
+                      }
+                    }
+                  ]
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "events": {
+              "type": "object",
+              "patternProperties": {
+                "^[a-z]\\w+$": {
+                  "$ref": "#/definitions2/event"
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "statics": {
+              "$ref": "#/definitions2/statics"
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "dependencies": {
+            "extends": [
+              "type"
+            ],
+            "object": [
+              "type"
+            ],
+            "generics": [
+              "type"
+            ],
+            "constructor": [
+              "type"
+            ],
+            "events": [
+              "type"
+            ]
+          },
+          "allOf": [
+            {
+              "$comment": "Where is the API located?",
+              "anyOf": [
+                {
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "required": [
+                    "object"
+                  ]
+                },
+                {
+                  "required": [
+                    "namespace"
+                  ]
+                }
+              ]
+            },
+            {
+              "$comment": "What is the document named?",
+              "anyOf": [
+                {
+                  "required": [
+                    "title"
+                  ]
+                },
+                {
+                  "required": [
+                    "object"
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            }
+          ],
+          "not": {
+            "$comment": "Interfaces do not support constructor or statics",
+            "properties": {
+              "interface": {
+                "enum": [
+                  true
+                ]
+              }
+            },
+            "required": [
+              "interface"
+            ],
+            "anyOf": [
+              {
+                "required": [
+                  "constructor"
+                ]
+              },
+              {
+                "required": [
+                  "statics"
+                ]
+              }
+            ]
+          },
+          "required": [
+            "category"
+          ],
+          "unevaluatedProperties": false
+        },
+        "typeReference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "interface": {
+                  "type": "string"
+                },
+                "generics": {
+                  "$ref": "#/definitions2/generics"
+                }
+              },
+              "required": [
+                "interface",
+                "generics"
+              ],
+              "unevaluatedProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "union": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/typeReference"
+                  }
+                }
+              },
+              "required": [
+                "union"
+              ],
+              "unevaluatedProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "tuple": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/typeReference"
+                  }
+                }
+              },
+              "required": [
+                "tuple"
+              ],
+              "unevaluatedProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "map": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-zA-Z]*$": {
+                      "$ref": "#/definitions2/property"
+                    }
+                  },
+                  "minProperties": 1,
+                  "unevaluatedProperties": false
+                }
+              },
+              "required": [
+                "map"
+              ],
+              "unevaluatedProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "map": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-z]\\w+$": {
+                      "$ref": "#/definitions2/typeReference"
+                    }
+                  },
+                  "minProperties": 1,
+                  "maxProperties": 1,
+                  "unevaluatedProperties": false
+                },
+                "indexType": {
+                  "enum": [
+                    "string",
+                    "number",
+                    "SelectorString"
+                  ]
+                }
+              },
+              "required": [
+                "map",
+                "indexType"
+              ],
+              "unevaluatedProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "callback": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions2/typeReference"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "name"
+                    ],
+                    "unevaluatedProperties": false
+                  }
+                },
+                "returns": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions2/typeReference"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "unevaluatedProperties": false
+                }
+              },
+              "required": [
+                "callback"
+              ],
+              "unevaluatedProperties": false
+            }
+          ]
+        },
+        "generics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/typeReference"
+          },
+          "minItems": 1
+        },
+        "genericsDef": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "default": {
+                "$ref": "#/definitions2/typeReference"
+              },
+              "extends": {
+                "$ref": "#/definitions2/typeReference"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "unevaluatedProperties": false
+          },
+          "minItems": 1
+        },
+        "statics": {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "patternProperties": {
+                "(^_?[a-z]\\w+$)|(^\\[.*\\]$)": {
+                  "$ref": "#/definitions2/property"
+                }
+              },
+              "unevaluatedProperties": false
+            },
+            "methods": {
+              "type": "object",
+              "patternProperties": {
+                "(^_?[a-z]\\w+$)|(^\\[.*\\]$)": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions2/method"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/method"
+                      }
+                    }
+                  ]
+                }
+              },
+              "unevaluatedProperties": false
+            }
+          }
+        },
+        "property": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "changeEventDescription": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "ts_type": {
+              "description": "Overrides \"type\" for TypeScript declarations",
+              "$ref": "#/definitions2/typeReference"
+            },
+            "ts_only": {
+              "description": "Exclude this property from documentation",
+              "type": "boolean"
+            },
+            "protected": {
+              "description": "Mark property as protected",
+              "type": "boolean"
+            },
+            "optional": {
+              "description": "Is the property optional?",
+              "type": "boolean",
+              "default": false
+            },
+            "private": {
+              "description": "Mark property as private",
+              "type": "boolean"
+            },
+            "jsxContentProperty": {
+              "description": "JSX child elements of the matching type are mapped to this property",
+              "type": "boolean"
+            },
+            "platforms": {
+              "$ref": "#/definitions2/platforms"
+            },
+            "readonly": {
+              "description": "Indicates that this property can not be set. However, if the property is not a \"const\", it may change by itself. Defaults to false",
+              "type": "boolean"
+            },
+            "const": {
+              "description": "Indicates that this property can not change during the lifetime of this object. However, if there is a public constructor and the property is not \"readonly\", it can be set via constructor. No change events will be generated for this property. Defaults to false",
+              "type": "boolean"
+            },
+            "noChangeEvent": {
+              "type": "boolean",
+              "description": "This property does not produce change events. Implied by 'const'."
+            },
+            "default": {
+              "description": "Default value of this property"
+            },
+            "values": {
+              "description": "Limits the possible values of this property",
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              }
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "unevaluatedProperties": false
+        },
+        "event": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "eventObject": {
+              "type": "string",
+              "description": "The name of the generated event object interface for TypeScript declaration. Defaults to \"{TypeName}{EventName}Event\". Useful for merging multiple identical event interfaces."
+            },
+            "platforms": {
+              "$ref": "#/definitions2/platforms"
+            },
+            "parameters": {
+              "type": "object",
+              "patternProperties": {
+                "^_?[a-z]\\w+$": {
+                  "$ref": "#/definitions2/property"
+                }
+              }
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "method": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/parameter"
+              }
+            },
+            "returns": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "docs_only": {
+              "type": "boolean"
+            },
+            "ts_only": {
+              "type": "boolean"
+            },
+            "ts_returns": {
+              "description": "Overrides \"returns\" for TypeScript declarations",
+              "$ref": "#/definitions2/typeReference"
+            },
+            "description": {
+              "type": "string"
+            },
+            "generics": {
+              "$ref": "#/definitions2/genericsDef"
+            },
+            "platforms": {
+              "$ref": "#/definitions2/platforms"
+            },
+            "protected": {
+              "type": "boolean"
+            },
+            "private": {
+              "type": "boolean"
+            },
+            "provisional": {
+              "type": "boolean"
+            },
+            "links": {
+              "$ref": "#/definitions2/links"
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "parameter": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/definitions2/typeReference"
+            },
+            "ts_type": {
+              "description": "Overrides \"type\" for TypeScript declarations",
+              "$ref": "#/definitions2/typeReference"
+            },
+            "optional": {
+              "description": "Defaults to false",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name",
+            "type"
+          ],
+          "unevaluatedProperties": false
+        },
+        "platforms": {
+          "type": "object",
+          "properties": {
+            "ios": {
+              "type": "boolean",
+              "description": "Defaults to true"
+            },
+            "android": {
+              "type": "boolean",
+              "description": "Defaults to true"
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "link": {
+          "required": [
+            "title",
+            "path"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "snippet": {
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "snippet": {
+              "type": "string"
+            },
+            "repo": {
+              "enum": [
+                "tabris",
+                "tabris-decorators"
+              ]
+            }
+          },
+          "required": [
+            "snippet"
+          ],
+          "unevaluatedProperties": false
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/link"
+              },
+              {
+                "$ref": "#/definitions2/snippet"
+              }
+            ]
+          }
+        }
+      },
+      "title": "Tabris.js API Definition JSON Schema",
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/api"
+        }
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

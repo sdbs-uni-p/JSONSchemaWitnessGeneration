@@ -1,0 +1,680 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "https://github.com/espressif/esp-idf/blob/master/tools/tools-schema.json",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Metadata file version"
+        },
+        "tools": {
+          "type": "array",
+          "description": "List of tools",
+          "items": {
+            "$ref": "#/definitions3/toolInfo"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "tools"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "https://github.com/espressif/esp-idf/blob/master/tools/tools-schema.json",
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "description": "Metadata file version"
+          },
+          "tools": {
+            "type": "array",
+            "description": "List of tools",
+            "items": {
+              "$ref": "#/definitions4/toolInfo"
+            }
+          }
+        },
+        "required": [
+          "version",
+          "tools"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "toolInfo": {
+      "type": "object",
+      "description": "Information about one tool",
+      "properties": {
+        "name": {
+          "description": "Tool name (used as a directory name)",
+          "type": "string"
+        },
+        "description": {
+          "description": "A short (one sentence) description of the tool.",
+          "type": "string"
+        },
+        "export_paths": {
+          "$ref": "#/definitions3/exportPaths"
+        },
+        "export_vars": {
+          "$ref": "#/definitions3/envVars",
+          "description": "Some variable expansions are done on the values. 1) ${TOOL_PATH} is replaced with the directory where the tool is installed."
+        },
+        "info_url": {
+          "description": "URL of the page with information about the tool",
+          "type": "string"
+        },
+        "install": {
+          "$ref": "#/definitions3/installRequirementInfo",
+          "description": "If 'always', the tool will be installed by default. If 'on_request', tool will be installed when specifically requested. If 'never', tool will not be considered for installation."
+        },
+        "license": {
+          "description": "License name. Use SPDX license identifier if it exists, short name of the license otherwise.",
+          "type": "string"
+        },
+        "version_cmd": {
+          "$ref": "#/definitions3/arrayOfStrings",
+          "description": "Command to be executed (along with any extra arguments). The executable be present in one of the export_paths."
+        },
+        "version_regex": {
+          "description": "Regex which is to be applied to version_cmd output to extract the version. By default, the version will be the first capture group of the expression. If version_regex_replace is specified, version will be obtained by doing a substitution using version_regex_replace instead.",
+          "$ref": "#/definitions3/regex"
+        },
+        "version_regex_replace": {
+          "description": "If given, this will be used as substitute expression for the regex defined in version_regex, to obtain the version string. Not specifying this is equivalent to setting it to '\\1' (i.e. return the first capture group).",
+          "type": "string"
+        },
+        "strip_container_dirs": {
+          "type": "integer",
+          "description": "If specified, this number of top directory levels will removed when extracting. E.g. if strip_container_dirs=2, archive path a/b/c/d.txt will be extracted as c/d.txt"
+        },
+        "versions": {
+          "type": "array",
+          "description": "List of versions",
+          "items": {
+            "$ref": "#/definitions3/versionInfo"
+          }
+        },
+        "platform_overrides": {
+          "type": "array",
+          "description": "List of platform-specific overrides",
+          "items": {
+            "$ref": "#/definitions3/platformOverrideInfo"
+          }
+        }
+      },
+      "required": [
+        "description",
+        "export_paths",
+        "version_cmd",
+        "version_regex",
+        "versions",
+        "install",
+        "info_url",
+        "license"
+      ]
+    },
+    "arrayOfStrings": {
+      "description": "Array of strings. Used to represent paths (split into components) and command lines (split into arguments)",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exportPaths": {
+      "description": "Array of paths to be exported (added to PATH). Each item in the array is relative to the directory where the tool will be installed.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/arrayOfStrings"
+      }
+    },
+    "envVars": {
+      "description": "Collection of environment variables. Keys and values are the environment variable names and values, respectively.",
+      "type": "object",
+      "patternProperties": {
+        "^([A-Z_0-9]+)+$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "regex": {
+      "description": "A regular expression",
+      "type": "string"
+    },
+    "versionInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Version name (used as a directory name)",
+          "type": "string"
+        },
+        "status": {
+          "description": "Determines whether the version is recommended/supported/deprecated",
+          "type": "string",
+          "enum": [
+            "recommended",
+            "supported",
+            "deprecated"
+          ]
+        },
+        "linux-i686": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "linux-amd64": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "linux-armel": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "linux-arm64": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "macos": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "win32": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "win64": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        },
+        "any": {
+          "$ref": "#/definitions3/platformDownloadInfo"
+        }
+      }
+    },
+    "platformDownloadInfo": {
+      "description": "Information about download artifact for one platform",
+      "type": "object",
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "description": "SHA256 sum of the file"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Size of the file, in bytes"
+        },
+        "url": {
+          "type": "string",
+          "description": "Download URL"
+        }
+      },
+      "required": [
+        "sha256",
+        "url",
+        "size"
+      ]
+    },
+    "installRequirementInfo": {
+      "description": "If 'always', the tool will be installed by default. If 'on_request', tool will be installed when specifically requested. If 'never', tool will not be considered for installation.",
+      "type": "string",
+      "enum": [
+        "always",
+        "on_request",
+        "never"
+      ]
+    },
+    "platformOverrideInfo": {
+      "description": "Platform-specific values which override the defaults",
+      "type": "object",
+      "properties": {
+        "platforms": {
+          "description": "List of platforms to which this override applies",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "linux-i686",
+              "linux-amd64",
+              "linux-armel",
+              "linux-arm64",
+              "macos",
+              "win32",
+              "win64"
+            ]
+          }
+        },
+        "export_paths": {
+          "description": "Platform-specific replacement for toolInfo/export_paths",
+          "$ref": "#/definitions3/exportPaths"
+        },
+        "export_vars": {
+          "description": "Platform-specific replacement for toolInfo/export_vars",
+          "$ref": "#/definitions3/envVars"
+        },
+        "install": {
+          "description": "Platform-specific replacement for toolInfo/install",
+          "$ref": "#/definitions3/installRequirementInfo"
+        },
+        "version_cmd": {
+          "description": "Platform-specific replacement for toolInfo/version_cmd",
+          "$ref": "#/definitions3/arrayOfStrings"
+        },
+        "version_regex": {
+          "description": "Platform-specific replacement for toolInfo/version_regex",
+          "$ref": "#/definitions3/regex"
+        },
+        "version_regex_replace": {
+          "description": "Platform-specific replacement for toolInfo/version_regex_replace",
+          "type": "string"
+        },
+        "strip_container_dirs": {
+          "type": "string",
+          "description": "Platform-specific replacement for toolInfo/strip_container_dirs"
+        }
+      },
+      "required": [
+        "platforms"
+      ]
+    }
+  },
+  "definitions4": {
+    "exportPaths": {
+      "description": "Array of paths to be exported (added to PATH). Each item in the array is relative to the directory where the tool will be installed.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/arrayOfStrings"
+      }
+    },
+    "envVars": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "platformDownloadInfo": {
+      "description": "Information about download artifact for one platform",
+      "type": "object",
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "description": "SHA256 sum of the file"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Size of the file, in bytes"
+        },
+        "url": {
+          "type": "string",
+          "description": "Download URL"
+        }
+      },
+      "required": [
+        "sha256",
+        "url",
+        "size"
+      ]
+    },
+    "toolInfo": {
+      "type": "object",
+      "description": "Information about one tool",
+      "properties": {
+        "name": {
+          "description": "Tool name (used as a directory name)",
+          "type": "string"
+        },
+        "platform_overrides": {
+          "type": "array",
+          "description": "List of platform-specific overrides",
+          "items": {
+            "$ref": "#/definitions4/platformOverrideInfo"
+          }
+        },
+        "version_cmd": {
+          "$ref": "#/definitions4/arrayOfStrings",
+          "description": "Command to be executed (along with any extra arguments). The executable be present in one of the export_paths."
+        },
+        "license": {
+          "description": "License name. Use SPDX license identifier if it exists, short name of the license otherwise.",
+          "type": "string"
+        },
+        "info_url": {
+          "description": "URL of the page with information about the tool",
+          "type": "string"
+        },
+        "strip_container_dirs": {
+          "type": "integer",
+          "description": "If specified, this number of top directory levels will removed when extracting. E.g. if strip_container_dirs=2, archive path a/b/c/d.txt will be extracted as c/d.txt"
+        },
+        "export_paths": {
+          "$ref": "#/definitions4/exportPaths"
+        },
+        "export_vars": {
+          "$ref": "#/definitions4/envVars",
+          "description": "Some variable expansions are done on the values. 1) ${TOOL_PATH} is replaced with the directory where the tool is installed."
+        },
+        "description": {
+          "description": "A short (one sentence) description of the tool.",
+          "type": "string"
+        },
+        "versions": {
+          "type": "array",
+          "description": "List of versions",
+          "items": {
+            "$ref": "#/definitions4/versionInfo"
+          }
+        },
+        "version_regex_replace": {
+          "description": "If given, this will be used as substitute expression for the regex defined in version_regex, to obtain the version string. Not specifying this is equivalent to setting it to '\\1' (i.e. return the first capture group).",
+          "type": "string"
+        },
+        "install": {
+          "$ref": "#/definitions4/installRequirementInfo",
+          "description": "If 'always', the tool will be installed by default. If 'on_request', tool will be installed when specifically requested. If 'never', tool will not be considered for installation."
+        },
+        "version_regex": {
+          "description": "Regex which is to be applied to version_cmd output to extract the version. By default, the version will be the first capture group of the expression. If version_regex_replace is specified, version will be obtained by doing a substitution using version_regex_replace instead.",
+          "$ref": "#/definitions4/regex"
+        }
+      },
+      "required": [
+        "description",
+        "export_paths",
+        "version_cmd",
+        "version_regex",
+        "versions",
+        "install",
+        "info_url",
+        "license"
+      ]
+    },
+    "regex": {
+      "description": "A regular expression",
+      "type": "string"
+    },
+    "platformOverrideInfo": {
+      "description": "Platform-specific values which override the defaults",
+      "type": "object",
+      "properties": {
+        "version_cmd": {
+          "description": "Platform-specific replacement for toolInfo/version_cmd",
+          "$ref": "#/definitions4/arrayOfStrings"
+        },
+        "version_regex_replace": {
+          "description": "Platform-specific replacement for toolInfo/version_regex_replace",
+          "type": "string"
+        },
+        "platforms": {
+          "description": "List of platforms to which this override applies",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "linux-i686",
+              "linux-amd64",
+              "linux-armel",
+              "linux-arm64",
+              "macos",
+              "win32",
+              "win64"
+            ]
+          }
+        },
+        "strip_container_dirs": {
+          "type": "string",
+          "description": "Platform-specific replacement for toolInfo/strip_container_dirs"
+        },
+        "export_paths": {
+          "description": "Platform-specific replacement for toolInfo/export_paths",
+          "$ref": "#/definitions4/exportPaths"
+        },
+        "export_vars": {
+          "description": "Platform-specific replacement for toolInfo/export_vars",
+          "$ref": "#/definitions4/envVars"
+        },
+        "install": {
+          "description": "Platform-specific replacement for toolInfo/install",
+          "$ref": "#/definitions4/installRequirementInfo"
+        },
+        "version_regex": {
+          "description": "Platform-specific replacement for toolInfo/version_regex",
+          "$ref": "#/definitions4/regex"
+        }
+      },
+      "required": [
+        "platforms"
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Collection of environment variables. Keys and values are the environment variable names and values, respectively.",
+              "type": "object",
+              "patternProperties": {
+                "^([A-Z_0-9]+)+$": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^([A-Z_0-9]+)+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "installRequirementInfo": {
+      "description": "If 'always', the tool will be installed by default. If 'on_request', tool will be installed when specifically requested. If 'never', tool will not be considered for installation.",
+      "type": "string",
+      "enum": [
+        "always",
+        "on_request",
+        "never"
+      ]
+    },
+    "arrayOfStrings": {
+      "description": "Array of strings. Used to represent paths (split into components) and command lines (split into arguments)",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "versionInfo": {
+      "type": "object",
+      "properties": {
+        "win32": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "any": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "name": {
+          "description": "Version name (used as a directory name)",
+          "type": "string"
+        },
+        "linux-armel": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "status": {
+          "description": "Determines whether the version is recommended/supported/deprecated",
+          "type": "string",
+          "enum": [
+            "recommended",
+            "supported",
+            "deprecated"
+          ]
+        },
+        "linux-arm64": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "linux-i686": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "macos": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "win64": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        },
+        "linux-amd64": {
+          "$ref": "#/definitions4/platformDownloadInfo"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/toolInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/toolInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions3/platformDownloadInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/platformDownloadInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/arrayOfStrings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/arrayOfStrings"
+      }
+    },
+    {
+      "$ref": "#/definitions3/toolInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/toolInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions3/arrayOfStrings"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/arrayOfStrings"
+      }
+    },
+    {
+      "$ref": "#/definitions3/versionInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/versionInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions3/exportPaths"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/exportPaths"
+      }
+    },
+    {
+      "$ref": "#/definitions4/regex"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/regex"
+      }
+    },
+    {
+      "$ref": "#/definitions4/platformOverrideInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/platformOverrideInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions3/platformOverrideInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/platformOverrideInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/envVars"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/envVars"
+      }
+    },
+    {
+      "$ref": "#/definitions3/installRequirementInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/installRequirementInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions3/regex"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/regex"
+      }
+    },
+    {
+      "$ref": "#/definitions4/installRequirementInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/installRequirementInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/platformDownloadInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/platformDownloadInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/versionInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/versionInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/exportPaths"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/exportPaths"
+      }
+    },
+    {
+      "$ref": "#/definitions3/envVars"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/envVars"
+      }
+    }
+  ]
+}

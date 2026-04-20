@@ -1,0 +1,170 @@
+[
+  {
+    "id": 577,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "ParentId",
+        "RestApiId",
+        "ChildResources"
+      ],
+      "properties": {
+        "ParentId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+$"
+        },
+        "RestApiId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]{10}$"
+        },
+        "ChildResources": {
+          "$ref": "#/definitions2/childresources"
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "childresources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/childresource"
+          }
+        },
+        "childresource": {
+          "required": [
+            "PathPart"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "type": "object",
+          "properties": {
+            "PathPart": {
+              "type": "string",
+              "pattern": "^(\\{[\\w\\-]+\\})|([\\w\\-]+)$"
+            },
+            "ChildResources": {
+              "$ref": "#/definitions2/childresources"
+            }
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "required": [
+                    "PathPart"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "PathPart": {
+                      "type": "string",
+                      "pattern": "^(\\{[\\w\\-]+\\})|([\\w\\-]+)$"
+                    },
+                    "ChildResources": {
+                      "$ref": "#/definitions2/childresources"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^PathPart$": {},
+                    "^ChildResources$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "ParentId",
+                    "RestApiId",
+                    "ChildResources"
+                  ],
+                  "properties": {
+                    "ParentId": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9]+$"
+                    },
+                    "RestApiId": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9]{10}$"
+                    },
+                    "ChildResources": {
+                      "$ref": "#/definitions2/childresources"
+                    }
+                  },
+                  "definitions2": {
+                    "childresources": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/childresource"
+                      }
+                    },
+                    "childresource": {
+                      "required": [
+                        "PathPart"
+                      ],
+                      "unevaluatedProperties": false,
+                      "type": "object",
+                      "properties": {
+                        "PathPart": {
+                          "type": "string",
+                          "pattern": "^(\\{[\\w\\-]+\\})|([\\w\\-]+)$"
+                        },
+                        "ChildResources": {
+                          "$ref": "#/definitions2/childresources"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^ParentId$": {},
+                    "^RestApiId$": {},
+                    "^ChildResources$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "childresource": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "childresources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/childresource"
+          }
+        }
+      },
+      "$ref": "#/definitions2/modern_2"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

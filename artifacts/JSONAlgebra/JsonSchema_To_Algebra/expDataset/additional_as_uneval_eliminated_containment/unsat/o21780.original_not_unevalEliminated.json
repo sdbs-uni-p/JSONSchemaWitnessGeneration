@@ -1,0 +1,1409 @@
+{
+  "allOf": [
+    {
+      "id": "http://cachemanager.net/schemas/cachemanager.json",
+      "title": "JSON schema for CacheManager configuration files",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "cacheManagers": {
+          "description": "The collection of CacheManager configurations.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/manager"
+          },
+          "minItems": 1,
+          "_uniqueItems": true,
+          "default": []
+        },
+        "redis": {
+          "type": "array",
+          "description": "The redis options. Use the 'key' of each item to reference them by other parts of the configuration.",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions3/redisConfiguration"
+              },
+              {
+                "$ref": "#/definitions3/redisConnectionString"
+              }
+            ]
+          },
+          "_uniqueItems": true,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "cacheManagers"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "http://cachemanager.net/schemas/cachemanager.json",
+        "title": "JSON schema for CacheManager configuration files",
+        "type": "object",
+        "properties": {
+          "cacheManagers": {
+            "description": "The collection of CacheManager configurations.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/manager"
+            },
+            "minItems": 1,
+            "_uniqueItems": true,
+            "default": []
+          },
+          "redis": {
+            "type": "array",
+            "description": "The redis options. Use the 'key' of each item to reference them by other parts of the configuration.",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions4/redisConfiguration"
+                },
+                {
+                  "$ref": "#/definitions4/redisConnectionString"
+                }
+              ]
+            },
+            "_uniqueItems": true,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "cacheManagers"
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "configurationKey": {
+      "type": "string",
+      "description": "The key to identify this entity by other parts of the configuration. The key must be unique for all entities of the collection.",
+      "minLength": 1
+    },
+    "expirationMode": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Absolute",
+        "Sliding"
+      ],
+      "description": "The expiration mode for the current configuration element"
+    },
+    "expirationTimeout": {
+      "type": "string",
+      "description": "The expiration timeout in milliseconds (only required if expirationMode is not None)",
+      "minLength": 1,
+      "format": "regex",
+      "pattern": "^((?:-?0*\\d+\\.)?(?:0*)(?:2[0-3]|1[0-9]|[0-9]))(?::0*([0-5]?[0-9]))?(?::0*((?:[0-5]?[0-9])(?:\\.\\d{0,7})?))?$"
+    },
+    "host": {
+      "type": "string",
+      "oneOf": [
+        {
+          "format": "hostname"
+        },
+        {
+          "format": "ipv4"
+        },
+        {
+          "format": "ipv6"
+        }
+      ],
+      "description": "The host name or IP address."
+    },
+    "channelName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "If specified, this name will be used for communication channels, if applicable"
+    },
+    "knownBackplane": {
+      "type": "object",
+      "required": [
+        "key",
+        "knownType"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/definitions3/configurationKey"
+        },
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "Redis"
+          ],
+          "description": "Choose one of the known backplane types instead of typing the full type name. The corresponding package for the backplane implementation must be installed."
+        },
+        "channelName": {
+          "$ref": "#/definitions3/channelName"
+        }
+      },
+      "additionalProperties": false
+    },
+    "unknownBackplane": {
+      "type": "object",
+      "required": [
+        "type",
+        "key"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The clr type of a backplane implementation."
+        },
+        "key": {
+          "$ref": "#/definitions3/configurationKey"
+        },
+        "channelName": {
+          "$ref": "#/definitions3/channelName"
+        }
+      },
+      "additionalProperties": false
+    },
+    "knownLoggerFactory": {
+      "type": "object",
+      "required": [
+        "knownType"
+      ],
+      "properties": {
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "Microsoft"
+          ],
+          "description": "Choose one of the known logger factories instead of typing the full type name. The corresponding package for the logger factory must be installed."
+        }
+      },
+      "additionalProperties": false
+    },
+    "unknownLoggerFactory": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The clr type of a logger factory which should be used by CacheManager to log events."
+        }
+      },
+      "additionalProperties": false
+    },
+    "knownSerializer": {
+      "type": "object",
+      "required": [
+        "knownType"
+      ],
+      "properties": {
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "Binary",
+            "Json"
+          ],
+          "description": "Define a known serializer type instead of setting 'serializerType'. The respective library has to be installed. The default 'binary' might not be available on all platforms."
+        }
+      },
+      "additionalProperties": false
+    },
+    "unknownSerializer": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The clr type of the serializer to be used by distributed cache handles."
+        }
+      },
+      "additionalProperties": false
+    },
+    "knownHandle": {
+      "type": "object",
+      "required": [
+        "knownType"
+      ],
+      "properties": {
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "SystemRuntime",
+            "Dictionary",
+            "SystemWeb"
+          ],
+          "description": "Shortcut to the known cache handle types. This requires the corresponding packages are installed."
+        }
+      }
+    },
+    "knownHandleWithConfigurationKey": {
+      "type": "object",
+      "required": [
+        "knownType",
+        "key"
+      ],
+      "properties": {
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "Redis",
+            "Couchbase",
+            "Memcached"
+          ],
+          "description": "Shortcut to the known cache handle types. This requires the corresponding packages are installed."
+        },
+        "key": {
+          "$ref": "#/definitions3/configurationKey"
+        }
+      }
+    },
+    "unknownHandle": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The clr type of the cache handle. Must be an open generic type definition.",
+          "minLength": 1
+        },
+        "key": {
+          "$ref": "#/definitions3/configurationKey"
+        }
+      }
+    },
+    "handle": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/knownHandle"
+        },
+        {
+          "$ref": "#/definitions3/knownHandleWithConfigurationKey"
+        },
+        {
+          "$ref": "#/definitions3/unknownHandle"
+        }
+      ],
+      "_uniqueItems": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the cache handle."
+        },
+        "expirationMode": {
+          "$ref": "#/definitions3/expirationMode"
+        },
+        "expirationTimeout": {
+          "$ref": "#/definitions3/expirationTimeout"
+        },
+        "isBackplaneSource": {
+          "type": "boolean",
+          "description": "Determines if the cache handle is the backplane's source. (optional; if no backplane is defined, this can stay empty. If a backplane is defined, at least one handle must be flagged.)"
+        },
+        "enablePerformanceCounters": {
+          "type": "boolean",
+          "description": "Defines if windows performance counters should be enabled or not."
+        },
+        "enableStatistics": {
+          "type": "boolean",
+          "description": "Defines if statistics should be captured."
+        }
+      }
+    },
+    "manager": {
+      "description": "The configuration for one CacheManager instance.",
+      "type": "object",
+      "required": [
+        "handles"
+      ],
+      "default": {
+        "handles": []
+      },
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the cache manager instance."
+        },
+        "updateMode": {
+          "type": "string",
+          "enum": [
+            "None",
+            "Full",
+            "Up"
+          ],
+          "description": "The update mode (default is Up).",
+          "default": "Up"
+        },
+        "maxRetries": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The number of retries in case the cache action fails before the cache manager throws the exception (default is 50)."
+        },
+        "retryTimeout": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The time between retries (default is 100)."
+        },
+        "backplane": {
+          "type": "object",
+          "description": "The backplane configuration.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/knownBackplane"
+            },
+            {
+              "$ref": "#/definitions3/unknownBackplane"
+            }
+          ]
+        },
+        "loggerFactory": {
+          "type": "object",
+          "description": "The logger factory configuration.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/knownLoggerFactory"
+            },
+            {
+              "$ref": "#/definitions3/unknownLoggerFactory"
+            }
+          ]
+        },
+        "serializer": {
+          "type": "object",
+          "description": "The logger factory configuration.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/knownSerializer"
+            },
+            {
+              "$ref": "#/definitions3/unknownSerializer"
+            }
+          ]
+        },
+        "handles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/handle"
+          },
+          "description": "The collection of cache handles the CacheManager instance should use.",
+          "minItems": 1
+        }
+      }
+    },
+    "redisConnectionString": {
+      "description": "A connection string based redis configuration.",
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "key",
+        "connectionString"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/definitions3/configurationKey"
+        },
+        "connectionString": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The StackExchange.Redis connection string, see https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Configuration.md."
+        }
+      }
+    },
+    "redisConfiguration": {
+      "description": "A redis configuration.",
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "key",
+        "endpoints"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/definitions3/configurationKey"
+        },
+        "password": {
+          "type": "string",
+          "description": "The server password.",
+          "minLength": 1
+        },
+        "allowAdmin": {
+          "type": "boolean",
+          "description": "If set to true, enables certain commands which might be time intensive, e.g. FLUSHDB."
+        },
+        "isSsl": {
+          "type": "boolean",
+          "description": "Defines if an ssl connection should be used."
+        },
+        "sslHost": {
+          "$ref": "#/definitions3/host",
+          "description": "The ssl host to be used in conjunction with the ssl flag."
+        },
+        "database": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The database to be used on the redis instance."
+        },
+        "connectionTimeout": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The time in milliseconds before the connection attempt gets timed out."
+        },
+        "endpoints": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The collection of redis hosts.",
+          "items": {
+            "required": [
+              "host",
+              "port"
+            ],
+            "type": "object",
+            "properties": {
+              "host": {
+                "$ref": "#/definitions3/host"
+              },
+              "port": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535,
+                "description": "The port number of the redis host."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "key"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "The clr type of a backplane implementation."
+                },
+                "key": {
+                  "$ref": "#/definitions4/configurationKey"
+                },
+                "channelName": {
+                  "$ref": "#/definitions4/channelName"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^key$": true,
+                "^channelName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "host": {
+      "type": "string",
+      "oneOf": [
+        {
+          "format": "hostname"
+        },
+        {
+          "format": "ipv4"
+        },
+        {
+          "format": "ipv6"
+        }
+      ],
+      "description": "The host name or IP address."
+    },
+    "knownLoggerFactory": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "knownType"
+              ],
+              "properties": {
+                "knownType": {
+                  "type": "string",
+                  "enum": [
+                    "Microsoft"
+                  ],
+                  "description": "Choose one of the known logger factories instead of typing the full type name. The corresponding package for the logger factory must be installed."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^knownType$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "configurationKey": {
+      "type": "string",
+      "description": "The key to identify this entity by other parts of the configuration. The key must be unique for all entities of the collection.",
+      "minLength": 1
+    },
+    "unknownSerializer": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "The clr type of a logger factory which should be used by CacheManager to log events."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "expirationTimeout": {
+      "type": "string",
+      "description": "The expiration timeout in milliseconds (only required if expirationMode is not None)",
+      "minLength": 1,
+      "format": "regex",
+      "pattern": "^((?:-?0*\\d+\\.)?(?:0*)(?:2[0-3]|1[0-9]|[0-9]))(?::0*([0-5]?[0-9]))?(?::0*((?:[0-5]?[0-9])(?:\\.\\d{0,7})?))?$"
+    },
+    "manager": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A connection string based redis configuration.",
+              "type": "object",
+              "required": [
+                "key",
+                "connectionString"
+              ],
+              "properties": {
+                "key": {
+                  "$ref": "#/definitions4/configurationKey"
+                },
+                "connectionString": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The StackExchange.Redis connection string, see https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Configuration.md."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^key$": true,
+                "^connectionString$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "unknownHandle": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The clr type of the cache handle. Must be an open generic type definition.",
+          "minLength": 1
+        },
+        "key": {
+          "$ref": "#/definitions4/configurationKey"
+        }
+      }
+    },
+    "knownHandleWithConfigurationKey": {
+      "type": "object",
+      "required": [
+        "knownType",
+        "key"
+      ],
+      "properties": {
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "Redis",
+            "Couchbase",
+            "Memcached"
+          ],
+          "description": "Shortcut to the known cache handle types. This requires the corresponding packages are installed."
+        },
+        "key": {
+          "$ref": "#/definitions4/configurationKey"
+        }
+      }
+    },
+    "redisConfiguration": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "key",
+                "knownType"
+              ],
+              "properties": {
+                "key": {
+                  "$ref": "#/definitions4/configurationKey"
+                },
+                "knownType": {
+                  "type": "string",
+                  "enum": [
+                    "Redis"
+                  ],
+                  "description": "Choose one of the known backplane types instead of typing the full type name. The corresponding package for the backplane implementation must be installed."
+                },
+                "channelName": {
+                  "$ref": "#/definitions4/channelName"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^key$": true,
+                "^knownType$": true,
+                "^channelName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "knownSerializer": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "expirationMode": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Absolute",
+        "Sliding"
+      ],
+      "description": "The expiration mode for the current configuration element"
+    },
+    "unknownBackplane": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A redis configuration.",
+              "type": "object",
+              "required": [
+                "key",
+                "endpoints"
+              ],
+              "properties": {
+                "database": {
+                  "type": "integer",
+                  "minimum": 0.0,
+                  "description": "The database to be used on the redis instance."
+                },
+                "sslHost": {
+                  "$ref": "#/definitions4/host",
+                  "description": "The ssl host to be used in conjunction with the ssl flag."
+                },
+                "endpoints": {
+                  "type": "array",
+                  "minItems": 1,
+                  "description": "The collection of redis hosts.",
+                  "items": {
+                    "required": [
+                      "host",
+                      "port"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "host": {
+                        "$ref": "#/definitions4/host"
+                      },
+                      "port": {
+                        "type": "integer",
+                        "minimum": 0.0,
+                        "maximum": 65535.0,
+                        "description": "The port number of the redis host."
+                      }
+                    }
+                  }
+                },
+                "isSsl": {
+                  "type": "boolean",
+                  "description": "Defines if an ssl connection should be used."
+                },
+                "allowAdmin": {
+                  "type": "boolean",
+                  "description": "If set to true, enables certain commands which might be time intensive, e.g. FLUSHDB."
+                },
+                "key": {
+                  "$ref": "#/definitions4/configurationKey"
+                },
+                "connectionTimeout": {
+                  "type": "integer",
+                  "minimum": 0.0,
+                  "description": "The time in milliseconds before the connection attempt gets timed out."
+                },
+                "password": {
+                  "type": "string",
+                  "description": "The server password.",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^isSsl$": true,
+                "^sslHost$": true,
+                "^allowAdmin$": true,
+                "^endpoints$": true,
+                "^connectionTimeout$": true,
+                "^database$": true,
+                "^password$": true,
+                "^key$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "knownType"
+              ],
+              "properties": {
+                "knownType": {
+                  "type": "string",
+                  "enum": [
+                    "Binary",
+                    "Json"
+                  ],
+                  "description": "Define a known serializer type instead of setting 'serializerType'. The respective library has to be installed. The default 'binary' might not be available on all platforms."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^knownType$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "channelName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "If specified, this name will be used for communication channels, if applicable"
+    },
+    "unknownLoggerFactory": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "redisConnectionString": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "knownBackplane": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "The clr type of the serializer to be used by distributed cache handles."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "handle": {
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/knownHandle"
+        },
+        {
+          "$ref": "#/definitions4/knownHandleWithConfigurationKey"
+        },
+        {
+          "$ref": "#/definitions4/unknownHandle"
+        }
+      ],
+      "_uniqueItems": true,
+      "properties": {
+        "expirationMode": {
+          "$ref": "#/definitions4/expirationMode"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the cache handle."
+        },
+        "isBackplaneSource": {
+          "type": "boolean",
+          "description": "Determines if the cache handle is the backplane's source. (optional; if no backplane is defined, this can stay empty. If a backplane is defined, at least one handle must be flagged.)"
+        },
+        "enableStatistics": {
+          "type": "boolean",
+          "description": "Defines if statistics should be captured."
+        },
+        "expirationTimeout": {
+          "$ref": "#/definitions4/expirationTimeout"
+        },
+        "enablePerformanceCounters": {
+          "type": "boolean",
+          "description": "Defines if windows performance counters should be enabled or not."
+        }
+      }
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "The configuration for one CacheManager instance.",
+              "type": "object",
+              "required": [
+                "handles"
+              ],
+              "default": {
+                "handles": []
+              },
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the cache manager instance."
+                },
+                "updateMode": {
+                  "type": "string",
+                  "enum": [
+                    "None",
+                    "Full",
+                    "Up"
+                  ],
+                  "description": "The update mode (default is Up).",
+                  "default": "Up"
+                },
+                "handles": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/handle"
+                  },
+                  "description": "The collection of cache handles the CacheManager instance should use.",
+                  "minItems": 1
+                },
+                "backplane": {
+                  "type": "object",
+                  "description": "The backplane configuration.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/knownBackplane"
+                    },
+                    {
+                      "$ref": "#/definitions4/unknownBackplane"
+                    }
+                  ]
+                },
+                "loggerFactory": {
+                  "type": "object",
+                  "description": "The logger factory configuration.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/knownLoggerFactory"
+                    },
+                    {
+                      "$ref": "#/definitions4/unknownLoggerFactory"
+                    }
+                  ]
+                },
+                "maxRetries": {
+                  "type": "integer",
+                  "minimum": 0.0,
+                  "description": "The number of retries in case the cache action fails before the cache manager throws the exception (default is 50)."
+                },
+                "serializer": {
+                  "type": "object",
+                  "description": "The logger factory configuration.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/knownSerializer"
+                    },
+                    {
+                      "$ref": "#/definitions4/unknownSerializer"
+                    }
+                  ]
+                },
+                "retryTimeout": {
+                  "type": "integer",
+                  "minimum": 0.0,
+                  "description": "The time between retries (default is 100)."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^handles$": true,
+                "^loggerFactory$": true,
+                "^retryTimeout$": true,
+                "^name$": true,
+                "^maxRetries$": true,
+                "^backplane$": true,
+                "^updateMode$": true,
+                "^serializer$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "knownHandle": {
+      "type": "object",
+      "required": [
+        "knownType"
+      ],
+      "properties": {
+        "knownType": {
+          "type": "string",
+          "enum": [
+            "SystemRuntime",
+            "Dictionary",
+            "SystemWeb"
+          ],
+          "description": "Shortcut to the known cache handle types. This requires the corresponding packages are installed."
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/redisConnectionString"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/redisConnectionString"
+      }
+    },
+    {
+      "$ref": "#/definitions4/channelName"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/channelName"
+      }
+    },
+    {
+      "$ref": "#/definitions4/knownLoggerFactory"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/knownLoggerFactory"
+      }
+    },
+    {
+      "$ref": "#/definitions4/knownHandleWithConfigurationKey"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/knownHandleWithConfigurationKey"
+      }
+    },
+    {
+      "$ref": "#/definitions3/handle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/handle"
+      }
+    },
+    {
+      "$ref": "#/definitions4/knownBackplane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/knownBackplane"
+      }
+    },
+    {
+      "$ref": "#/definitions4/host"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/host"
+      }
+    },
+    {
+      "$ref": "#/definitions3/knownHandleWithConfigurationKey"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/knownHandleWithConfigurationKey"
+      }
+    },
+    {
+      "$ref": "#/definitions4/unknownHandle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/unknownHandle"
+      }
+    },
+    {
+      "$ref": "#/definitions3/configurationKey"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/configurationKey"
+      }
+    },
+    {
+      "$ref": "#/definitions4/knownHandle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/knownHandle"
+      }
+    },
+    {
+      "$ref": "#/definitions4/unknownSerializer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/unknownSerializer"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/expirationTimeout"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/expirationTimeout"
+      }
+    },
+    {
+      "$ref": "#/definitions3/knownSerializer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/knownSerializer"
+      }
+    },
+    {
+      "$ref": "#/definitions3/channelName"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/channelName"
+      }
+    },
+    {
+      "$ref": "#/definitions3/unknownHandle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/unknownHandle"
+      }
+    },
+    {
+      "$ref": "#/definitions4/unknownLoggerFactory"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/unknownLoggerFactory"
+      }
+    },
+    {
+      "$ref": "#/definitions3/knownLoggerFactory"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/knownLoggerFactory"
+      }
+    },
+    {
+      "$ref": "#/definitions3/host"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/host"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/redisConfiguration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/redisConfiguration"
+      }
+    },
+    {
+      "$ref": "#/definitions4/manager"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/manager"
+      }
+    },
+    {
+      "$ref": "#/definitions4/knownSerializer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/knownSerializer"
+      }
+    },
+    {
+      "$ref": "#/definitions4/unknownBackplane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/unknownBackplane"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/expirationTimeout"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/expirationTimeout"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/manager"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/manager"
+      }
+    },
+    {
+      "$ref": "#/definitions3/knownBackplane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/knownBackplane"
+      }
+    },
+    {
+      "$ref": "#/definitions4/handle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/handle"
+      }
+    },
+    {
+      "$ref": "#/definitions3/unknownSerializer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/unknownSerializer"
+      }
+    },
+    {
+      "$ref": "#/definitions3/unknownBackplane"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/unknownBackplane"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/configurationKey"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/configurationKey"
+      }
+    },
+    {
+      "$ref": "#/definitions3/unknownLoggerFactory"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/unknownLoggerFactory"
+      }
+    },
+    {
+      "$ref": "#/definitions4/expirationMode"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/expirationMode"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/redisConfiguration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/redisConfiguration"
+      }
+    },
+    {
+      "$ref": "#/definitions3/redisConnectionString"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/redisConnectionString"
+      }
+    },
+    {
+      "$ref": "#/definitions3/knownHandle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/knownHandle"
+      }
+    },
+    {
+      "$ref": "#/definitions3/expirationMode"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/expirationMode"
+      }
+    }
+  ]
+}

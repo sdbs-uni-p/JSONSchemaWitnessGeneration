@@ -1,0 +1,640 @@
+[
+  {
+    "id": 3052,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "orgId": {
+          "type": "string",
+          "pattern": "^[A-Fa-f\\d]{24}$"
+        },
+        "applicationTemplateId": {
+          "type": "string",
+          "pattern": "^[A-Fa-f\\d]{24}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "endpointSlug": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 63,
+          "pattern": "^[0-9a-z-]*$"
+        },
+        "expUserTokenCutoff": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endpointDefaultCors": {
+          "type": "boolean"
+        },
+        "globals": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[0-9a-zA-Z_-]{1,255}$"
+              },
+              "json": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32767
+              },
+              "cloudOnly": {
+                "type": "boolean",
+                "default": false
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 1024
+              }
+            },
+            "additionalProperties": {
+              "not": {}
+            },
+            "required": [
+              "key",
+              "json"
+            ]
+          }
+        },
+        "archiveConfig": {
+          "type": "object",
+          "properties": {
+            "directory": {
+              "type": "string",
+              "max": 255
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "all",
+                "whitelist",
+                "blacklist"
+              ]
+            },
+            "deviceIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Fa-f\\d]{24}$"
+              },
+              "maxItems": 1000
+            },
+            "deviceTags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[0-9a-zA-Z_-]{1,255}$"
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  }
+                },
+                "additionalProperties": {
+                  "not": {}
+                }
+              },
+              "maxItems": 100
+            },
+            "includeDevices": {
+              "type": "boolean",
+              "default": true
+            },
+            "includeEvents": {
+              "type": "boolean",
+              "default": false
+            },
+            "includeDataTables": {
+              "type": "boolean",
+              "default": false
+            },
+            "dataTablesMode": {
+              "type": "string",
+              "enum": [
+                "all",
+                "whitelist",
+                "blacklist"
+              ]
+            },
+            "dataTableIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Fa-f\\d]{24}$"
+              },
+              "maxItems": 1000
+            },
+            "s3": {
+              "type": "object",
+              "properties": {
+                "bucket": {
+                  "type": "string",
+                  "max": 255
+                },
+                "accessKeyId": {
+                  "type": "string",
+                  "min": 4,
+                  "max": 128
+                },
+                "secretAccessKey": {
+                  "type": "string",
+                  "min": 4,
+                  "max": 128
+                },
+                "region": {
+                  "type": "string",
+                  "max": 128
+                }
+              },
+              "required": [
+                "bucket",
+                "accessKeyId",
+                "secretAccessKey",
+                "region"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "gcs": {
+              "type": "object",
+              "properties": {
+                "projectId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "keyJson": {
+                  "type": "string",
+                  "maxLength": 32767,
+                  "minLength": 4
+                },
+                "bucket": {
+                  "type": "string",
+                  "max": 255
+                }
+              },
+              "required": [
+                "projectId",
+                "keyJson",
+                "bucket"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            },
+            "azure": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string",
+                  "min": 3,
+                  "max": 24
+                },
+                "accountKey": {
+                  "type": "string",
+                  "max": 255
+                },
+                "bucket": {
+                  "type": "string",
+                  "min": 3,
+                  "max": 63
+                }
+              },
+              "required": [
+                "account",
+                "accountKey",
+                "bucket"
+              ],
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "blobUrlTTL": {
+          "type": "number",
+          "minimum": 3600,
+          "maximum": 604800
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "bucket": {
+                      "type": "string",
+                      "max": 255
+                    },
+                    "accessKeyId": {
+                      "type": "string",
+                      "min": 4,
+                      "max": 128
+                    },
+                    "secretAccessKey": {
+                      "type": "string",
+                      "min": 4,
+                      "max": 128
+                    },
+                    "region": {
+                      "type": "string",
+                      "max": 128
+                    }
+                  },
+                  "required": [
+                    "bucket",
+                    "accessKeyId",
+                    "secretAccessKey",
+                    "region"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^bucket$": {},
+                    "^accessKeyId$": {},
+                    "^secretAccessKey$": {},
+                    "^region$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "account": {
+                      "type": "string",
+                      "min": 3,
+                      "max": 24
+                    },
+                    "accountKey": {
+                      "type": "string",
+                      "max": 255
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "min": 3,
+                      "max": 63
+                    }
+                  },
+                  "required": [
+                    "account",
+                    "accountKey",
+                    "bucket"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^account$": {},
+                    "^accountKey$": {},
+                    "^bucket$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    "endpointDefaultCors": {
+                      "type": "boolean"
+                    },
+                    "applicationTemplateId": {
+                      "type": "string",
+                      "pattern": "^[A-Fa-f\\d]{24}$"
+                    },
+                    "orgId": {
+                      "type": "string",
+                      "pattern": "^[A-Fa-f\\d]{24}$"
+                    },
+                    "blobUrlTTL": {
+                      "type": "number",
+                      "minimum": 3600.0,
+                      "maximum": 604800.0
+                    },
+                    "expUserTokenCutoff": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "description": {
+                      "type": "string",
+                      "maxLength": 1024
+                    },
+                    "endpointSlug": {
+                      "type": "string",
+                      "minLength": 4,
+                      "maxLength": 63,
+                      "pattern": "^[0-9a-z-]*$"
+                    },
+                    "archiveConfig": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    "globals": {
+                      "type": "array",
+                      "maxItems": 100,
+                      "items": {
+                        "$ref": "#/definitions2/modern_7"
+                      }
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^blobUrlTTL$": {},
+                    "^expUserTokenCutoff$": {},
+                    "^description$": {},
+                    "^orgId$": {},
+                    "^name$": {},
+                    "^archiveConfig$": {},
+                    "^globals$": {},
+                    "^endpointDefaultCors$": {},
+                    "^applicationTemplateId$": {},
+                    "^endpointSlug$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^[0-9a-zA-Z_-]{1,255}$"
+                    },
+                    "json": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 32767
+                    },
+                    "cloudOnly": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "description": {
+                      "type": "string",
+                      "maxLength": 1024
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "json"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^key$": {},
+                    "^json$": {},
+                    "^cloudOnly$": {},
+                    "^description$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "dataTablesMode": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "whitelist",
+                        "blacklist"
+                      ]
+                    },
+                    "gcs": {
+                      "$ref": "#/definitions2/modern_3"
+                    },
+                    "includeDataTables": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "mode": {
+                      "type": "string",
+                      "enum": [
+                        "all",
+                        "whitelist",
+                        "blacklist"
+                      ]
+                    },
+                    "deviceTags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_4"
+                      },
+                      "maxItems": 100
+                    },
+                    "directory": {
+                      "type": "string",
+                      "max": 255
+                    },
+                    "dataTableIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Fa-f\\d]{24}$"
+                      },
+                      "maxItems": 1000
+                    },
+                    "s3": {
+                      "$ref": "#/definitions2/modern_5"
+                    },
+                    "deviceIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Fa-f\\d]{24}$"
+                      },
+                      "maxItems": 1000
+                    },
+                    "azure": {
+                      "$ref": "#/definitions2/modern_6"
+                    },
+                    "includeEvents": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "includeDevices": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^deviceTags$": {},
+                    "^azure$": {},
+                    "^s3$": {},
+                    "^dataTablesMode$": {},
+                    "^directory$": {},
+                    "^includeDevices$": {},
+                    "^mode$": {},
+                    "^includeEvents$": {},
+                    "^gcs$": {},
+                    "^dataTableIds$": {},
+                    "^deviceIds$": {},
+                    "^includeDataTables$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "projectId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1024
+                    },
+                    "keyJson": {
+                      "type": "string",
+                      "maxLength": 32767,
+                      "minLength": 4
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "max": 255
+                    }
+                  },
+                  "required": [
+                    "projectId",
+                    "keyJson",
+                    "bucket"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^projectId$": {},
+                    "^keyJson$": {},
+                    "^bucket$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^[0-9a-zA-Z_-]{1,255}$"
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^key$": {},
+                    "^value$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

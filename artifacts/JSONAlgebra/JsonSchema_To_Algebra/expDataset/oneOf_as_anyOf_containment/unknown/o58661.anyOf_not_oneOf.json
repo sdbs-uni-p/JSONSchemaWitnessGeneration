@@ -1,0 +1,898 @@
+{
+  "allOf": [
+    {
+      "title": "IR of an executable unit",
+      "description": "This schema describes the JSON representation of an executable unit. An executable unit is a function, method, etc. In particular, something that can have preconditions and postconditions attached",
+      "type": "object",
+      "properties": {
+        "name": {},
+        "params": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/definitions4/typedVariableName"
+          },
+          "_uniqueItems": true
+        },
+        "body": {
+          "$ref": "#/definitions4/expression"
+        }
+      },
+      "required": [
+        "name",
+        "body"
+      ]
+    },
+    {
+      "not": {
+        "title": "IR of an executable unit",
+        "description": "This schema describes the JSON representation of an executable unit. An executable unit is a function, method, etc. In particular, something that can have preconditions and postconditions attached",
+        "type": "object",
+        "properties": {
+          "name": {},
+          "params": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "$ref": "#/definitions3/typedVariableName"
+            },
+            "_uniqueItems": true
+          },
+          "body": {
+            "$ref": "#/definitions3/expression"
+          }
+        },
+        "required": [
+          "name",
+          "body"
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "variableName": {
+      "type": "string"
+    },
+    "internalFunctionName": {
+      "type": "string"
+    },
+    "constructorName": {
+      "type": "string"
+    },
+    "valueTypeName": {
+      "type": "string"
+    },
+    "literalValue": {},
+    "typedVariableName": {
+      "title": "Variable with a type (used for introducing variables into scope)",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions4/variableName"
+        },
+        "type": {
+          "$ref": "#/definitions4/valueTypeName"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "functionDefinition": {
+      "title": "Function definition",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/typedVariableName"
+          },
+          "body": {
+            "$ref": "#/definitions4/expression"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "params",
+        "body"
+      ]
+    },
+    "pattern2": {
+      "title": "Pattern schema",
+      "anyOf": [
+        {
+          "title": "Literal pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "literal"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions4/literalValue"
+            },
+            "type": {
+              "$ref": "#/definitions4/valueTypeName"
+            }
+          },
+          "required": [
+            "patType",
+            "value",
+            "type"
+          ]
+        },
+        {
+          "title": "Variable pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "variable"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions4/variableName"
+            },
+            "type": {
+              "$ref": "#/definitions4/valueTypeName"
+            }
+          },
+          "required": [
+            "patType",
+            "value",
+            "type"
+          ]
+        },
+        {
+          "title": "Constructor pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "constructor"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions4/constructorName"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/pattern2"
+              }
+            }
+          },
+          "required": [
+            "patType",
+            "name",
+            "args"
+          ]
+        },
+        {
+          "title": "Tuple pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "tuple"
+              ]
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/pattern2"
+              }
+            }
+          },
+          "required": [
+            "patType",
+            "components"
+          ]
+        }
+      ]
+    },
+    "expression": {
+      "title": "Expression schema",
+      "anyOf": [
+        {
+          "title": "Literal expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "literal"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions4/literalValue"
+            },
+            "type": {
+              "$ref": "#/definitions4/valueTypeName"
+            }
+          },
+          "required": [
+            "expType",
+            "value",
+            "type"
+          ]
+        },
+        {
+          "title": "Variable expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "variable"
+              ]
+            },
+            "variable": {
+              "$ref": "#/definitions4/variableName"
+            }
+          },
+          "required": [
+            "expType",
+            "variable"
+          ]
+        },
+        {
+          "title": "Let expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "let"
+              ]
+            },
+            "bindings": {
+              "type": "array",
+              "items": {
+                "title": "Binding of a Let",
+                "type": "object",
+                "attributes": {
+                  "lhs": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions4/variableName"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions4/variableName"
+                        }
+                      }
+                    ]
+                  },
+                  "rhs": {
+                    "$ref": "#/definitions4/expression"
+                  }
+                },
+                "required": [
+                  "lhs",
+                  "ths"
+                ]
+              }
+            },
+            "main": {
+              "$ref": "#/definitions4/expression"
+            }
+          },
+          "required": [
+            "expType",
+            "bindings",
+            "main"
+          ]
+        },
+        {
+          "title": "Case expression",
+          "type": "object",
+          "attributes": {
+            "expType": {
+              "enum": [
+                "case"
+              ]
+            },
+            "discriminant": {
+              "$ref": "#/definitions4/expression"
+            },
+            "branches": {
+              "type": "array",
+              "items": {
+                "title": "Case alternative",
+                "type": "object",
+                "attributes": {
+                  "pattern": {
+                    "$ref": "#/definitions4/pattern2"
+                  },
+                  "exp": {
+                    "$ref": "#/definitions4/expression"
+                  }
+                },
+                "required": [
+                  "pattern",
+                  "expr"
+                ]
+              }
+            },
+            "defaultBranch": {
+              "$ref": "#/definitions4/expression"
+            }
+          },
+          "required": [
+            "expType",
+            "discriminant",
+            "branches"
+          ]
+        },
+        {
+          "title": "Constructor application",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "constructor"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions4/constructorName"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/expression"
+              }
+            }
+          },
+          "required": [
+            "expType",
+            "name",
+            "args"
+          ]
+        },
+        {
+          "title": "Function application (internal)",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "application"
+              ]
+            },
+            "external": {
+              "enum": [
+                false
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions4/internalFunctionName"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/expression"
+              }
+            }
+          },
+          "required": [
+            "expType",
+            "name",
+            "args",
+            "external"
+          ]
+        },
+        {
+          "title": "Function application (external)",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "application"
+              ]
+            },
+            "external": {
+              "enum": [
+                true
+              ]
+            },
+            "name": {
+              "type": "object"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/expression"
+              }
+            }
+          },
+          "required": [
+            "expType",
+            "name",
+            "args",
+            "external"
+          ]
+        },
+        {
+          "title": "Letfun expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "letfun"
+              ]
+            },
+            "defs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/functionDefinition"
+              }
+            },
+            "main": {
+              "$ref": "#/definitions4/expression"
+            }
+          },
+          "required": [
+            "expType",
+            "defs",
+            "main"
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "variableName": {
+      "type": "string"
+    },
+    "internalFunctionName": {
+      "type": "string"
+    },
+    "constructorName": {
+      "type": "string"
+    },
+    "valueTypeName": {
+      "type": "string"
+    },
+    "literalValue": {},
+    "typedVariableName": {
+      "title": "Variable with a type (used for introducing variables into scope)",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions3/variableName"
+        },
+        "type": {
+          "$ref": "#/definitions3/valueTypeName"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "functionDefinition": {
+      "title": "Function definition",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/typedVariableName"
+          },
+          "body": {
+            "$ref": "#/definitions3/expression"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "params",
+        "body"
+      ]
+    },
+    "pattern2": {
+      "title": "Pattern schema",
+      "oneOf": [
+        {
+          "title": "Literal pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "literal"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions3/literalValue"
+            },
+            "type": {
+              "$ref": "#/definitions3/valueTypeName"
+            }
+          },
+          "required": [
+            "patType",
+            "value",
+            "type"
+          ]
+        },
+        {
+          "title": "Variable pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "variable"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions3/variableName"
+            },
+            "type": {
+              "$ref": "#/definitions3/valueTypeName"
+            }
+          },
+          "required": [
+            "patType",
+            "value",
+            "type"
+          ]
+        },
+        {
+          "title": "Constructor pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "constructor"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions3/constructorName"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/pattern2"
+              }
+            }
+          },
+          "required": [
+            "patType",
+            "name",
+            "args"
+          ]
+        },
+        {
+          "title": "Tuple pattern",
+          "type": "object",
+          "properties": {
+            "patType": {
+              "enum": [
+                "tuple"
+              ]
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/pattern2"
+              }
+            }
+          },
+          "required": [
+            "patType",
+            "components"
+          ]
+        }
+      ]
+    },
+    "expression": {
+      "title": "Expression schema",
+      "oneOf": [
+        {
+          "title": "Literal expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "literal"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions3/literalValue"
+            },
+            "type": {
+              "$ref": "#/definitions3/valueTypeName"
+            }
+          },
+          "required": [
+            "expType",
+            "value",
+            "type"
+          ]
+        },
+        {
+          "title": "Variable expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "variable"
+              ]
+            },
+            "variable": {
+              "$ref": "#/definitions3/variableName"
+            }
+          },
+          "required": [
+            "expType",
+            "variable"
+          ]
+        },
+        {
+          "title": "Let expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "let"
+              ]
+            },
+            "bindings": {
+              "type": "array",
+              "items": {
+                "title": "Binding of a Let",
+                "type": "object",
+                "attributes": {
+                  "lhs": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions3/variableName"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions3/variableName"
+                        }
+                      }
+                    ]
+                  },
+                  "rhs": {
+                    "$ref": "#/definitions3/expression"
+                  }
+                },
+                "required": [
+                  "lhs",
+                  "ths"
+                ]
+              }
+            },
+            "main": {
+              "$ref": "#/definitions3/expression"
+            }
+          },
+          "required": [
+            "expType",
+            "bindings",
+            "main"
+          ]
+        },
+        {
+          "title": "Case expression",
+          "type": "object",
+          "attributes": {
+            "expType": {
+              "enum": [
+                "case"
+              ]
+            },
+            "discriminant": {
+              "$ref": "#/definitions3/expression"
+            },
+            "branches": {
+              "type": "array",
+              "items": {
+                "title": "Case alternative",
+                "type": "object",
+                "attributes": {
+                  "pattern": {
+                    "$ref": "#/definitions3/pattern2"
+                  },
+                  "exp": {
+                    "$ref": "#/definitions3/expression"
+                  }
+                },
+                "required": [
+                  "pattern",
+                  "expr"
+                ]
+              }
+            },
+            "defaultBranch": {
+              "$ref": "#/definitions3/expression"
+            }
+          },
+          "required": [
+            "expType",
+            "discriminant",
+            "branches"
+          ]
+        },
+        {
+          "title": "Constructor application",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "constructor"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions3/constructorName"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/expression"
+              }
+            }
+          },
+          "required": [
+            "expType",
+            "name",
+            "args"
+          ]
+        },
+        {
+          "title": "Function application (internal)",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "application"
+              ]
+            },
+            "external": {
+              "enum": [
+                false
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions3/internalFunctionName"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/expression"
+              }
+            }
+          },
+          "required": [
+            "expType",
+            "name",
+            "args",
+            "external"
+          ]
+        },
+        {
+          "title": "Function application (external)",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "application"
+              ]
+            },
+            "external": {
+              "enum": [
+                true
+              ]
+            },
+            "name": {
+              "type": "object"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/expression"
+              }
+            }
+          },
+          "required": [
+            "expType",
+            "name",
+            "args",
+            "external"
+          ]
+        },
+        {
+          "title": "Letfun expression",
+          "type": "object",
+          "properties": {
+            "expType": {
+              "enum": [
+                "letfun"
+              ]
+            },
+            "defs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/functionDefinition"
+              }
+            },
+            "main": {
+              "$ref": "#/definitions3/expression"
+            }
+          },
+          "required": [
+            "expType",
+            "defs",
+            "main"
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/expression"
+    },
+    {
+      "$ref": "#/definitions3/expression"
+    },
+    {
+      "$ref": "#/definitions4/constructorName"
+    },
+    {
+      "$ref": "#/definitions4/variableName"
+    },
+    {
+      "$ref": "#/definitions4/pattern2"
+    },
+    {
+      "$ref": "#/definitions3/internalFunctionName"
+    },
+    {
+      "$ref": "#/definitions3/functionDefinition"
+    },
+    {
+      "$ref": "#/definitions3/pattern2"
+    },
+    {
+      "$ref": "#/definitions4/literalValue"
+    },
+    {
+      "$ref": "#/definitions4/internalFunctionName"
+    },
+    {
+      "$ref": "#/definitions4/typedVariableName"
+    },
+    {
+      "$ref": "#/definitions3/constructorName"
+    },
+    {
+      "$ref": "#/definitions3/variableName"
+    },
+    {
+      "$ref": "#/definitions3/valueTypeName"
+    },
+    {
+      "$ref": "#/definitions4/functionDefinition"
+    },
+    {
+      "$ref": "#/definitions4/valueTypeName"
+    },
+    {
+      "$ref": "#/definitions3/typedVariableName"
+    },
+    {
+      "$ref": "#/definitions3/literalValue"
+    }
+  ]
+}

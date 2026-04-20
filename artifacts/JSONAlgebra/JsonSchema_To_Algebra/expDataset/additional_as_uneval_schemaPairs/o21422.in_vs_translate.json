@@ -1,0 +1,1233 @@
+[
+  {
+    "id": 523,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "absolute_path": {
+          "description": "A path only. Query string and/or fragment are not allowed.",
+          "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$",
+          "type": "string"
+        },
+        "access_limited": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "auth_bypass_ids": {
+              "$ref": "#/definitions2/guid_list",
+              "description": "Deprecated: auth_bypass_ids should be sent as a separate field"
+            },
+            "organisations": {
+              "$ref": "#/definitions2/guid_list",
+              "description": "A list of organisation content ids permitted access to this item"
+            },
+            "users": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "analytics_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A short identifier we send to Google Analytics for multi-valued fields. This means we avoid the truncated values we would get if we sent the path or slug of eg organisations."
+        },
+        "description": {
+          "type": "string"
+        },
+        "description_optional": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions2/description"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "details": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "email_signup_link": {
+              "$ref": "#/definitions2/email_signup_link"
+            },
+            "max_cache_time": {
+              "$ref": "#/definitions2/max_cache_time"
+            },
+            "publishing_request_id": {
+              "$ref": "#/definitions2/publishing_request_id"
+            }
+          },
+          "required": [
+            "email_signup_link"
+          ],
+          "type": "object"
+        },
+        "email_signup_link": {
+          "_format": "uri",
+          "description": "Path to email signup form. TODO: Check if can be switched to use links instead",
+          "type": "string"
+        },
+        "first_published_at": {
+          "_format": "date-time",
+          "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+          "type": "string"
+        },
+        "guid": {
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+          "type": "string"
+        },
+        "guid_list": {
+          "items": {
+            "$ref": "#/definitions2/guid"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "locale": {
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bn",
+            "cs",
+            "cy",
+            "da",
+            "de",
+            "dr",
+            "el",
+            "en",
+            "es",
+            "es-419",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "gd",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "hy",
+            "id",
+            "is",
+            "it",
+            "ja",
+            "ka",
+            "kk",
+            "ko",
+            "lt",
+            "lv",
+            "ms",
+            "mt",
+            "nl",
+            "no",
+            "pl",
+            "ps",
+            "pt",
+            "ro",
+            "ru",
+            "si",
+            "sk",
+            "sl",
+            "so",
+            "sq",
+            "sr",
+            "sv",
+            "sw",
+            "ta",
+            "th",
+            "tk",
+            "tr",
+            "uk",
+            "ur",
+            "uz",
+            "vi",
+            "zh",
+            "zh-hk",
+            "zh-tw"
+          ],
+          "type": "string"
+        },
+        "max_cache_time": {
+          "description": "The maximum length of time the content should be cached, in seconds",
+          "type": "integer"
+        },
+        "public_updated_at": {
+          "_format": "date-time",
+          "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+          "type": "string"
+        },
+        "publishing_app_name": {
+          "description": "The application that published this item.",
+          "enum": [
+            "calculators",
+            "calendars",
+            "collections-publisher",
+            "contacts",
+            "content-publisher",
+            "content-tagger",
+            "email-alert-frontend",
+            "external-link-tracker",
+            "feedback",
+            "frontend",
+            "government-frontend",
+            "hmrc-manuals-api",
+            "info-frontend",
+            "licencefinder",
+            "local-links-manager",
+            "manuals-frontend",
+            "manuals-publisher",
+            "maslow",
+            "performanceplatform-big-screen-view",
+            "publisher",
+            "rummager",
+            "search-admin",
+            "search-api",
+            "service-manual-publisher",
+            "share-sale-publisher",
+            "short-url-manager",
+            "smartanswers",
+            "special-route-publisher",
+            "specialist-publisher",
+            "static",
+            "tariff",
+            "travel-advice-publisher",
+            "whitehall"
+          ],
+          "type": "string"
+        },
+        "publishing_request_id": {
+          "description": "A unique identifier used to track publishing requests to rendered content",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rendering_app": {
+          "description": "The application that renders this item.",
+          "enum": [
+            "calculators",
+            "calendars",
+            "collections",
+            "content-store",
+            "email-alert-frontend",
+            "email-campaign-frontend",
+            "feedback",
+            "finder-frontend",
+            "frontend",
+            "government-frontend",
+            "info-frontend",
+            "licencefinder",
+            "manuals-frontend",
+            "performanceplatform-big-screen-view",
+            "rummager",
+            "search-api",
+            "service-manual-frontend",
+            "smartanswers",
+            "spotlight",
+            "static",
+            "tariff",
+            "whitehall-admin",
+            "whitehall-frontend"
+          ],
+          "type": "string"
+        },
+        "route": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "prefix",
+                "exact"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "type"
+          ],
+          "type": "object"
+        },
+        "routes": {
+          "items": {
+            "$ref": "#/definitions2/route"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "title": {
+          "type": "string"
+        },
+        "update_type": {
+          "enum": [
+            "major",
+            "minor",
+            "republish"
+          ]
+        }
+      },
+      "properties": {
+        "access_limited": {
+          "$ref": "#/definitions2/access_limited"
+        },
+        "analytics_identifier": {
+          "$ref": "#/definitions2/analytics_identifier"
+        },
+        "auth_bypass_ids": {
+          "$ref": "#/definitions2/guid_list",
+          "description": "A list of ids that will allow access to this item for non-authenticated users"
+        },
+        "base_path": {
+          "$ref": "#/definitions2/absolute_path"
+        },
+        "bulk_publishing": {
+          "type": "boolean"
+        },
+        "change_note": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "description": {
+          "$ref": "#/definitions2/description_optional"
+        },
+        "details": {
+          "$ref": "#/definitions2/details"
+        },
+        "document_type": {
+          "enum": [
+            "travel_advice_index"
+          ],
+          "type": "string"
+        },
+        "first_published_at": {
+          "$ref": "#/definitions2/first_published_at"
+        },
+        "last_edited_at": {
+          "_format": "date-time",
+          "description": "Last time when the content received a major or minor update.",
+          "type": "string"
+        },
+        "links": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "policy_areas": {
+              "$ref": "#/definitions2/guid_list",
+              "description": "A largely deprecated tag currently only used to power email alerts."
+            }
+          },
+          "type": "object"
+        },
+        "locale": {
+          "$ref": "#/definitions2/locale"
+        },
+        "need_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "phase": {
+          "description": "The service design phase of this content item - https://www.gov.uk/service-manual/phases",
+          "enum": [
+            "alpha",
+            "beta",
+            "live"
+          ],
+          "type": "string"
+        },
+        "previous_version": {
+          "type": "string"
+        },
+        "public_updated_at": {
+          "$ref": "#/definitions2/public_updated_at"
+        },
+        "publishing_app": {
+          "$ref": "#/definitions2/publishing_app_name"
+        },
+        "redirects": {
+          "additionalItems": false,
+          "items": {},
+          "type": "array"
+        },
+        "rendering_app": {
+          "$ref": "#/definitions2/rendering_app"
+        },
+        "routes": {
+          "$ref": "#/definitions2/routes"
+        },
+        "schema_name": {
+          "enum": [
+            "travel_advice_index"
+          ],
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/definitions2/title"
+        },
+        "update_type": {
+          "$ref": "#/definitions2/update_type"
+        }
+      },
+      "required": [
+        "base_path",
+        "details",
+        "document_type",
+        "publishing_app",
+        "rendering_app",
+        "routes",
+        "schema_name",
+        "title"
+      ],
+      "type": "object"
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "routes": {
+          "items": {
+            "$ref": "#/definitions2/route"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "description": {
+          "type": "string"
+        },
+        "publishing_app_name": {
+          "description": "The application that published this item.",
+          "enum": [
+            "calculators",
+            "calendars",
+            "collections-publisher",
+            "contacts",
+            "content-publisher",
+            "content-tagger",
+            "email-alert-frontend",
+            "external-link-tracker",
+            "feedback",
+            "frontend",
+            "government-frontend",
+            "hmrc-manuals-api",
+            "info-frontend",
+            "licencefinder",
+            "local-links-manager",
+            "manuals-frontend",
+            "manuals-publisher",
+            "maslow",
+            "performanceplatform-big-screen-view",
+            "publisher",
+            "rummager",
+            "search-admin",
+            "search-api",
+            "service-manual-publisher",
+            "share-sale-publisher",
+            "short-url-manager",
+            "smartanswers",
+            "special-route-publisher",
+            "specialist-publisher",
+            "static",
+            "tariff",
+            "travel-advice-publisher",
+            "whitehall"
+          ],
+          "type": "string"
+        },
+        "public_updated_at": {
+          "_format": "date-time",
+          "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+          "type": "string"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "prefix",
+                        "exact"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "type"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^path$": {},
+                    "^type$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "locale": {
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bn",
+            "cs",
+            "cy",
+            "da",
+            "de",
+            "dr",
+            "el",
+            "en",
+            "es",
+            "es-419",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "gd",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "hy",
+            "id",
+            "is",
+            "it",
+            "ja",
+            "ka",
+            "kk",
+            "ko",
+            "lt",
+            "lv",
+            "ms",
+            "mt",
+            "nl",
+            "no",
+            "pl",
+            "ps",
+            "pt",
+            "ro",
+            "ru",
+            "si",
+            "sk",
+            "sl",
+            "so",
+            "sq",
+            "sr",
+            "sv",
+            "sw",
+            "ta",
+            "th",
+            "tk",
+            "tr",
+            "uk",
+            "ur",
+            "uz",
+            "vi",
+            "zh",
+            "zh-hk",
+            "zh-tw"
+          ],
+          "type": "string"
+        },
+        "analytics_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A short identifier we send to Google Analytics for multi-valued fields. This means we avoid the truncated values we would get if we sent the path or slug of eg organisations."
+        },
+        "rendering_app": {
+          "description": "The application that renders this item.",
+          "enum": [
+            "calculators",
+            "calendars",
+            "collections",
+            "content-store",
+            "email-alert-frontend",
+            "email-campaign-frontend",
+            "feedback",
+            "finder-frontend",
+            "frontend",
+            "government-frontend",
+            "info-frontend",
+            "licencefinder",
+            "manuals-frontend",
+            "performanceplatform-big-screen-view",
+            "rummager",
+            "search-api",
+            "service-manual-frontend",
+            "smartanswers",
+            "spotlight",
+            "static",
+            "tariff",
+            "whitehall-admin",
+            "whitehall-frontend"
+          ],
+          "type": "string"
+        },
+        "publishing_request_id": {
+          "description": "A unique identifier used to track publishing requests to rendered content",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "route": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "title": {
+          "type": "string"
+        },
+        "absolute_path": {
+          "description": "A path only. Query string and/or fragment are not allowed.",
+          "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$",
+          "type": "string"
+        },
+        "update_type": {
+          "enum": [
+            "major",
+            "minor",
+            "republish"
+          ]
+        },
+        "description_optional": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions2/description"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "guid_list": {
+          "items": {
+            "$ref": "#/definitions2/guid"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "items": true,
+                  "type": "array"
+                },
+                {
+                  "items": {
+                    "anyOf": [
+                      true,
+                      false
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "first_published_at": {
+          "_format": "date-time",
+          "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+          "type": "string"
+        },
+        "access_limited": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "policy_areas": {
+                      "$ref": "#/definitions2/guid_list",
+                      "description": "A largely deprecated tag currently only used to power email alerts."
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^policy_areas$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "guid": {
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+          "type": "string"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "email_signup_link": {
+                      "$ref": "#/definitions2/email_signup_link"
+                    },
+                    "max_cache_time": {
+                      "$ref": "#/definitions2/max_cache_time"
+                    },
+                    "publishing_request_id": {
+                      "$ref": "#/definitions2/publishing_request_id"
+                    }
+                  },
+                  "required": [
+                    "email_signup_link"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^email_signup_link$": {},
+                    "^max_cache_time$": {},
+                    "^publishing_request_id$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "email_signup_link": {
+          "_format": "uri",
+          "description": "Path to email signup form. TODO: Check if can be switched to use links instead",
+          "type": "string"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "auth_bypass_ids": {
+                      "$ref": "#/definitions2/guid_list",
+                      "description": "Deprecated: auth_bypass_ids should be sent as a separate field"
+                    },
+                    "organisations": {
+                      "$ref": "#/definitions2/guid_list",
+                      "description": "A list of organisation content ids permitted access to this item"
+                    },
+                    "users": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^auth_bypass_ids$": {},
+                    "^organisations$": {},
+                    "^users$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "details": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "max_cache_time": {
+          "description": "The maximum length of time the content should be cached, in seconds",
+          "type": "integer"
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "definitions2": {
+                    "absolute_path": {
+                      "description": "A path only. Query string and/or fragment are not allowed.",
+                      "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$",
+                      "type": "string"
+                    },
+                    "access_limited": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "auth_bypass_ids": {
+                          "$ref": "#/definitions2/guid_list",
+                          "description": "Deprecated: auth_bypass_ids should be sent as a separate field"
+                        },
+                        "organisations": {
+                          "$ref": "#/definitions2/guid_list",
+                          "description": "A list of organisation content ids permitted access to this item"
+                        },
+                        "users": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "analytics_identifier": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "A short identifier we send to Google Analytics for multi-valued fields. This means we avoid the truncated values we would get if we sent the path or slug of eg organisations."
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "description_optional": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions2/description"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "details": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "email_signup_link": {
+                          "$ref": "#/definitions2/email_signup_link"
+                        },
+                        "max_cache_time": {
+                          "$ref": "#/definitions2/max_cache_time"
+                        },
+                        "publishing_request_id": {
+                          "$ref": "#/definitions2/publishing_request_id"
+                        }
+                      },
+                      "required": [
+                        "email_signup_link"
+                      ],
+                      "type": "object"
+                    },
+                    "email_signup_link": {
+                      "_format": "uri",
+                      "description": "Path to email signup form. TODO: Check if can be switched to use links instead",
+                      "type": "string"
+                    },
+                    "first_published_at": {
+                      "_format": "date-time",
+                      "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+                      "type": "string"
+                    },
+                    "guid": {
+                      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$",
+                      "type": "string"
+                    },
+                    "guid_list": {
+                      "items": {
+                        "$ref": "#/definitions2/guid"
+                      },
+                      "type": "array",
+                      "_uniqueItems": true
+                    },
+                    "locale": {
+                      "enum": [
+                        "ar",
+                        "az",
+                        "be",
+                        "bg",
+                        "bn",
+                        "cs",
+                        "cy",
+                        "da",
+                        "de",
+                        "dr",
+                        "el",
+                        "en",
+                        "es",
+                        "es-419",
+                        "et",
+                        "fa",
+                        "fi",
+                        "fr",
+                        "gd",
+                        "he",
+                        "hi",
+                        "hr",
+                        "hu",
+                        "hy",
+                        "id",
+                        "is",
+                        "it",
+                        "ja",
+                        "ka",
+                        "kk",
+                        "ko",
+                        "lt",
+                        "lv",
+                        "ms",
+                        "mt",
+                        "nl",
+                        "no",
+                        "pl",
+                        "ps",
+                        "pt",
+                        "ro",
+                        "ru",
+                        "si",
+                        "sk",
+                        "sl",
+                        "so",
+                        "sq",
+                        "sr",
+                        "sv",
+                        "sw",
+                        "ta",
+                        "th",
+                        "tk",
+                        "tr",
+                        "uk",
+                        "ur",
+                        "uz",
+                        "vi",
+                        "zh",
+                        "zh-hk",
+                        "zh-tw"
+                      ],
+                      "type": "string"
+                    },
+                    "max_cache_time": {
+                      "description": "The maximum length of time the content should be cached, in seconds",
+                      "type": "integer"
+                    },
+                    "public_updated_at": {
+                      "_format": "date-time",
+                      "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+                      "type": "string"
+                    },
+                    "publishing_app_name": {
+                      "description": "The application that published this item.",
+                      "enum": [
+                        "calculators",
+                        "calendars",
+                        "collections-publisher",
+                        "contacts",
+                        "content-publisher",
+                        "content-tagger",
+                        "email-alert-frontend",
+                        "external-link-tracker",
+                        "feedback",
+                        "frontend",
+                        "government-frontend",
+                        "hmrc-manuals-api",
+                        "info-frontend",
+                        "licencefinder",
+                        "local-links-manager",
+                        "manuals-frontend",
+                        "manuals-publisher",
+                        "maslow",
+                        "performanceplatform-big-screen-view",
+                        "publisher",
+                        "rummager",
+                        "search-admin",
+                        "search-api",
+                        "service-manual-publisher",
+                        "share-sale-publisher",
+                        "short-url-manager",
+                        "smartanswers",
+                        "special-route-publisher",
+                        "specialist-publisher",
+                        "static",
+                        "tariff",
+                        "travel-advice-publisher",
+                        "whitehall"
+                      ],
+                      "type": "string"
+                    },
+                    "publishing_request_id": {
+                      "description": "A unique identifier used to track publishing requests to rendered content",
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "rendering_app": {
+                      "description": "The application that renders this item.",
+                      "enum": [
+                        "calculators",
+                        "calendars",
+                        "collections",
+                        "content-store",
+                        "email-alert-frontend",
+                        "email-campaign-frontend",
+                        "feedback",
+                        "finder-frontend",
+                        "frontend",
+                        "government-frontend",
+                        "info-frontend",
+                        "licencefinder",
+                        "manuals-frontend",
+                        "performanceplatform-big-screen-view",
+                        "rummager",
+                        "search-api",
+                        "service-manual-frontend",
+                        "smartanswers",
+                        "spotlight",
+                        "static",
+                        "tariff",
+                        "whitehall-admin",
+                        "whitehall-frontend"
+                      ],
+                      "type": "string"
+                    },
+                    "route": {
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "prefix",
+                            "exact"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "type"
+                      ],
+                      "type": "object"
+                    },
+                    "routes": {
+                      "items": {
+                        "$ref": "#/definitions2/route"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "update_type": {
+                      "enum": [
+                        "major",
+                        "minor",
+                        "republish"
+                      ]
+                    }
+                  },
+                  "properties": {
+                    "base_path": {
+                      "$ref": "#/definitions2/absolute_path"
+                    },
+                    "routes": {
+                      "$ref": "#/definitions2/routes"
+                    },
+                    "previous_version": {
+                      "type": "string"
+                    },
+                    "public_updated_at": {
+                      "$ref": "#/definitions2/public_updated_at"
+                    },
+                    "change_note": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "analytics_identifier": {
+                      "$ref": "#/definitions2/analytics_identifier"
+                    },
+                    "rendering_app": {
+                      "$ref": "#/definitions2/rendering_app"
+                    },
+                    "details": {
+                      "$ref": "#/definitions2/details"
+                    },
+                    "title": {
+                      "$ref": "#/definitions2/title"
+                    },
+                    "redirects": {
+                      "$ref": "#/definitions2/modern_5"
+                    },
+                    "update_type": {
+                      "$ref": "#/definitions2/update_type"
+                    },
+                    "document_type": {
+                      "enum": [
+                        "travel_advice_index"
+                      ],
+                      "type": "string"
+                    },
+                    "publishing_app": {
+                      "$ref": "#/definitions2/publishing_app_name"
+                    },
+                    "first_published_at": {
+                      "$ref": "#/definitions2/first_published_at"
+                    },
+                    "access_limited": {
+                      "$ref": "#/definitions2/access_limited"
+                    },
+                    "description": {
+                      "$ref": "#/definitions2/description_optional"
+                    },
+                    "phase": {
+                      "description": "The service design phase of this content item - https://www.gov.uk/service-manual/phases",
+                      "enum": [
+                        "alpha",
+                        "beta",
+                        "live"
+                      ],
+                      "type": "string"
+                    },
+                    "need_ids": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "auth_bypass_ids": {
+                      "$ref": "#/definitions2/guid_list",
+                      "description": "A list of ids that will allow access to this item for non-authenticated users"
+                    },
+                    "locale": {
+                      "$ref": "#/definitions2/locale"
+                    },
+                    "bulk_publishing": {
+                      "type": "boolean"
+                    },
+                    "last_edited_at": {
+                      "_format": "date-time",
+                      "description": "Last time when the content received a major or minor update.",
+                      "type": "string"
+                    },
+                    "schema_name": {
+                      "enum": [
+                        "travel_advice_index"
+                      ],
+                      "type": "string"
+                    },
+                    "links": {
+                      "$ref": "#/definitions2/modern_6"
+                    }
+                  },
+                  "required": [
+                    "base_path",
+                    "details",
+                    "document_type",
+                    "publishing_app",
+                    "rendering_app",
+                    "routes",
+                    "schema_name",
+                    "title"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^auth_bypass_ids$": {},
+                    "^rendering_app$": {},
+                    "^publishing_app$": {},
+                    "^locale$": {},
+                    "^details$": {},
+                    "^previous_version$": {},
+                    "^need_ids$": {},
+                    "^links$": {},
+                    "^document_type$": {},
+                    "^phase$": {},
+                    "^first_published_at$": {},
+                    "^routes$": {},
+                    "^update_type$": {},
+                    "^schema_name$": {},
+                    "^base_path$": {},
+                    "^access_limited$": {},
+                    "^redirects$": {},
+                    "^description$": {},
+                    "^last_edited_at$": {},
+                    "^analytics_identifier$": {},
+                    "^public_updated_at$": {},
+                    "^change_note$": {},
+                    "^title$": {},
+                    "^bulk_publishing$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_4"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

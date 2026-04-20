@@ -1,0 +1,206 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "name": "Package",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "description",
+        "version",
+        "update-type",
+        "maintainer",
+        "changelog",
+        "filemapping"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Package name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short package description."
+        },
+        "version": {
+          "type": "string",
+          "description": "Package version, see http://semver.org for more info on valid schemes."
+        },
+        "update-type": {
+          "description": "Package update type, either 'minor' for minor releases, 'security' for security issues etc. or a custom type ([a-z0-9-]+) defined by whatever this package applies to.",
+          "type": "string"
+        },
+        "maintainer": {
+          "type": "string",
+          "description": "Package maintainer name."
+        },
+        "changelog": {
+          "type": "array",
+          "description": "List of all changes that will be applied (changelog).",
+          "items": {
+            "type": "string",
+            "additionalProperties": false
+          }
+        },
+        "filemapping": {
+          "type": "array",
+          "description": "List of all files that will be removed, modified or added when upgrading the app.",
+          "items": {
+            "type": "string",
+            "additionalProperties": false
+          }
+        },
+        "include": {
+          "type": "string",
+          "description": "A list of paths to include."
+        },
+        "time": {
+          "type": "string",
+          "description": "Package release date, in 'YYYY-MM-DD', 'YYYY-MM-DD HH:MM:SS' or 'YYYY-MM-DDTHH:MM:SSZ' format."
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "name": "Package",
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "version",
+                "update-type",
+                "maintainer",
+                "changelog",
+                "filemapping"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Package name"
+                },
+                "changelog": {
+                  "type": "array",
+                  "description": "List of all changes that will be applied (changelog).",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Short package description."
+                },
+                "maintainer": {
+                  "type": "string",
+                  "description": "Package maintainer name."
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Package version, see http://semver.org for more info on valid schemes."
+                },
+                "filemapping": {
+                  "type": "array",
+                  "description": "List of all files that will be removed, modified or added when upgrading the app.",
+                  "items": {
+                    "$ref": "#/definitions4/modern_3"
+                  }
+                },
+                "include": {
+                  "type": "string",
+                  "description": "A list of paths to include."
+                },
+                "update-type": {
+                  "description": "Package update type, either 'minor' for minor releases, 'security' for security issues etc. or a custom type ([a-z0-9-]+) defined by whatever this package applies to.",
+                  "type": "string"
+                },
+                "time": {
+                  "type": "string",
+                  "description": "Package release date, in 'YYYY-MM-DD', 'YYYY-MM-DD HH:MM:SS' or 'YYYY-MM-DDTHH:MM:SSZ' format."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^filemapping$": true,
+                "^update-type$": true,
+                "^version$": true,
+                "^description$": true,
+                "^changelog$": true,
+                "^name$": true,
+                "^time$": true,
+                "^include$": true,
+                "^maintainer$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

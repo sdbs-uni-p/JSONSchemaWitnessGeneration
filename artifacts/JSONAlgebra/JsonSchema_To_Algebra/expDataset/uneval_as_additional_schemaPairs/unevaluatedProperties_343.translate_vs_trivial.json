@@ -1,0 +1,185 @@
+[
+  {
+    "id": 127,
+    "schema1": {
+      "$id": "high_availability.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "definitions1": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Configuration to use Raw as backend for high availability",
+                  "properties": {
+                    "database-name": {
+                      "type": "string",
+                      "description": "Raw database to store high availability states in"
+                    },
+                    "table-name": {
+                      "type": "string",
+                      "description": "Raw table to store high availability states in"
+                    }
+                  },
+                  "required": [
+                    "database-name",
+                    "table-name"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^database-name$": {},
+                    "^table-name$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Configuration to use a Redis store as backend for high availability",
+                  "properties": {
+                    "connection-string": {
+                      "type": "string",
+                      "description": "Connection string to connect to redis instance"
+                    },
+                    "table-name": {
+                      "type": "string",
+                      "description": "Redis table name to store high availability states in"
+                    }
+                  },
+                  "required": [
+                    "connection-string",
+                    "table-name"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^connection-string$": {},
+                    "^table-name$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "description": "Configuration to allow you to run multiple redundant extractors. Each extractor needs a unique index.",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "description": "Unique index of this extractor. Each redundant extractor must have a unique index",
+          "minimum": 0.0
+        },
+        "raw": {
+          "$ref": "#/definitions1/modern_1"
+        },
+        "redis": {
+          "$ref": "#/definitions1/modern_2"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "raw"
+          ]
+        },
+        {
+          "required": [
+            "redis"
+          ]
+        }
+      ],
+      "required": [
+        "index"
+      ]
+    },
+    "schema2": {
+      "$id": "high_availability.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "description": "Configuration to allow you to run multiple redundant extractors. Each extractor needs a unique index.",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "description": "Unique index of this extractor. Each redundant extractor must have a unique index",
+          "minimum": 0
+        },
+        "raw": {
+          "type": "object",
+          "description": "Configuration to use Raw as backend for high availability",
+          "properties": {
+            "database-name": {
+              "type": "string",
+              "description": "Raw database to store high availability states in"
+            },
+            "table-name": {
+              "type": "string",
+              "description": "Raw table to store high availability states in"
+            }
+          },
+          "required": [
+            "database-name",
+            "table-name"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "redis": {
+          "type": "object",
+          "description": "Configuration to use a Redis store as backend for high availability",
+          "properties": {
+            "connection-string": {
+              "type": "string",
+              "description": "Connection string to connect to redis instance"
+            },
+            "table-name": {
+              "type": "string",
+              "description": "Redis table name to store high availability states in"
+            }
+          },
+          "required": [
+            "connection-string",
+            "table-name"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "raw"
+          ]
+        },
+        {
+          "required": [
+            "redis"
+          ]
+        }
+      ],
+      "required": [
+        "index"
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

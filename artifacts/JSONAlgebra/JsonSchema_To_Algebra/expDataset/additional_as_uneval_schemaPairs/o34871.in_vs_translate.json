@@ -1,0 +1,1396 @@
+[
+  {
+    "id": 739,
+    "schema1": {
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "asset": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "Assets reflecting files in primary storage.",
+          "properties": {
+            "clip": {
+              "$ref": "#/definitions2/segment",
+              "description": "Portion of source file to extract as this asset. Note that segment is relative to clip start."
+            },
+            "file": {
+              "description": "Relative path to file under '/nyu/stage/$directory'.",
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "options": {
+              "description": "Additional transcode options to pass to ffmpeg.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "position": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/offset",
+                  "description": "Start point only (end point inferred from length)."
+                },
+                {
+                  "$ref": "#/definitions2/segment"
+                },
+                {
+                  "description": "Automatically postioned immediately following previous positioned asset.",
+                  "enum": [
+                    "auto"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            "release": {
+              "$ref": "#/definitions2/release"
+            },
+            "replace": {
+              "description": "Original file staging path or asset id to replace.",
+              "type": [
+                "string",
+                "integer"
+              ]
+            }
+          },
+          "title": "file",
+          "type": "object"
+        },
+        "citation": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "Publications/products corresponding to study volumes.",
+          "properties": {
+            "authors": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "head": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "title": "URL or DOI",
+              "type": "string"
+            },
+            "year": {
+              "maximum": 2900,
+              "minimum": 1900,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "head"
+          ],
+          "type": "object"
+        },
+        "container": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "Organizational unit within volume containing related files (with common annotations), often corresponding to an individual data session (single visit/acquisition/participant/group/day).",
+          "properties": {
+            "assets": {
+              "description": "Attachment point of assets, which, in the case of timeseries data, should match asset.duration.",
+              "items": {
+                "$ref": "#/definitions2/asset"
+              },
+              "type": "array"
+            },
+            "date": {
+              "$ref": "#/definitions2/date"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "key": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "records": {
+              "description": "Attachment of records to slots.",
+              "items": {
+                "$ref": "#/definitions2/record"
+              },
+              "type": "array"
+            },
+            "release": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/release"
+                }
+              ],
+              "default": null,
+              "description": "Sharing/release permissions granted by participants on (portions of) contained data."
+            },
+            "top": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "title": "session or materials",
+          "type": "object"
+        },
+        "date": {
+          "pattern": "^[12][0-9]{3}-[01][0-9]-[0-3][0-9]$",
+          "type": "string"
+        },
+        "link": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "Link to externals resources/references.",
+          "properties": {
+            "head": {
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "title": "URL or DOI",
+              "type": "string"
+            }
+          },
+          "required": [
+            "head",
+            "url"
+          ],
+          "type": "object"
+        },
+        "numeric": {
+          "pattern": "^[0-9]*(\\.[0-9]*)?$",
+          "type": "string"
+        },
+        "offset": {
+          "description": "Point in time in milliseconds or MM:SS.sss, used as endpoint for segment.  Null represents indeterminate value, usually representing +-Infinity as an endpoint.",
+          "pattern": "^[-+]?([0-9]+:){0,2}[0-9]+(\\.[0-9]*)?$",
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "position": {
+          "default": [
+            null,
+            null
+          ]
+        },
+        "record": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "Sets of metadata measurements organized into or applying to a single cohesive unit. These are assumed to be unique within a volume, such that two identical records are considered the same object.",
+          "properties": {
+            "ID": {
+              "type": "string"
+            },
+            "birth weight": {
+              "$ref": "#/definitions2/numeric"
+            },
+            "birthdate": {
+              "$ref": "#/definitions2/date"
+            },
+            "category": {
+              "description": "Types of records that are relevant for data organization.",
+              "enum": [
+                "participant",
+                "pilot",
+                "exclusion",
+                "condition",
+                "group",
+                "task",
+                "context"
+              ]
+            },
+            "country": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "disability": {
+              "type": "string"
+            },
+            "ethnicity": {
+              "enum": [
+                "Not Hispanic or Latino",
+                "Hispanic or Latino"
+              ],
+              "type": "string"
+            },
+            "gender": {
+              "enum": [
+                "Female",
+                "Male"
+              ],
+              "type": "string"
+            },
+            "gestational age": {
+              "$ref": "#/definitions2/numeric"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "info": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "positions": {
+              "items": {
+                "$ref": "#/definitions2/segment"
+              },
+              "type": "array"
+            },
+            "pregnancy term": {
+              "enum": [
+                "Full term",
+                "Preterm"
+              ],
+              "type": "string"
+            },
+            "race": {
+              "enum": [
+                "American Indian or Alaska Native",
+                "Asian",
+                "Native Hawaiian or Other Pacific Islander",
+                "Black or African American",
+                "White",
+                "More than one",
+                "Unknown or not reported"
+              ],
+              "type": "string"
+            },
+            "reason": {
+              "enum": [
+                "Did not meet inclusion criteria",
+                "Procedural/experimenter error",
+                "Withdrew/fussy/tired",
+                "Outlier"
+              ],
+              "type": "string"
+            },
+            "setting": {
+              "enum": [
+                "Lab",
+                "Home",
+                "Classroom",
+                "Outdoor",
+                "Clinic"
+              ],
+              "type": "string"
+            },
+            "state": {
+              "enum": [
+                "AL",
+                "AK",
+                "AZ",
+                "AR",
+                "CA",
+                "CO",
+                "CT",
+                "DE",
+                "DC",
+                "FL",
+                "GA",
+                "HI",
+                "ID",
+                "IL",
+                "IN",
+                "IA",
+                "KS",
+                "KY",
+                "LA",
+                "ME",
+                "MT",
+                "NE",
+                "NV",
+                "NH",
+                "NJ",
+                "NM",
+                "NY",
+                "NC",
+                "ND",
+                "OH",
+                "OK",
+                "OR",
+                "MD",
+                "MA",
+                "MI",
+                "MN",
+                "MS",
+                "MO",
+                "PA",
+                "RI",
+                "SC",
+                "SD",
+                "TN",
+                "TX",
+                "UT",
+                "VT",
+                "VA",
+                "WA",
+                "WV",
+                "WI",
+                "WY"
+              ],
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "key",
+            "category"
+          ],
+          "type": "object"
+        },
+        "release": {
+          "description": "Levels at which participants or researchers may choose to share data.",
+          "enum": [
+            null,
+            "PRIVATE",
+            "SHARED",
+            "EXCERPTS",
+            "PUBLIC"
+          ],
+          "title": "sharing release level"
+        },
+        "segment": {
+          "additionalItems": false,
+          "default": [
+            null,
+            null
+          ],
+          "description": "Explicit range of time (within a container): an empty segment, a singleton point in time, or a start and end point.",
+          "items": {
+            "$ref": "#/definitions2/offset"
+          },
+          "maxItems": 2,
+          "type": "array"
+        }
+      },
+      "description": "Basic organizational unit for data.",
+      "properties": {
+        "containers": {
+          "description": "The first container is required and must have 'top' set.",
+          "items": {
+            "$ref": "#/definitions2/container"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "directory": {
+          "default": "",
+          "description": "Staging directory (normally within /nyu/stage) within which to find all asset files.",
+          "title": "Asset base directory",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "containers"
+      ],
+      "title": "Databrary Volume",
+      "type": "object"
+    },
+    "schema2": {
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "default": [
+                    null,
+                    null
+                  ],
+                  "description": "Explicit range of time (within a container): an empty segment, a singleton point in time, or a start and end point.",
+                  "items": {
+                    "$ref": "#/definitions2/offset"
+                  },
+                  "maxItems": 2,
+                  "type": "array"
+                },
+                {
+                  "items": {
+                    "anyOf": [
+                      true,
+                      false
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Publications/products corresponding to study volumes.",
+                  "properties": {
+                    "url": {
+                      "format": "uri",
+                      "title": "URL or DOI",
+                      "type": "string"
+                    },
+                    "head": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "maximum": 2900.0,
+                      "minimum": 1900.0,
+                      "type": "integer"
+                    },
+                    "authors": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "head"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^url$": {},
+                    "^title$": {},
+                    "^head$": {},
+                    "^year$": {},
+                    "^authors$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Organizational unit within volume containing related files (with common annotations), often corresponding to an individual data session (single visit/acquisition/participant/group/day).",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "assets": {
+                      "description": "Attachment point of assets, which, in the case of timeseries data, should match asset.duration.",
+                      "items": {
+                        "$ref": "#/definitions2/asset"
+                      },
+                      "type": "array"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "date": {
+                      "$ref": "#/definitions2/date"
+                    },
+                    "top": {
+                      "default": false,
+                      "type": "boolean"
+                    },
+                    "records": {
+                      "description": "Attachment of records to slots.",
+                      "items": {
+                        "$ref": "#/definitions2/record"
+                      },
+                      "type": "array"
+                    },
+                    "release": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions2/release"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Sharing/release permissions granted by participants on (portions of) contained data."
+                    }
+                  },
+                  "required": [
+                    "key"
+                  ],
+                  "title": "session or materials",
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^date$": {},
+                    "^name$": {},
+                    "^top$": {},
+                    "^id$": {},
+                    "^records$": {},
+                    "^release$": {},
+                    "^key$": {},
+                    "^assets$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "definitions2": {
+                    "asset": {
+                      "unevaluatedProperties": false,
+                      "description": "Assets reflecting files in primary storage.",
+                      "properties": {
+                        "clip": {
+                          "$ref": "#/definitions2/segment",
+                          "description": "Portion of source file to extract as this asset. Note that segment is relative to clip start."
+                        },
+                        "file": {
+                          "description": "Relative path to file under '/nyu/stage/$directory'.",
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "options": {
+                          "description": "Additional transcode options to pass to ffmpeg.",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "position": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions2/offset",
+                              "description": "Start point only (end point inferred from length)."
+                            },
+                            {
+                              "$ref": "#/definitions2/segment"
+                            },
+                            {
+                              "description": "Automatically postioned immediately following previous positioned asset.",
+                              "enum": [
+                                "auto"
+                              ],
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "release": {
+                          "$ref": "#/definitions2/release"
+                        },
+                        "replace": {
+                          "description": "Original file staging path or asset id to replace.",
+                          "type": [
+                            "string",
+                            "integer"
+                          ]
+                        }
+                      },
+                      "title": "file",
+                      "type": "object"
+                    },
+                    "citation": {
+                      "unevaluatedProperties": false,
+                      "description": "Publications/products corresponding to study volumes.",
+                      "properties": {
+                        "authors": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "head": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "format": "uri",
+                          "title": "URL or DOI",
+                          "type": "string"
+                        },
+                        "year": {
+                          "maximum": 2900,
+                          "minimum": 1900,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "head"
+                      ],
+                      "type": "object"
+                    },
+                    "container": {
+                      "unevaluatedProperties": false,
+                      "description": "Organizational unit within volume containing related files (with common annotations), often corresponding to an individual data session (single visit/acquisition/participant/group/day).",
+                      "properties": {
+                        "assets": {
+                          "description": "Attachment point of assets, which, in the case of timeseries data, should match asset.duration.",
+                          "items": {
+                            "$ref": "#/definitions2/asset"
+                          },
+                          "type": "array"
+                        },
+                        "date": {
+                          "$ref": "#/definitions2/date"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "records": {
+                          "description": "Attachment of records to slots.",
+                          "items": {
+                            "$ref": "#/definitions2/record"
+                          },
+                          "type": "array"
+                        },
+                        "release": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/definitions2/release"
+                            }
+                          ],
+                          "default": null,
+                          "description": "Sharing/release permissions granted by participants on (portions of) contained data."
+                        },
+                        "top": {
+                          "default": false,
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "title": "session or materials",
+                      "type": "object"
+                    },
+                    "date": {
+                      "pattern": "^[12][0-9]{3}-[01][0-9]-[0-3][0-9]$",
+                      "type": "string"
+                    },
+                    "link": {
+                      "unevaluatedProperties": false,
+                      "description": "Link to externals resources/references.",
+                      "properties": {
+                        "head": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "format": "uri",
+                          "title": "URL or DOI",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "head",
+                        "url"
+                      ],
+                      "type": "object"
+                    },
+                    "numeric": {
+                      "pattern": "^[0-9]*(\\.[0-9]*)?$",
+                      "type": "string"
+                    },
+                    "offset": {
+                      "description": "Point in time in milliseconds or MM:SS.sss, used as endpoint for segment.  Null represents indeterminate value, usually representing +-Infinity as an endpoint.",
+                      "pattern": "^[-+]?([0-9]+:){0,2}[0-9]+(\\.[0-9]*)?$",
+                      "type": [
+                        "number",
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "position": {
+                      "default": [
+                        null,
+                        null
+                      ]
+                    },
+                    "record": {
+                      "unevaluatedProperties": false,
+                      "description": "Sets of metadata measurements organized into or applying to a single cohesive unit. These are assumed to be unique within a volume, such that two identical records are considered the same object.",
+                      "properties": {
+                        "ID": {
+                          "type": "string"
+                        },
+                        "birth weight": {
+                          "$ref": "#/definitions2/numeric"
+                        },
+                        "birthdate": {
+                          "$ref": "#/definitions2/date"
+                        },
+                        "category": {
+                          "description": "Types of records that are relevant for data organization.",
+                          "enum": [
+                            "participant",
+                            "pilot",
+                            "exclusion",
+                            "condition",
+                            "group",
+                            "task",
+                            "context"
+                          ]
+                        },
+                        "country": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "disability": {
+                          "type": "string"
+                        },
+                        "ethnicity": {
+                          "enum": [
+                            "Not Hispanic or Latino",
+                            "Hispanic or Latino"
+                          ],
+                          "type": "string"
+                        },
+                        "gender": {
+                          "enum": [
+                            "Female",
+                            "Male"
+                          ],
+                          "type": "string"
+                        },
+                        "gestational age": {
+                          "$ref": "#/definitions2/numeric"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "info": {
+                          "type": "string"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "language": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "positions": {
+                          "items": {
+                            "$ref": "#/definitions2/segment"
+                          },
+                          "type": "array"
+                        },
+                        "pregnancy term": {
+                          "enum": [
+                            "Full term",
+                            "Preterm"
+                          ],
+                          "type": "string"
+                        },
+                        "race": {
+                          "enum": [
+                            "American Indian or Alaska Native",
+                            "Asian",
+                            "Native Hawaiian or Other Pacific Islander",
+                            "Black or African American",
+                            "White",
+                            "More than one",
+                            "Unknown or not reported"
+                          ],
+                          "type": "string"
+                        },
+                        "reason": {
+                          "enum": [
+                            "Did not meet inclusion criteria",
+                            "Procedural/experimenter error",
+                            "Withdrew/fussy/tired",
+                            "Outlier"
+                          ],
+                          "type": "string"
+                        },
+                        "setting": {
+                          "enum": [
+                            "Lab",
+                            "Home",
+                            "Classroom",
+                            "Outdoor",
+                            "Clinic"
+                          ],
+                          "type": "string"
+                        },
+                        "state": {
+                          "enum": [
+                            "AL",
+                            "AK",
+                            "AZ",
+                            "AR",
+                            "CA",
+                            "CO",
+                            "CT",
+                            "DE",
+                            "DC",
+                            "FL",
+                            "GA",
+                            "HI",
+                            "ID",
+                            "IL",
+                            "IN",
+                            "IA",
+                            "KS",
+                            "KY",
+                            "LA",
+                            "ME",
+                            "MT",
+                            "NE",
+                            "NV",
+                            "NH",
+                            "NJ",
+                            "NM",
+                            "NY",
+                            "NC",
+                            "ND",
+                            "OH",
+                            "OK",
+                            "OR",
+                            "MD",
+                            "MA",
+                            "MI",
+                            "MN",
+                            "MS",
+                            "MO",
+                            "PA",
+                            "RI",
+                            "SC",
+                            "SD",
+                            "TN",
+                            "TX",
+                            "UT",
+                            "VT",
+                            "VA",
+                            "WA",
+                            "WV",
+                            "WI",
+                            "WY"
+                          ],
+                          "type": "string"
+                        },
+                        "summary": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "category"
+                      ],
+                      "type": "object"
+                    },
+                    "release": {
+                      "description": "Levels at which participants or researchers may choose to share data.",
+                      "enum": [
+                        null,
+                        "PRIVATE",
+                        "SHARED",
+                        "EXCERPTS",
+                        "PUBLIC"
+                      ],
+                      "title": "sharing release level"
+                    },
+                    "segment": {
+                      "unevaluatedItems": false,
+                      "default": [
+                        null,
+                        null
+                      ],
+                      "description": "Explicit range of time (within a container): an empty segment, a singleton point in time, or a start and end point.",
+                      "items": {
+                        "$ref": "#/definitions2/offset"
+                      },
+                      "maxItems": 2,
+                      "type": "array"
+                    }
+                  },
+                  "description": "Basic organizational unit for data.",
+                  "properties": {
+                    "containers": {
+                      "description": "The first container is required and must have 'top' set.",
+                      "items": {
+                        "$ref": "#/definitions2/container"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "directory": {
+                      "default": "",
+                      "description": "Staging directory (normally within /nyu/stage) within which to find all asset files.",
+                      "title": "Asset base directory",
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "containers"
+                  ],
+                  "title": "Databrary Volume",
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^containers$": {},
+                    "^directory$": {},
+                    "^name$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "container": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Link to externals resources/references.",
+                  "properties": {
+                    "head": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "format": "uri",
+                      "title": "URL or DOI",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "head",
+                    "url"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^head$": {},
+                    "^url$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "offset": {
+          "description": "Point in time in milliseconds or MM:SS.sss, used as endpoint for segment.  Null represents indeterminate value, usually representing +-Infinity as an endpoint.",
+          "pattern": "^[-+]?([0-9]+:){0,2}[0-9]+(\\.[0-9]*)?$",
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "date": {
+          "pattern": "^[12][0-9]{3}-[01][0-9]-[0-3][0-9]$",
+          "type": "string"
+        },
+        "link": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Assets reflecting files in primary storage.",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "replace": {
+                      "description": "Original file staging path or asset id to replace.",
+                      "type": [
+                        "string",
+                        "integer"
+                      ]
+                    },
+                    "options": {
+                      "description": "Additional transcode options to pass to ffmpeg.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "release": {
+                      "$ref": "#/definitions2/release"
+                    },
+                    "clip": {
+                      "$ref": "#/definitions2/segment",
+                      "description": "Portion of source file to extract as this asset. Note that segment is relative to clip start."
+                    },
+                    "position": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/definitions2/offset",
+                          "description": "Start point only (end point inferred from length)."
+                        },
+                        {
+                          "$ref": "#/definitions2/segment"
+                        },
+                        {
+                          "description": "Automatically postioned immediately following previous positioned asset.",
+                          "enum": [
+                            "auto"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "file": {
+                      "description": "Relative path to file under '/nyu/stage/$directory'.",
+                      "type": "string"
+                    }
+                  },
+                  "title": "file",
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^file$": {},
+                    "^clip$": {},
+                    "^options$": {},
+                    "^replace$": {},
+                    "^name$": {},
+                    "^id$": {},
+                    "^release$": {},
+                    "^position$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "position": {
+          "default": [
+            null,
+            null
+          ]
+        },
+        "asset": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "record": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Sets of metadata measurements organized into or applying to a single cohesive unit. These are assumed to be unique within a volume, such that two identical records are considered the same object.",
+                  "properties": {
+                    "ID": {
+                      "type": "string"
+                    },
+                    "pregnancy term": {
+                      "enum": [
+                        "Full term",
+                        "Preterm"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "enum": [
+                        "AL",
+                        "AK",
+                        "AZ",
+                        "AR",
+                        "CA",
+                        "CO",
+                        "CT",
+                        "DE",
+                        "DC",
+                        "FL",
+                        "GA",
+                        "HI",
+                        "ID",
+                        "IL",
+                        "IN",
+                        "IA",
+                        "KS",
+                        "KY",
+                        "LA",
+                        "ME",
+                        "MT",
+                        "NE",
+                        "NV",
+                        "NH",
+                        "NJ",
+                        "NM",
+                        "NY",
+                        "NC",
+                        "ND",
+                        "OH",
+                        "OK",
+                        "OR",
+                        "MD",
+                        "MA",
+                        "MI",
+                        "MN",
+                        "MS",
+                        "MO",
+                        "PA",
+                        "RI",
+                        "SC",
+                        "SD",
+                        "TN",
+                        "TX",
+                        "UT",
+                        "VT",
+                        "VA",
+                        "WA",
+                        "WV",
+                        "WI",
+                        "WY"
+                      ],
+                      "type": "string"
+                    },
+                    "setting": {
+                      "enum": [
+                        "Lab",
+                        "Home",
+                        "Classroom",
+                        "Outdoor",
+                        "Clinic"
+                      ],
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "gestational age": {
+                      "$ref": "#/definitions2/numeric"
+                    },
+                    "country": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "enum": [
+                        "Did not meet inclusion criteria",
+                        "Procedural/experimenter error",
+                        "Withdrew/fussy/tired",
+                        "Outlier"
+                      ],
+                      "type": "string"
+                    },
+                    "info": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "language": {
+                      "type": "string"
+                    },
+                    "race": {
+                      "enum": [
+                        "American Indian or Alaska Native",
+                        "Asian",
+                        "Native Hawaiian or Other Pacific Islander",
+                        "Black or African American",
+                        "White",
+                        "More than one",
+                        "Unknown or not reported"
+                      ],
+                      "type": "string"
+                    },
+                    "disability": {
+                      "type": "string"
+                    },
+                    "birth weight": {
+                      "$ref": "#/definitions2/numeric"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "gender": {
+                      "enum": [
+                        "Female",
+                        "Male"
+                      ],
+                      "type": "string"
+                    },
+                    "birthdate": {
+                      "$ref": "#/definitions2/date"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "positions": {
+                      "items": {
+                        "$ref": "#/definitions2/segment"
+                      },
+                      "type": "array"
+                    },
+                    "ethnicity": {
+                      "enum": [
+                        "Not Hispanic or Latino",
+                        "Hispanic or Latino"
+                      ],
+                      "type": "string"
+                    },
+                    "category": {
+                      "description": "Types of records that are relevant for data organization.",
+                      "enum": [
+                        "participant",
+                        "pilot",
+                        "exclusion",
+                        "condition",
+                        "group",
+                        "task",
+                        "context"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "category"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^race$": {},
+                    "^gestational age$": {},
+                    "^description$": {},
+                    "^state$": {},
+                    "^gender$": {},
+                    "^category$": {},
+                    "^name$": {},
+                    "^summary$": {},
+                    "^id$": {},
+                    "^country$": {},
+                    "^reason$": {},
+                    "^ethnicity$": {},
+                    "^birthdate$": {},
+                    "^positions$": {},
+                    "^pregnancy term$": {},
+                    "^info$": {},
+                    "^ID$": {},
+                    "^birth weight$": {},
+                    "^language$": {},
+                    "^setting$": {},
+                    "^disability$": {},
+                    "^key$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "segment": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "citation": {
+          "$ref": "#/definitions2/modern_6"
+        },
+        "numeric": {
+          "pattern": "^[0-9]*(\\.[0-9]*)?$",
+          "type": "string"
+        },
+        "release": {
+          "description": "Levels at which participants or researchers may choose to share data.",
+          "enum": [
+            null,
+            "PRIVATE",
+            "SHARED",
+            "EXCERPTS",
+            "PUBLIC"
+          ],
+          "title": "sharing release level"
+        }
+      },
+      "$ref": "#/definitions2/modern_7"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

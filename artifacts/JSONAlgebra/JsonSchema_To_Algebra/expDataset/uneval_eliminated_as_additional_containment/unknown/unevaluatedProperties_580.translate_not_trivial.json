@@ -1,0 +1,1570 @@
+{
+  "allOf": [
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "shared.json",
+      "version": "0.7.1"
+    },
+    {
+      "not": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "shared.json",
+        "version": "0.7.1"
+      }
+    }
+  ],
+  "definitions1": {
+    "foundryEffectDurationObject": {
+      "type": "object"
+    },
+    "foundryEffectObject": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "$ref": "#/definitions1/foundryEffectDurationObject"
+        },
+        "name": {
+          "type": "string"
+        },
+        "flags": {
+          "$ref": "#/definitions1/foundryFlagsObject"
+        },
+        "img": {
+          "type": "string"
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "mode": {
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "enum": [
+                  "CUSTOM",
+                  0,
+                  "MULTIPLY",
+                  1,
+                  "ADD",
+                  2,
+                  "DOWNGRADE",
+                  3,
+                  "UPGRADE",
+                  4,
+                  "OVERRIDE",
+                  5
+                ]
+              },
+              "priority": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "mode",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "transfer": {
+          "const": true
+        },
+        "disabled": {
+          "const": true
+        },
+        "requires": {
+          "$ref": "#/definitions1/requiresObject"
+        }
+      },
+      "additionalProperties": false
+    },
+    "foundrySideDataGenericBase": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "flags": {
+          "$ref": "#/definitions1/foundryFlagsObject"
+        },
+        "_TODO": {
+          "description": "A free-text dev-only list of issues with the entity. This is useful for keeping track of as-yet-unsupported functionality.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "chooseFlags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions1/foundryFlagsObject"
+              },
+              "minItems": 1
+            },
+            {
+              "const": null
+            }
+          ]
+        },
+        "chooseSystem": {
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions1/foundrySystemObject"
+              },
+              "minItems": 1
+            },
+            {
+              "const": null
+            }
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "weapon",
+            "equipment",
+            "consumable",
+            "tool",
+            "loot",
+            "class",
+            "spell",
+            "feat",
+            "backpack"
+          ]
+        },
+        "ignoreSrdEffects": {
+          "type": "boolean"
+        },
+        "itemMacro": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "requires": {
+              "$ref": "#/definitions1/requiresObject"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false
+        },
+        "isChooseSystemRenderEntries": {
+          "type": "boolean"
+        },
+        "_merge": {
+          "type": "object",
+          "description": "If our \"X\" (e.g. \"system\") should be merged with any base \"X\", rather than overwriting.",
+          "properties": {
+            "flags": {
+              "const": true
+            },
+            "chooseFlags": {
+              "const": true
+            },
+            "chooseSystem": {
+              "const": true
+            },
+            "effects": {
+              "const": true
+            },
+            "system": {
+              "const": true
+            }
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions1/effectObject"
+          },
+          "uniqueItems": true
+        },
+        "system": {
+          "$ref": "#/definitions1/foundrySystemObject"
+        },
+        "isChooseFlagsRenderEntries": {
+          "type": "boolean"
+        },
+        "img": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "source"
+      ],
+      "minProperties": 3
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "className": {
+                  "type": "string"
+                },
+                "classSource": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "className",
+                "classSource",
+                "level"
+              ],
+              "minProperties": 6
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^chooseFlags$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^ignoreSrdEffects$": true,
+                "^itemMacro$": true,
+                "^effects$": true,
+                "^_TODO$": true,
+                "^level$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true,
+                "^img$": true,
+                "^className$": true,
+                "^classSource$": true,
+                "^source$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "foundryFlagsObject": {
+      "type": "object"
+    },
+    "classFeature": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_2"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "subclassFeature": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_3"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "convenientEffectObject": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "$ref": "#/definitions1/foundryEffectDurationObject"
+        },
+        "flags": {
+          "$ref": "#/definitions1/foundryFlagsObject"
+        },
+        "convenientEffect": {
+          "description": "Generally taken from names in `game.dfreds.effects.conditions`.",
+          "type": "string",
+          "examples": [
+            "Blinded",
+            "Charmed",
+            "Concentrating",
+            "Deafened",
+            "Exhaustion 1",
+            "Exhaustion 2",
+            "Exhaustion 3",
+            "Exhaustion 4",
+            "Exhaustion 5",
+            "Frightened",
+            "Grappled",
+            "Incapacitated",
+            "Invisible",
+            "Paralyzed",
+            "Petrified",
+            "Poisoned",
+            "Prone",
+            "Restrained",
+            "Stunned",
+            "Unconscious",
+            "Bullseye Lantern",
+            "Candle",
+            "Hooded Lantern",
+            "Lantern",
+            "Torch"
+          ]
+        },
+        "transfer": {
+          "const": true
+        },
+        "disabled": {
+          "const": true
+        }
+      },
+      "required": [
+        "convenientEffect"
+      ],
+      "additionalProperties": false
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "psionicName": {
+                  "type": "string"
+                },
+                "psionicSource": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "psionicName",
+                "psionicSource"
+              ],
+              "minProperties": 5
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^psionicSource$": true,
+                "^chooseFlags$": true,
+                "^_TODO$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^ignoreSrdEffects$": true,
+                "^img$": true,
+                "^effects$": true,
+                "^source$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true,
+                "^itemMacro$": true,
+                "^psionicName$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "foundrySideDataGeneric": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "subclass": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_6"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "raceFeature": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_7"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "className": {
+                  "type": "string"
+                },
+                "classSource": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "className",
+                "classSource"
+              ],
+              "minProperties": 5
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^chooseFlags$": true,
+                "^_TODO$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^ignoreSrdEffects$": true,
+                "^itemMacro$": true,
+                "^effects$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true,
+                "^img$": true,
+                "^className$": true,
+                "^classSource$": true,
+                "^source$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "effectObject": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/foundryEffectObject"
+        },
+        {
+          "$ref": "#/definitions1/convenientEffectObject"
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^chooseFlags$": true,
+                "^_TODO$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^ignoreSrdEffects$": true,
+                "^img$": true,
+                "^itemMacro$": true,
+                "^effects$": true,
+                "^source$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "foundrySideDataGenericArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions1/foundrySideDataGeneric"
+      },
+      "minItems": 1
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "raceName": {
+                  "type": "string"
+                },
+                "raceSource": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "raceName",
+                "raceSource"
+              ],
+              "minProperties": 5
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^chooseFlags$": true,
+                "^_TODO$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^raceSource$": true,
+                "^ignoreSrdEffects$": true,
+                "^img$": true,
+                "^itemMacro$": true,
+                "^effects$": true,
+                "^source$": true,
+                "^raceName$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "foundrySystemObject": {
+      "type": "object"
+    },
+    "schema": {
+      "description": "An optional key that allows you specify the schema you want to verify against in compatible IDEs.\nIt is  advised that you leave this key out when submitting to the repo.",
+      "type": "string",
+      "examples": [
+        "../../../test/schema/homebrew.json",
+        "../../../test/schema/core.json",
+        "https://raw.githubusercontent.com/TheGiddyLimit/plutonium-addon-automation/master/test/schema/homebrew.json",
+        "https://raw.githubusercontent.com/TheGiddyLimit/plutonium-addon-automation/master/test/schema/core.json"
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "vehicleName": {
+                  "type": "string"
+                },
+                "vehicleSource": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "vehicleName",
+                "vehicleSource"
+              ],
+              "minProperties": 5
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^_TODO$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^ignoreSrdEffects$": true,
+                "^img$": true,
+                "^effects$": true,
+                "^source$": true,
+                "^vehicleSource$": true,
+                "^chooseFlags$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true,
+                "^vehicleName$": true,
+                "^itemMacro$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "className": {
+                  "type": "string"
+                },
+                "classSource": {
+                  "type": "string"
+                },
+                "subclassSource": {
+                  "type": "string"
+                },
+                "subclassShortName": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "className",
+                "classSource",
+                "level",
+                "subclassShortName",
+                "subclassSource"
+              ],
+              "minProperties": 8
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^subclassSource$": true,
+                "^chooseFlags$": true,
+                "^flags$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^ignoreSrdEffects$": true,
+                "^itemMacro$": true,
+                "^effects$": true,
+                "^_TODO$": true,
+                "^level$": true,
+                "^subclassShortName$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true,
+                "^img$": true,
+                "^className$": true,
+                "^classSource$": true,
+                "^source$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "backgroundFeature": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_4"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "requiresObject": {
+      "type": "object",
+      "description": "Each key should correspond to a Foundry module's \"name\" field, which can be found in that module's \"module.json\" (or at the end of the Foundry module page URL, e.g. the \"JB2A_DnD5e\" in \"https://foundryvtt.com/packages/JB2A_DnD5e\")",
+      "patternProperties": {
+        "^.*$": {
+          "const": true
+        }
+      },
+      "propertyNames": {
+        "not": {
+          "$comment": "The modules listed here are module dependencies, so are implicitly required.",
+          "enum": [
+            "plutonium",
+            "midi-qol",
+            "dae",
+            "times-up",
+            "dfreds-convenient-effects"
+          ]
+        }
+      }
+    },
+    "vehicleWeapon": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_8"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "psionicDisciplineActive": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions1/modern_5"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/foundrySideDataGenericBase"
+                }
+              ],
+              "properties": {
+                "backgroundName": {
+                  "type": "string"
+                },
+                "backgroundSource": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "backgroundName",
+                "backgroundSource"
+              ],
+              "minProperties": 5
+            },
+            {
+              "patternProperties": {
+                "^chooseSystem$": true,
+                "^chooseFlags$": true,
+                "^_TODO$": true,
+                "^flags$": true,
+                "^_merge$": true,
+                "^name$": true,
+                "^type$": true,
+                "^backgroundName$": true,
+                "^ignoreSrdEffects$": true,
+                "^img$": true,
+                "^itemMacro$": true,
+                "^effects$": true,
+                "^source$": true,
+                "^isChooseSystemRenderEntries$": true,
+                "^backgroundSource$": true,
+                "^system$": true,
+                "^isChooseFlagsRenderEntries$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions2": {
+    "schema": {
+      "description": "An optional key that allows you specify the schema you want to verify against in compatible IDEs.\nIt is  advised that you leave this key out when submitting to the repo.",
+      "type": "string",
+      "examples": [
+        "../../../test/schema/homebrew.json",
+        "../../../test/schema/core.json",
+        "https://raw.githubusercontent.com/TheGiddyLimit/plutonium-addon-automation/master/test/schema/homebrew.json",
+        "https://raw.githubusercontent.com/TheGiddyLimit/plutonium-addon-automation/master/test/schema/core.json"
+      ]
+    },
+    "requiresObject": {
+      "type": "object",
+      "description": "Each key should correspond to a Foundry module's \"name\" field, which can be found in that module's \"module.json\" (or at the end of the Foundry module page URL, e.g. the \"JB2A_DnD5e\" in \"https://foundryvtt.com/packages/JB2A_DnD5e\")",
+      "patternProperties": {
+        "^.*$": {
+          "const": true
+        }
+      },
+      "propertyNames": {
+        "not": {
+          "$comment": "The modules listed here are module dependencies, so are implicitly required.",
+          "enum": [
+            "plutonium",
+            "midi-qol",
+            "dae",
+            "times-up",
+            "dfreds-convenient-effects"
+          ]
+        }
+      }
+    },
+    "foundrySystemObject": {
+      "type": "object"
+    },
+    "foundryFlagsObject": {
+      "type": "object"
+    },
+    "foundryEffectDurationObject": {
+      "type": "object"
+    },
+    "foundryEffectObject": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "img": {
+          "type": "string"
+        },
+        "requires": {
+          "$ref": "#/definitions2/requiresObject"
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "mode": {
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "enum": [
+                  "CUSTOM",
+                  0,
+                  "MULTIPLY",
+                  1,
+                  "ADD",
+                  2,
+                  "DOWNGRADE",
+                  3,
+                  "UPGRADE",
+                  4,
+                  "OVERRIDE",
+                  5
+                ]
+              },
+              "priority": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "mode",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "flags": {
+          "$ref": "#/definitions2/foundryFlagsObject"
+        },
+        "duration": {
+          "$ref": "#/definitions2/foundryEffectDurationObject"
+        },
+        "disabled": {
+          "const": true
+        },
+        "transfer": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "convenientEffectObject": {
+      "type": "object",
+      "properties": {
+        "convenientEffect": {
+          "description": "Generally taken from names in `game.dfreds.effects.conditions`.",
+          "type": "string",
+          "examples": [
+            "Blinded",
+            "Charmed",
+            "Concentrating",
+            "Deafened",
+            "Exhaustion 1",
+            "Exhaustion 2",
+            "Exhaustion 3",
+            "Exhaustion 4",
+            "Exhaustion 5",
+            "Frightened",
+            "Grappled",
+            "Incapacitated",
+            "Invisible",
+            "Paralyzed",
+            "Petrified",
+            "Poisoned",
+            "Prone",
+            "Restrained",
+            "Stunned",
+            "Unconscious",
+            "Bullseye Lantern",
+            "Candle",
+            "Hooded Lantern",
+            "Lantern",
+            "Torch"
+          ]
+        },
+        "flags": {
+          "$ref": "#/definitions2/foundryFlagsObject"
+        },
+        "duration": {
+          "$ref": "#/definitions2/foundryEffectDurationObject"
+        },
+        "disabled": {
+          "const": true
+        },
+        "transfer": {
+          "const": true
+        }
+      },
+      "required": [
+        "convenientEffect"
+      ],
+      "additionalProperties": false
+    },
+    "effectObject": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/foundryEffectObject"
+        },
+        {
+          "$ref": "#/definitions2/convenientEffectObject"
+        }
+      ]
+    },
+    "foundrySideDataGenericBase": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "_TODO": {
+          "description": "A free-text dev-only list of issues with the entity. This is useful for keeping track of as-yet-unsupported functionality.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "system": {
+          "$ref": "#/definitions2/foundrySystemObject"
+        },
+        "chooseSystem": {
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/foundrySystemObject"
+              },
+              "minItems": 1
+            },
+            {
+              "const": null
+            }
+          ]
+        },
+        "isChooseSystemRenderEntries": {
+          "type": "boolean"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/effectObject"
+          },
+          "uniqueItems": true
+        },
+        "flags": {
+          "$ref": "#/definitions2/foundryFlagsObject"
+        },
+        "chooseFlags": {
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/foundryFlagsObject"
+              },
+              "minItems": 1
+            },
+            {
+              "const": null
+            }
+          ]
+        },
+        "isChooseFlagsRenderEntries": {
+          "type": "boolean"
+        },
+        "img": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "weapon",
+            "equipment",
+            "consumable",
+            "tool",
+            "loot",
+            "class",
+            "spell",
+            "feat",
+            "backpack"
+          ]
+        },
+        "itemMacro": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "requires": {
+              "$ref": "#/definitions2/requiresObject"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false
+        },
+        "ignoreSrdEffects": {
+          "type": "boolean"
+        },
+        "_merge": {
+          "type": "object",
+          "description": "If our \"X\" (e.g. \"system\") should be merged with any base \"X\", rather than overwriting.",
+          "properties": {
+            "system": {
+              "const": true
+            },
+            "chooseSystem": {
+              "const": true
+            },
+            "effects": {
+              "const": true
+            },
+            "flags": {
+              "const": true
+            },
+            "chooseFlags": {
+              "const": true
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "source"
+      ],
+      "minProperties": 3
+    },
+    "foundrySideDataGeneric": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions2/foundrySideDataGenericBase"
+        }
+      ],
+      "additionalProperties": false
+    },
+    "foundrySideDataGenericArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions2/foundrySideDataGeneric"
+      },
+      "minItems": 1
+    },
+    "subclass": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "className": {
+            "type": "string"
+          },
+          "classSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "className",
+          "classSource"
+        ],
+        "minProperties": 5,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "raceFeature": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "raceName": {
+            "type": "string"
+          },
+          "raceSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "raceName",
+          "raceSource"
+        ],
+        "minProperties": 5,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "backgroundFeature": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "backgroundName": {
+            "type": "string"
+          },
+          "backgroundSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "backgroundName",
+          "backgroundSource"
+        ],
+        "minProperties": 5,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "classFeature": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "className": {
+            "type": "string"
+          },
+          "classSource": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "className",
+          "classSource",
+          "level"
+        ],
+        "minProperties": 6,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "subclassFeature": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "className": {
+            "type": "string"
+          },
+          "classSource": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer"
+          },
+          "subclassShortName": {
+            "type": "string"
+          },
+          "subclassSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "className",
+          "classSource",
+          "level",
+          "subclassShortName",
+          "subclassSource"
+        ],
+        "minProperties": 8,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "psionicDisciplineActive": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "psionicName": {
+            "type": "string"
+          },
+          "psionicSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "psionicName",
+          "psionicSource"
+        ],
+        "minProperties": 5,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "vehicleWeapon": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions2/foundrySideDataGenericBase"
+          }
+        ],
+        "properties": {
+          "vehicleName": {
+            "type": "string"
+          },
+          "vehicleSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "vehicleName",
+          "vehicleSource"
+        ],
+        "minProperties": 5,
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions2/foundryEffectObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/foundryEffectObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions1/foundryFlagsObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/foundryFlagsObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions2/foundrySideDataGenericBase"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/foundrySideDataGenericBase"
+      }
+    },
+    {
+      "$ref": "#/definitions2/foundrySystemObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/foundrySystemObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/foundryEffectObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/foundryEffectObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/foundrySideDataGenericBase"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/foundrySideDataGenericBase"
+      }
+    },
+    {
+      "$ref": "#/definitions1/foundryEffectDurationObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/foundryEffectDurationObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/effectObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/effectObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/foundrySystemObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/foundrySystemObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions2/foundryFlagsObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/foundryFlagsObject"
+      }
+    },
+    {
+      "$ref": "#/definitions2/requiresObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/requiresObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/convenientEffectObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/convenientEffectObject"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions2/foundryEffectDurationObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/foundryEffectDurationObject"
+      }
+    },
+    {
+      "$ref": "#/definitions2/foundrySideDataGeneric"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/foundrySideDataGeneric"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions1/foundrySideDataGeneric"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/foundrySideDataGeneric"
+      }
+    },
+    {
+      "$ref": "#/definitions1/requiresObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/requiresObject"
+      }
+    },
+    {
+      "$ref": "#/definitions2/effectObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/effectObject"
+      }
+    },
+    {
+      "$ref": "#/definitions2/convenientEffectObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/convenientEffectObject"
+      }
+    }
+  ]
+}

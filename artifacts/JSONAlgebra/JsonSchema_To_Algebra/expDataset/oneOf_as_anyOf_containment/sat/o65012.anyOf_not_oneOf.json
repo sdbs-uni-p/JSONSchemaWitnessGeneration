@@ -1,0 +1,444 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "filter": {
+          "$ref": "#/definitions4/bool"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "filter": {
+            "$ref": "#/definitions3/bool"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "field": {
+      "type": "string"
+    },
+    "value": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "array",
+        "object"
+      ]
+    },
+    "range": {
+      "type": "array"
+    },
+    "filter_type": {
+      "type": "string",
+      "enum": [
+        "bool",
+        "match",
+        "in",
+        "exist",
+        "compare"
+      ]
+    },
+    "filters_allowed": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/basic_filter"
+        },
+        {
+          "$ref": "#/definitions4/exist"
+        },
+        {
+          "$ref": "#/definitions4/bool"
+        },
+        {
+          "$ref": "#/definitions4/compare"
+        }
+      ]
+    },
+    "basic_filter": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions4/filter_type"
+        },
+        "field": {
+          "$ref": "#/definitions4/field"
+        },
+        "value": {
+          "$ref": "#/definitions4/value"
+        },
+        "range": {
+          "$ref": "#/definitions4/range"
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "field",
+            "value",
+            "filter_type"
+          ]
+        },
+        {
+          "required": [
+            "field",
+            "range",
+            "filter_type"
+          ]
+        }
+      ]
+    },
+    "exist": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions4/filter_type"
+        },
+        "field": {
+          "$ref": "#/definitions4/field"
+        }
+      },
+      "required": [
+        "field",
+        "filter_type"
+      ],
+      "additionalProperties": false
+    },
+    "compare": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions4/filter_type"
+        },
+        "field1": {
+          "$ref": "#/definitions4/field"
+        },
+        "field2": {
+          "$ref": "#/definitions4/field"
+        },
+        "constant": {
+          "$ref": "#/definitions4/constant"
+        },
+        "comparison_operator": {
+          "$ref": "#/definitions4/comparison_operator"
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "field1",
+            "field2",
+            "comparison_operator",
+            "filter_type"
+          ]
+        },
+        {
+          "required": [
+            "field1",
+            "constant",
+            "comparison_operator",
+            "filter_type"
+          ]
+        }
+      ]
+    },
+    "constant": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "comparison_operator": {
+      "type": "string",
+      "enum": [
+        "lt",
+        "gt",
+        "lte",
+        "gte",
+        "eq"
+      ]
+    },
+    "bool": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions4/filter_type"
+        },
+        "must": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/filters_allowed"
+          }
+        },
+        "must_not": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/filters_allowed"
+          }
+        },
+        "should": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/filters_allowed"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions3": {
+    "field": {
+      "type": "string"
+    },
+    "value": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "array",
+        "object"
+      ]
+    },
+    "range": {
+      "type": "array"
+    },
+    "filter_type": {
+      "type": "string",
+      "enum": [
+        "bool",
+        "match",
+        "in",
+        "exist",
+        "compare"
+      ]
+    },
+    "filters_allowed": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/basic_filter"
+        },
+        {
+          "$ref": "#/definitions3/exist"
+        },
+        {
+          "$ref": "#/definitions3/bool"
+        },
+        {
+          "$ref": "#/definitions3/compare"
+        }
+      ]
+    },
+    "basic_filter": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions3/filter_type"
+        },
+        "field": {
+          "$ref": "#/definitions3/field"
+        },
+        "value": {
+          "$ref": "#/definitions3/value"
+        },
+        "range": {
+          "$ref": "#/definitions3/range"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "field",
+            "value",
+            "filter_type"
+          ]
+        },
+        {
+          "required": [
+            "field",
+            "range",
+            "filter_type"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "exist": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions3/filter_type"
+        },
+        "field": {
+          "$ref": "#/definitions3/field"
+        }
+      },
+      "required": [
+        "field",
+        "filter_type"
+      ],
+      "additionalProperties": false
+    },
+    "compare": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions3/filter_type"
+        },
+        "field1": {
+          "$ref": "#/definitions3/field"
+        },
+        "field2": {
+          "$ref": "#/definitions3/field"
+        },
+        "constant": {
+          "$ref": "#/definitions3/constant"
+        },
+        "comparison_operator": {
+          "$ref": "#/definitions3/comparison_operator"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "field1",
+            "field2",
+            "comparison_operator",
+            "filter_type"
+          ]
+        },
+        {
+          "required": [
+            "field1",
+            "constant",
+            "comparison_operator",
+            "filter_type"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "constant": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "comparison_operator": {
+      "type": "string",
+      "enum": [
+        "lt",
+        "gt",
+        "lte",
+        "gte",
+        "eq"
+      ]
+    },
+    "bool": {
+      "type": "object",
+      "properties": {
+        "filter_type": {
+          "$ref": "#/definitions3/filter_type"
+        },
+        "must": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/filters_allowed"
+          }
+        },
+        "must_not": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/filters_allowed"
+          }
+        },
+        "should": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/filters_allowed"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/filters_allowed"
+    },
+    {
+      "$ref": "#/definitions3/filter_type"
+    },
+    {
+      "$ref": "#/definitions4/bool"
+    },
+    {
+      "$ref": "#/definitions4/filters_allowed"
+    },
+    {
+      "$ref": "#/definitions3/comparison_operator"
+    },
+    {
+      "$ref": "#/definitions3/exist"
+    },
+    {
+      "$ref": "#/definitions3/compare"
+    },
+    {
+      "$ref": "#/definitions3/range"
+    },
+    {
+      "$ref": "#/definitions3/bool"
+    },
+    {
+      "$ref": "#/definitions4/exist"
+    },
+    {
+      "$ref": "#/definitions4/constant"
+    },
+    {
+      "$ref": "#/definitions3/field"
+    },
+    {
+      "$ref": "#/definitions4/basic_filter"
+    },
+    {
+      "$ref": "#/definitions4/range"
+    },
+    {
+      "$ref": "#/definitions4/value"
+    },
+    {
+      "$ref": "#/definitions3/basic_filter"
+    },
+    {
+      "$ref": "#/definitions3/value"
+    },
+    {
+      "$ref": "#/definitions4/comparison_operator"
+    },
+    {
+      "$ref": "#/definitions4/compare"
+    },
+    {
+      "$ref": "#/definitions4/field"
+    },
+    {
+      "$ref": "#/definitions3/constant"
+    },
+    {
+      "$ref": "#/definitions4/filter_type"
+    }
+  ]
+}

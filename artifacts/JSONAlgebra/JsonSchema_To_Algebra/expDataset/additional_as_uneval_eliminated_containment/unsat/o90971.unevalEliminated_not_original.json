@@ -1,0 +1,2609 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://json.schemastore.org/prometheus",
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "http://json.schemastore.org/prometheus",
+        "title": "Prometheus",
+        "description": "Prometheus configuration file",
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "global": {
+            "description": "The global configuration specifies parameters that are valid in all other configuration contexts. They also serve as defaults for other configuration sections.",
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "scrape_interval": {
+                "description": "How frequently to scrape targets by default.",
+                "$ref": "#/definitions3/duration",
+                "default": "1m"
+              },
+              "scrape_timeout": {
+                "description": "How long until a scrape request times out.",
+                "$ref": "#/definitions3/duration",
+                "default": "10s"
+              },
+              "evaluation_interval": {
+                "description": "How frequently to evaluate rules.",
+                "$ref": "#/definitions3/duration",
+                "default": "1m"
+              },
+              "external_labels": {
+                "description": "The labels to add to any time series or alerts when communicating with external systems (federation, remote storage, Alertmanager).",
+                "$ref": "#/definitions3/labels"
+              }
+            },
+            "additionalProperties": false
+          },
+          "rule_files": {
+            "description": "Rule files specifies a list of globs. Rules and alerts are read from all matching files.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/definitions3/filepath_glob"
+            }
+          },
+          "remote_write": {
+            "description": "Settings related to the remote write feature.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "The URL of the endpoint to send samples to.",
+                  "type": "string",
+                  "format": "uri-reference"
+                },
+                "remote_timeout": {
+                  "description": "Timeout for requests to the remote write endpoint.",
+                  "$ref": "#/definitions3/duration",
+                  "default": "30s"
+                },
+                "write_relabel_configs": {
+                  "description": "List of remote write relabel configurations.",
+                  "$ref": "#/definitions3/relabel_configs"
+                },
+                "basic_auth": {
+                  "$ref": "#/definitions3/basic_auth"
+                },
+                "bearer_token": {
+                  "$ref": "#/definitions3/bearer_token"
+                },
+                "bearer_token_file": {
+                  "$ref": "#/definitions3/bearer_token_file"
+                },
+                "tls_config": {
+                  "description": "Configures the remote write request's TLS settings.",
+                  "$ref": "#/definitions3/tls_config"
+                },
+                "proxy_url": {
+                  "description": "Optional proxy URL.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri-reference"
+                },
+                "queue_config": {
+                  "description": "Configures the queue used to write to remote storage.",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "capacity": {
+                      "description": "Number of samples to buffer per shard before we block reading of more samples from the WAL. It is recommended to have enough capacity in each shard to buffer several requests to keep throughput up while processing occasional slow remote requests.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 500
+                    },
+                    "max_shards": {
+                      "description": "Maximum number of shards, i.e. amount of concurrency.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 1000
+                    },
+                    "min_shards": {
+                      "description": "Minimum number of shards, i.e. amount of concurrency.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 1
+                    },
+                    "max_samples_per_send": {
+                      "description": "Maximum number of samples per send.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 100
+                    },
+                    "batch_send_deadline": {
+                      "description": "Maximum time a sample will wait in buffer.",
+                      "$ref": "#/definitions3/duration",
+                      "default": "5s"
+                    },
+                    "min_backoff": {
+                      "description": "Initial retry delay. Gets doubled for every retry.",
+                      "$ref": "#/definitions3/duration",
+                      "default": "30ms"
+                    },
+                    "max_backoff": {
+                      "description": "Maximum retry delay.",
+                      "$ref": "#/definitions3/duration",
+                      "default": "100ms"
+                    }
+                  }
+                }
+              },
+              "allOf": [
+                {
+                  "$ref": "#/definitions3/auth"
+                }
+              ],
+              "additionalProperties": false,
+              "required": [
+                "url"
+              ]
+            }
+          },
+          "remote_read": {
+            "description": "Settings related to the remote read feature.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "The URL of the endpoint to query from.",
+                  "type": "string",
+                  "format": "uri-reference"
+                },
+                "required_matchers": {
+                  "description": "An optional list of equality matchers which have to be present in a selector to query the remote read endpoint.",
+                  "$ref": "#/definitions3/labels"
+                },
+                "remote_timeout": {
+                  "description": "Timeout for requests to the remote read endpoint.",
+                  "$ref": "#/definitions3/duration",
+                  "default": "1m"
+                },
+                "read_recent": {
+                  "description": "Whether reads should be made for queries for time ranges that the local storage should have complete data for.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "default": false
+                },
+                "basic_auth": {
+                  "$ref": "#/definitions3/basic_auth"
+                },
+                "bearer_token": {
+                  "$ref": "#/definitions3/bearer_token"
+                },
+                "bearer_token_file": {
+                  "$ref": "#/definitions3/bearer_token_file"
+                },
+                "tls_config": {
+                  "$ref": "#/definitions3/tls_config"
+                },
+                "proxy_url": {
+                  "description": "Optional proxy URL.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri-reference"
+                }
+              },
+              "allOf": [
+                {
+                  "$ref": "#/definitions3/auth"
+                }
+              ],
+              "additionalProperties": false,
+              "required": [
+                "url"
+              ]
+            }
+          },
+          "scrape_configs": {
+            "description": "A list of scrape configurations.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "job_name": {
+                  "description": "The job name assigned to scraped metrics by default. Must be unique across all scrape configurations.",
+                  "type": "string"
+                },
+                "scrape_interval": {
+                  "description": "How frequently to scrape targets from this job. Defaults to `global.scrape_interval`.",
+                  "$ref": "#/definitions3/duration"
+                },
+                "scrape_timeout": {
+                  "description": "Per-scrape timeout when scraping this job. Defaults to `global.scrape_timeout`.",
+                  "$ref": "#/definitions3/duration"
+                },
+                "metrics_path": {
+                  "description": "The HTTP resource path on which to fetch metrics from targets.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "default": "/metrics"
+                },
+                "honor_labels": {
+                  "description": "Controls how Prometheus handles conflicts between labels that are already present in scraped data and labels that Prometheus would attach server-side (\"job\" and \"instance\" labels, manually configured target labels, and labels generated by service discovery implementations).",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "default": false
+                },
+                "honor_timestamps": {
+                  "description": "Controls whether Prometheus respects the timestamps present in scraped data.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "default": true
+                },
+                "scheme": {
+                  "description": "Configures the protocol scheme used for requests.",
+                  "$ref": "#/definitions3/scheme"
+                },
+                "params": {
+                  "description": "Optional HTTP(S) URL parameters.",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "basic_auth": {
+                  "$ref": "#/definitions3/basic_auth"
+                },
+                "bearer_token": {
+                  "$ref": "#/definitions3/bearer_token"
+                },
+                "bearer_token_file": {
+                  "$ref": "#/definitions3/bearer_token_file"
+                },
+                "tls_config": {
+                  "description": "Configures the scrape request's TLS settings.",
+                  "$ref": "#/definitions3/tls_config"
+                },
+                "proxy_url": {
+                  "description": "Optional proxy URL.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri-reference"
+                },
+                "azure_sd_configs": {
+                  "$ref": "#/definitions3/azure_sd_configs"
+                },
+                "consul_sd_configs": {
+                  "$ref": "#/definitions3/consul_sd_configs"
+                },
+                "dns_sd_configs": {
+                  "$ref": "#/definitions3/dns_sd_configs"
+                },
+                "ec2_sd_configs": {
+                  "$ref": "#/definitions3/ec2_sd_configs"
+                },
+                "openstack_sd_configs": {
+                  "$ref": "#/definitions3/openstack_sd_configs"
+                },
+                "file_sd_configs": {
+                  "$ref": "#/definitions3/file_sd_configs"
+                },
+                "gce_sd_configs": {
+                  "$ref": "#/definitions3/gce_sd_configs"
+                },
+                "kubernetes_sd_configs": {
+                  "$ref": "#/definitions3/kubernetes_sd_configs"
+                },
+                "marathon_sd_configs": {
+                  "$ref": "#/definitions3/marathon_sd_configs"
+                },
+                "nerve_sd_configs": {
+                  "$ref": "#/definitions3/nerve_sd_configs"
+                },
+                "serverset_sd_configs": {
+                  "$ref": "#/definitions3/serverset_sd_configs"
+                },
+                "triton_sd_configs": {
+                  "$ref": "#/definitions3/triton_sd_configs"
+                },
+                "static_configs": {
+                  "$ref": "#/definitions3/static_configs"
+                },
+                "relabel_configs": {
+                  "description": "List of target relabel configurations.",
+                  "$ref": "#/definitions3/relabel_configs"
+                },
+                "metric_relabel_configs": {
+                  "description": "List of metric relabel configurations.",
+                  "$ref": "#/definitions3/relabel_configs"
+                },
+                "sample_limit": {
+                  "description": "Per-scrape limit on number of scraped samples that will be accepted. If more than this number of samples are present after metric relabelling the entire scrape will be treated as failed. 0 means no limit.",
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "default": 0
+                }
+              },
+              "allOf": [
+                {
+                  "$ref": "#/definitions3/auth"
+                }
+              ],
+              "additionalProperties": false,
+              "required": [
+                "job_name"
+              ]
+            }
+          },
+          "alerting": {
+            "description": "Alerting specifies settings related to the Alertmanager.",
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "alert_relabel_configs": {
+                "$ref": "#/definitions3/relabel_configs"
+              },
+              "alertmanagers": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "timeout": {
+                      "description": "Per-target Alertmanager timeout when pushing alerts.",
+                      "$ref": "#/definitions3/duration",
+                      "default": "10s"
+                    },
+                    "api_version": {
+                      "description": "The api version of Alertmanager.",
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": "v1"
+                    },
+                    "path_prefix": {
+                      "description": "Prefix for the HTTP path alerts are pushed to.",
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": "/"
+                    },
+                    "scheme": {
+                      "description": "Configures the protocol scheme used for requests.",
+                      "$ref": "#/definitions3/scheme"
+                    },
+                    "basic_auth": {
+                      "$ref": "#/definitions3/basic_auth"
+                    },
+                    "bearer_token": {
+                      "$ref": "#/definitions3/bearer_token"
+                    },
+                    "bearer_token_file": {
+                      "$ref": "#/definitions3/bearer_token_file"
+                    },
+                    "tls_config": {
+                      "description": "Configures the scrape request's TLS settings.",
+                      "$ref": "#/definitions3/tls_config"
+                    },
+                    "proxy_url": {
+                      "description": "Optional proxy URL.",
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "uri-reference"
+                    },
+                    "azure_sd_configs": {
+                      "$ref": "#/definitions3/azure_sd_configs"
+                    },
+                    "consul_sd_configs": {
+                      "$ref": "#/definitions3/consul_sd_configs"
+                    },
+                    "dns_sd_configs": {
+                      "$ref": "#/definitions3/dns_sd_configs"
+                    },
+                    "ec2_sd_configs": {
+                      "$ref": "#/definitions3/ec2_sd_configs"
+                    },
+                    "file_sd_configs": {
+                      "$ref": "#/definitions3/file_sd_configs"
+                    },
+                    "gce_sd_configs": {
+                      "$ref": "#/definitions3/gce_sd_configs"
+                    },
+                    "kubernetes_sd_configs": {
+                      "$ref": "#/definitions3/kubernetes_sd_configs"
+                    },
+                    "marathon_sd_configs": {
+                      "$ref": "#/definitions3/marathon_sd_configs"
+                    },
+                    "nerve_sd_configs": {
+                      "$ref": "#/definitions3/nerve_sd_configs"
+                    },
+                    "serverset_sd_configs": {
+                      "$ref": "#/definitions3/serverset_sd_configs"
+                    },
+                    "triton_sd_configs": {
+                      "$ref": "#/definitions3/triton_sd_configs"
+                    },
+                    "static_configs": {
+                      "$ref": "#/definitions3/static_configs"
+                    },
+                    "relabel_configs": {
+                      "description": "List of target relabel configurations.",
+                      "$ref": "#/definitions3/relabel_configs"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions3/auth"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "nerve_sd_configs": {
+      "description": "List of AirBnB's Nerve service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object"
+      }
+    },
+    "filepath_glob": {
+      "type": "string"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "server_name": {
+                  "description": "ServerName extension to indicate the name of the server.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "cert_file": {
+                  "description": "Certificate file for client cert authentication to the server.",
+                  "$ref": "#/definitions4/filepath"
+                },
+                "key_file": {
+                  "description": "Key file for client cert authentication to the server.",
+                  "$ref": "#/definitions4/filepath"
+                },
+                "insecure_skip_verify": {
+                  "description": "Disable validation of the server certificate.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "ca_file": {
+                  "description": "CA certificate to validate API server certificate with.",
+                  "$ref": "#/definitions4/filepath"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^cert_file$": true,
+                "^server_name$": true,
+                "^insecure_skip_verify$": true,
+                "^key_file$": true,
+                "^ca_file$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "label_name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "tls_config": {
+                  "description": "Configures the remote write request's TLS settings.",
+                  "$ref": "#/definitions4/tls_config"
+                },
+                "url": {
+                  "description": "The URL of the endpoint to send samples to.",
+                  "type": "string",
+                  "format": "uri-reference"
+                },
+                "bearer_token": {
+                  "$ref": "#/definitions4/bearer_token"
+                },
+                "write_relabel_configs": {
+                  "description": "List of remote write relabel configurations.",
+                  "$ref": "#/definitions4/relabel_configs"
+                },
+                "bearer_token_file": {
+                  "$ref": "#/definitions4/bearer_token_file"
+                },
+                "basic_auth": {
+                  "$ref": "#/definitions4/basic_auth"
+                },
+                "queue_config": {
+                  "description": "Configures the queue used to write to remote storage.",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "batch_send_deadline": {
+                      "description": "Maximum time a sample will wait in buffer.",
+                      "$ref": "#/definitions4/duration",
+                      "default": "5s"
+                    },
+                    "max_samples_per_send": {
+                      "description": "Maximum number of samples per send.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 100
+                    },
+                    "min_shards": {
+                      "description": "Minimum number of shards, i.e. amount of concurrency.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 1
+                    },
+                    "max_backoff": {
+                      "description": "Maximum retry delay.",
+                      "$ref": "#/definitions4/duration",
+                      "default": "100ms"
+                    },
+                    "min_backoff": {
+                      "description": "Initial retry delay. Gets doubled for every retry.",
+                      "$ref": "#/definitions4/duration",
+                      "default": "30ms"
+                    },
+                    "max_shards": {
+                      "description": "Maximum number of shards, i.e. amount of concurrency.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 1000
+                    },
+                    "capacity": {
+                      "description": "Number of samples to buffer per shard before we block reading of more samples from the WAL. It is recommended to have enough capacity in each shard to buffer several requests to keep throughput up while processing occasional slow remote requests.",
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "default": 500
+                    }
+                  }
+                },
+                "remote_timeout": {
+                  "description": "Timeout for requests to the remote write endpoint.",
+                  "$ref": "#/definitions4/duration",
+                  "default": "30s"
+                },
+                "proxy_url": {
+                  "description": "Optional proxy URL.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri-reference"
+                }
+              },
+              "allOf": [
+                {
+                  "$ref": "#/definitions4/auth"
+                }
+              ],
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bearer_token$": true,
+                "^url$": true,
+                "^write_relabel_configs$": true,
+                "^queue_config$": true,
+                "^bearer_token_file$": true,
+                "^remote_timeout$": true,
+                "^proxy_url$": true,
+                "^basic_auth$": true,
+                "^tls_config$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ec2_sd_configs": {
+      "description": "List of EC2 service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the EC2 API.",
+        "type": "object"
+      }
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Sets the `Authorization` header on every remote write request with the configured username and password. password and password_file are mutually exclusive.",
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "password_file": {
+                  "$ref": "#/definitions4/filepath"
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "password"
+                  ]
+                },
+                {
+                  "required": [
+                    "password_file"
+                  ]
+                }
+              ],
+              "required": [
+                "username"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^username$": true,
+                "^password$": true,
+                "^password_file$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "bearer_token_file": {
+      "description": "Sets the `Authorization` header on every scrape request with the bearer token read from the configured file. It is mutually exclusive with `bearer_token`.",
+      "$ref": "#/definitions4/filepath"
+    },
+    "basic_auth": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "consul_sd_configs": {
+      "description": "List of Consul service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Consul API. It is to be defined as the Consul documentation requires.",
+        "type": "object"
+      }
+    },
+    "labels": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Optional HTTP(S) URL parameters.",
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": [
+                "object",
+                "null"
+              ],
+              "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                  "$ref": "#/definitions4/label_value"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "relabel_configs": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "regex": {
+            "description": "Regular expression against which the extracted value is matched.",
+            "$comment": "https://github.com/prometheus/prometheus/blob/release-2.13/config/testdata/conf.good.yml#L111 has integer instead of string",
+            "default": "(.*)"
+          },
+          "replacement": {
+            "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available.",
+            "type": "string",
+            "default": "$1"
+          },
+          "separator": {
+            "description": "Separator placed between concatenated source label values.",
+            "type": "string",
+            "default": ";"
+          },
+          "source_labels": {
+            "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/label_name"
+            }
+          },
+          "modulus": {
+            "description": "Modulus to take of the hash of the source label values.",
+            "type": "integer"
+          },
+          "target_label": {
+            "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
+            "$comment": "https://github.com/prometheus/prometheus/blob/release-2.13/config/testdata/conf.good.yml#L146 has a regex capture group, violating vanilla label_name definition.",
+            "type": "string"
+          },
+          "action": {
+            "description": "Action to perform based on regex matching.",
+            "type": "string",
+            "enum": [
+              "replace",
+              "keep",
+              "drop",
+              "hashmod",
+              "labelmap",
+              "labeldrop",
+              "labelkeep"
+            ],
+            "default": "replace"
+          }
+        },
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "properties": {
+                  "action": {
+                    "const": "replace"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "target_label"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "properties": {
+                "action": {
+                  "const": "replace"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "file_sd_configs": {
+      "description": "List of file service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "Patterns for files from which target groups are extracted. Where the pattern may be a path ending in .json, .yml or .yaml. The last path segment may contain a single * that matches any character sequence, e.g. my/path/tg_*.json.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "refresh_interval": {
+            "description": "Refresh interval to re-read the files.",
+            "$ref": "#/definitions4/duration",
+            "default": "5m"
+          }
+        }
+      }
+    },
+    "azure_sd_configs": {
+      "description": "List of Azure service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Azure API.",
+        "type": "object"
+      }
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Prometheus",
+              "description": "Prometheus configuration file",
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "remote_read": {
+                  "description": "Settings related to the remote read feature.",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "$ref": "#/definitions4/modern_5"
+                  }
+                },
+                "alerting": {
+                  "description": "Alerting specifies settings related to the Alertmanager.",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "alert_relabel_configs": {
+                      "$ref": "#/definitions4/relabel_configs"
+                    },
+                    "alertmanagers": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tls_config": {
+                            "description": "Configures the scrape request's TLS settings.",
+                            "$ref": "#/definitions4/tls_config"
+                          },
+                          "nerve_sd_configs": {
+                            "$ref": "#/definitions4/nerve_sd_configs"
+                          },
+                          "triton_sd_configs": {
+                            "$ref": "#/definitions4/triton_sd_configs"
+                          },
+                          "ec2_sd_configs": {
+                            "$ref": "#/definitions4/ec2_sd_configs"
+                          },
+                          "bearer_token_file": {
+                            "$ref": "#/definitions4/bearer_token_file"
+                          },
+                          "api_version": {
+                            "description": "The api version of Alertmanager.",
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "default": "v1"
+                          },
+                          "basic_auth": {
+                            "$ref": "#/definitions4/basic_auth"
+                          },
+                          "consul_sd_configs": {
+                            "$ref": "#/definitions4/consul_sd_configs"
+                          },
+                          "relabel_configs": {
+                            "description": "List of target relabel configurations.",
+                            "$ref": "#/definitions4/relabel_configs"
+                          },
+                          "proxy_url": {
+                            "description": "Optional proxy URL.",
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "uri-reference"
+                          },
+                          "kubernetes_sd_configs": {
+                            "$ref": "#/definitions4/kubernetes_sd_configs"
+                          },
+                          "gce_sd_configs": {
+                            "$ref": "#/definitions4/gce_sd_configs"
+                          },
+                          "static_configs": {
+                            "$ref": "#/definitions4/static_configs"
+                          },
+                          "marathon_sd_configs": {
+                            "$ref": "#/definitions4/marathon_sd_configs"
+                          },
+                          "dns_sd_configs": {
+                            "$ref": "#/definitions4/dns_sd_configs"
+                          },
+                          "bearer_token": {
+                            "$ref": "#/definitions4/bearer_token"
+                          },
+                          "scheme": {
+                            "description": "Configures the protocol scheme used for requests.",
+                            "$ref": "#/definitions4/scheme"
+                          },
+                          "serverset_sd_configs": {
+                            "$ref": "#/definitions4/serverset_sd_configs"
+                          },
+                          "path_prefix": {
+                            "description": "Prefix for the HTTP path alerts are pushed to.",
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "default": "/"
+                          },
+                          "file_sd_configs": {
+                            "$ref": "#/definitions4/file_sd_configs"
+                          },
+                          "azure_sd_configs": {
+                            "$ref": "#/definitions4/azure_sd_configs"
+                          },
+                          "timeout": {
+                            "description": "Per-target Alertmanager timeout when pushing alerts.",
+                            "$ref": "#/definitions4/duration",
+                            "default": "10s"
+                          }
+                        },
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions4/auth"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "rule_files": {
+                  "description": "Rule files specifies a list of globs. Rules and alerts are read from all matching files.",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "$ref": "#/definitions4/filepath_glob"
+                  }
+                },
+                "global": {
+                  "$ref": "#/definitions4/modern_6"
+                },
+                "remote_write": {
+                  "description": "Settings related to the remote write feature.",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "$ref": "#/definitions4/modern_7"
+                  }
+                },
+                "scrape_configs": {
+                  "description": "A list of scrape configurations.",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "$ref": "#/definitions4/modern_8"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^rule_files$": true,
+                "^remote_read$": true,
+                "^remote_write$": true,
+                "^global$": true,
+                "^alerting$": true,
+                "^scrape_configs$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "tls_config": {
+                  "$ref": "#/definitions4/tls_config"
+                },
+                "required_matchers": {
+                  "description": "An optional list of equality matchers which have to be present in a selector to query the remote read endpoint.",
+                  "$ref": "#/definitions4/labels"
+                },
+                "url": {
+                  "description": "The URL of the endpoint to query from.",
+                  "type": "string",
+                  "format": "uri-reference"
+                },
+                "read_recent": {
+                  "description": "Whether reads should be made for queries for time ranges that the local storage should have complete data for.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "default": false
+                },
+                "bearer_token": {
+                  "$ref": "#/definitions4/bearer_token"
+                },
+                "bearer_token_file": {
+                  "$ref": "#/definitions4/bearer_token_file"
+                },
+                "basic_auth": {
+                  "$ref": "#/definitions4/basic_auth"
+                },
+                "remote_timeout": {
+                  "description": "Timeout for requests to the remote read endpoint.",
+                  "$ref": "#/definitions4/duration",
+                  "default": "1m"
+                },
+                "proxy_url": {
+                  "description": "Optional proxy URL.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri-reference"
+                }
+              },
+              "allOf": [
+                {
+                  "$ref": "#/definitions4/auth"
+                }
+              ],
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^bearer_token$": true,
+                "^url$": true,
+                "^bearer_token_file$": true,
+                "^remote_timeout$": true,
+                "^proxy_url$": true,
+                "^basic_auth$": true,
+                "^tls_config$": true,
+                "^read_recent$": true,
+                "^required_matchers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "tls_config": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "duration": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9]+(ms|[smhdwy])$"
+    },
+    "label_value": {
+      "type": "string"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "The global configuration specifies parameters that are valid in all other configuration contexts. They also serve as defaults for other configuration sections.",
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "scrape_interval": {
+                  "description": "How frequently to scrape targets by default.",
+                  "$ref": "#/definitions4/duration",
+                  "default": "1m"
+                },
+                "scrape_timeout": {
+                  "description": "How long until a scrape request times out.",
+                  "$ref": "#/definitions4/duration",
+                  "default": "10s"
+                },
+                "evaluation_interval": {
+                  "description": "How frequently to evaluate rules.",
+                  "$ref": "#/definitions4/duration",
+                  "default": "1m"
+                },
+                "external_labels": {
+                  "description": "The labels to add to any time series or alerts when communicating with external systems (federation, remote storage, Alertmanager).",
+                  "$ref": "#/definitions4/labels"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^scrape_interval$": true,
+                "^scrape_timeout$": true,
+                "^evaluation_interval$": true,
+                "^external_labels$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "kubernetes_sd_configs": {
+      "description": "List of Kubernetes service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Kubernetes API.",
+        "type": "object"
+      }
+    },
+    "gce_sd_configs": {
+      "description": "List of GCE service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the GCE API.",
+        "type": "object"
+      }
+    },
+    "triton_sd_configs": {
+      "description": "List of Triton service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Triton discovery API.",
+        "type": "object"
+      }
+    },
+    "auth": {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "not": {
+                    "properties": {
+                      "basic_auth": {
+                        "const": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "bearer_token": {
+                      "const": null
+                    },
+                    "bearer_token_file": {
+                      "const": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "not": {
+                "not": {
+                  "properties": {
+                    "basic_auth": {
+                      "const": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "not": {
+                    "properties": {
+                      "bearer_token": {
+                        "const": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "basic_auth": {
+                      "const": null
+                    },
+                    "bearer_token_file": {
+                      "const": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "not": {
+                "not": {
+                  "properties": {
+                    "bearer_token": {
+                      "const": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "not": {
+                    "properties": {
+                      "bearer_token_file": {
+                        "const": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "basic_auth": {
+                      "const": null
+                    },
+                    "bearer_token": {
+                      "const": null
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "not": {
+                "not": {
+                  "properties": {
+                    "bearer_token_file": {
+                      "const": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "static_configs": {
+      "description": "List of labeled statically configured targets for this job.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "targets": {
+            "description": "The targets specified by the static config.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "labels": {
+            "description": "Labels assigned to all metrics scraped from the targets.",
+            "$ref": "#/definitions4/labels"
+          }
+        }
+      }
+    },
+    "marathon_sd_configs": {
+      "description": "List of Marathon service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object"
+      }
+    },
+    "dns_sd_configs": {
+      "description": "List of DNS service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "A DNS-based service discovery configuration allows specifying a set of DNS domain names which are periodically queried to discover a list of targets. The DNS servers to be contacted are read from /etc/resolv.conf. This service discovery method only supports basic DNS A, AAAA and SRV record queries, but not the advanced DNS-SD approach specified in RFC6763. During the relabeling phase, the meta label __meta_dns_name is available on each target and is set to the record name that produced the discovered target.",
+        "type": "object"
+      }
+    },
+    "openstack_sd_configs": {
+      "description": "List of OpenStack service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the OpenStack API.",
+        "type": "object"
+      }
+    },
+    "bearer_token": {
+      "description": "Sets the `Authorization` header on every scrape request with the configured bearer token. It is mutually exclusive with `bearer_token_file`.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "filepath": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri-reference"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "tls_config": {
+                  "description": "Configures the scrape request's TLS settings.",
+                  "$ref": "#/definitions4/tls_config"
+                },
+                "nerve_sd_configs": {
+                  "$ref": "#/definitions4/nerve_sd_configs"
+                },
+                "metric_relabel_configs": {
+                  "description": "List of metric relabel configurations.",
+                  "$ref": "#/definitions4/relabel_configs"
+                },
+                "triton_sd_configs": {
+                  "$ref": "#/definitions4/triton_sd_configs"
+                },
+                "metrics_path": {
+                  "description": "The HTTP resource path on which to fetch metrics from targets.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "default": "/metrics"
+                },
+                "bearer_token_file": {
+                  "$ref": "#/definitions4/bearer_token_file"
+                },
+                "sample_limit": {
+                  "description": "Per-scrape limit on number of scraped samples that will be accepted. If more than this number of samples are present after metric relabelling the entire scrape will be treated as failed. 0 means no limit.",
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "default": 0
+                },
+                "basic_auth": {
+                  "$ref": "#/definitions4/basic_auth"
+                },
+                "consul_sd_configs": {
+                  "$ref": "#/definitions4/consul_sd_configs"
+                },
+                "relabel_configs": {
+                  "description": "List of target relabel configurations.",
+                  "$ref": "#/definitions4/relabel_configs"
+                },
+                "file_sd_configs": {
+                  "$ref": "#/definitions4/file_sd_configs"
+                },
+                "azure_sd_configs": {
+                  "$ref": "#/definitions4/azure_sd_configs"
+                },
+                "kubernetes_sd_configs": {
+                  "$ref": "#/definitions4/kubernetes_sd_configs"
+                },
+                "gce_sd_configs": {
+                  "$ref": "#/definitions4/gce_sd_configs"
+                },
+                "static_configs": {
+                  "$ref": "#/definitions4/static_configs"
+                },
+                "marathon_sd_configs": {
+                  "$ref": "#/definitions4/marathon_sd_configs"
+                },
+                "dns_sd_configs": {
+                  "$ref": "#/definitions4/dns_sd_configs"
+                },
+                "openstack_sd_configs": {
+                  "$ref": "#/definitions4/openstack_sd_configs"
+                },
+                "bearer_token": {
+                  "$ref": "#/definitions4/bearer_token"
+                },
+                "params": {
+                  "$ref": "#/definitions4/modern_9"
+                },
+                "honor_timestamps": {
+                  "description": "Controls whether Prometheus respects the timestamps present in scraped data.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "default": true
+                },
+                "ec2_sd_configs": {
+                  "$ref": "#/definitions4/ec2_sd_configs"
+                },
+                "job_name": {
+                  "description": "The job name assigned to scraped metrics by default. Must be unique across all scrape configurations.",
+                  "type": "string"
+                },
+                "scheme": {
+                  "description": "Configures the protocol scheme used for requests.",
+                  "$ref": "#/definitions4/scheme"
+                },
+                "serverset_sd_configs": {
+                  "$ref": "#/definitions4/serverset_sd_configs"
+                },
+                "scrape_interval": {
+                  "description": "How frequently to scrape targets from this job. Defaults to `global.scrape_interval`.",
+                  "$ref": "#/definitions4/duration"
+                },
+                "honor_labels": {
+                  "description": "Controls how Prometheus handles conflicts between labels that are already present in scraped data and labels that Prometheus would attach server-side (\"job\" and \"instance\" labels, manually configured target labels, and labels generated by service discovery implementations).",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "default": false
+                },
+                "scrape_timeout": {
+                  "description": "Per-scrape timeout when scraping this job. Defaults to `global.scrape_timeout`.",
+                  "$ref": "#/definitions4/duration"
+                },
+                "proxy_url": {
+                  "description": "Optional proxy URL.",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri-reference"
+                }
+              },
+              "allOf": [
+                {
+                  "$ref": "#/definitions4/auth"
+                }
+              ],
+              "required": [
+                "job_name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^nerve_sd_configs$": true,
+                "^openstack_sd_configs$": true,
+                "^kubernetes_sd_configs$": true,
+                "^scheme$": true,
+                "^marathon_sd_configs$": true,
+                "^bearer_token$": true,
+                "^bearer_token_file$": true,
+                "^sample_limit$": true,
+                "^file_sd_configs$": true,
+                "^scrape_timeout$": true,
+                "^scrape_interval$": true,
+                "^job_name$": true,
+                "^azure_sd_configs$": true,
+                "^basic_auth$": true,
+                "^tls_config$": true,
+                "^params$": true,
+                "^gce_sd_configs$": true,
+                "^dns_sd_configs$": true,
+                "^relabel_configs$": true,
+                "^honor_labels$": true,
+                "^static_configs$": true,
+                "^metrics_path$": true,
+                "^consul_sd_configs$": true,
+                "^serverset_sd_configs$": true,
+                "^ec2_sd_configs$": true,
+                "^triton_sd_configs$": true,
+                "^proxy_url$": true,
+                "^metric_relabel_configs$": true,
+                "^honor_timestamps$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "scheme": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "http",
+        "https",
+        null
+      ]
+    },
+    "serverset_sd_configs": {
+      "description": "List of Zookeeper Serverset service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "definitions3": {
+    "duration": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9]+(ms|[smhdwy])$"
+    },
+    "label_name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+    "label_value": {
+      "type": "string"
+    },
+    "labels": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+          "$ref": "#/definitions3/label_value"
+        }
+      },
+      "additionalProperties": false
+    },
+    "filepath_glob": {
+      "type": "string"
+    },
+    "filepath": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri-reference"
+    },
+    "basic_auth": {
+      "description": "Sets the `Authorization` header on every remote write request with the configured username and password. password and password_file are mutually exclusive.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "password_file": {
+          "$ref": "#/definitions3/filepath"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "password"
+          ]
+        },
+        {
+          "required": [
+            "password_file"
+          ]
+        }
+      ],
+      "additionalProperties": false,
+      "required": [
+        "username"
+      ]
+    },
+    "bearer_token": {
+      "description": "Sets the `Authorization` header on every scrape request with the configured bearer token. It is mutually exclusive with `bearer_token_file`.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bearer_token_file": {
+      "description": "Sets the `Authorization` header on every scrape request with the bearer token read from the configured file. It is mutually exclusive with `bearer_token`.",
+      "$ref": "#/definitions3/filepath"
+    },
+    "auth": {
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "properties": {
+                "basic_auth": {
+                  "const": null
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "bearer_token": {
+                "const": null
+              },
+              "bearer_token_file": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "not": {
+              "properties": {
+                "bearer_token": {
+                  "const": null
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "basic_auth": {
+                "const": null
+              },
+              "bearer_token_file": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "not": {
+              "properties": {
+                "bearer_token_file": {
+                  "const": null
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "basic_auth": {
+                "const": null
+              },
+              "bearer_token": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "relabel_configs": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_labels": {
+            "description": "The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions3/label_name"
+            }
+          },
+          "separator": {
+            "description": "Separator placed between concatenated source label values.",
+            "type": "string",
+            "default": ";"
+          },
+          "target_label": {
+            "description": "Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.",
+            "$comment": "https://github.com/prometheus/prometheus/blob/release-2.13/config/testdata/conf.good.yml#L146 has a regex capture group, violating vanilla label_name definition.",
+            "type": "string"
+          },
+          "regex": {
+            "description": "Regular expression against which the extracted value is matched.",
+            "$comment": "https://github.com/prometheus/prometheus/blob/release-2.13/config/testdata/conf.good.yml#L111 has integer instead of string",
+            "default": "(.*)"
+          },
+          "modulus": {
+            "description": "Modulus to take of the hash of the source label values.",
+            "type": "integer"
+          },
+          "replacement": {
+            "description": "Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available.",
+            "type": "string",
+            "default": "$1"
+          },
+          "action": {
+            "description": "Action to perform based on regex matching.",
+            "type": "string",
+            "enum": [
+              "replace",
+              "keep",
+              "drop",
+              "hashmod",
+              "labelmap",
+              "labeldrop",
+              "labelkeep"
+            ],
+            "default": "replace"
+          }
+        },
+        "if": {
+          "properties": {
+            "action": {
+              "const": "replace"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "target_label"
+          ]
+        }
+      }
+    },
+    "tls_config": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "ca_file": {
+          "description": "CA certificate to validate API server certificate with.",
+          "$ref": "#/definitions3/filepath"
+        },
+        "cert_file": {
+          "description": "Certificate file for client cert authentication to the server.",
+          "$ref": "#/definitions3/filepath"
+        },
+        "key_file": {
+          "description": "Key file for client cert authentication to the server.",
+          "$ref": "#/definitions3/filepath"
+        },
+        "server_name": {
+          "description": "ServerName extension to indicate the name of the server.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "insecure_skip_verify": {
+          "description": "Disable validation of the server certificate.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "scheme": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "http",
+        "https",
+        null
+      ]
+    },
+    "azure_sd_configs": {
+      "description": "List of Azure service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Azure API.",
+        "type": "object"
+      }
+    },
+    "consul_sd_configs": {
+      "description": "List of Consul service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Consul API. It is to be defined as the Consul documentation requires.",
+        "type": "object"
+      }
+    },
+    "dns_sd_configs": {
+      "description": "List of DNS service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "A DNS-based service discovery configuration allows specifying a set of DNS domain names which are periodically queried to discover a list of targets. The DNS servers to be contacted are read from /etc/resolv.conf. This service discovery method only supports basic DNS A, AAAA and SRV record queries, but not the advanced DNS-SD approach specified in RFC6763. During the relabeling phase, the meta label __meta_dns_name is available on each target and is set to the record name that produced the discovered target.",
+        "type": "object"
+      }
+    },
+    "ec2_sd_configs": {
+      "description": "List of EC2 service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the EC2 API.",
+        "type": "object"
+      }
+    },
+    "openstack_sd_configs": {
+      "description": "List of OpenStack service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the OpenStack API.",
+        "type": "object"
+      }
+    },
+    "file_sd_configs": {
+      "description": "List of file service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "Patterns for files from which target groups are extracted. Where the pattern may be a path ending in .json, .yml or .yaml. The last path segment may contain a single * that matches any character sequence, e.g. my/path/tg_*.json.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "refresh_interval": {
+            "description": "Refresh interval to re-read the files.",
+            "$ref": "#/definitions3/duration",
+            "default": "5m"
+          }
+        }
+      }
+    },
+    "gce_sd_configs": {
+      "description": "List of GCE service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the GCE API.",
+        "type": "object"
+      }
+    },
+    "kubernetes_sd_configs": {
+      "description": "List of Kubernetes service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Kubernetes API.",
+        "type": "object"
+      }
+    },
+    "marathon_sd_configs": {
+      "description": "List of Marathon service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object"
+      }
+    },
+    "nerve_sd_configs": {
+      "description": "List of AirBnB's Nerve service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object"
+      }
+    },
+    "serverset_sd_configs": {
+      "description": "List of Zookeeper Serverset service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object"
+      }
+    },
+    "triton_sd_configs": {
+      "description": "List of Triton service discovery configurations.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "description": "The information to access the Triton discovery API.",
+        "type": "object"
+      }
+    },
+    "static_configs": {
+      "description": "List of labeled statically configured targets for this job.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "targets": {
+            "description": "The targets specified by the static config.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "labels": {
+            "description": "Labels assigned to all metrics scraped from the targets.",
+            "$ref": "#/definitions3/labels"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/static_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/static_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/label_value"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/label_value"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dns_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dns_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/serverset_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/serverset_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/nerve_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/nerve_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/bearer_token_file"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/bearer_token_file"
+      }
+    },
+    {
+      "$ref": "#/definitions3/duration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/duration"
+      }
+    },
+    {
+      "$ref": "#/definitions4/openstack_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/openstack_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/auth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/auth"
+      }
+    },
+    {
+      "$ref": "#/definitions3/kubernetes_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/kubernetes_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/label_value"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/label_value"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relabel_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relabel_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/labels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/labels"
+      }
+    },
+    {
+      "$ref": "#/definitions3/triton_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/triton_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/gce_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/gce_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/nerve_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/nerve_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/bearer_token"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/bearer_token"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tls_config"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tls_config"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/basic_auth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/basic_auth"
+      }
+    },
+    {
+      "$ref": "#/definitions3/bearer_token_file"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/bearer_token_file"
+      }
+    },
+    {
+      "$ref": "#/definitions4/consul_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/consul_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/scheme"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/scheme"
+      }
+    },
+    {
+      "$ref": "#/definitions3/openstack_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/openstack_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/serverset_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/serverset_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/consul_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/consul_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions3/azure_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/azure_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/labels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/labels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/duration"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/duration"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/triton_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/triton_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/marathon_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/marathon_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/marathon_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/marathon_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/basic_auth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/basic_auth"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dns_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dns_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/label_name"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/label_name"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/auth"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/auth"
+      }
+    },
+    {
+      "$ref": "#/definitions4/static_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/static_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/ec2_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/ec2_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tls_config"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tls_config"
+      }
+    },
+    {
+      "$ref": "#/definitions4/kubernetes_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/kubernetes_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/scheme"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/scheme"
+      }
+    },
+    {
+      "$ref": "#/definitions4/ec2_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/ec2_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/gce_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/gce_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/filepath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/filepath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relabel_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relabel_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions3/filepath_glob"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/filepath_glob"
+      }
+    },
+    {
+      "$ref": "#/definitions3/file_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/file_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/label_name"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/label_name"
+      }
+    },
+    {
+      "$ref": "#/definitions4/file_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/file_sd_configs"
+      }
+    },
+    {
+      "$ref": "#/definitions4/filepath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/filepath"
+      }
+    },
+    {
+      "$ref": "#/definitions3/bearer_token"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/bearer_token"
+      }
+    },
+    {
+      "$ref": "#/definitions4/filepath_glob"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/filepath_glob"
+      }
+    },
+    {
+      "$ref": "#/definitions4/azure_sd_configs"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/azure_sd_configs"
+      }
+    }
+  ]
+}

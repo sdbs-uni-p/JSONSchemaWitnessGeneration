@@ -1,0 +1,332 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "_elements"
+      ],
+      "properties": {
+        "_attributes": {
+          "type": "object",
+          "required": [
+            "extracted",
+            "has_metadata"
+          ],
+          "properties": {
+            "extracted": {
+              "type": "boolean"
+            },
+            "has_metadata": {
+              "type": "boolean"
+            }
+          }
+        },
+        "_elements": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions4/file"
+              },
+              {
+                "$ref": "#/definitions4/file_remote_dir"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "_elements"
+        ],
+        "properties": {
+          "_attributes": {
+            "type": "object",
+            "required": [
+              "extracted",
+              "has_metadata"
+            ],
+            "properties": {
+              "extracted": {
+                "type": "boolean"
+              },
+              "has_metadata": {
+                "type": "boolean"
+              }
+            }
+          },
+          "_elements": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions3/file"
+                },
+                {
+                  "$ref": "#/definitions3/file_remote_dir"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "file_common": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "file": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/file_common"
+        },
+        {
+          "properties": {
+            "user": {
+              "type": "string",
+              "minLength": 1
+            },
+            "group": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "anyOf": [
+            {
+              "$ref": "#/definitions4/file_file"
+            },
+            {
+              "$ref": "#/definitions4/file_dir"
+            },
+            {
+              "$ref": "#/definitions4/file_link"
+            }
+          ]
+        }
+      ]
+    },
+    "file_file": {
+      "properties": {
+        "type": {
+          "enum": [
+            "file"
+          ]
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^[0-7]{3,4}$"
+        }
+      }
+    },
+    "file_dir": {
+      "properties": {
+        "type": {
+          "enum": [
+            "dir"
+          ]
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^[0-4]?[0-7]{3}$"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "file_link": {
+      "properties": {
+        "type": {
+          "enum": [
+            "link"
+          ]
+        }
+      }
+    },
+    "file_remote_dir": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/file_common"
+        },
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "remote_dir"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "file_common": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "file": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/file_common"
+        },
+        {
+          "properties": {
+            "user": {
+              "type": "string",
+              "minLength": 1
+            },
+            "group": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/file_file"
+            },
+            {
+              "$ref": "#/definitions3/file_dir"
+            },
+            {
+              "$ref": "#/definitions3/file_link"
+            }
+          ]
+        }
+      ]
+    },
+    "file_file": {
+      "properties": {
+        "type": {
+          "enum": [
+            "file"
+          ]
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^[0-7]{3,4}$"
+        }
+      }
+    },
+    "file_dir": {
+      "properties": {
+        "type": {
+          "enum": [
+            "dir"
+          ]
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^[0-4]?[0-7]{3}$"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "file_link": {
+      "properties": {
+        "type": {
+          "enum": [
+            "link"
+          ]
+        }
+      }
+    },
+    "file_remote_dir": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/file_common"
+        },
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "remote_dir"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/file"
+    },
+    {
+      "$ref": "#/definitions3/file_dir"
+    },
+    {
+      "$ref": "#/definitions3/file_link"
+    },
+    {
+      "$ref": "#/definitions3/file"
+    },
+    {
+      "$ref": "#/definitions4/file_file"
+    },
+    {
+      "$ref": "#/definitions3/file_file"
+    },
+    {
+      "$ref": "#/definitions4/file_link"
+    },
+    {
+      "$ref": "#/definitions4/file_common"
+    },
+    {
+      "$ref": "#/definitions4/file_remote_dir"
+    },
+    {
+      "$ref": "#/definitions4/file_dir"
+    },
+    {
+      "$ref": "#/definitions3/file_common"
+    },
+    {
+      "$ref": "#/definitions3/file_remote_dir"
+    }
+  ]
+}

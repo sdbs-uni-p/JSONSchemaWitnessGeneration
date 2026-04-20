@@ -1,0 +1,158 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "$id": "segment",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "$id": "segment",
+        "description": "define segments to insert into a jinja template",
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "identifier",
+          "description",
+          "segments"
+        ],
+        "properties": {
+          "$schema": {
+            "type": "string"
+          },
+          "identifier": {
+            "description": "the identification of the segments",
+            "type": "string"
+          },
+          "description": {
+            "description": "the purpose of this group of segments",
+            "type": "string"
+          },
+          "segments": {
+            "additionalProperties": false,
+            "description": "the segments to insert",
+            "patternProperties": {
+              ".+": {
+                "description": "a segment of the template, each line should be a separate list item",
+                "type": [
+                  "string",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "overwrite": {
+            "description": "a list of segment keys that may overwrite previously defined entries",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "define segments to insert into a jinja template",
+              "type": "object",
+              "required": [
+                "identifier",
+                "description",
+                "segments"
+              ],
+              "properties": {
+                "identifier": {
+                  "description": "the identification of the segments",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "the purpose of this group of segments",
+                  "type": "string"
+                },
+                "segments": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "overwrite": {
+                  "description": "a list of segment keys that may overwrite previously defined entries",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "$schema": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^$schema$": true,
+                "^segments$": true,
+                "^description$": true,
+                "^identifier$": true,
+                "^overwrite$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "the segments to insert",
+              "patternProperties": {
+                ".+": {
+                  "description": "a segment of the template, each line should be a separate list item",
+                  "type": [
+                    "string",
+                    "array"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".+": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+[
+  {
+    "id": 1969,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "https://flynn.io/schema/examples/base#",
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "required": [
+        "request",
+        "response"
+      ],
+      "properties": {
+        "request": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "method",
+            "url",
+            "headers"
+          ],
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "_format": "uri"
+            },
+            "headers": {
+              "type": "object"
+            },
+            "params": {
+              "type": "object"
+            },
+            "body": {
+              "type": "object"
+            }
+          }
+        },
+        "response": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "headers"
+          ],
+          "properties": {
+            "headers": {
+              "type": "object"
+            },
+            "body": {}
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "id": "https://flynn.io/schema/examples/base#",
+                  "type": "object",
+                  "required": [
+                    "request",
+                    "response"
+                  ],
+                  "properties": {
+                    "request": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    "response": {
+                      "$ref": "#/definitions2/modern_3"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^request$": {},
+                    "^response$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "method",
+                    "url",
+                    "headers"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "_format": "uri"
+                    },
+                    "params": {
+                      "type": "object"
+                    },
+                    "headers": {
+                      "type": "object"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE"
+                      ]
+                    },
+                    "body": {
+                      "type": "object"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^headers$": {},
+                    "^method$": {},
+                    "^body$": {},
+                    "^url$": {},
+                    "^params$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "headers"
+                  ],
+                  "properties": {
+                    "headers": {
+                      "type": "object"
+                    },
+                    "body": true
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^headers$": {},
+                    "^body$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

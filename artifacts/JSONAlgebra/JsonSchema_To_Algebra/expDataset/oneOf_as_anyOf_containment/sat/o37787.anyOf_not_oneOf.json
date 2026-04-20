@@ -1,0 +1,404 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "https://tabris.com/fonts-schema.json",
+      "title": "Tabris.js Font Resources JSON Schema",
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/fontResources"
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "https://tabris.com/fonts-schema.json",
+        "title": "Tabris.js Font Resources JSON Schema",
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/fontResources"
+          }
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "fontResources": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "$scaleFactor": {
+          "enum": [
+            "nearest",
+            "lower",
+            "higher"
+          ]
+        },
+        "$fallbackLanguage": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z][a-zA-Z]?(-[\\-a-zA-Z0-9]+)?$"
+        }
+      },
+      "patternProperties": {
+        "^[a-z][a-zA-Z][a-zA-Z0-9]+$": {
+          "$ref": "#/definitions4/fontResource"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fontResource": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/fontDefinition"
+        },
+        {
+          "$ref": "#/definitions4/fontSelector"
+        }
+      ]
+    },
+    "fontSelector": {
+      "anyOf": [
+        {
+          "description": "Platform Selector",
+          "type": "object",
+          "properties": {
+            "ios": {
+              "$ref": "#/definitions4/fontResource"
+            },
+            "android": {
+              "$ref": "#/definitions4/fontResource"
+            }
+          },
+          "required": [
+            "ios",
+            "android"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "description": "Resource Reference",
+          "type": "object",
+          "required": [
+            "ref"
+          ],
+          "properties": {
+            "ref": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "description": "Inherit Marker",
+          "type": "object",
+          "properties": {
+            "inherit": {
+              "enum": [
+                true
+              ]
+            }
+          },
+          "required": [
+            "inherit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "description": "Scale Selector",
+          "type": "object",
+          "patternProperties": {
+            "^([0-9]\\.?[0-9]*)x$": {
+              "$ref": "#/definitions4/fontResource"
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        },
+        {
+          "description": "Locale Selector",
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z][a-zA-Z][a-zA-Z]?(-[\\-a-zA-Z0-9]+)?$": {
+              "$ref": "#/definitions4/fontResource"
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1,
+          "not": {
+            "required": [
+              "ios"
+            ]
+          }
+        }
+      ]
+    },
+    "fontDefinition": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions4/fontFamily"
+              }
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            },
+            "style": {
+              "enum": [
+                "italic",
+                "normal"
+              ]
+            },
+            "weight": {
+              "enum": [
+                "black",
+                "bold",
+                "medium",
+                "thin",
+                "light",
+                "normal"
+              ]
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "string",
+          "pattern": "^((italic|normal) )?((black|bold|medium|thin|light|normal) )?[1-9][0-9]*px( ([A-Za-z\\-]+|'[A-Za-z \\-]+')(, ?([A-Za-z\\-]+|'[A-Za-z \\-]+'))*)?$"
+        }
+      ]
+    },
+    "fontFamily": {
+      "anyOf": [
+        {
+          "enum": [
+            "serif",
+            "san-serif",
+            "monospace",
+            "condensed"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z \\-]+$"
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "fontResources": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "$scaleFactor": {
+          "enum": [
+            "nearest",
+            "lower",
+            "higher"
+          ]
+        },
+        "$fallbackLanguage": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z][a-zA-Z]?(-[\\-a-zA-Z0-9]+)?$"
+        }
+      },
+      "patternProperties": {
+        "^[a-z][a-zA-Z][a-zA-Z0-9]+$": {
+          "$ref": "#/definitions3/fontResource"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fontResource": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/fontDefinition"
+        },
+        {
+          "$ref": "#/definitions3/fontSelector"
+        }
+      ]
+    },
+    "fontSelector": {
+      "oneOf": [
+        {
+          "description": "Platform Selector",
+          "type": "object",
+          "properties": {
+            "ios": {
+              "$ref": "#/definitions3/fontResource"
+            },
+            "android": {
+              "$ref": "#/definitions3/fontResource"
+            }
+          },
+          "required": [
+            "ios",
+            "android"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "description": "Resource Reference",
+          "type": "object",
+          "required": [
+            "ref"
+          ],
+          "properties": {
+            "ref": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "description": "Inherit Marker",
+          "type": "object",
+          "properties": {
+            "inherit": {
+              "enum": [
+                true
+              ]
+            }
+          },
+          "required": [
+            "inherit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "description": "Scale Selector",
+          "type": "object",
+          "patternProperties": {
+            "^([0-9]\\.?[0-9]*)x$": {
+              "$ref": "#/definitions3/fontResource"
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        },
+        {
+          "description": "Locale Selector",
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z][a-zA-Z][a-zA-Z]?(-[\\-a-zA-Z0-9]+)?$": {
+              "$ref": "#/definitions3/fontResource"
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1,
+          "not": {
+            "required": [
+              "ios"
+            ]
+          }
+        }
+      ]
+    },
+    "fontDefinition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions3/fontFamily"
+              }
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1
+            },
+            "style": {
+              "enum": [
+                "italic",
+                "normal"
+              ]
+            },
+            "weight": {
+              "enum": [
+                "black",
+                "bold",
+                "medium",
+                "thin",
+                "light",
+                "normal"
+              ]
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "string",
+          "pattern": "^((italic|normal) )?((black|bold|medium|thin|light|normal) )?[1-9][0-9]*px( ([A-Za-z\\-]+|'[A-Za-z \\-]+')(, ?([A-Za-z\\-]+|'[A-Za-z \\-]+'))*)?$"
+        }
+      ]
+    },
+    "fontFamily": {
+      "anyOf": [
+        {
+          "enum": [
+            "serif",
+            "san-serif",
+            "monospace",
+            "condensed"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z \\-]+$"
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/fontSelector"
+    },
+    {
+      "$ref": "#/definitions3/fontResources"
+    },
+    {
+      "$ref": "#/definitions3/fontDefinition"
+    },
+    {
+      "$ref": "#/definitions3/fontResource"
+    },
+    {
+      "$ref": "#/definitions4/fontFamily"
+    },
+    {
+      "$ref": "#/definitions3/fontSelector"
+    },
+    {
+      "$ref": "#/definitions4/fontResource"
+    },
+    {
+      "$ref": "#/definitions4/fontResources"
+    },
+    {
+      "$ref": "#/definitions3/fontFamily"
+    },
+    {
+      "$ref": "#/definitions4/fontDefinition"
+    }
+  ]
+}

@@ -1,0 +1,1299 @@
+[
+  {
+    "id": 1996,
+    "schema1": {
+      "title": "schema for a serialized crosscat model",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "This schema specifies the structure of a single serialized model from the 'crosscat' generator in bayeslite. Such serialized models are stored in the theta_json column of the bayesdb_crosscat_theta table of a .bdb file.",
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "required": [
+        "X_D",
+        "X_L",
+        "model_config",
+        "iterations"
+      ],
+      "properties": {
+        "iterations": {
+          "description": "The number of iterations ANALYZE has been run for on this model.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "model_config": {
+          "description": "Metainformation about the model, independent of its current state. It is always the same value.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "initialization",
+            "kernel_list",
+            "row_initialization"
+          ],
+          "properties": {
+            "initialization": {
+              "enum": [
+                "from_the_prior"
+              ]
+            },
+            "row_initialization": {
+              "enum": [
+                "from_the_prior"
+              ]
+            },
+            "kernel_list": {
+              "description": "See transition_name_to_method_name_and_args in crosscat/src/cython_code/State.pyx.",
+              "type": "array",
+              "items": {
+                "enum": [
+                  "column_partition_hyperparameter",
+                  "column_partition_assignments",
+                  "column_hyperparameters",
+                  "row_partition_hyperparameters",
+                  "row_partition_assignments"
+                ]
+              }
+            }
+          }
+        },
+        "X_D": {
+          "description": "X_D specifies the mapping of data rows into categories for each view. It is an array with an element for each view. So, if there were three data rows and two views, X_D could be [[0, 0, 0], [0, 1, 1]]. The first view would assign all rows to a single category. The second view would assign the first row to one category and last two rows to a second category.",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "X_L": {
+          "description": "X_L specifies the latent state of the model.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "column_partition",
+            "column_hypers",
+            "view_state"
+          ],
+          "properties": {
+            "col_ensure": {
+              "description": "Optional declaration of (in)dependence constraints",
+              "type": "object",
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "dependent": {
+                  "$ref": "#/definitions2/dependenceContstraints"
+                },
+                "independent": {
+                  "$ref": "#/definitions2/dependenceContstraints"
+                }
+              }
+            },
+            "column_partition": {
+              "description": "Describes the partitioning of variables into views.",
+              "type": "object",
+              "additionalProperties": {
+                "not": {}
+              },
+              "required": [
+                "assignments",
+                "counts",
+                "hypers"
+              ],
+              "properties": {
+                "assignments": {
+                  "description": "An array of view assignments. Element k has value v if variable k is in view v.",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "counts": {
+                  "description": "Element v has value n if view v has n variables in it. This is redundant with assignments. This array has the same length as X_D.",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "hypers": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "not": {}
+                  },
+                  "required": [
+                    "alpha"
+                  ],
+                  "properties": {
+                    "alpha": {
+                      "description": "Parameter for the CRP that generates the views.",
+                      "type": "number",
+                      "minimum": 0.0
+                    }
+                  }
+                }
+              }
+            },
+            "column_hypers": {
+              "description": "Hyperparameters for a column. Model parameters within a category are drawn from the distribution implied by these parameters. Elements correspond to columns.",
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/numericHypers"
+                  },
+                  {
+                    "$ref": "#/definitions2/categoricalHypers"
+                  },
+                  {
+                    "$ref": "#/definitions2/cyclicHypers"
+                  }
+                ]
+              }
+            },
+            "view_state": {
+              "description": "Each element corresponds to a view and contains all information about that view.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": {
+                  "not": {}
+                },
+                "required": [
+                  "column_names",
+                  "column_component_suffstats",
+                  "row_partition_model"
+                ],
+                "properties": {
+                  "column_names": {
+                    "description": "An array of the column names in the view. If X_L.view_state[2].column_names[4] is 'S', and the fifth element of X_L.column_partition.assignments with value 2 has index k, then column k has name 'S'.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "column_component_suffstats": {
+                    "description": "An array of sufficient statistics of the categories of this view. There is one element for each column in the view. This element is itself an array with one element for each category.",
+                    "type": "array",
+                    "items": {
+                      "description": "Array of sufficient-statistics objects for one category of this view.",
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/normalStats"
+                          },
+                          {
+                            "$ref": "#/definitions2/multinomialStats"
+                          },
+                          {
+                            "$ref": "#/definitions2/vonMisesStats"
+                          },
+                          {
+                            "$ref": "#/definitions2/emptyStats"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "row_partition_model": {
+                    "description": "Latent state for assignment of variables to categories in this view.",
+                    "type": "object",
+                    "additionalProperties": {
+                      "not": {}
+                    },
+                    "required": [
+                      "counts",
+                      "hypers"
+                    ],
+                    "properties": {
+                      "counts": {
+                        "description": "Index is category, value is number of variables in that category.",
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "hypers": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "not": {}
+                        },
+                        "required": [
+                          "alpha"
+                        ],
+                        "properties": {
+                          "alpha": {
+                            "description": "Dirichlet parameter for assignment of variables to categories in this view.",
+                            "type": "number",
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "definitions2": {
+        "numericHypers": {
+          "description": "Hyperparameters for a normal-inverse-gamma distribution in column_hypers",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "fixed"
+          ],
+          "properties": {
+            "fixed": {
+              "$ref": "#/definitions2/fixed"
+            },
+            "mu": {
+              "type": "number"
+            },
+            "r": {
+              "type": "number"
+            },
+            "s": {
+              "type": "number"
+            },
+            "nu": {
+              "type": "number"
+            }
+          }
+        },
+        "categoricalHypers": {
+          "description": "Hyperparameters for a Dirichlet distribution in column_hypers. dirichlet_alpha is a single number because the model only allows for Dirichlets with uniform priors; {'dirichlet_alpha': 0.5, 'K': 2} is the Beta(0.5,0.5) distribution.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "fixed",
+            "dirichlet_alpha",
+            "K"
+          ],
+          "properties": {
+            "fixed": {
+              "$ref": "#/definitions2/fixed"
+            },
+            "dirichlet_alpha": {
+              "type": "number"
+            },
+            "K": {
+              "type": "number"
+            }
+          }
+        },
+        "cyclicHypers": {
+          "description": "Hyperparameters for a von Mises distribution in column_hypers",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "fixed",
+            "a",
+            "b",
+            "kappa"
+          ],
+          "properties": {
+            "fixed": {
+              "$ref": "#/definitions2/fixed"
+            },
+            "a": {
+              "type": "number"
+            },
+            "b": {
+              "type": "number"
+            },
+            "kappa": {
+              "type": "number"
+            }
+          }
+        },
+        "fixed": {
+          "description": "Hyperparameter 'fixed'. Nonzero in theory if Crosscat cannot do hyperparameter inference. Always zero.",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "normalStats": {
+          "description": "Sufficient statistics for a normal category",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "N",
+            "sum_x",
+            "sum_x_squared"
+          ],
+          "properties": {
+            "N": {
+              "type": "number"
+            },
+            "sum_x": {
+              "type": "number"
+            },
+            "sum_x_squared": {
+              "type": "number"
+            }
+          }
+        },
+        "multinomialStats": {
+          "description": "Sufficient statistics for a multinomial category. '0', '1', etc. properties are counts.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "N"
+          ],
+          "patternProperties": {
+            "[0-9]+": {
+              "type": "number"
+            }
+          },
+          "properties": {
+            "N": {
+              "type": "number"
+            }
+          }
+        },
+        "vonMisesStats": {
+          "description": "Sufficient statistics for a von Mises category.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "N",
+            "sum_cos_x",
+            "sum_sin_x"
+          ],
+          "properties": {
+            "N": {
+              "type": "number"
+            },
+            "sum_cos_x": {
+              "type": "number"
+            },
+            "sum_sin_x": {
+              "type": "number"
+            }
+          }
+        },
+        "emptyStats": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "dependenceContstraints": {
+          "description": "Specifies a collection of dependence or independence constraints. Maps a column index to the list of columns on which it is (in)dependent.",
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "patternProperties": {
+            "[0-9]+": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "numericHypers": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Metainformation about the model, independent of its current state. It is always the same value.",
+                  "type": "object",
+                  "required": [
+                    "initialization",
+                    "kernel_list",
+                    "row_initialization"
+                  ],
+                  "properties": {
+                    "initialization": {
+                      "enum": [
+                        "from_the_prior"
+                      ]
+                    },
+                    "row_initialization": {
+                      "enum": [
+                        "from_the_prior"
+                      ]
+                    },
+                    "kernel_list": {
+                      "description": "See transition_name_to_method_name_and_args in crosscat/src/cython_code/State.pyx.",
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "column_partition_hyperparameter",
+                          "column_partition_assignments",
+                          "column_hyperparameters",
+                          "row_partition_hyperparameters",
+                          "row_partition_assignments"
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^initialization$": {},
+                    "^row_initialization$": {},
+                    "^kernel_list$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cyclicHypers": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "modern_12": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Optional declaration of (in)dependence constraints",
+                  "type": "object",
+                  "properties": {
+                    "dependent": {
+                      "$ref": "#/definitions2/dependenceContstraints"
+                    },
+                    "independent": {
+                      "$ref": "#/definitions2/dependenceContstraints"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^dependent$": {},
+                    "^independent$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Sufficient statistics for a multinomial category. '0', '1', etc. properties are counts.",
+                  "type": "object",
+                  "required": [
+                    "N"
+                  ],
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "type": "number"
+                    }
+                  },
+                  "properties": {
+                    "N": {
+                      "type": "number"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {},
+                    "^N$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Sufficient statistics for a von Mises category.",
+                  "type": "object",
+                  "required": [
+                    "N",
+                    "sum_cos_x",
+                    "sum_sin_x"
+                  ],
+                  "properties": {
+                    "N": {
+                      "type": "number"
+                    },
+                    "sum_cos_x": {
+                      "type": "number"
+                    },
+                    "sum_sin_x": {
+                      "type": "number"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^N$": {},
+                    "^sum_cos_x$": {},
+                    "^sum_sin_x$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_11": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "X_L specifies the latent state of the model.",
+                  "type": "object",
+                  "required": [
+                    "column_partition",
+                    "column_hypers",
+                    "view_state"
+                  ],
+                  "properties": {
+                    "col_ensure": {
+                      "$ref": "#/definitions2/modern_12"
+                    },
+                    "column_partition": {
+                      "$ref": "#/definitions2/modern_13"
+                    },
+                    "column_hypers": {
+                      "description": "Hyperparameters for a column. Model parameters within a category are drawn from the distribution implied by these parameters. Elements correspond to columns.",
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/numericHypers"
+                          },
+                          {
+                            "$ref": "#/definitions2/categoricalHypers"
+                          },
+                          {
+                            "$ref": "#/definitions2/cyclicHypers"
+                          }
+                        ]
+                      }
+                    },
+                    "view_state": {
+                      "description": "Each element corresponds to a view and contains all information about that view.",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_15"
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^col_ensure$": {},
+                    "^column_partition$": {},
+                    "^column_hypers$": {},
+                    "^view_state$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_14": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "alpha"
+                  ],
+                  "properties": {
+                    "alpha": {
+                      "description": "Parameter for the CRP that generates the views.",
+                      "type": "number",
+                      "minimum": 0.0
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^alpha$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "multinomialStats": {
+          "$ref": "#/definitions2/modern_8"
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Hyperparameters for a von Mises distribution in column_hypers",
+                  "type": "object",
+                  "required": [
+                    "fixed",
+                    "a",
+                    "b",
+                    "kappa"
+                  ],
+                  "properties": {
+                    "fixed": {
+                      "$ref": "#/definitions2/fixed"
+                    },
+                    "a": {
+                      "type": "number"
+                    },
+                    "b": {
+                      "type": "number"
+                    },
+                    "kappa": {
+                      "type": "number"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^fixed$": {},
+                    "^a$": {},
+                    "^b$": {},
+                    "^kappa$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Specifies a collection of dependence or independence constraints. Maps a column index to the list of columns on which it is (in)dependent.",
+                  "type": "object",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "categoricalHypers": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_16": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Latent state for assignment of variables to categories in this view.",
+                  "type": "object",
+                  "required": [
+                    "counts",
+                    "hypers"
+                  ],
+                  "properties": {
+                    "counts": {
+                      "description": "Index is category, value is number of variables in that category.",
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    "hypers": {
+                      "$ref": "#/definitions2/modern_17"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^counts$": {},
+                    "^hypers$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_15": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "column_names",
+                    "column_component_suffstats",
+                    "row_partition_model"
+                  ],
+                  "properties": {
+                    "column_names": {
+                      "description": "An array of the column names in the view. If X_L.view_state[2].column_names[4] is 'S', and the fifth element of X_L.column_partition.assignments with value 2 has index k, then column k has name 'S'.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "column_component_suffstats": {
+                      "description": "An array of sufficient statistics of the categories of this view. There is one element for each column in the view. This element is itself an array with one element for each category.",
+                      "type": "array",
+                      "items": {
+                        "description": "Array of sufficient-statistics objects for one category of this view.",
+                        "type": "array",
+                        "items": {
+                          "oneOf": [
+                            {
+                              "$ref": "#/definitions2/normalStats"
+                            },
+                            {
+                              "$ref": "#/definitions2/multinomialStats"
+                            },
+                            {
+                              "$ref": "#/definitions2/vonMisesStats"
+                            },
+                            {
+                              "$ref": "#/definitions2/emptyStats"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "row_partition_model": {
+                      "$ref": "#/definitions2/modern_16"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^column_names$": {},
+                    "^column_component_suffstats$": {},
+                    "^row_partition_model$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Hyperparameters for a Dirichlet distribution in column_hypers. dirichlet_alpha is a single number because the model only allows for Dirichlets with uniform priors; {'dirichlet_alpha': 0.5, 'K': 2} is the Beta(0.5,0.5) distribution.",
+                  "type": "object",
+                  "required": [
+                    "fixed",
+                    "dirichlet_alpha",
+                    "K"
+                  ],
+                  "properties": {
+                    "fixed": {
+                      "$ref": "#/definitions2/fixed"
+                    },
+                    "dirichlet_alpha": {
+                      "type": "number"
+                    },
+                    "K": {
+                      "type": "number"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^fixed$": {},
+                    "^dirichlet_alpha$": {},
+                    "^K$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "vonMisesStats": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "dependenceContstraints": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Sufficient statistics for a normal category",
+                  "type": "object",
+                  "required": [
+                    "N",
+                    "sum_x",
+                    "sum_x_squared"
+                  ],
+                  "properties": {
+                    "N": {
+                      "type": "number"
+                    },
+                    "sum_x": {
+                      "type": "number"
+                    },
+                    "sum_x_squared": {
+                      "type": "number"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^N$": {},
+                    "^sum_x$": {},
+                    "^sum_x_squared$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_17": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "alpha"
+                  ],
+                  "properties": {
+                    "alpha": {
+                      "description": "Dirichlet parameter for assignment of variables to categories in this view.",
+                      "type": "number",
+                      "exclusiveMinimum": 0.0
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^alpha$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "emptyStats": {
+          "$ref": "#/definitions2/modern_6"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Hyperparameters for a normal-inverse-gamma distribution in column_hypers",
+                  "type": "object",
+                  "required": [
+                    "fixed"
+                  ],
+                  "properties": {
+                    "s": {
+                      "type": "number"
+                    },
+                    "nu": {
+                      "type": "number"
+                    },
+                    "fixed": {
+                      "$ref": "#/definitions2/fixed"
+                    },
+                    "r": {
+                      "type": "number"
+                    },
+                    "mu": {
+                      "type": "number"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^s$": {},
+                    "^mu$": {},
+                    "^fixed$": {},
+                    "^r$": {},
+                    "^nu$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "normalStats": {
+          "$ref": "#/definitions2/modern_7"
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "schema for a serialized crosscat model",
+                  "description": "This schema specifies the structure of a single serialized model from the 'crosscat' generator in bayeslite. Such serialized models are stored in the theta_json column of the bayesdb_crosscat_theta table of a .bdb file.",
+                  "type": "object",
+                  "required": [
+                    "X_D",
+                    "X_L",
+                    "model_config",
+                    "iterations"
+                  ],
+                  "properties": {
+                    "iterations": {
+                      "description": "The number of iterations ANALYZE has been run for on this model.",
+                      "type": "integer",
+                      "minimum": 0.0
+                    },
+                    "model_config": {
+                      "$ref": "#/definitions2/modern_10"
+                    },
+                    "X_D": {
+                      "description": "X_D specifies the mapping of data rows into categories for each view. It is an array with an element for each view. So, if there were three data rows and two views, X_D could be [[0, 0, 0], [0, 1, 1]]. The first view would assign all rows to a single category. The second view would assign the first row to one category and last two rows to a second category.",
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        }
+                      }
+                    },
+                    "X_L": {
+                      "$ref": "#/definitions2/modern_11"
+                    }
+                  },
+                  "definitions2": {
+                    "numericHypers": {
+                      "description": "Hyperparameters for a normal-inverse-gamma distribution in column_hypers",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "fixed"
+                      ],
+                      "properties": {
+                        "fixed": {
+                          "$ref": "#/definitions2/fixed"
+                        },
+                        "mu": {
+                          "type": "number"
+                        },
+                        "r": {
+                          "type": "number"
+                        },
+                        "s": {
+                          "type": "number"
+                        },
+                        "nu": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "categoricalHypers": {
+                      "description": "Hyperparameters for a Dirichlet distribution in column_hypers. dirichlet_alpha is a single number because the model only allows for Dirichlets with uniform priors; {'dirichlet_alpha': 0.5, 'K': 2} is the Beta(0.5,0.5) distribution.",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "fixed",
+                        "dirichlet_alpha",
+                        "K"
+                      ],
+                      "properties": {
+                        "fixed": {
+                          "$ref": "#/definitions2/fixed"
+                        },
+                        "dirichlet_alpha": {
+                          "type": "number"
+                        },
+                        "K": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "cyclicHypers": {
+                      "description": "Hyperparameters for a von Mises distribution in column_hypers",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "fixed",
+                        "a",
+                        "b",
+                        "kappa"
+                      ],
+                      "properties": {
+                        "fixed": {
+                          "$ref": "#/definitions2/fixed"
+                        },
+                        "a": {
+                          "type": "number"
+                        },
+                        "b": {
+                          "type": "number"
+                        },
+                        "kappa": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "fixed": {
+                      "description": "Hyperparameter 'fixed'. Nonzero in theory if Crosscat cannot do hyperparameter inference. Always zero.",
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 0.0
+                    },
+                    "normalStats": {
+                      "description": "Sufficient statistics for a normal category",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "N",
+                        "sum_x",
+                        "sum_x_squared"
+                      ],
+                      "properties": {
+                        "N": {
+                          "type": "number"
+                        },
+                        "sum_x": {
+                          "type": "number"
+                        },
+                        "sum_x_squared": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "multinomialStats": {
+                      "description": "Sufficient statistics for a multinomial category. '0', '1', etc. properties are counts.",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "N"
+                      ],
+                      "patternProperties": {
+                        "[0-9]+": {
+                          "type": "number"
+                        }
+                      },
+                      "properties": {
+                        "N": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "vonMisesStats": {
+                      "description": "Sufficient statistics for a von Mises category.",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "N",
+                        "sum_cos_x",
+                        "sum_sin_x"
+                      ],
+                      "properties": {
+                        "N": {
+                          "type": "number"
+                        },
+                        "sum_cos_x": {
+                          "type": "number"
+                        },
+                        "sum_sin_x": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "emptyStats": {
+                      "type": "object",
+                      "unevaluatedProperties": false
+                    },
+                    "dependenceContstraints": {
+                      "description": "Specifies a collection of dependence or independence constraints. Maps a column index to the list of columns on which it is (in)dependent.",
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "patternProperties": {
+                        "[0-9]+": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^iterations$": {},
+                    "^model_config$": {},
+                    "^X_D$": {},
+                    "^X_L$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "fixed": {
+          "description": "Hyperparameter 'fixed'. Nonzero in theory if Crosscat cannot do hyperparameter inference. Always zero.",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "modern_13": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Describes the partitioning of variables into views.",
+                  "type": "object",
+                  "required": [
+                    "assignments",
+                    "counts",
+                    "hypers"
+                  ],
+                  "properties": {
+                    "assignments": {
+                      "description": "An array of view assignments. Element k has value v if variable k is in view v.",
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0.0
+                      }
+                    },
+                    "counts": {
+                      "description": "Element v has value n if view v has n variables in it. This is redundant with assignments. This array has the same length as X_D.",
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0.0
+                      }
+                    },
+                    "hypers": {
+                      "$ref": "#/definitions2/modern_14"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^assignments$": {},
+                    "^counts$": {},
+                    "^hypers$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_9"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

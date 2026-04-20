@@ -1,0 +1,541 @@
+[
+  {
+    "id": 2552,
+    "schema1": {
+      "id": "http://schemas.triniti.io/json-schema/gdbots/iam/mixin/role/1-0-0.json#",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "pattern": "^[\\w\\/\\.:-]+$",
+          "pbj": {
+            "type": "identifier",
+            "rule": "single"
+          }
+        },
+        "status": {
+          "type": "string",
+          "default": "draft",
+          "enum": [
+            "unknown",
+            "published",
+            "scheduled",
+            "pending",
+            "draft",
+            "expired",
+            "archived",
+            "deleted"
+          ],
+          "pbj": {
+            "type": "string-enum",
+            "rule": "single"
+          }
+        },
+        "etag": {
+          "type": "string",
+          "pattern": "^[\\w\\.:-]+$",
+          "pbj": {
+            "type": "string",
+            "rule": "single"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "pattern": "^[1-9]{1}[0-9]{12,15}$",
+          "pbj": {
+            "type": "microtime",
+            "rule": "single"
+          }
+        },
+        "creator_ref": {
+          "type": "object",
+          "properties": {
+            "curie": {
+              "type": "string",
+              "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+              "minLength": 0,
+              "maxLength": 146
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9:_\\-]+$",
+              "minLength": 0,
+              "maxLength": 255
+            },
+            "tag": {
+              "type": "string",
+              "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+              "minLength": 0,
+              "maxLength": 255
+            }
+          },
+          "required": [
+            "curie",
+            "id"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "A fully qualified reference to what created this node. This is intentionally a message-ref and not a user id because it is often a program that creates nodes, not a user.",
+          "pbj": {
+            "type": "message-ref",
+            "rule": "single"
+          }
+        },
+        "updated_at": {
+          "type": "string",
+          "pattern": "^[1-9]{1}[0-9]{12,15}$",
+          "pbj": {
+            "type": "microtime",
+            "rule": "single",
+            "useTypeDefault": false
+          }
+        },
+        "updater_ref": {
+          "type": "object",
+          "properties": {
+            "curie": {
+              "type": "string",
+              "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+              "minLength": 0,
+              "maxLength": 146
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9:_\\-]+$",
+              "minLength": 0,
+              "maxLength": 255
+            },
+            "tag": {
+              "type": "string",
+              "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+              "minLength": 0,
+              "maxLength": 255
+            }
+          },
+          "required": [
+            "curie",
+            "id"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "A fully qualified reference to what updated this node. This is intentionally a message-ref and not a user id because it is often a program that updates nodes, not a user. E.g. \"acme:iam:node:app:cli-scheduler\" or \"acme:iam:node:user:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+          "pbj": {
+            "type": "message-ref",
+            "rule": "single"
+          }
+        },
+        "last_event_ref": {
+          "type": "object",
+          "properties": {
+            "curie": {
+              "type": "string",
+              "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+              "minLength": 0,
+              "maxLength": 146
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9:_\\-]+$",
+              "minLength": 0,
+              "maxLength": 255
+            },
+            "tag": {
+              "type": "string",
+              "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+              "minLength": 0,
+              "maxLength": 255
+            }
+          },
+          "required": [
+            "curie",
+            "id"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "A reference to the last event that changed the state of this node. E.g. \"acme:blog:event:article-published:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+          "pbj": {
+            "type": "message-ref",
+            "rule": "single"
+          }
+        },
+        "title": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255,
+          "pbj": {
+            "type": "string",
+            "rule": "single"
+          }
+        },
+        "allowed": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9_\\*\\.:-]+$"
+            }
+          ],
+          "_uniqueItems": true,
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "The \"allowed\" field is a set of actions that a user will be granted. Although the string can be anything it is best practice to use the curies of the pbjx commands and requests from your application. E.g. \"acme:blog:command:publish-article\" or \"acme:blog:command:*\"",
+          "pbj": {
+            "type": "string",
+            "rule": "set"
+          }
+        },
+        "denied": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9_\\*\\.:-]+$"
+            }
+          ],
+          "_uniqueItems": true,
+          "additionalProperties": {
+            "not": {}
+          },
+          "description": "The \"denied\" field works just like the \"allowed\" field with the exception that these rules take precedence and deny a user's ability to perform the action.",
+          "pbj": {
+            "type": "string",
+            "rule": "set"
+          }
+        }
+      },
+      "required": [
+        "_id"
+      ],
+      "additionalProperties": {}
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "curie": {
+                      "type": "string",
+                      "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                      "minLength": 0,
+                      "maxLength": 146
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9:_\\-]+$",
+                      "minLength": 0,
+                      "maxLength": 255
+                    },
+                    "tag": {
+                      "type": "string",
+                      "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                      "minLength": 0,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": [
+                    "curie",
+                    "id"
+                  ],
+                  "description": "A fully qualified reference to what created this node. This is intentionally a message-ref and not a user id because it is often a program that creates nodes, not a user.",
+                  "pbj": {
+                    "type": "message-ref",
+                    "rule": "single"
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^curie$": {},
+                    "^id$": {},
+                    "^tag$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "array",
+                  "_uniqueItems": true,
+                  "description": "The \"denied\" field works just like the \"allowed\" field with the exception that these rules take precedence and deny a user's ability to perform the action.",
+                  "pbj": {
+                    "type": "string",
+                    "rule": "set"
+                  },
+                  "items": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-z0-9_\\*\\.:-]+$"
+                    }
+                  ]
+                },
+                {
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "id": "http://schemas.triniti.io/json-schema/gdbots/iam/mixin/role/1-0-0.json#",
+                  "type": "object",
+                  "properties": {
+                    "allowed": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    "etag": {
+                      "type": "string",
+                      "pattern": "^[\\w\\.:-]+$",
+                      "pbj": {
+                        "type": "string",
+                        "rule": "single"
+                      }
+                    },
+                    "updater_ref": {
+                      "$ref": "#/definitions2/modern_3"
+                    },
+                    "last_event_ref": {
+                      "$ref": "#/definitions2/modern_4"
+                    },
+                    "status": {
+                      "type": "string",
+                      "default": "draft",
+                      "enum": [
+                        "unknown",
+                        "published",
+                        "scheduled",
+                        "pending",
+                        "draft",
+                        "expired",
+                        "archived",
+                        "deleted"
+                      ],
+                      "pbj": {
+                        "type": "string-enum",
+                        "rule": "single"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "pattern": "^[1-9]{1}[0-9]{12,15}$",
+                      "pbj": {
+                        "type": "microtime",
+                        "rule": "single"
+                      }
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "pattern": "^[1-9]{1}[0-9]{12,15}$",
+                      "pbj": {
+                        "type": "microtime",
+                        "rule": "single",
+                        "useTypeDefault": false
+                      }
+                    },
+                    "_id": {
+                      "type": "string",
+                      "pattern": "^[\\w\\/\\.:-]+$",
+                      "pbj": {
+                        "type": "identifier",
+                        "rule": "single"
+                      }
+                    },
+                    "creator_ref": {
+                      "$ref": "#/definitions2/modern_5"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 255,
+                      "pbj": {
+                        "type": "string",
+                        "rule": "single"
+                      }
+                    },
+                    "denied": {
+                      "$ref": "#/definitions2/modern_6"
+                    }
+                  },
+                  "required": [
+                    "_id"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^updated_at$": {},
+                    "^creator_ref$": {},
+                    "^etag$": {},
+                    "^status$": {},
+                    "^title$": {},
+                    "^denied$": {},
+                    "^allowed$": {},
+                    "^_id$": {},
+                    "^created_at$": {},
+                    "^last_event_ref$": {},
+                    "^updater_ref$": {}
+                  },
+                  "additionalProperties": {}
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "array",
+                  "_uniqueItems": true,
+                  "description": "The \"allowed\" field is a set of actions that a user will be granted. Although the string can be anything it is best practice to use the curies of the pbjx commands and requests from your application. E.g. \"acme:blog:command:publish-article\" or \"acme:blog:command:*\"",
+                  "pbj": {
+                    "type": "string",
+                    "rule": "set"
+                  },
+                  "items": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-z0-9_\\*\\.:-]+$"
+                    }
+                  ]
+                },
+                {
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "curie": {
+                      "type": "string",
+                      "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                      "minLength": 0,
+                      "maxLength": 146
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9:_\\-]+$",
+                      "minLength": 0,
+                      "maxLength": 255
+                    },
+                    "tag": {
+                      "type": "string",
+                      "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                      "minLength": 0,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": [
+                    "curie",
+                    "id"
+                  ],
+                  "description": "A fully qualified reference to what updated this node. This is intentionally a message-ref and not a user id because it is often a program that updates nodes, not a user. E.g. \"acme:iam:node:app:cli-scheduler\" or \"acme:iam:node:user:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+                  "pbj": {
+                    "type": "message-ref",
+                    "rule": "single"
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^curie$": {},
+                    "^id$": {},
+                    "^tag$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "curie": {
+                      "type": "string",
+                      "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                      "minLength": 0,
+                      "maxLength": 146
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9:_\\-]+$",
+                      "minLength": 0,
+                      "maxLength": 255
+                    },
+                    "tag": {
+                      "type": "string",
+                      "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                      "minLength": 0,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": [
+                    "curie",
+                    "id"
+                  ],
+                  "description": "A reference to the last event that changed the state of this node. E.g. \"acme:blog:event:article-published:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+                  "pbj": {
+                    "type": "message-ref",
+                    "rule": "single"
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^curie$": {},
+                    "^id$": {},
+                    "^tag$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

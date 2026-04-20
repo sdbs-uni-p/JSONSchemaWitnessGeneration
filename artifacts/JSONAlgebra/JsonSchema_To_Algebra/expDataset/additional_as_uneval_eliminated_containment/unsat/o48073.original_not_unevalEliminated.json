@@ -1,0 +1,449 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "projects",
+        "drivers"
+      ],
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z\\d\\./-]+$"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/definitions3/release_id"
+              },
+              "wiki": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "wiki"
+            ]
+          }
+        },
+        "drivers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "project_id": {
+                "type": "string"
+              },
+              "vendor": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "maintainers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions3/user"
+                }
+              },
+              "wiki": {
+                "type": "string"
+              },
+              "releases": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions3/release_id"
+                }
+              },
+              "ci": {
+                "$ref": "#/definitions3/ci"
+              }
+            },
+            "required": [
+              "project_id",
+              "vendor",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "projects",
+          "drivers"
+        ],
+        "properties": {
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/modern_3"
+            }
+          },
+          "releases": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions4/release_id"
+                },
+                "wiki": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "wiki"
+              ]
+            }
+          },
+          "drivers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions4/modern_4"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[^,]+$"
+        },
+        "email": {
+          "type": "string",
+          "pattern": "^[a-z\\d_\\.-]+@([a-z\\d\\.-]+\\.)+[a-z]+$"
+        },
+        "irc": {
+          "type": "string",
+          "pattern": "^[\\S]+$"
+        },
+        "launchpad_id": {
+          "type": "string",
+          "pattern": "^[\\S]+$"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "ci": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[\\S]+$"
+        },
+        "success_pattern": {
+          "type": "string"
+        },
+        "failure_pattern": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^[A-Z][a-z]+$"
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "pattern": "^[^,]+$"
+                },
+                "email": {
+                  "type": "string",
+                  "pattern": "^[a-z\\d_\\.-]+@([a-z\\d\\.-]+\\.)+[a-z]+$"
+                },
+                "irc": {
+                  "type": "string",
+                  "pattern": "^[\\S]+$"
+                },
+                "launchpad_id": {
+                  "type": "string",
+                  "pattern": "^[\\S]+$"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^email$": true,
+                "^irc$": true,
+                "^launchpad_id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[\\S]+$"
+                },
+                "success_pattern": {
+                  "type": "string"
+                },
+                "failure_pattern": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^success_pattern$": true,
+                "^failure_pattern$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^[A-Z][a-z]+$"
+    },
+    "user": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "maintainers": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/user"
+                  }
+                },
+                "description": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "string"
+                },
+                "wiki": {
+                  "type": "string"
+                },
+                "vendor": {
+                  "type": "string"
+                },
+                "releases": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/release_id"
+                  }
+                },
+                "ci": {
+                  "$ref": "#/definitions4/ci"
+                }
+              },
+              "required": [
+                "project_id",
+                "vendor",
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^maintainers$": true,
+                "^ci$": true,
+                "^description$": true,
+                "^wiki$": true,
+                "^name$": true,
+                "^vendor$": true,
+                "^releases$": true,
+                "^project_id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z\\d\\./-]+$"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ci": {
+      "$ref": "#/definitions4/modern_2"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/release_id"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/release_id"
+      }
+    },
+    {
+      "$ref": "#/definitions3/user"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/user"
+      }
+    },
+    {
+      "$ref": "#/definitions3/ci"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/ci"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/ci"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/ci"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/release_id"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/release_id"
+      }
+    },
+    {
+      "$ref": "#/definitions4/user"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/user"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

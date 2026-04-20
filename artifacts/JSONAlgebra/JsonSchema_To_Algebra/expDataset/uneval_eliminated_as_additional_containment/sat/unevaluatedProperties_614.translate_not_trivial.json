@@ -1,0 +1,547 @@
+{
+  "allOf": [
+    {
+      "$id": "webserv_config",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "miniRT",
+      "description": "config for webserv",
+      "$ref": "#/definitions1/root"
+    },
+    {
+      "not": {
+        "$id": "webserv_config",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "miniRT",
+        "description": "config for webserv",
+        "$ref": "#/definitions2/root"
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "cgi"
+                  ]
+                },
+                "path": {
+                  "type": "string"
+                },
+                "rule": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "routes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions1/route"
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "path",
+                "rule"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^path$": true,
+                "^rule$": true,
+                "^routes$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "servers": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions1/server"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^servers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "server": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
+                },
+                "port": {
+                  "type": "integer",
+                  "min": 1,
+                  "max": 65535
+                },
+                "root": {
+                  "$ref": "#/definitions1/route"
+                }
+              },
+              "required": [
+                "port"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^host$": true,
+                "^port$": true,
+                "^root$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "file-route": {
+      "$ref": "#/definitions1/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "directoryListing": {
+                  "type": "boolean"
+                },
+                "root": {
+                  "type": "string",
+                  "description": "path to file system root"
+                },
+                "methods": {
+                  "$ref": "#/definitions1/modern_3"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "file"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "description": "http route path segment"
+                },
+                "routes": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions1/route"
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "path"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^root$": true,
+                "^type$": true,
+                "^methods$": true,
+                "^directoryListing$": true,
+                "^routes$": true,
+                "^path$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "PATCH": {
+                  "type": "boolean"
+                },
+                "HEAD": {
+                  "type": "boolean"
+                },
+                "OPTIONS": {
+                  "type": "boolean"
+                },
+                "TRACE": {
+                  "type": "boolean"
+                },
+                "PUT": {
+                  "type": "boolean"
+                },
+                "GET": {
+                  "type": "boolean"
+                },
+                "POST": {
+                  "type": "boolean"
+                },
+                "DELETE": {
+                  "type": "boolean"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^PATCH$": true,
+                "^GET$": true,
+                "^DELETE$": true,
+                "^HEAD$": true,
+                "^POST$": true,
+                "^OPTIONS$": true,
+                "^PUT$": true,
+                "^TRACE$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "route": {
+      "$ref": "#/definitions1/modern_4"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions1/file-route"
+                },
+                {
+                  "$ref": "#/definitions1/cgi-route"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "cgi-route": {
+      "$ref": "#/definitions1/modern_5"
+    },
+    "root": {
+      "$ref": "#/definitions1/modern_6"
+    }
+  },
+  "definitions2": {
+    "root": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "servers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/server"
+          }
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "type": "string",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
+        },
+        "port": {
+          "type": "integer",
+          "min": 1,
+          "max": 65535
+        },
+        "root": {
+          "$ref": "#/definitions2/route"
+        }
+      },
+      "required": [
+        "port"
+      ]
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/file-route"
+        },
+        {
+          "$ref": "#/definitions2/cgi-route"
+        }
+      ]
+    },
+    "file-route": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "file"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "description": "http route path segment"
+        },
+        "root": {
+          "type": "string",
+          "description": "path to file system root"
+        },
+        "methods": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "GET": {
+              "type": "boolean"
+            },
+            "HEAD": {
+              "type": "boolean"
+            },
+            "OPTIONS": {
+              "type": "boolean"
+            },
+            "POST": {
+              "type": "boolean"
+            },
+            "PUT": {
+              "type": "boolean"
+            },
+            "PATCH": {
+              "type": "boolean"
+            },
+            "DELETE": {
+              "type": "boolean"
+            },
+            "TRACE": {
+              "type": "boolean"
+            }
+          }
+        },
+        "directoryListing": {
+          "type": "boolean"
+        },
+        "routes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions2/route"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "path"
+      ]
+    },
+    "cgi-route": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "cgi"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "routes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions2/route"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "path",
+        "rule"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions2/route"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/route"
+      }
+    },
+    {
+      "$ref": "#/definitions1/server"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/server"
+      }
+    },
+    {
+      "$ref": "#/definitions2/root"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/root"
+      }
+    },
+    {
+      "$ref": "#/definitions1/route"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/route"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions2/server"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/server"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions1/cgi-route"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/cgi-route"
+      }
+    },
+    {
+      "$ref": "#/definitions1/root"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/root"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions2/cgi-route"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/cgi-route"
+      }
+    },
+    {
+      "$ref": "#/definitions2/file-route"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/file-route"
+      }
+    },
+    {
+      "$ref": "#/definitions1/file-route"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/file-route"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    }
+  ]
+}

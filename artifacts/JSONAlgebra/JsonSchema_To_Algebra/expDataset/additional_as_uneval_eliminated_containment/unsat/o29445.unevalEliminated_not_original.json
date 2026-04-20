@@ -1,0 +1,2012 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions4/modern_20"
+    },
+    {
+      "not": {
+        "additionalProperties": false,
+        "patternProperties": {
+          "^\\.": {}
+        },
+        "properties": {
+          "config_variables": {
+            "$ref": "#/definitions3/configVariablesList"
+          },
+          "containers": {
+            "$ref": "#/definitions3/containers"
+          },
+          "include": {
+            "$ref": "#/definitions3/includesList"
+          },
+          "project_name": {
+            "description": "The name of your project. Used to label any images built.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "tasks": {
+            "$ref": "#/definitions3/tasks"
+          }
+        },
+        "title": "JSON schema for batect configuration files",
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "configVariable": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "run"
+                  ]
+                },
+                {
+                  "not": {
+                    "required": [
+                      "dependencies",
+                      "run"
+                    ]
+                  },
+                  "required": [
+                    "prerequisites"
+                  ]
+                }
+              ],
+              "description": "Definition of a single task",
+              "properties": {
+                "description": {
+                  "description": "Description shown when running `batect --list-tasks`",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "run": {
+                  "$ref": "#/definitions4/taskRunOptions"
+                },
+                "prerequisites": {
+                  "description": "List of other tasks that should be run before running this task",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "dependencies": {
+                  "$ref": "#/definitions4/containerDependencyList",
+                  "description": "List of other containers that should be started and healthy before starting the task container given in `run`"
+                },
+                "group": {
+                  "description": "Name used to group tasks when running `batect --list-tasks`",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^prerequisites$": true,
+                "^group$": true,
+                "^run$": true,
+                "^dependencies$": true,
+                "^description$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "container": {
+                  "description": "Path inside the container to mount the cache at",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name of the cache",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "options": {
+                  "description": "Docker volume mount options to use when creating mount",
+                  "enum": [
+                    "cached",
+                    "delegated",
+                    "consistent",
+                    "default",
+                    "ro"
+                  ],
+                  "type": "string"
+                },
+                "type": {
+                  "description": "Type of volume mount",
+                  "enum": [
+                    "cache"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "name",
+                "container"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^container$": true,
+                "^name$": true,
+                "^options$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "environmentVariableList": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Additional hostnames to add to /etc/hosts in the container",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "capabilityList": {
+      "items": {
+        "oneOf": [
+          {
+            "enum": [
+              "AUDIT_CONTROL",
+              "AUDIT_READ",
+              "AUDIT_WRITE",
+              "BLOCK_SUSPEND",
+              "CHOWN",
+              "DAC_OVERRIDE",
+              "DAC_READ_SEARCH",
+              "FOWNER",
+              "FSETID",
+              "IPC_LOCK",
+              "IPC_OWNER",
+              "KILL",
+              "LEASE",
+              "LINUX_IMMUTABLE",
+              "MAC_ADMIN",
+              "MAC_OVERRIDE",
+              "MKNOD",
+              "NET_ADMIN",
+              "NET_BIND_SERVICE",
+              "NET_BROADCAST",
+              "NET_RAW",
+              "SETGID",
+              "SETFCAP",
+              "SETPCAP",
+              "SETUID",
+              "SYS_ADMIN",
+              "SYS_BOOT",
+              "SYS_CHROOT",
+              "SYS_MODULE",
+              "SYS_NICE",
+              "SYS_PACCT",
+              "SYS_PTRACE",
+              "SYS_RAWIO",
+              "SYS_RESOURCE",
+              "SYS_TIME",
+              "SYS_TTY_CONFIG",
+              "SYSLOG",
+              "WAKE_ALARM",
+              "ALL"
+            ],
+            "type": "string"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "oneOf": [
+                {
+                  "not": {
+                    "required": [
+                      "build_args",
+                      "dockerfile"
+                    ]
+                  },
+                  "required": [
+                    "image"
+                  ]
+                },
+                {
+                  "required": [
+                    "build_directory"
+                  ]
+                }
+              ],
+              "properties": {
+                "additional_hosts": {
+                  "$ref": "#/definitions4/modern_12"
+                },
+                "build_directory": {
+                  "description": "Path (relative to the configuration file's directory) to a directory containing a Dockerfile to build and use as an image for this container",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "dockerfile": {
+                  "description": "Dockerfile (relative to build_directory) to use when building the image. Defaults to Dockerfile` if not set.",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "image": {
+                  "description": "Image name (in standard Docker image reference format) to use for this container",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "capabilities_to_drop": {
+                  "$ref": "#/definitions4/capabilityList",
+                  "description": "List of additional capabilities to remove from the container"
+                },
+                "health_check": {
+                  "$ref": "#/definitions4/healthCheckOptions",
+                  "description": "Overrides health check configuration specified in the image or Dockerfile"
+                },
+                "volumes": {
+                  "$ref": "#/definitions4/volumeMountList",
+                  "description": "List of volume mounts to create for the container"
+                },
+                "log_driver": {
+                  "description": "Docker log driver to use",
+                  "type": "string"
+                },
+                "environment": {
+                  "$ref": "#/definitions4/environmentVariableList",
+                  "description": "List of environment variables for the container"
+                },
+                "log_options": {
+                  "$ref": "#/definitions4/modern_13"
+                },
+                "privileged": {
+                  "description": "Enable privileged mode for the container",
+                  "type": "boolean"
+                },
+                "dependencies": {
+                  "$ref": "#/definitions4/containerDependencyList",
+                  "description": "List of other containers that should be started and healthy before starting this container"
+                },
+                "run_as_current_user": {
+                  "$ref": "#/definitions4/runAsCurrentUserOptions"
+                },
+                "enable_init_process": {
+                  "description": "Set to `true` to run an init process inside the container that forwards signals and reaps processes",
+                  "type": "boolean"
+                },
+                "additional_hostnames": {
+                  "$ref": "#/definitions4/additionalHostnamesList",
+                  "description": "Hostnames to associate with this container in addition to the default hostname"
+                },
+                "ports": {
+                  "$ref": "#/definitions4/portMappingList",
+                  "description": "List of ports to make available to the host machine"
+                },
+                "setup_commands": {
+                  "$ref": "#/definitions4/setupCommandsList",
+                  "description": "Commands to run after the container reports as healthy but before dependency containers start"
+                },
+                "build_args": {
+                  "$ref": "#/definitions4/buildArgList",
+                  "description": "List of build args to use when building the image in build_directory"
+                },
+                "working_directory": {
+                  "description": "Working directory to start the container in",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "command": {
+                  "description": "Command to run when the container starts",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "entrypoint": {
+                  "description": "Entrypoint to use to run the command",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "capabilities_to_add": {
+                  "$ref": "#/definitions4/capabilityList",
+                  "description": "List of additional capabilities to add to the container"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^volumes$": true,
+                "^ports$": true,
+                "^dependencies$": true,
+                "^working_directory$": true,
+                "^enable_init_process$": true,
+                "^build_args$": true,
+                "^environment$": true,
+                "^additional_hosts$": true,
+                "^capabilities_to_add$": true,
+                "^additional_hostnames$": true,
+                "^capabilities_to_drop$": true,
+                "^command$": true,
+                "^build_directory$": true,
+                "^log_driver$": true,
+                "^health_check$": true,
+                "^setup_commands$": true,
+                "^image$": true,
+                "^privileged$": true,
+                "^run_as_current_user$": true,
+                "^entrypoint$": true,
+                "^log_options$": true,
+                "^dockerfile$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "container": {
+                  "description": "Port inside the container to map",
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "local": {
+                  "description": "Port on the host machine to map",
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "protocol": {
+                  "description": "Protocol to use (eg. TCP or UDP)",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "local",
+                "container"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^container$": true,
+                "^local$": true,
+                "^protocol$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "additionalHostnamesList": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "command": {
+                  "description": "The command to run to check the health of the container. If this command exits with code 0, the container is considered healthy.",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "interval": {
+                  "description": "The interval between runs of the health check. Accepts values such as `2s` (two seconds) or `1m` (one minute).",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "retries": {
+                  "description": "The number of times to perform the health check before considering the container unhealthy",
+                  "minimum": 0.0,
+                  "type": "integer"
+                },
+                "start_period": {
+                  "description": "The time to wait before failing health checks count against the retry count. The health check is still run during this period, and if the check succeeds, the container is immediately considered healthy. Accepts values such as `2s` (two seconds) or `1m` (one minute).",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^command$": true,
+                "^interval$": true,
+                "^retries$": true,
+                "^start_period$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "includesList": {
+      "description": "List of configuration files to include in this project",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "volumeMountList": {
+      "items": {
+        "oneOf": [
+          {
+            "pattern": "^.+:.+(:.+)?$",
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions4/modern_6"
+          },
+          {
+            "$ref": "#/definitions4/modern_7"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "setupCommandsList": {
+      "items": {
+        "$ref": "#/definitions4/modern_8"
+      },
+      "type": "array"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "container": {
+                  "description": "Path inside the container to mount the host path at",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "local": {
+                  "description": "Path on the host machine to mount",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "options": {
+                  "description": "Docker volume mount options to use when creating mount",
+                  "enum": [
+                    "cached",
+                    "delegated",
+                    "consistent",
+                    "default",
+                    "ro"
+                  ],
+                  "type": "string"
+                },
+                "type": {
+                  "description": "Type of volume mount",
+                  "enum": [
+                    "local"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "local",
+                "container"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^container$": true,
+                "^local$": true,
+                "^options$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "task": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies what to do when this task starts",
+              "properties": {
+                "entrypoint": {
+                  "description": "Entrypoint to use to run the command for this task",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "environment": {
+                  "$ref": "#/definitions4/environmentVariableList",
+                  "description": "List of environment variables to pass to the container, in addition to those defined on the container itself"
+                },
+                "container": {
+                  "description": "Container to run for this task",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "ports": {
+                  "$ref": "#/definitions4/portMappingList",
+                  "description": "List of port mappings to create for the container, in addition to those defined on the container itself"
+                },
+                "working_directory": {
+                  "description": "Working directory to start the container in",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "command": {
+                  "description": "Command to run for this task",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "container"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^ports$": true,
+                "^working_directory$": true,
+                "^container$": true,
+                "^environment$": true,
+                "^entrypoint$": true,
+                "^command$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Definitions for each of the containers that make up your various environments",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/container"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "container": {
+                  "description": "Ports inside the container to map",
+                  "pattern": "^\\d+-\\d+$",
+                  "type": "string"
+                },
+                "local": {
+                  "description": "Ports on the host machine to map",
+                  "pattern": "^\\d+-\\d+$",
+                  "type": "string"
+                },
+                "protocol": {
+                  "description": "Protocol to use (eg. TCP or UDP)",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "local",
+                "container"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^container$": true,
+                "^local$": true,
+                "^protocol$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "buildArgList": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "taskRunOptions": {
+      "$ref": "#/definitions4/modern_10"
+    },
+    "container": {
+      "$ref": "#/definitions4/modern_11"
+    },
+    "portMappingList": {
+      "items": {
+        "oneOf": [
+          {
+            "pattern": "^\\d+(-\\d+)?:\\d+(-\\d+)?(/.*)?$",
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions4/modern_14"
+          },
+          {
+            "$ref": "#/definitions4/modern_15"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "modern_20": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "patternProperties": {
+                "^\\.": true
+              },
+              "properties": {
+                "containers": {
+                  "$ref": "#/definitions4/containers"
+                },
+                "include": {
+                  "$ref": "#/definitions4/includesList"
+                },
+                "project_name": {
+                  "description": "The name of your project. Used to label any images built.",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "config_variables": {
+                  "$ref": "#/definitions4/configVariablesList"
+                },
+                "tasks": {
+                  "$ref": "#/definitions4/tasks"
+                }
+              },
+              "title": "JSON schema for batect configuration files",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^tasks$": true,
+                "^include$": true,
+                "^\\.": true,
+                "^config_variables$": true,
+                "^project_name$": true,
+                "^containers$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "enabled": {
+                  "description": "Set to `true` to enable 'run as current user' mode",
+                  "enum": [
+                    false
+                  ],
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "enabled"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^enabled$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Definition of a single config variable",
+              "properties": {
+                "default": {
+                  "description": "Default value of the variable if one is not provided elsewhere",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Human-readable description of the purpose of the variable",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^default$": true,
+                "^description$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "tasks": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "command": {
+                  "description": "Command to execute",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "working_directory": {
+                  "description": "Working directory to start the command in (defaults to container working directory if not set)",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "command"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^command$": true,
+                "^working_directory$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "containers": {
+      "$ref": "#/definitions4/modern_16"
+    },
+    "runAsCurrentUserOptions": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/modern_17"
+        },
+        {
+          "$ref": "#/definitions4/modern_18"
+        }
+      ]
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "enabled": {
+                  "description": "Set to `true` to enable 'run as current user' mode",
+                  "enum": [
+                    true
+                  ],
+                  "type": "boolean"
+                },
+                "home_directory": {
+                  "description": "Directory to use as home directory for user inside container",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "home_directory"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^enabled$": true,
+                "^home_directory$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Additional options to pass to Docker log driver",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "healthCheckOptions": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "configVariablesList": {
+      "$ref": "#/definitions4/modern_19"
+    },
+    "containerDependencyList": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Definitions for each of the config variables used to configure your tasks and containers",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/configVariable"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Definitions for each of your tasks, the actions you launch through batect",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/task"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "additionalHostnamesList": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "buildArgList": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "capabilityList": {
+      "items": {
+        "oneOf": [
+          {
+            "enum": [
+              "AUDIT_CONTROL",
+              "AUDIT_READ",
+              "AUDIT_WRITE",
+              "BLOCK_SUSPEND",
+              "CHOWN",
+              "DAC_OVERRIDE",
+              "DAC_READ_SEARCH",
+              "FOWNER",
+              "FSETID",
+              "IPC_LOCK",
+              "IPC_OWNER",
+              "KILL",
+              "LEASE",
+              "LINUX_IMMUTABLE",
+              "MAC_ADMIN",
+              "MAC_OVERRIDE",
+              "MKNOD",
+              "NET_ADMIN",
+              "NET_BIND_SERVICE",
+              "NET_BROADCAST",
+              "NET_RAW",
+              "SETGID",
+              "SETFCAP",
+              "SETPCAP",
+              "SETUID",
+              "SYS_ADMIN",
+              "SYS_BOOT",
+              "SYS_CHROOT",
+              "SYS_MODULE",
+              "SYS_NICE",
+              "SYS_PACCT",
+              "SYS_PTRACE",
+              "SYS_RAWIO",
+              "SYS_RESOURCE",
+              "SYS_TIME",
+              "SYS_TTY_CONFIG",
+              "SYSLOG",
+              "WAKE_ALARM",
+              "ALL"
+            ],
+            "type": "string"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "configVariable": {
+      "additionalProperties": false,
+      "description": "Definition of a single config variable",
+      "properties": {
+        "default": {
+          "description": "Default value of the variable if one is not provided elsewhere",
+          "minLength": 1,
+          "type": "string"
+        },
+        "description": {
+          "description": "Human-readable description of the purpose of the variable",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "configVariablesList": {
+      "additionalProperties": {
+        "$ref": "#/definitions3/configVariable"
+      },
+      "description": "Definitions for each of the config variables used to configure your tasks and containers",
+      "type": "object"
+    },
+    "container": {
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "not": {
+            "required": [
+              "build_args",
+              "dockerfile"
+            ]
+          },
+          "required": [
+            "image"
+          ]
+        },
+        {
+          "required": [
+            "build_directory"
+          ]
+        }
+      ],
+      "properties": {
+        "additional_hostnames": {
+          "$ref": "#/definitions3/additionalHostnamesList",
+          "description": "Hostnames to associate with this container in addition to the default hostname"
+        },
+        "additional_hosts": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Additional hostnames to add to /etc/hosts in the container",
+          "type": "object"
+        },
+        "build_args": {
+          "$ref": "#/definitions3/buildArgList",
+          "description": "List of build args to use when building the image in build_directory"
+        },
+        "build_directory": {
+          "description": "Path (relative to the configuration file's directory) to a directory containing a Dockerfile to build and use as an image for this container",
+          "minLength": 1,
+          "type": "string"
+        },
+        "capabilities_to_add": {
+          "$ref": "#/definitions3/capabilityList",
+          "description": "List of additional capabilities to add to the container"
+        },
+        "capabilities_to_drop": {
+          "$ref": "#/definitions3/capabilityList",
+          "description": "List of additional capabilities to remove from the container"
+        },
+        "command": {
+          "description": "Command to run when the container starts",
+          "minLength": 1,
+          "type": "string"
+        },
+        "dependencies": {
+          "$ref": "#/definitions3/containerDependencyList",
+          "description": "List of other containers that should be started and healthy before starting this container"
+        },
+        "dockerfile": {
+          "description": "Dockerfile (relative to build_directory) to use when building the image. Defaults to Dockerfile` if not set.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "enable_init_process": {
+          "description": "Set to `true` to run an init process inside the container that forwards signals and reaps processes",
+          "type": "boolean"
+        },
+        "entrypoint": {
+          "description": "Entrypoint to use to run the command",
+          "minLength": 1,
+          "type": "string"
+        },
+        "environment": {
+          "$ref": "#/definitions3/environmentVariableList",
+          "description": "List of environment variables for the container"
+        },
+        "health_check": {
+          "$ref": "#/definitions3/healthCheckOptions",
+          "description": "Overrides health check configuration specified in the image or Dockerfile"
+        },
+        "image": {
+          "description": "Image name (in standard Docker image reference format) to use for this container",
+          "minLength": 1,
+          "type": "string"
+        },
+        "log_driver": {
+          "description": "Docker log driver to use",
+          "type": "string"
+        },
+        "log_options": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Additional options to pass to Docker log driver",
+          "type": "object"
+        },
+        "ports": {
+          "$ref": "#/definitions3/portMappingList",
+          "description": "List of ports to make available to the host machine"
+        },
+        "privileged": {
+          "description": "Enable privileged mode for the container",
+          "type": "boolean"
+        },
+        "run_as_current_user": {
+          "$ref": "#/definitions3/runAsCurrentUserOptions"
+        },
+        "setup_commands": {
+          "$ref": "#/definitions3/setupCommandsList",
+          "description": "Commands to run after the container reports as healthy but before dependency containers start"
+        },
+        "volumes": {
+          "$ref": "#/definitions3/volumeMountList",
+          "description": "List of volume mounts to create for the container"
+        },
+        "working_directory": {
+          "description": "Working directory to start the container in",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "containerDependencyList": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "_uniqueItems": true
+    },
+    "containers": {
+      "additionalProperties": {
+        "$ref": "#/definitions3/container"
+      },
+      "description": "Definitions for each of the containers that make up your various environments",
+      "type": "object"
+    },
+    "environmentVariableList": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "healthCheckOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "description": "The command to run to check the health of the container. If this command exits with code 0, the container is considered healthy.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "interval": {
+          "description": "The interval between runs of the health check. Accepts values such as `2s` (two seconds) or `1m` (one minute).",
+          "minLength": 1,
+          "type": "string"
+        },
+        "retries": {
+          "description": "The number of times to perform the health check before considering the container unhealthy",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "start_period": {
+          "description": "The time to wait before failing health checks count against the retry count. The health check is still run during this period, and if the check succeeds, the container is immediately considered healthy. Accepts values such as `2s` (two seconds) or `1m` (one minute).",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "includesList": {
+      "description": "List of configuration files to include in this project",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "portMappingList": {
+      "items": {
+        "oneOf": [
+          {
+            "pattern": "^\\d+(-\\d+)?:\\d+(-\\d+)?(/.*)?$",
+            "type": "string"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "container": {
+                "description": "Port inside the container to map",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "local": {
+                "description": "Port on the host machine to map",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "protocol": {
+                "description": "Protocol to use (eg. TCP or UDP)",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "local",
+              "container"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "container": {
+                "description": "Ports inside the container to map",
+                "pattern": "^\\d+-\\d+$",
+                "type": "string"
+              },
+              "local": {
+                "description": "Ports on the host machine to map",
+                "pattern": "^\\d+-\\d+$",
+                "type": "string"
+              },
+              "protocol": {
+                "description": "Protocol to use (eg. TCP or UDP)",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "local",
+              "container"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "runAsCurrentUserOptions": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "description": "Set to `true` to enable 'run as current user' mode",
+              "enum": [
+                false
+              ],
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "description": "Set to `true` to enable 'run as current user' mode",
+              "enum": [
+                true
+              ],
+              "type": "boolean"
+            },
+            "home_directory": {
+              "description": "Directory to use as home directory for user inside container",
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "home_directory"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "setupCommandsList": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "description": "Command to execute",
+            "minLength": 1,
+            "type": "string"
+          },
+          "working_directory": {
+            "description": "Working directory to start the command in (defaults to container working directory if not set)",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "command"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "task": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "run"
+          ]
+        },
+        {
+          "not": {
+            "required": [
+              "dependencies",
+              "run"
+            ]
+          },
+          "required": [
+            "prerequisites"
+          ]
+        }
+      ],
+      "description": "Definition of a single task",
+      "properties": {
+        "dependencies": {
+          "$ref": "#/definitions3/containerDependencyList",
+          "description": "List of other containers that should be started and healthy before starting the task container given in `run`"
+        },
+        "description": {
+          "description": "Description shown when running `batect --list-tasks`",
+          "minLength": 1,
+          "type": "string"
+        },
+        "group": {
+          "description": "Name used to group tasks when running `batect --list-tasks`",
+          "minLength": 1,
+          "type": "string"
+        },
+        "prerequisites": {
+          "description": "List of other tasks that should be run before running this task",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "run": {
+          "$ref": "#/definitions3/taskRunOptions"
+        }
+      },
+      "type": "object"
+    },
+    "taskRunOptions": {
+      "additionalProperties": false,
+      "description": "Specifies what to do when this task starts",
+      "properties": {
+        "command": {
+          "description": "Command to run for this task",
+          "minLength": 1,
+          "type": "string"
+        },
+        "container": {
+          "description": "Container to run for this task",
+          "minLength": 1,
+          "type": "string"
+        },
+        "entrypoint": {
+          "description": "Entrypoint to use to run the command for this task",
+          "minLength": 1,
+          "type": "string"
+        },
+        "environment": {
+          "$ref": "#/definitions3/environmentVariableList",
+          "description": "List of environment variables to pass to the container, in addition to those defined on the container itself"
+        },
+        "ports": {
+          "$ref": "#/definitions3/portMappingList",
+          "description": "List of port mappings to create for the container, in addition to those defined on the container itself"
+        },
+        "working_directory": {
+          "description": "Working directory to start the container in",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "container"
+      ],
+      "type": "object"
+    },
+    "tasks": {
+      "additionalProperties": {
+        "$ref": "#/definitions3/task"
+      },
+      "description": "Definitions for each of your tasks, the actions you launch through batect",
+      "type": "object"
+    },
+    "volumeMountList": {
+      "items": {
+        "oneOf": [
+          {
+            "pattern": "^.+:.+(:.+)?$",
+            "type": "string"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "container": {
+                "description": "Path inside the container to mount the host path at",
+                "minLength": 1,
+                "type": "string"
+              },
+              "local": {
+                "description": "Path on the host machine to mount",
+                "minLength": 1,
+                "type": "string"
+              },
+              "options": {
+                "description": "Docker volume mount options to use when creating mount",
+                "enum": [
+                  "cached",
+                  "delegated",
+                  "consistent",
+                  "default",
+                  "ro"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of volume mount",
+                "enum": [
+                  "local"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "local",
+              "container"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "container": {
+                "description": "Path inside the container to mount the cache at",
+                "minLength": 1,
+                "type": "string"
+              },
+              "name": {
+                "description": "Name of the cache",
+                "minLength": 1,
+                "type": "string"
+              },
+              "options": {
+                "description": "Docker volume mount options to use when creating mount",
+                "enum": [
+                  "cached",
+                  "delegated",
+                  "consistent",
+                  "default",
+                  "ro"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of volume mount",
+                "enum": [
+                  "cache"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "name",
+              "container"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "type": "array"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/containers"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/containers"
+      }
+    },
+    {
+      "$ref": "#/definitions4/additionalHostnamesList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/additionalHostnamesList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/environmentVariableList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/environmentVariableList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/taskRunOptions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/taskRunOptions"
+      }
+    },
+    {
+      "$ref": "#/definitions4/buildArgList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/buildArgList"
+      }
+    },
+    {
+      "$ref": "#/definitions3/container"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/container"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions3/additionalHostnamesList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/additionalHostnamesList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions3/setupCommandsList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/setupCommandsList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/volumeMountList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/volumeMountList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/portMappingList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/portMappingList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/configVariablesList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/configVariablesList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions3/containerDependencyList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/containerDependencyList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/containers"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/containers"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tasks"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tasks"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions3/runAsCurrentUserOptions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/runAsCurrentUserOptions"
+      }
+    },
+    {
+      "$ref": "#/definitions4/runAsCurrentUserOptions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/runAsCurrentUserOptions"
+      }
+    },
+    {
+      "$ref": "#/definitions3/environmentVariableList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/environmentVariableList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/containerDependencyList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/containerDependencyList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/setupCommandsList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/setupCommandsList"
+      }
+    },
+    {
+      "$ref": "#/definitions3/capabilityList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/capabilityList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/healthCheckOptions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/healthCheckOptions"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/configVariable"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/configVariable"
+      }
+    },
+    {
+      "$ref": "#/definitions3/volumeMountList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/volumeMountList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/healthCheckOptions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/healthCheckOptions"
+      }
+    },
+    {
+      "$ref": "#/definitions3/configVariable"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/configVariable"
+      }
+    },
+    {
+      "$ref": "#/definitions3/buildArgList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/buildArgList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/capabilityList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/capabilityList"
+      }
+    },
+    {
+      "$ref": "#/definitions3/taskRunOptions"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/taskRunOptions"
+      }
+    },
+    {
+      "$ref": "#/definitions3/portMappingList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/portMappingList"
+      }
+    },
+    {
+      "$ref": "#/definitions3/task"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/task"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/container"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/container"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions4/task"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/task"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_20"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_20"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions3/includesList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/includesList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/includesList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/includesList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tasks"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tasks"
+      }
+    },
+    {
+      "$ref": "#/definitions3/configVariablesList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/configVariablesList"
+      }
+    }
+  ]
+}

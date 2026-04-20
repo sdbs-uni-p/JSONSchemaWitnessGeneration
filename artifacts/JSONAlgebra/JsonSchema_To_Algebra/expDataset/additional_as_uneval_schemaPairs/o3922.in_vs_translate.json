@@ -1,0 +1,1003 @@
+[
+  {
+    "id": 856,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://www.cornutum.org/tcases/system-input-schema.json",
+      "title": "System Input Model",
+      "description": "Defines the input space for a system (version: ${project.version})",
+      "type": "object",
+      "properties": {
+        "system": {
+          "type": "string"
+        },
+        "has": {
+          "$ref": "#/definitions2/annotation"
+        }
+      },
+      "required": [
+        "system"
+      ],
+      "additionalProperties": {
+        "$ref": "#/definitions2/function"
+      },
+      "definitions2": {
+        "annotation": {
+          "description": "Defines a set of output annotations",
+          "type": "object",
+          "patternProperties": {
+            ".": {
+              "type": "string"
+            }
+          },
+          "minProperties": 1
+        },
+        "function": {
+          "description": "Defines the input space for a system function",
+          "type": "object",
+          "properties": {
+            "has": {
+              "$ref": "#/definitions2/annotation"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/definitions2/inputDef"
+          }
+        },
+        "inputDef": {
+          "description": "Defines a collection of input variables of the same type",
+          "type": "object",
+          "properties": {
+            "has": {
+              "$ref": "#/definitions2/annotation"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/definitions2/varDef"
+          }
+        },
+        "varDef": {
+          "type": "object",
+          "properties": {
+            "has": {
+              "$ref": "#/definitions2/annotation"
+            },
+            "when": {
+              "$ref": "#/definitions2/condition"
+            },
+            "values": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                ".": {
+                  "$ref": "#/definitions2/valueDef"
+                }
+              }
+            },
+            "members": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                ".": {
+                  "$ref": "#/definitions2/varDef"
+                }
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          },
+          "oneOf": [
+            {
+              "required": [
+                "values"
+              ],
+              "properties": {
+                "members": false
+              }
+            },
+            {
+              "required": [
+                "members"
+              ],
+              "properties": {
+                "values": false
+              }
+            }
+          ]
+        },
+        "valueDef": {
+          "description": "Defines a value for an input variable",
+          "type": "object",
+          "properties": {
+            "has": {
+              "$ref": "#/definitions2/annotation"
+            },
+            "when": {
+              "$ref": "#/definitions2/condition"
+            },
+            "failure": {
+              "type": "boolean"
+            },
+            "once": {
+              "type": "boolean"
+            },
+            "properties": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "condition": {
+          "description": "Defines a constraint on the values allowed for an input variable",
+          "type": "object",
+          "properties": {
+            "hasAll": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "hasAny": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "hasNone": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "allOf": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/condition"
+              }
+            },
+            "anyOf": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions2/condition"
+              }
+            },
+            "not": {
+              "$ref": "#/definitions2/condition"
+            },
+            "lessThan": {
+              "type": "object",
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "property",
+                "max"
+              ]
+            },
+            "notLessThan": {
+              "type": "object",
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "property",
+                "min"
+              ]
+            },
+            "moreThan": {
+              "type": "object",
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "property",
+                "min"
+              ]
+            },
+            "notMoreThan": {
+              "type": "object",
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "property",
+                "max"
+              ]
+            },
+            "equals": {
+              "type": "object",
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "property",
+                "count"
+              ]
+            },
+            "between": {
+              "type": "object",
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "exclusiveMin": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "exclusiveMax": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "property"
+              ],
+              "minProperties": 3,
+              "maxProperties": 3,
+              "dependencies": {
+                "min": {
+                  "properties": {
+                    "exclusiveMin": false
+                  }
+                },
+                "max": {
+                  "properties": {
+                    "exclusiveMax": false
+                  }
+                }
+              }
+            }
+          },
+          "minProperties": 1,
+          "maxProperties": 1,
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://www.cornutum.org/tcases/system-input-schema.json",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "System Input Model",
+                  "description": "Defines the input space for a system (version: ${project.version})",
+                  "type": "object",
+                  "properties": {
+                    "system": {
+                      "type": "string"
+                    },
+                    "has": {
+                      "$ref": "#/definitions2/annotation"
+                    }
+                  },
+                  "required": [
+                    "system"
+                  ],
+                  "definitions2": {
+                    "annotation": {
+                      "description": "Defines a set of output annotations",
+                      "type": "object",
+                      "patternProperties": {
+                        ".": {
+                          "type": "string"
+                        }
+                      },
+                      "minProperties": 1
+                    },
+                    "function": {
+                      "description": "Defines the input space for a system function",
+                      "type": "object",
+                      "properties": {
+                        "has": {
+                          "$ref": "#/definitions2/annotation"
+                        }
+                      },
+                      "unevaluatedProperties": {
+                        "$ref": "#/definitions2/inputDef"
+                      }
+                    },
+                    "inputDef": {
+                      "description": "Defines a collection of input variables of the same type",
+                      "type": "object",
+                      "properties": {
+                        "has": {
+                          "$ref": "#/definitions2/annotation"
+                        }
+                      },
+                      "unevaluatedProperties": {
+                        "$ref": "#/definitions2/varDef"
+                      }
+                    },
+                    "varDef": {
+                      "type": "object",
+                      "properties": {
+                        "has": {
+                          "$ref": "#/definitions2/annotation"
+                        },
+                        "when": {
+                          "$ref": "#/definitions2/condition"
+                        },
+                        "values": {
+                          "type": "object",
+                          "minProperties": 1,
+                          "patternProperties": {
+                            ".": {
+                              "$ref": "#/definitions2/valueDef"
+                            }
+                          }
+                        },
+                        "members": {
+                          "type": "object",
+                          "minProperties": 1,
+                          "patternProperties": {
+                            ".": {
+                              "$ref": "#/definitions2/varDef"
+                            }
+                          }
+                        }
+                      },
+                      "unevaluatedProperties": false,
+                      "oneOf": [
+                        {
+                          "required": [
+                            "values"
+                          ],
+                          "properties": {
+                            "members": false
+                          }
+                        },
+                        {
+                          "required": [
+                            "members"
+                          ],
+                          "properties": {
+                            "values": false
+                          }
+                        }
+                      ]
+                    },
+                    "valueDef": {
+                      "description": "Defines a value for an input variable",
+                      "type": "object",
+                      "properties": {
+                        "has": {
+                          "$ref": "#/definitions2/annotation"
+                        },
+                        "when": {
+                          "$ref": "#/definitions2/condition"
+                        },
+                        "failure": {
+                          "type": "boolean"
+                        },
+                        "once": {
+                          "type": "boolean"
+                        },
+                        "properties": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "condition": {
+                      "description": "Defines a constraint on the values allowed for an input variable",
+                      "type": "object",
+                      "properties": {
+                        "hasAll": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "hasAny": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "hasNone": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "allOf": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "$ref": "#/definitions2/condition"
+                          }
+                        },
+                        "anyOf": {
+                          "type": "array",
+                          "minItems": 1,
+                          "_uniqueItems": true,
+                          "items": {
+                            "$ref": "#/definitions2/condition"
+                          }
+                        },
+                        "not": {
+                          "$ref": "#/definitions2/condition"
+                        },
+                        "lessThan": {
+                          "type": "object",
+                          "properties": {
+                            "property": {
+                              "type": "string"
+                            },
+                            "max": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "property",
+                            "max"
+                          ]
+                        },
+                        "notLessThan": {
+                          "type": "object",
+                          "properties": {
+                            "property": {
+                              "type": "string"
+                            },
+                            "min": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "property",
+                            "min"
+                          ]
+                        },
+                        "moreThan": {
+                          "type": "object",
+                          "properties": {
+                            "property": {
+                              "type": "string"
+                            },
+                            "min": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "property",
+                            "min"
+                          ]
+                        },
+                        "notMoreThan": {
+                          "type": "object",
+                          "properties": {
+                            "property": {
+                              "type": "string"
+                            },
+                            "max": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "property",
+                            "max"
+                          ]
+                        },
+                        "equals": {
+                          "type": "object",
+                          "properties": {
+                            "property": {
+                              "type": "string"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "property",
+                            "count"
+                          ]
+                        },
+                        "between": {
+                          "type": "object",
+                          "properties": {
+                            "property": {
+                              "type": "string"
+                            },
+                            "min": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "exclusiveMin": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "max": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "exclusiveMax": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "property"
+                          ],
+                          "minProperties": 3,
+                          "maxProperties": 3,
+                          "dependencies": {
+                            "min": {
+                              "properties": {
+                                "exclusiveMin": false
+                              }
+                            },
+                            "max": {
+                              "properties": {
+                                "exclusiveMax": false
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "minProperties": 1,
+                      "maxProperties": 1,
+                      "unevaluatedProperties": false
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^system$": {},
+                    "^has$": {}
+                  },
+                  "additionalProperties": {
+                    "$ref": "#/definitions2/function"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "varDef": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "has": {
+                      "$ref": "#/definitions2/annotation"
+                    },
+                    "when": {
+                      "$ref": "#/definitions2/condition"
+                    },
+                    "values": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "patternProperties": {
+                        ".": {
+                          "$ref": "#/definitions2/valueDef"
+                        }
+                      }
+                    },
+                    "members": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "patternProperties": {
+                        ".": {
+                          "$ref": "#/definitions2/varDef"
+                        }
+                      }
+                    }
+                  },
+                  "oneOf": [
+                    {
+                      "required": [
+                        "values"
+                      ],
+                      "properties": {
+                        "members": false
+                      }
+                    },
+                    {
+                      "required": [
+                        "members"
+                      ],
+                      "properties": {
+                        "values": false
+                      }
+                    }
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^has$": {},
+                    "^when$": {},
+                    "^values$": {},
+                    "^members$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "annotation": {
+          "description": "Defines a set of output annotations",
+          "type": "object",
+          "patternProperties": {
+            ".": {
+              "type": "string"
+            }
+          },
+          "minProperties": 1
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Defines a constraint on the values allowed for an input variable",
+                  "type": "object",
+                  "properties": {
+                    "equals": {
+                      "type": "object",
+                      "properties": {
+                        "property": {
+                          "type": "string"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        }
+                      },
+                      "required": [
+                        "property",
+                        "count"
+                      ]
+                    },
+                    "hasAll": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "hasAny": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "moreThan": {
+                      "type": "object",
+                      "properties": {
+                        "property": {
+                          "type": "string"
+                        },
+                        "min": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        }
+                      },
+                      "required": [
+                        "property",
+                        "min"
+                      ]
+                    },
+                    "between": {
+                      "type": "object",
+                      "properties": {
+                        "exclusiveMax": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        },
+                        "min": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        },
+                        "exclusiveMin": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        },
+                        "max": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        },
+                        "property": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "property"
+                      ],
+                      "minProperties": 3,
+                      "maxProperties": 3,
+                      "dependencies": {
+                        "min": {
+                          "properties": {
+                            "exclusiveMin": false
+                          }
+                        },
+                        "max": {
+                          "properties": {
+                            "exclusiveMax": false
+                          }
+                        }
+                      }
+                    },
+                    "allOf": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "$ref": "#/definitions2/condition"
+                      }
+                    },
+                    "anyOf": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "$ref": "#/definitions2/condition"
+                      }
+                    },
+                    "lessThan": {
+                      "type": "object",
+                      "properties": {
+                        "property": {
+                          "type": "string"
+                        },
+                        "max": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        }
+                      },
+                      "required": [
+                        "property",
+                        "max"
+                      ]
+                    },
+                    "notMoreThan": {
+                      "type": "object",
+                      "properties": {
+                        "property": {
+                          "type": "string"
+                        },
+                        "max": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        }
+                      },
+                      "required": [
+                        "property",
+                        "max"
+                      ]
+                    },
+                    "notLessThan": {
+                      "type": "object",
+                      "properties": {
+                        "property": {
+                          "type": "string"
+                        },
+                        "min": {
+                          "type": "integer",
+                          "minimum": 0.0
+                        }
+                      },
+                      "required": [
+                        "property",
+                        "min"
+                      ]
+                    },
+                    "hasNone": {
+                      "type": "array",
+                      "minItems": 1,
+                      "_uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "not": {
+                      "$ref": "#/definitions2/condition"
+                    }
+                  },
+                  "minProperties": 1,
+                  "maxProperties": 1
+                },
+                {
+                  "patternProperties": {
+                    "^notLessThan$": {},
+                    "^not$": {},
+                    "^hasAny$": {},
+                    "^hasAll$": {},
+                    "^anyOf$": {},
+                    "^between$": {},
+                    "^moreThan$": {},
+                    "^notMoreThan$": {},
+                    "^lessThan$": {},
+                    "^equals$": {},
+                    "^hasNone$": {},
+                    "^allOf$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "condition": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "inputDef": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "function": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Defines a collection of input variables of the same type",
+                  "type": "object",
+                  "properties": {
+                    "has": {
+                      "$ref": "#/definitions2/annotation"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^has$": {}
+                  },
+                  "additionalProperties": {
+                    "$ref": "#/definitions2/varDef"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "valueDef": {
+          "description": "Defines a value for an input variable",
+          "type": "object",
+          "properties": {
+            "failure": {
+              "type": "boolean"
+            },
+            "once": {
+              "type": "boolean"
+            },
+            "has": {
+              "$ref": "#/definitions2/annotation"
+            },
+            "properties": {
+              "type": "array",
+              "minItems": 1,
+              "_uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "when": {
+              "$ref": "#/definitions2/condition"
+            }
+          }
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Defines the input space for a system function",
+                  "type": "object",
+                  "properties": {
+                    "has": {
+                      "$ref": "#/definitions2/annotation"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^has$": {}
+                  },
+                  "additionalProperties": {
+                    "$ref": "#/definitions2/inputDef"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_5"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

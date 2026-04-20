@@ -1,0 +1,140 @@
+[
+  {
+    "id": 3139,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "patternProperties": {
+        "^[A-Fa-f\\d]{24}$": {
+          "type": "object",
+          "properties": {
+            "time": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "data": {
+              "type": "object",
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]{1,255}$": {
+                  "type": [
+                    "number",
+                    "string",
+                    "boolean"
+                  ]
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "data",
+            "time"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "not": {}
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[A-Fa-f\\d]{24}$": {
+                      "$ref": "#/definitions2/modern_2"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^[A-Fa-f\\d]{24}$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data": {
+                      "$ref": "#/definitions2/modern_3"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "time"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^time$": {},
+                    "^data$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[0-9a-zA-Z_-]{1,255}$": {
+                      "type": [
+                        "number",
+                        "string",
+                        "boolean"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^[0-9a-zA-Z_-]{1,255}$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

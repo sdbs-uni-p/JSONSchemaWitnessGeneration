@@ -1,0 +1,166 @@
+{
+  "allOf": [
+    {
+      "description": "TSD - TypeScript Definition Manager: config & data file",
+      "properties": {
+        "path": {
+          "description": "path to definition directory",
+          "minLength": 1,
+          "type": "string"
+        },
+        "ref": {
+          "description": "git index ref (branch/commit)",
+          "pattern": "^[\\w\\.-]+(?:\\/[\\w\\.-]+)*$",
+          "type": "string"
+        },
+        "cache": {
+          "description": "path to (shared) tsd-cache",
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "description": "config-format version",
+          "pattern": "^v[\\d]+$",
+          "type": "string"
+        },
+        "repo": {
+          "description": "github repository \"owner/name\"",
+          "pattern": "^[\\w\\.-]+/[\\w\\.-]+$",
+          "type": "string"
+        },
+        "installed": {
+          "$ref": "#/definitions4/modern_1"
+        },
+        "bundle": {
+          "description": "path to <reference /> bundle",
+          "pattern": "\\w+\\.ts$",
+          "type": "string"
+        },
+        "stats": {
+          "description": "enable stats tracking",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "version",
+        "repo",
+        "ref",
+        "path"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "description": "TSD - TypeScript Definition Manager: config & data file",
+        "properties": {
+          "bundle": {
+            "description": "path to <reference /> bundle",
+            "pattern": "\\w+\\.ts$",
+            "type": "string"
+          },
+          "cache": {
+            "description": "path to (shared) tsd-cache",
+            "minLength": 1,
+            "type": "string"
+          },
+          "installed": {
+            "additionalProperties": false,
+            "description": "index of installed definitions3",
+            "patternProperties": {
+              "^[\\w\\.-]+\\/[\\w\\.-]+\\.d\\.ts$": {
+                "properties": {
+                  "commit": {
+                    "description": "sha1 hex",
+                    "pattern": "^[0-9a-f]{6,40}$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "commit"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "path": {
+            "description": "path to definition directory",
+            "minLength": 1,
+            "type": "string"
+          },
+          "ref": {
+            "description": "git index ref (branch/commit)",
+            "pattern": "^[\\w\\.-]+(?:\\/[\\w\\.-]+)*$",
+            "type": "string"
+          },
+          "repo": {
+            "description": "github repository \"owner/name\"",
+            "pattern": "^[\\w\\.-]+/[\\w\\.-]+$",
+            "type": "string"
+          },
+          "stats": {
+            "description": "enable stats tracking",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "config-format version",
+            "pattern": "^v[\\d]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "repo",
+          "ref",
+          "path"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "index of installed definitions4",
+              "patternProperties": {
+                "^[\\w\\.-]+\\/[\\w\\.-]+\\.d\\.ts$": {
+                  "properties": {
+                    "commit": {
+                      "description": "sha1 hex",
+                      "pattern": "^[0-9a-f]{6,40}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "commit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[\\w\\.-]+\\/[\\w\\.-]+\\.d\\.ts$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

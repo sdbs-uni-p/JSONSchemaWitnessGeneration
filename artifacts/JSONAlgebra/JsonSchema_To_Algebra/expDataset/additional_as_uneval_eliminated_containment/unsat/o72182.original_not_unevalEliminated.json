@@ -1,0 +1,157 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-06/schema#",
+      "title": "Integration Configuration",
+      "description": "The schema used to generate integration configuration in Contentful",
+      "type": "object",
+      "properties": {
+        "webhooks": {
+          "type": "array",
+          "title": "Managed Webhooks",
+          "description": "A list of webhooks managed by this integration",
+          "items": {
+            "$ref": "#/definitions3/webhook"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-06/schema#",
+        "$ref": "#/definitions4/modern_2"
+      }
+    }
+  ],
+  "definitions3": {
+    "webhook": {
+      "type": "object",
+      "title": "Managed Webhook",
+      "description": "Configuration for setting up a webhook",
+      "properties": {
+        "endpointUrl": {
+          "type": "string",
+          "title": "Endpoint Url",
+          "format": "url",
+          "description": "The webhook destination"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "The name of the webhook (e.g. Stripe Integration Entry Point)"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "endpointUrl",
+        "name"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "title": "Managed Webhook",
+              "description": "Configuration for setting up a webhook",
+              "properties": {
+                "endpointUrl": {
+                  "type": "string",
+                  "title": "Endpoint Url",
+                  "format": "url",
+                  "description": "The webhook destination"
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "The name of the webhook (e.g. Stripe Integration Entry Point)"
+                }
+              },
+              "required": [
+                "endpointUrl",
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^endpointUrl$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Integration Configuration",
+              "description": "The schema used to generate integration configuration in Contentful",
+              "type": "object",
+              "properties": {
+                "webhooks": {
+                  "type": "array",
+                  "title": "Managed Webhooks",
+                  "description": "A list of webhooks managed by this integration",
+                  "items": {
+                    "$ref": "#/definitions4/webhook"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^webhooks$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "webhook": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/webhook"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/webhook"
+      }
+    },
+    {
+      "$ref": "#/definitions3/webhook"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/webhook"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

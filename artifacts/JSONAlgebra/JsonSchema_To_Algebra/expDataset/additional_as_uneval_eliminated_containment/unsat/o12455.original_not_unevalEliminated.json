@@ -1,0 +1,239 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "description": "Module specifications",
+      "type": "object",
+      "$comment": "Example key: 'magdeck'",
+      "patternProperties": {
+        ".*": {
+          "type": "object",
+          "required": [
+            "labwareOffset",
+            "dimensions",
+            "calibrationPoint",
+            "displayName",
+            "loadName",
+            "quirks"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "labwareOffset": {
+              "$ref": "#/definitions3/coordinates"
+            },
+            "dimensions": {
+              "type": "object",
+              "required": [
+                "bareOverallHeight",
+                "overLabwareHeight"
+              ],
+              "properties": {
+                "bareOverallHeight": {
+                  "type": "number"
+                },
+                "overLabwareHeight": {
+                  "type": "number"
+                },
+                "lidHeight": {
+                  "type": "number"
+                }
+              }
+            },
+            "calibrationPoint": {
+              "$ref": "#/definitions3/coordinates"
+            },
+            "displayName": {
+              "type": "string"
+            },
+            "loadName": {
+              "type": "string"
+            },
+            "quirks": {
+              "type": "array",
+              "description": "List of quirks for a given module",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "description": "Module specifications",
+        "type": "object",
+        "$comment": "Example key: 'magdeck'",
+        "patternProperties": {
+          ".*": {
+            "$ref": "#/definitions4/modern_2"
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "coordinates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "coordinates": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "x",
+                "y"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^x$": true,
+                "^y$": true,
+                "^z$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "labwareOffset",
+                "dimensions",
+                "calibrationPoint",
+                "displayName",
+                "loadName",
+                "quirks"
+              ],
+              "properties": {
+                "displayName": {
+                  "type": "string"
+                },
+                "labwareOffset": {
+                  "$ref": "#/definitions4/coordinates"
+                },
+                "quirks": {
+                  "type": "array",
+                  "description": "List of quirks for a given module",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "dimensions": {
+                  "type": "object",
+                  "required": [
+                    "bareOverallHeight",
+                    "overLabwareHeight"
+                  ],
+                  "properties": {
+                    "bareOverallHeight": {
+                      "type": "number"
+                    },
+                    "overLabwareHeight": {
+                      "type": "number"
+                    },
+                    "lidHeight": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "calibrationPoint": {
+                  "$ref": "#/definitions4/coordinates"
+                },
+                "loadName": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^calibrationPoint$": true,
+                "^loadName$": true,
+                "^quirks$": true,
+                "^labwareOffset$": true,
+                "^displayName$": true,
+                "^dimensions$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/coordinates"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/coordinates"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/coordinates"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/coordinates"
+      }
+    }
+  ]
+}

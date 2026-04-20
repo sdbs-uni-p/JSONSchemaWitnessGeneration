@@ -1,0 +1,683 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions3/canonicalData",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "comments": [
+        " This is a JSON Schema for 'canonical-data.json' files.     ",
+        "                                                            ",
+        " It enforces just a general structure for all exercises,    ",
+        " optimising for the ability to represent example-based tests",
+        " of the form 'function (input) == output'. Future expansions",
+        " may allow for other types of tests such as property-based. ",
+        "                                                            ",
+        " The only thing enforced regarding how test data should be  ",
+        " structured is the error encoding, because it was agreed    ",
+        " and it doesn't restrict flexibility in a significant way.  ",
+        "                                                            ",
+        " Standardized property names may help when automatically    ",
+        " deriving JSON parsers in some languages, so we followed    ",
+        " a few conventions from the 'Google JSON Style Guide'.      ",
+        "                                                            ",
+        " Additionally, this schema strictly enforces letters, in    ",
+        " lowerCamelCase, for naming the 'property' being tested. We ",
+        " expect this regularity will allow an easier automatic      ",
+        " generation of function's names in test generators,         ",
+        " slightly reducing the amount of manually generated code.   "
+      ],
+      "self": {
+        "format": "jsonschema",
+        "name": "canonical-data",
+        "vendor": "io.exercism",
+        "version": "1-1-0"
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/canonicalData",
+        "comments": [
+          " This is a JSON Schema for 'canonical-data.json' files.     ",
+          "                                                            ",
+          " It enforces just a general structure for all exercises,    ",
+          " optimising for the ability to represent example-based tests",
+          " of the form 'function (input) == output'. Future expansions",
+          " may allow for other types of tests such as property-based. ",
+          "                                                            ",
+          " The only thing enforced regarding how test data should be  ",
+          " structured is the error encoding, because it was agreed    ",
+          " and it doesn't restrict flexibility in a significant way.  ",
+          "                                                            ",
+          " Standardized property names may help when automatically    ",
+          " deriving JSON parsers in some languages, so we followed    ",
+          " a few conventions from the 'Google JSON Style Guide'.      ",
+          "                                                            ",
+          " Additionally, this schema strictly enforces letters, in    ",
+          " lowerCamelCase, for naming the 'property' being tested. We ",
+          " expect this regularity will allow an easier automatic      ",
+          " generation of function's names in test generators,         ",
+          " slightly reducing the amount of manually generated code.   "
+        ],
+        "self": {
+          "format": "jsonschema",
+          "name": "canonical-data",
+          "vendor": "io.exercism",
+          "version": "1-1-0"
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "canonicalData": {
+      "additionalProperties": false,
+      "description": "This is the top-level file structure",
+      "properties": {
+        "cases": {
+          "$ref": "#/definitions3/testGroup"
+        },
+        "comments": {
+          "$ref": "#/definitions3/comments"
+        },
+        "exercise": {
+          "$ref": "#/definitions3/exercise"
+        },
+        "version": {
+          "$ref": "#/definitions3/version"
+        }
+      },
+      "required": [
+        "exercise",
+        "version",
+        "cases"
+      ],
+      "type": "object"
+    },
+    "comments": {
+      "description": "An array of strings to fake multi-line comments",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "description2": {
+      "description": "A short, clear, one-line description",
+      "type": "string"
+    },
+    "error": {
+      "description": "A message describing an error condition",
+      "type": "string"
+    },
+    "exercise": {
+      "description": "Exercise's slug (kebab-case)",
+      "pattern": "^[a-z]+(-[a-z]+)*$",
+      "type": "string"
+    },
+    "expected": {
+      "dependencies": {
+        "error": {
+          "maxProperties": 1
+        }
+      },
+      "description": "The expected return value of a test case",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions3/error"
+        }
+      }
+    },
+    "input": {
+      "description": "The inputs to a test case",
+      "type": "object"
+    },
+    "labeledTest": {
+      "additionalProperties": false,
+      "description": "A single test with a description",
+      "properties": {
+        "comments": {
+          "$ref": "#/definitions3/comments"
+        },
+        "description": {
+          "$ref": "#/definitions3/description2"
+        },
+        "expected": {
+          "$ref": "#/definitions3/expected"
+        },
+        "input": {
+          "$ref": "#/definitions3/input"
+        },
+        "optional": {
+          "$ref": "#/definitions3/optional"
+        },
+        "property": {
+          "$ref": "#/definitions3/property"
+        }
+      },
+      "required": [
+        "description",
+        "property",
+        "input",
+        "expected"
+      ],
+      "type": "object"
+    },
+    "labeledTestGroup": {
+      "additionalProperties": false,
+      "description": "A group of tests with a description",
+      "properties": {
+        "cases": {
+          "$ref": "#/definitions3/testGroup"
+        },
+        "comments": {
+          "$ref": "#/definitions3/comments"
+        },
+        "description": {
+          "$ref": "#/definitions3/description2"
+        },
+        "optional": {
+          "$ref": "#/definitions3/optional"
+        }
+      },
+      "required": [
+        "description",
+        "cases"
+      ],
+      "type": "object"
+    },
+    "labeledTestItem": {
+      "description": "A single test or group of tests with a description",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/labeledTest"
+        },
+        {
+          "$ref": "#/definitions3/labeledTestGroup"
+        }
+      ]
+    },
+    "optional": {
+      "description": "An identifier for similar optional test cases (kebab-case)",
+      "pattern": "^[a-z]+(-[a-z]+)*$",
+      "type": "string"
+    },
+    "property": {
+      "description": "A letters-only, lowerCamelCase property name",
+      "pattern": "^[a-z]+([A-Z][a-z]+)*[A-Z]?$",
+      "type": "string"
+    },
+    "testGroup": {
+      "description": "An array of labeled test items",
+      "items": {
+        "$ref": "#/definitions3/labeledTestItem"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "version": {
+      "description": "Semantic versioning: MAJOR.MINOR.PATCH",
+      "pattern": "^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*)){2}$",
+      "type": "string"
+    }
+  },
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "This is the top-level file structure",
+              "properties": {
+                "cases": {
+                  "$ref": "#/definitions4/testGroup"
+                },
+                "comments": {
+                  "$ref": "#/definitions4/comments"
+                },
+                "exercise": {
+                  "$ref": "#/definitions4/exercise"
+                },
+                "version": {
+                  "$ref": "#/definitions4/version"
+                }
+              },
+              "required": [
+                "exercise",
+                "version",
+                "cases"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^cases$": true,
+                "^comments$": true,
+                "^exercise$": true,
+                "^version$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A group of tests with a description",
+              "properties": {
+                "cases": {
+                  "$ref": "#/definitions4/testGroup"
+                },
+                "comments": {
+                  "$ref": "#/definitions4/comments"
+                },
+                "description": {
+                  "$ref": "#/definitions4/description2"
+                },
+                "optional": {
+                  "$ref": "#/definitions4/optional"
+                }
+              },
+              "required": [
+                "description",
+                "cases"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^cases$": true,
+                "^comments$": true,
+                "^description$": true,
+                "^optional$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "version": {
+      "description": "Semantic versioning: MAJOR.MINOR.PATCH",
+      "pattern": "^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*)){2}$",
+      "type": "string"
+    },
+    "error": {
+      "description": "A message describing an error condition",
+      "type": "string"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A single test with a description",
+              "properties": {
+                "optional": {
+                  "$ref": "#/definitions4/optional"
+                },
+                "property": {
+                  "$ref": "#/definitions4/property"
+                },
+                "input": {
+                  "$ref": "#/definitions4/input"
+                },
+                "comments": {
+                  "$ref": "#/definitions4/comments"
+                },
+                "description": {
+                  "$ref": "#/definitions4/description2"
+                },
+                "expected": {
+                  "$ref": "#/definitions4/expected"
+                }
+              },
+              "required": [
+                "description",
+                "property",
+                "input",
+                "expected"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^optional$": true,
+                "^property$": true,
+                "^input$": true,
+                "^comments$": true,
+                "^expected$": true,
+                "^description$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "input": {
+      "description": "The inputs to a test case",
+      "type": "object"
+    },
+    "exercise": {
+      "description": "Exercise's slug (kebab-case)",
+      "pattern": "^[a-z]+(-[a-z]+)*$",
+      "type": "string"
+    },
+    "comments": {
+      "description": "An array of strings to fake multi-line comments",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "description2": {
+      "description": "A short, clear, one-line description",
+      "type": "string"
+    },
+    "expected": {
+      "dependencies": {
+        "error": {
+          "maxProperties": 1
+        }
+      },
+      "description": "The expected return value of a test case",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions4/error"
+        }
+      }
+    },
+    "testGroup": {
+      "description": "An array of labeled test items",
+      "items": {
+        "$ref": "#/definitions4/labeledTestItem"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "canonicalData": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "labeledTestGroup": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "optional": {
+      "description": "An identifier for similar optional test cases (kebab-case)",
+      "pattern": "^[a-z]+(-[a-z]+)*$",
+      "type": "string"
+    },
+    "property": {
+      "description": "A letters-only, lowerCamelCase property name",
+      "pattern": "^[a-z]+([A-Z][a-z]+)*[A-Z]?$",
+      "type": "string"
+    },
+    "labeledTestItem": {
+      "description": "A single test or group of tests with a description",
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/labeledTest"
+        },
+        {
+          "$ref": "#/definitions4/labeledTestGroup"
+        }
+      ]
+    },
+    "labeledTest": {
+      "$ref": "#/definitions4/modern_3"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/version"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/version"
+      }
+    },
+    {
+      "$ref": "#/definitions4/optional"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/optional"
+      }
+    },
+    {
+      "$ref": "#/definitions3/input"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/input"
+      }
+    },
+    {
+      "$ref": "#/definitions3/exercise"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/exercise"
+      }
+    },
+    {
+      "$ref": "#/definitions4/description2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/description2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/expected"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/expected"
+      }
+    },
+    {
+      "$ref": "#/definitions4/comments"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/comments"
+      }
+    },
+    {
+      "$ref": "#/definitions4/property"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/property"
+      }
+    },
+    {
+      "$ref": "#/definitions4/labeledTestItem"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/labeledTestItem"
+      }
+    },
+    {
+      "$ref": "#/definitions3/labeledTestGroup"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/labeledTestGroup"
+      }
+    },
+    {
+      "$ref": "#/definitions3/labeledTest"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/labeledTest"
+      }
+    },
+    {
+      "$ref": "#/definitions4/exercise"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/exercise"
+      }
+    },
+    {
+      "$ref": "#/definitions4/error"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/error"
+      }
+    },
+    {
+      "$ref": "#/definitions3/optional"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/optional"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/version"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/version"
+      }
+    },
+    {
+      "$ref": "#/definitions4/labeledTest"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/labeledTest"
+      }
+    },
+    {
+      "$ref": "#/definitions3/canonicalData"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/canonicalData"
+      }
+    },
+    {
+      "$ref": "#/definitions3/comments"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/comments"
+      }
+    },
+    {
+      "$ref": "#/definitions4/input"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/input"
+      }
+    },
+    {
+      "$ref": "#/definitions3/property"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/property"
+      }
+    },
+    {
+      "$ref": "#/definitions3/error"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/error"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/labeledTestGroup"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/labeledTestGroup"
+      }
+    },
+    {
+      "$ref": "#/definitions4/canonicalData"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/canonicalData"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/testGroup"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/testGroup"
+      }
+    },
+    {
+      "$ref": "#/definitions4/expected"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/expected"
+      }
+    },
+    {
+      "$ref": "#/definitions3/description2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/description2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/labeledTestItem"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/labeledTestItem"
+      }
+    },
+    {
+      "$ref": "#/definitions4/testGroup"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/testGroup"
+      }
+    }
+  ]
+}

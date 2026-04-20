@@ -1,0 +1,735 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "id": "http://schemas.triniti.io/json-schema/triniti/sys/mixin/flagset/1-0-0.json#",
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "pattern": "^[\\w\\/\\.:-]+$",
+            "pbj": {
+              "type": "identifier",
+              "rule": "single",
+              "overridable": true
+            }
+          },
+          "status": {
+            "type": "string",
+            "default": "draft",
+            "enum": [
+              "unknown",
+              "published",
+              "scheduled",
+              "pending",
+              "draft",
+              "expired",
+              "archived",
+              "deleted"
+            ],
+            "pbj": {
+              "type": "string-enum",
+              "rule": "single"
+            }
+          },
+          "etag": {
+            "type": "string",
+            "pattern": "^[\\w\\.:-]+$",
+            "pbj": {
+              "type": "string",
+              "rule": "single"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[1-9]{1}[0-9]{12,15}$",
+            "pbj": {
+              "type": "microtime",
+              "rule": "single"
+            }
+          },
+          "creator_ref": {
+            "type": "object",
+            "properties": {
+              "curie": {
+                "type": "string",
+                "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                "minLength": 0,
+                "maxLength": 146
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9:_\\-]+$",
+                "minLength": 0,
+                "maxLength": 255
+              },
+              "tag": {
+                "type": "string",
+                "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                "minLength": 0,
+                "maxLength": 255
+              }
+            },
+            "required": [
+              "curie",
+              "id"
+            ],
+            "additionalProperties": false,
+            "description": "A fully qualified reference to what created this node. This is intentionally a message-ref and not a user id because it is often a program that creates nodes, not a user.",
+            "pbj": {
+              "type": "message-ref",
+              "rule": "single"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "pattern": "^[1-9]{1}[0-9]{12,15}$",
+            "pbj": {
+              "type": "microtime",
+              "rule": "single",
+              "useTypeDefault": false
+            }
+          },
+          "updater_ref": {
+            "type": "object",
+            "properties": {
+              "curie": {
+                "type": "string",
+                "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                "minLength": 0,
+                "maxLength": 146
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9:_\\-]+$",
+                "minLength": 0,
+                "maxLength": 255
+              },
+              "tag": {
+                "type": "string",
+                "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                "minLength": 0,
+                "maxLength": 255
+              }
+            },
+            "required": [
+              "curie",
+              "id"
+            ],
+            "additionalProperties": false,
+            "description": "A fully qualified reference to what updated this node. This is intentionally a message-ref and not a user id because it is often a program that updates nodes, not a user. E.g. \"acme:iam:node:app:cli-scheduler\" or \"acme:iam:node:user:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+            "pbj": {
+              "type": "message-ref",
+              "rule": "single"
+            }
+          },
+          "last_event_ref": {
+            "type": "object",
+            "properties": {
+              "curie": {
+                "type": "string",
+                "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                "minLength": 0,
+                "maxLength": 146
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9:_\\-]+$",
+                "minLength": 0,
+                "maxLength": 255
+              },
+              "tag": {
+                "type": "string",
+                "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                "minLength": 0,
+                "maxLength": 255
+              }
+            },
+            "required": [
+              "curie",
+              "id"
+            ],
+            "additionalProperties": false,
+            "description": "A reference to the last event that changed the state of this node. E.g. \"acme:blog:event:article-published:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+            "pbj": {
+              "type": "message-ref",
+              "rule": "single"
+            }
+          },
+          "title": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "pbj": {
+              "type": "string",
+              "rule": "single"
+            }
+          },
+          "booleans": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "pbj": {
+              "type": "boolean",
+              "rule": "map"
+            }
+          },
+          "floats": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                "type": "number",
+                "default": 0
+              }
+            },
+            "additionalProperties": false,
+            "pbj": {
+              "type": "float",
+              "rule": "map"
+            }
+          },
+          "ints": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                "type": "integer",
+                "default": 0,
+                "minimum": 0,
+                "maximum": 4294967295
+              }
+            },
+            "additionalProperties": false,
+            "pbj": {
+              "type": "int",
+              "rule": "map"
+            }
+          },
+          "strings": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 255
+              }
+            },
+            "additionalProperties": false,
+            "pbj": {
+              "type": "string",
+              "rule": "map"
+            }
+          },
+          "trinaries": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                "type": "integer",
+                "default": 0,
+                "minimum": 0,
+                "maximum": 2
+              }
+            },
+            "additionalProperties": false,
+            "pbj": {
+              "type": "trinary",
+              "rule": "map"
+            }
+          }
+        },
+        "required": [
+          "_id"
+        ],
+        "additionalProperties": true
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                  "type": "integer",
+                  "default": 0,
+                  "minimum": 0.0,
+                  "maximum": 4294967295.0
+                }
+              },
+              "pbj": {
+                "type": "int",
+                "rule": "map"
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                  "type": "string",
+                  "minLength": 0,
+                  "maxLength": 255
+                }
+              },
+              "pbj": {
+                "type": "string",
+                "rule": "map"
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "http://schemas.triniti.io/json-schema/triniti/sys/mixin/flagset/1-0-0.json#",
+              "type": "object",
+              "properties": {
+                "floats": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "etag": {
+                  "type": "string",
+                  "pattern": "^[\\w\\.:-]+$",
+                  "pbj": {
+                    "type": "string",
+                    "rule": "single"
+                  }
+                },
+                "updater_ref": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "last_event_ref": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "ints": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "strings": {
+                  "$ref": "#/definitions4/modern_6"
+                },
+                "trinaries": {
+                  "$ref": "#/definitions4/modern_7"
+                },
+                "status": {
+                  "type": "string",
+                  "default": "draft",
+                  "enum": [
+                    "unknown",
+                    "published",
+                    "scheduled",
+                    "pending",
+                    "draft",
+                    "expired",
+                    "archived",
+                    "deleted"
+                  ],
+                  "pbj": {
+                    "type": "string-enum",
+                    "rule": "single"
+                  }
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 0,
+                  "maxLength": 255,
+                  "pbj": {
+                    "type": "string",
+                    "rule": "single"
+                  }
+                },
+                "updated_at": {
+                  "type": "string",
+                  "pattern": "^[1-9]{1}[0-9]{12,15}$",
+                  "pbj": {
+                    "type": "microtime",
+                    "rule": "single",
+                    "useTypeDefault": false
+                  }
+                },
+                "_id": {
+                  "type": "string",
+                  "pattern": "^[\\w\\/\\.:-]+$",
+                  "pbj": {
+                    "type": "identifier",
+                    "rule": "single",
+                    "overridable": true
+                  }
+                },
+                "creator_ref": {
+                  "$ref": "#/definitions4/modern_8"
+                },
+                "created_at": {
+                  "type": "string",
+                  "pattern": "^[1-9]{1}[0-9]{12,15}$",
+                  "pbj": {
+                    "type": "microtime",
+                    "rule": "single"
+                  }
+                },
+                "booleans": {
+                  "$ref": "#/definitions4/modern_9"
+                }
+              },
+              "required": [
+                "_id"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^updated_at$": true,
+                "^floats$": true,
+                "^creator_ref$": true,
+                "^etag$": true,
+                "^status$": true,
+                "^booleans$": true,
+                "^title$": true,
+                "^strings$": true,
+                "^ints$": true,
+                "^_id$": true,
+                "^created_at$": true,
+                "^last_event_ref$": true,
+                "^updater_ref$": true,
+                "^trinaries$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                  "type": "integer",
+                  "default": 0,
+                  "minimum": 0.0,
+                  "maximum": 2.0
+                }
+              },
+              "pbj": {
+                "type": "trinary",
+                "rule": "map"
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                  "type": "number",
+                  "default": 0
+                }
+              },
+              "pbj": {
+                "type": "float",
+                "rule": "map"
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "curie": {
+                  "type": "string",
+                  "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                  "minLength": 0,
+                  "maxLength": 146
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9:_\\-]+$",
+                  "minLength": 0,
+                  "maxLength": 255
+                },
+                "tag": {
+                  "type": "string",
+                  "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                  "minLength": 0,
+                  "maxLength": 255
+                }
+              },
+              "required": [
+                "curie",
+                "id"
+              ],
+              "description": "A fully qualified reference to what created this node. This is intentionally a message-ref and not a user id because it is often a program that creates nodes, not a user.",
+              "pbj": {
+                "type": "message-ref",
+                "rule": "single"
+              }
+            },
+            {
+              "patternProperties": {
+                "^curie$": true,
+                "^id$": true,
+                "^tag$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
+                  "type": "boolean"
+                }
+              },
+              "pbj": {
+                "type": "boolean",
+                "rule": "map"
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-zA-Z_]{1}[\\w\\.:-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "curie": {
+                  "type": "string",
+                  "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                  "minLength": 0,
+                  "maxLength": 146
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9:_\\-]+$",
+                  "minLength": 0,
+                  "maxLength": 255
+                },
+                "tag": {
+                  "type": "string",
+                  "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                  "minLength": 0,
+                  "maxLength": 255
+                }
+              },
+              "required": [
+                "curie",
+                "id"
+              ],
+              "description": "A fully qualified reference to what updated this node. This is intentionally a message-ref and not a user id because it is often a program that updates nodes, not a user. E.g. \"acme:iam:node:app:cli-scheduler\" or \"acme:iam:node:user:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+              "pbj": {
+                "type": "message-ref",
+                "rule": "single"
+              }
+            },
+            {
+              "patternProperties": {
+                "^curie$": true,
+                "^id$": true,
+                "^tag$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "curie": {
+                  "type": "string",
+                  "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+                  "minLength": 0,
+                  "maxLength": 146
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9:_\\-]+$",
+                  "minLength": 0,
+                  "maxLength": 255
+                },
+                "tag": {
+                  "type": "string",
+                  "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+                  "minLength": 0,
+                  "maxLength": 255
+                }
+              },
+              "required": [
+                "curie",
+                "id"
+              ],
+              "description": "A reference to the last event that changed the state of this node. E.g. \"acme:blog:event:article-published:60c71df0-fda8-11e5-bfb9-30342d363854\"",
+              "pbj": {
+                "type": "message-ref",
+                "rule": "single"
+              }
+            },
+            {
+              "patternProperties": {
+                "^curie$": true,
+                "^id$": true,
+                "^tag$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

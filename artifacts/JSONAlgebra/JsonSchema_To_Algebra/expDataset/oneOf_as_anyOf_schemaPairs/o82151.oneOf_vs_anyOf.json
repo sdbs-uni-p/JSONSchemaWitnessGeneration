@@ -1,0 +1,931 @@
+[
+  {
+    "id": 750,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "title": "Schema for Evaluated Job Config",
+      "id": "#job-config-evaluated-v1",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "hooks": {
+          "$ref": "#/definitions2/hooks"
+        },
+        "deployers": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions2/deployer"
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "$ref": "#/definitions2/security"
+        },
+        "notifications": {
+          "$ref": "#/definitions2/notifications"
+        },
+        "scm": {
+          "type": "object"
+        },
+        "environment": {
+          "type": "object",
+          "$ref": "#/definitions2/environment",
+          "description": "Defines top level environment (key, value) support"
+        },
+        "schedule": {
+          "type": "string",
+          "description": "Run this deployment as scheduled job."
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "encrypted-type": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "encrypted": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "hooks": {
+          "type": "object",
+          "properties": {
+            "ci": {
+              "$ref": "#/definitions2/hook-list"
+            },
+            "builder": {
+              "$ref": "#/definitions2/hook-list"
+            },
+            "scm-push": {
+              "$ref": "#/definitions2/hook-list"
+            },
+            "scm-create": {
+              "$ref": "#/definitions2/hook-list"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "hook-list": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions2/hook-type"
+            }
+          }
+        },
+        "hook-type": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "deployer": {
+          "type": "object",
+          "properties": {
+            "proxy": {
+              "$ref": "#/definitions2/proxy"
+            },
+            "endpoints": {
+              "type": "object"
+            },
+            "templates": {
+              "type": "object"
+            },
+            "deployment": {
+              "description": "Deployment configuration.",
+              "$ref": "#/definitions2/deployment"
+            },
+            "url": {
+              "description": "URL for the deployer",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Is deployer enabled?",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "deployment": {
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 512
+            },
+            "version": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "type": {
+              "enum": [
+                "blue-green",
+                "red-green",
+                "a/b",
+                "custom"
+              ]
+            },
+            "nodes": {
+              "type": "number",
+              "maximum": 12,
+              "minimum": 1
+            },
+            "check": {
+              "$ref": "#/definitions2/deployment-check"
+            },
+            "stop": {
+              "type": "object",
+              "$ref": "#/definitions2/deployment-stop"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "deployment-check": {
+          "properties": {
+            "min-nodes": {
+              "type": "number",
+              "description": "Minimum number of nodes for deployment. (Used for deployment check)",
+              "minimum": 1
+            },
+            "port": {
+              "type": "number",
+              "description": "Application internal Port to be used for discover check (Value of 0 disable discover check)",
+              "minimum": 0
+            },
+            "path": {
+              "type": "string",
+              "description": "Optional path to be used for performing deployment check. If null, empty or un-specified, only discover check is performed.",
+              "default": ""
+            },
+            "timeout": {
+              "type": "string",
+              "description": "Deployment check timeout represented in terms of seconds or minutes. e.g: 20s for timeout of 20 seconds",
+              "default": "5s"
+            },
+            "attempts": {
+              "type": "number",
+              "description": "Maximum number of attempts for deployment check before marking deployment as failed.",
+              "default": "10"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "deployment-stop": {
+          "properties": {
+            "timeout": {
+              "type": "string",
+              "description": "Deployment stop timeout represented in terms of seconds or minutes. e.g: 30s for timeout of 30 seconds. The application will be sent SIGTERM signal and will have this time for its cleanup.",
+              "default": "30s"
+            },
+            "check-retries": {
+              "type": "number",
+              "description": "Maximum no. of retries to be attempted to check if deployment is stopped.",
+              "default": "10"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "hosts": {
+              "description": "Hosts associated with the proxy",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/host"
+                }
+              }
+            },
+            "upstreams": {
+              "description": "Backends associated with the proxy",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/upstream"
+                }
+              }
+            },
+            "listeners": {
+              "description": "TCP Listeners associated with proxy (for tcp based proxy)",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/listener"
+                }
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "host": {
+          "description": "Proxy Host definition",
+          "type": "object",
+          "properties": {
+            "hostname": {
+              "description": "Hostname(s) to be registered with proxy. If multiple hosts need to be specified, separate them using comma or space",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9\\-.\\s,]*[a-zA-Z0-9\\s\\-,]$"
+            },
+            "locations": {
+              "description": "Locations for given proxy host.",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/location"
+                }
+              }
+            },
+            "enabled": {
+              "description": "Is host enabled?",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "location": {
+          "description": "Proxy location definition for a given proxy path",
+          "type": "object",
+          "properties": {
+            "path": {
+              "description": "Path to be used for proxy",
+              "type": "string"
+            },
+            "port": {
+              "description": "Internal container port for proxy.",
+              "type": "number"
+            },
+            "enabled": {
+              "description": "Is location enabled?",
+              "type": "boolean"
+            },
+            "denied-acls": {
+              "type": "array",
+              "description": "List of Denied proxy ACLs",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allowed-acls": {
+              "type": "array",
+              "description": "List of Allowed proxy ACLs",
+              "items": {
+                "type": "string"
+              }
+            },
+            "force-ssl": {
+              "description": "If SSL needs to be forced at the given path",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "upstream": {
+          "description": "Proxy Upstream (Backend) definition",
+          "type": "object",
+          "properties": {
+            "health": {
+              "$ref": "#/definitions2/health"
+            },
+            "mode": {
+              "description": "Proxy mode (http or tcp)",
+              "enum": [
+                "http",
+                "tcp"
+              ],
+              "default": "http"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "health": {
+          "description": "Health check definition for proxy upstream",
+          "type": "object",
+          "properties": {
+            "timeout": {
+              "type": "string",
+              "description": "Health check timeout represented in terms of seconds or minutes. e.g: 20s for timeout of 20 seconds"
+            },
+            "uri": {
+              "type": "string",
+              "description": "Path to be used for health check. If empty or not specified, tcp based check is used."
+            },
+            "interval": {
+              "type": "string",
+              "description": "Interval to be used for health check. e.g.: 30s to run health check every 30 seconds."
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "listener": {
+          "description": "Proxy TCP Listener definition",
+          "type": "object"
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string"
+            }
+          }
+        },
+        "notifications": {
+          "patternProperties": {
+            "hipchat": {
+              "$ref": "#/definitions2/notification-hipchat"
+            },
+            "github": {
+              "$ref": "#/definitions2/notification-github"
+            },
+            ".*": {
+              "$ref": "#/definitions2/notification"
+            }
+          }
+        },
+        "notification": {
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Used for enabling/disabling notification"
+            },
+            "level": {
+              "description": "Min level for the message to activate this notifier",
+              "type": "number"
+            }
+          },
+          "additionalProperties": {}
+        },
+        "notification-hipchat": {
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Used for enabling/disabling notification"
+            },
+            "url": {
+              "type": "string",
+              "description": "Hipchat v2 api url"
+            },
+            "colors": {
+              "type": "object",
+              "description": "Color mapping"
+            },
+            "room": {
+              "type": "string",
+              "description": "Room to be used for notification"
+            },
+            "token": {
+              "description": "Hipchat API v2 token (personal/ room) for notification",
+              "type": "object",
+              "$ref": "#/definitions2/encrypted-type"
+            },
+            "level": {
+              "description": "Min level for the message to activate this notifier",
+              "type": "number"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "notification-github": {
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Used for enabling/disabling notification"
+            },
+            "url": {
+              "type": "string",
+              "description": "Github API url base"
+            },
+            "token": {
+              "description": "Github Oauth token",
+              "type": "object",
+              "$ref": "#/definitions2/encrypted-type"
+            },
+            "level": {
+              "description": "Min level for the message to activate this notifier",
+              "type": "number"
+            }
+          },
+          "additionalProperties": {}
+        },
+        "environment": {
+          "patternProperties": {
+            ".*": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                {
+                  "$ref": "#/definitions2/encrypted-type"
+                }
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "title": "Schema for Evaluated Job Config",
+      "id": "#job-config-evaluated-v1",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "hooks": {
+          "$ref": "#/definitions2/hooks"
+        },
+        "deployers": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions2/deployer"
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "$ref": "#/definitions2/security"
+        },
+        "notifications": {
+          "$ref": "#/definitions2/notifications"
+        },
+        "scm": {
+          "type": "object"
+        },
+        "environment": {
+          "type": "object",
+          "$ref": "#/definitions2/environment",
+          "description": "Defines top level environment (key, value) support"
+        },
+        "schedule": {
+          "type": "string",
+          "description": "Run this deployment as scheduled job."
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "encrypted-type": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "encrypted": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "hooks": {
+          "type": "object",
+          "properties": {
+            "ci": {
+              "$ref": "#/definitions2/hook-list"
+            },
+            "builder": {
+              "$ref": "#/definitions2/hook-list"
+            },
+            "scm-push": {
+              "$ref": "#/definitions2/hook-list"
+            },
+            "scm-create": {
+              "$ref": "#/definitions2/hook-list"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "hook-list": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions2/hook-type"
+            }
+          }
+        },
+        "hook-type": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "deployer": {
+          "type": "object",
+          "properties": {
+            "proxy": {
+              "$ref": "#/definitions2/proxy"
+            },
+            "endpoints": {
+              "type": "object"
+            },
+            "templates": {
+              "type": "object"
+            },
+            "deployment": {
+              "description": "Deployment configuration.",
+              "$ref": "#/definitions2/deployment"
+            },
+            "url": {
+              "description": "URL for the deployer",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Is deployer enabled?",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "deployment": {
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 512
+            },
+            "version": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "type": {
+              "enum": [
+                "blue-green",
+                "red-green",
+                "a/b",
+                "custom"
+              ]
+            },
+            "nodes": {
+              "type": "number",
+              "maximum": 12,
+              "minimum": 1
+            },
+            "check": {
+              "$ref": "#/definitions2/deployment-check"
+            },
+            "stop": {
+              "type": "object",
+              "$ref": "#/definitions2/deployment-stop"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "deployment-check": {
+          "properties": {
+            "min-nodes": {
+              "type": "number",
+              "description": "Minimum number of nodes for deployment. (Used for deployment check)",
+              "minimum": 1
+            },
+            "port": {
+              "type": "number",
+              "description": "Application internal Port to be used for discover check (Value of 0 disable discover check)",
+              "minimum": 0
+            },
+            "path": {
+              "type": "string",
+              "description": "Optional path to be used for performing deployment check. If null, empty or un-specified, only discover check is performed.",
+              "default": ""
+            },
+            "timeout": {
+              "type": "string",
+              "description": "Deployment check timeout represented in terms of seconds or minutes. e.g: 20s for timeout of 20 seconds",
+              "default": "5s"
+            },
+            "attempts": {
+              "type": "number",
+              "description": "Maximum number of attempts for deployment check before marking deployment as failed.",
+              "default": "10"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "deployment-stop": {
+          "properties": {
+            "timeout": {
+              "type": "string",
+              "description": "Deployment stop timeout represented in terms of seconds or minutes. e.g: 30s for timeout of 30 seconds. The application will be sent SIGTERM signal and will have this time for its cleanup.",
+              "default": "30s"
+            },
+            "check-retries": {
+              "type": "number",
+              "description": "Maximum no. of retries to be attempted to check if deployment is stopped.",
+              "default": "10"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "hosts": {
+              "description": "Hosts associated with the proxy",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/host"
+                }
+              }
+            },
+            "upstreams": {
+              "description": "Backends associated with the proxy",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/upstream"
+                }
+              }
+            },
+            "listeners": {
+              "description": "TCP Listeners associated with proxy (for tcp based proxy)",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/listener"
+                }
+              }
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "host": {
+          "description": "Proxy Host definition",
+          "type": "object",
+          "properties": {
+            "hostname": {
+              "description": "Hostname(s) to be registered with proxy. If multiple hosts need to be specified, separate them using comma or space",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9\\-.\\s,]*[a-zA-Z0-9\\s\\-,]$"
+            },
+            "locations": {
+              "description": "Locations for given proxy host.",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions2/location"
+                }
+              }
+            },
+            "enabled": {
+              "description": "Is host enabled?",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "location": {
+          "description": "Proxy location definition for a given proxy path",
+          "type": "object",
+          "properties": {
+            "path": {
+              "description": "Path to be used for proxy",
+              "type": "string"
+            },
+            "port": {
+              "description": "Internal container port for proxy.",
+              "type": "number"
+            },
+            "enabled": {
+              "description": "Is location enabled?",
+              "type": "boolean"
+            },
+            "denied-acls": {
+              "type": "array",
+              "description": "List of Denied proxy ACLs",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allowed-acls": {
+              "type": "array",
+              "description": "List of Allowed proxy ACLs",
+              "items": {
+                "type": "string"
+              }
+            },
+            "force-ssl": {
+              "description": "If SSL needs to be forced at the given path",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "upstream": {
+          "description": "Proxy Upstream (Backend) definition",
+          "type": "object",
+          "properties": {
+            "health": {
+              "$ref": "#/definitions2/health"
+            },
+            "mode": {
+              "description": "Proxy mode (http or tcp)",
+              "enum": [
+                "http",
+                "tcp"
+              ],
+              "default": "http"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "health": {
+          "description": "Health check definition for proxy upstream",
+          "type": "object",
+          "properties": {
+            "timeout": {
+              "type": "string",
+              "description": "Health check timeout represented in terms of seconds or minutes. e.g: 20s for timeout of 20 seconds"
+            },
+            "uri": {
+              "type": "string",
+              "description": "Path to be used for health check. If empty or not specified, tcp based check is used."
+            },
+            "interval": {
+              "type": "string",
+              "description": "Interval to be used for health check. e.g.: 30s to run health check every 30 seconds."
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "listener": {
+          "description": "Proxy TCP Listener definition",
+          "type": "object"
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string"
+            }
+          }
+        },
+        "notifications": {
+          "patternProperties": {
+            "hipchat": {
+              "$ref": "#/definitions2/notification-hipchat"
+            },
+            "github": {
+              "$ref": "#/definitions2/notification-github"
+            },
+            ".*": {
+              "$ref": "#/definitions2/notification"
+            }
+          }
+        },
+        "notification": {
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Used for enabling/disabling notification"
+            },
+            "level": {
+              "description": "Min level for the message to activate this notifier",
+              "type": "number"
+            }
+          },
+          "additionalProperties": {}
+        },
+        "notification-hipchat": {
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Used for enabling/disabling notification"
+            },
+            "url": {
+              "type": "string",
+              "description": "Hipchat v2 api url"
+            },
+            "colors": {
+              "type": "object",
+              "description": "Color mapping"
+            },
+            "room": {
+              "type": "string",
+              "description": "Room to be used for notification"
+            },
+            "token": {
+              "description": "Hipchat API v2 token (personal/ room) for notification",
+              "type": "object",
+              "$ref": "#/definitions2/encrypted-type"
+            },
+            "level": {
+              "description": "Min level for the message to activate this notifier",
+              "type": "number"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "notification-github": {
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Used for enabling/disabling notification"
+            },
+            "url": {
+              "type": "string",
+              "description": "Github API url base"
+            },
+            "token": {
+              "description": "Github Oauth token",
+              "type": "object",
+              "$ref": "#/definitions2/encrypted-type"
+            },
+            "level": {
+              "description": "Min level for the message to activate this notifier",
+              "type": "number"
+            }
+          },
+          "additionalProperties": {}
+        },
+        "environment": {
+          "patternProperties": {
+            ".*": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                {
+                  "$ref": "#/definitions2/encrypted-type"
+                }
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      }
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

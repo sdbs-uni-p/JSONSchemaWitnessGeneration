@@ -1,0 +1,1463 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "JSON API Schema",
+      "description": "This is a schema for responses in the JSON API format. For more, see http://jsonapi.org",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/success"
+        },
+        {
+          "$ref": "#/definitions3/failure"
+        },
+        {
+          "$ref": "#/definitions3/info"
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "JSON API Schema",
+        "description": "This is a schema for responses in the JSON API format. For more, see http://jsonapi.org",
+        "oneOf": [
+          {
+            "$ref": "#/definitions4/success"
+          },
+          {
+            "$ref": "#/definitions4/failure"
+          },
+          {
+            "$ref": "#/definitions4/info"
+          }
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "success": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions3/data"
+        },
+        "included": {
+          "description": "To reduce the number of HTTP requests, servers **MAY** allow responses that include related resources along with the requested primary resources. Such responses are called \"compound documents\".",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/resource"
+          },
+          "_uniqueItems": true
+        },
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        },
+        "links": {
+          "description": "Link members related to the primary data.",
+          "allOf": [
+            {
+              "$ref": "#/definitions3/links"
+            },
+            {
+              "$ref": "#/definitions3/pagination"
+            }
+          ]
+        },
+        "jsonapi": {
+          "$ref": "#/definitions3/jsonapi"
+        }
+      },
+      "additionalProperties": false
+    },
+    "failure": {
+      "type": "object",
+      "required": [
+        "errors"
+      ],
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/error"
+          },
+          "_uniqueItems": true
+        },
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        },
+        "jsonapi": {
+          "$ref": "#/definitions3/jsonapi"
+        },
+        "links": {
+          "$ref": "#/definitions3/links"
+        }
+      },
+      "additionalProperties": false
+    },
+    "info": {
+      "type": "object",
+      "required": [
+        "meta"
+      ],
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        },
+        "links": {
+          "$ref": "#/definitions3/links"
+        },
+        "jsonapi": {
+          "$ref": "#/definitions3/jsonapi"
+        }
+      },
+      "additionalProperties": false
+    },
+    "meta": {
+      "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "data": {
+      "description": "The document's \"primary data\" is a representation of the resource or collection of resources targeted by a request.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/resource"
+        },
+        {
+          "description": "An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/resource"
+          },
+          "_uniqueItems": true
+        },
+        {
+          "description": "null if the request is one that might correspond to a single resource, but doesn't currently.",
+          "type": "null"
+        }
+      ]
+    },
+    "resource": {
+      "description": "\"Resource objects\" appear in a JSON API document to represent resources.",
+      "type": "object",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/definitions3/attributes"
+        },
+        "relationships": {
+          "$ref": "#/definitions3/relationships"
+        },
+        "links": {
+          "$ref": "#/definitions3/links"
+        },
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationshipLinks": {
+      "description": "A resource object **MAY** contain references to other resource objects (\"relationships\"). Relationships may be to-one or to-many. Relationships can be specified by including a member in a resource's links object.",
+      "type": "object",
+      "properties": {
+        "self": {
+          "description": "A `self` member, whose value is a URL for the relationship itself (a \"relationship URL\"). This URL allows the client to directly manipulate the relationship. For example, it would allow a client to remove an `author` from an `article` without deleting the people resource itself.",
+          "$ref": "#/definitions3/link"
+        },
+        "related": {
+          "$ref": "#/definitions3/link"
+        }
+      },
+      "additionalProperties": true
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions3/link"
+      }
+    },
+    "link": {
+      "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object.",
+      "oneOf": [
+        {
+          "description": "A string containing the link's URL.",
+          "type": "string",
+          "format": "uri-reference"
+        },
+        {
+          "type": "object",
+          "required": [
+            "href"
+          ],
+          "properties": {
+            "href": {
+              "description": "A string containing the link's URL.",
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "meta": {
+              "$ref": "#/definitions3/meta"
+            }
+          }
+        }
+      ]
+    },
+    "attributes": {
+      "description": "Members of the attributes object (\"attributes\") represent information about the resource object in which it's defined.",
+      "type": "object",
+      "patternProperties": {
+        "^\\w[-\\w_]*$": {
+          "description": "Attributes may contain any valid JSON value."
+        },
+        "^(relationships|links)$": {
+          "description": "Reserved for future use.",
+          "not": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationships": {
+      "description": "Members of the relationships object (\"relationships\") represent references from the resource object in which it's defined to other resource objects.",
+      "type": "object",
+      "patternProperties": {
+        "\\w[-\\w_]*$": {
+          "properties": {
+            "links": {
+              "$ref": "#/definitions3/relationshipLinks"
+            },
+            "data": {
+              "description": "Member, whose value represents \"resource linkage\".",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/relationshipToOne"
+                },
+                {
+                  "$ref": "#/definitions3/relationshipToMany"
+                }
+              ]
+            },
+            "meta": {
+              "$ref": "#/definitions3/meta"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "data"
+              ]
+            },
+            {
+              "required": [
+                "meta"
+              ]
+            },
+            {
+              "required": [
+                "links"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        },
+        "^(id|type)$": {
+          "description": "Reserved for future use.",
+          "not": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationshipToOne": {
+      "description": "References to other resource objects in a to-one (\"relationship\"). Relationships can be specified by including a member in a resource's links object.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions3/empty"
+        },
+        {
+          "$ref": "#/definitions3/linkage"
+        }
+      ]
+    },
+    "relationshipToMany": {
+      "description": "An array of objects each containing \"type\" and \"id\" members for to-many relationships.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/linkage"
+      },
+      "_uniqueItems": true
+    },
+    "empty": {
+      "description": "Describes an empty to-one relationship.",
+      "type": "null"
+    },
+    "linkage": {
+      "description": "The \"type\" and \"id\" to non-empty members.",
+      "type": "object",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "description": "The first page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last": {
+          "description": "The last page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prev": {
+          "description": "The previous page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next": {
+          "description": "The next page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "jsonapi": {
+      "description": "An object describing the server's implementation",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "A unique identifier for this particular occurrence of the problem.",
+          "type": "string"
+        },
+        "links": {
+          "$ref": "#/definitions3/links"
+        },
+        "status": {
+          "description": "The HTTP status code applicable to this problem, expressed as a string value.",
+          "type": "string"
+        },
+        "code": {
+          "description": "An application-specific error code, expressed as a string value.",
+          "type": "string"
+        },
+        "title": {
+          "description": "A short, human-readable summary of the problem. It **SHOULD NOT** change from occurrence to occurrence of the problem, except for purposes of localization.",
+          "type": "string"
+        },
+        "detail": {
+          "description": "A human-readable explanation specific to this occurrence of the problem.",
+          "type": "string"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "pointer": {
+              "description": "A JSON Pointer [RFC6901] to the associated entity in the request document [e.g. \"/data\" for a primary data object, or \"/data/attributes/title\" for a specific attribute].",
+              "type": "string"
+            },
+            "parameter": {
+              "description": "A string indicating which query parameter caused the error.",
+              "type": "string"
+            }
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions3/meta"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions4": {
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "\"Resource objects\" appear in a JSON API document to represent resources.",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "properties": {
+                "attributes": {
+                  "$ref": "#/definitions4/attributes"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "relationships": {
+                  "$ref": "#/definitions4/relationships"
+                },
+                "links": {
+                  "$ref": "#/definitions4/links"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^relationships$": true,
+                "^attributes$": true,
+                "^type$": true,
+                "^id$": true,
+                "^links$": true,
+                "^meta$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "success": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "linkage": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "errors"
+              ],
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/error"
+                  },
+                  "_uniqueItems": true
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                },
+                "jsonapi": {
+                  "$ref": "#/definitions4/jsonapi"
+                },
+                "links": {
+                  "$ref": "#/definitions4/links"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^errors$": true,
+                "^meta$": true,
+                "^jsonapi$": true,
+                "^links$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "relationshipLinks": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "data": {
+      "description": "The document's \"primary data\" is a representation of the resource or collection of resources targeted by a request.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/resource"
+        },
+        {
+          "description": "An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/resource"
+          },
+          "_uniqueItems": true
+        },
+        {
+          "description": "null if the request is one that might correspond to a single resource, but doesn't currently.",
+          "type": "null"
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "meta"
+              ],
+              "properties": {
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                },
+                "links": {
+                  "$ref": "#/definitions4/links"
+                },
+                "jsonapi": {
+                  "$ref": "#/definitions4/jsonapi"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^meta$": true,
+                "^links$": true,
+                "^jsonapi$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "properties": {
+                "included": {
+                  "description": "To reduce the number of HTTP requests, servers **MAY** allow responses that include related resources along with the requested primary resources. Such responses are called \"compound documents\".",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/resource"
+                  },
+                  "_uniqueItems": true
+                },
+                "data": {
+                  "$ref": "#/definitions4/data"
+                },
+                "links": {
+                  "description": "Link members related to the primary data.",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions4/links"
+                    },
+                    {
+                      "$ref": "#/definitions4/pagination"
+                    }
+                  ]
+                },
+                "jsonapi": {
+                  "$ref": "#/definitions4/jsonapi"
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^jsonapi$": true,
+                "^data$": true,
+                "^links$": true,
+                "^included$": true,
+                "^meta$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "resource": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "The \"type\" and \"id\" to non-empty members.",
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^id$": true,
+                "^meta$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/link"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "description": "The first page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last": {
+          "description": "The last page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prev": {
+          "description": "The previous page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next": {
+          "description": "The next page of data",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "A resource object **MAY** contain references to other resource objects (\"relationships\"). Relationships may be to-one or to-many. Relationships can be specified by including a member in a resource's links object.",
+              "type": "object",
+              "properties": {
+                "self": {
+                  "description": "A `self` member, whose value is a URL for the relationship itself (a \"relationship URL\"). This URL allows the client to directly manipulate the relationship. For example, it would allow a client to remove an `author` from an `article` without deleting the people resource itself.",
+                  "$ref": "#/definitions4/link"
+                },
+                "related": {
+                  "$ref": "#/definitions4/link"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^self$": true,
+                "^related$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "object",
+                  "properties": {
+                    "pointer": {
+                      "description": "A JSON Pointer [RFC6901] to the associated entity in the request document [e.g. \"/data\" for a primary data object, or \"/data/attributes/title\" for a specific attribute].",
+                      "type": "string"
+                    },
+                    "parameter": {
+                      "description": "A string indicating which query parameter caused the error.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "code": {
+                  "description": "An application-specific error code, expressed as a string value.",
+                  "type": "string"
+                },
+                "links": {
+                  "$ref": "#/definitions4/links"
+                },
+                "status": {
+                  "description": "The HTTP status code applicable to this problem, expressed as a string value.",
+                  "type": "string"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.",
+                  "type": "string"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem. It **SHOULD NOT** change from occurrence to occurrence of the problem, except for purposes of localization.",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "A unique identifier for this particular occurrence of the problem.",
+                  "type": "string"
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^code$": true,
+                "^detail$": true,
+                "^status$": true,
+                "^id$": true,
+                "^title$": true,
+                "^source$": true,
+                "^links$": true,
+                "^meta$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "failure": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "links": {
+                  "$ref": "#/definitions4/relationshipLinks"
+                },
+                "data": {
+                  "description": "Member, whose value represents \"resource linkage\".",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/relationshipToOne"
+                    },
+                    {
+                      "$ref": "#/definitions4/relationshipToMany"
+                    }
+                  ]
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                }
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "data"
+                  ]
+                },
+                {
+                  "required": [
+                    "meta"
+                  ]
+                },
+                {
+                  "required": [
+                    "links"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^links$": true,
+                "^data$": true,
+                "^meta$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "empty": {
+      "description": "Describes an empty to-one relationship.",
+      "type": "null"
+    },
+    "info": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "attributes": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "An object describing the server's implementation",
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "string"
+                },
+                "meta": {
+                  "$ref": "#/definitions4/meta"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^meta$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "relationshipToOne": {
+      "description": "References to other resource objects in a to-one (\"relationship\"). Relationships can be specified by including a member in a resource's links object.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/empty"
+        },
+        {
+          "$ref": "#/definitions4/linkage"
+        }
+      ]
+    },
+    "relationships": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "links": {
+      "$ref": "#/definitions4/modern_11"
+    },
+    "jsonapi": {
+      "$ref": "#/definitions4/modern_12"
+    },
+    "relationshipToMany": {
+      "description": "An array of objects each containing \"type\" and \"id\" members for to-many relationships.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/linkage"
+      },
+      "_uniqueItems": true
+    },
+    "meta": {
+      "$ref": "#/definitions4/modern_13"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Members of the attributes object (\"attributes\") represent information about the resource object in which it's defined.",
+              "type": "object",
+              "patternProperties": {
+                "^\\w[-\\w_]*$": {
+                  "description": "Attributes may contain any valid JSON value."
+                },
+                "^(relationships|links)$": {
+                  "description": "Reserved for future use.",
+                  "not": true
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^\\w[-\\w_]*$": true,
+                "^(relationships|links)$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "error": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "link": {
+      "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object.",
+      "oneOf": [
+        {
+          "description": "A string containing the link's URL.",
+          "type": "string",
+          "format": "uri-reference"
+        },
+        {
+          "type": "object",
+          "required": [
+            "href"
+          ],
+          "properties": {
+            "href": {
+              "description": "A string containing the link's URL.",
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "meta": {
+              "$ref": "#/definitions4/meta"
+            }
+          }
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Members of the relationships object (\"relationships\") represent references from the resource object in which it's defined to other resource objects.",
+              "type": "object",
+              "patternProperties": {
+                "\\w[-\\w_]*$": {
+                  "$ref": "#/definitions4/modern_10"
+                },
+                "^(id|type)$": {
+                  "description": "Reserved for future use.",
+                  "not": true
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "\\w[-\\w_]*$": true,
+                "^(id|type)$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/linkage"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/linkage"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relationshipToOne"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relationshipToOne"
+      }
+    },
+    {
+      "$ref": "#/definitions4/info"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/info"
+      }
+    },
+    {
+      "$ref": "#/definitions3/meta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/meta"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions3/attributes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/attributes"
+      }
+    },
+    {
+      "$ref": "#/definitions3/info"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/info"
+      }
+    },
+    {
+      "$ref": "#/definitions3/empty"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/empty"
+      }
+    },
+    {
+      "$ref": "#/definitions4/resource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/resource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/resource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/resource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relationshipToMany"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relationshipToMany"
+      }
+    },
+    {
+      "$ref": "#/definitions4/empty"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/empty"
+      }
+    },
+    {
+      "$ref": "#/definitions4/link"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/link"
+      }
+    },
+    {
+      "$ref": "#/definitions4/error"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/error"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/links"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/links"
+      }
+    },
+    {
+      "$ref": "#/definitions4/pagination"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/pagination"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relationshipLinks"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relationshipLinks"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/data"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/data"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relationships"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relationships"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relationshipLinks"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relationshipLinks"
+      }
+    },
+    {
+      "$ref": "#/definitions4/data"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/data"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/failure"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/failure"
+      }
+    },
+    {
+      "$ref": "#/definitions3/pagination"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/pagination"
+      }
+    },
+    {
+      "$ref": "#/definitions4/success"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/success"
+      }
+    },
+    {
+      "$ref": "#/definitions3/error"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/error"
+      }
+    },
+    {
+      "$ref": "#/definitions4/jsonapi"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/jsonapi"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/success"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/success"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relationshipToOne"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relationshipToOne"
+      }
+    },
+    {
+      "$ref": "#/definitions3/linkage"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/linkage"
+      }
+    },
+    {
+      "$ref": "#/definitions3/jsonapi"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/jsonapi"
+      }
+    },
+    {
+      "$ref": "#/definitions4/attributes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/attributes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions3/links"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/links"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relationships"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relationships"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relationshipToMany"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relationshipToMany"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/meta"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/meta"
+      }
+    },
+    {
+      "$ref": "#/definitions3/failure"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/failure"
+      }
+    },
+    {
+      "$ref": "#/definitions3/link"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/link"
+      }
+    }
+  ]
+}

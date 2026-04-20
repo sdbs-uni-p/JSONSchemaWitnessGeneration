@@ -1,0 +1,629 @@
+[
+  {
+    "id": 836,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-06/schema#",
+      "title": "Avro Schema Definition",
+      "description": "Json-Schema definition for Avro AVSC files.",
+      "definitions2": {
+        "avroSchema": {
+          "title": "Avro Schema",
+          "description": "Root Schema",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/types"
+            }
+          ]
+        },
+        "types": {
+          "title": "Avro Types",
+          "description": "Allowed Avro types",
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/primitiveType"
+            },
+            {
+              "$ref": "#/definitions2/customTypeReference"
+            },
+            {
+              "$ref": "#/definitions2/avroRecord"
+            },
+            {
+              "$ref": "#/definitions2/avroEnum"
+            },
+            {
+              "$ref": "#/definitions2/avroArray"
+            },
+            {
+              "$ref": "#/definitions2/avroMap"
+            },
+            {
+              "$ref": "#/definitions2/avroFixed"
+            },
+            {
+              "$ref": "#/definitions2/avroUnion"
+            }
+          ]
+        },
+        "primitiveType": {
+          "title": "Primitive Type",
+          "description": "Basic type primitives.",
+          "type": "string",
+          "enum": [
+            "null",
+            "boolean",
+            "int",
+            "long",
+            "float",
+            "double",
+            "bytes",
+            "string"
+          ]
+        },
+        "customTypeReference": {
+          "title": "Custom Type",
+          "description": "Reference to a ComplexType",
+          "not": {
+            "$ref": "#/definitions2/primitiveType"
+          },
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"
+        },
+        "avroUnion": {
+          "title": "Union",
+          "description": "A Union of types",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/avroSchema"
+          },
+          "minItems": 1
+        },
+        "avroField": {
+          "title": "Field",
+          "description": "A field within a Record",
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "type": {
+              "$ref": "#/definitions2/types"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "default": {},
+            "order": {
+              "enum": [
+                "ascending",
+                "descending",
+                "ignore"
+              ]
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            }
+          },
+          "required": [
+            "name",
+            "type"
+          ]
+        },
+        "avroRecord": {
+          "title": "Record",
+          "description": "A Record",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "record"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/avroField"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "fields"
+          ]
+        },
+        "avroEnum": {
+          "title": "Enum",
+          "description": "An enumeration",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "enum"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "symbols": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "symbols"
+          ]
+        },
+        "avroArray": {
+          "title": "Array",
+          "description": "An array",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "array"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "items": {
+              "$ref": "#/definitions2/types"
+            }
+          },
+          "required": [
+            "type",
+            "items"
+          ]
+        },
+        "avroMap": {
+          "title": "Map",
+          "description": "A map of values",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "map"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "values": {
+              "$ref": "#/definitions2/types"
+            }
+          },
+          "required": [
+            "type",
+            "values"
+          ]
+        },
+        "avroFixed": {
+          "title": "Fixed",
+          "description": "A fixed sized array of bytes",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "fixed"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "size": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "size"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "namespace": {
+          "type": "string",
+          "pattern": "^([A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*)*$"
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/avroSchema"
+        }
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-06/schema#",
+      "title": "Avro Schema Definition",
+      "description": "Json-Schema definition for Avro AVSC files.",
+      "definitions2": {
+        "avroSchema": {
+          "title": "Avro Schema",
+          "description": "Root Schema",
+          "anyOf": [
+            {
+              "$ref": "#/definitions2/types"
+            }
+          ]
+        },
+        "types": {
+          "title": "Avro Types",
+          "description": "Allowed Avro types",
+          "anyOf": [
+            {
+              "$ref": "#/definitions2/primitiveType"
+            },
+            {
+              "$ref": "#/definitions2/customTypeReference"
+            },
+            {
+              "$ref": "#/definitions2/avroRecord"
+            },
+            {
+              "$ref": "#/definitions2/avroEnum"
+            },
+            {
+              "$ref": "#/definitions2/avroArray"
+            },
+            {
+              "$ref": "#/definitions2/avroMap"
+            },
+            {
+              "$ref": "#/definitions2/avroFixed"
+            },
+            {
+              "$ref": "#/definitions2/avroUnion"
+            }
+          ]
+        },
+        "primitiveType": {
+          "title": "Primitive Type",
+          "description": "Basic type primitives.",
+          "type": "string",
+          "enum": [
+            "null",
+            "boolean",
+            "int",
+            "long",
+            "float",
+            "double",
+            "bytes",
+            "string"
+          ]
+        },
+        "customTypeReference": {
+          "title": "Custom Type",
+          "description": "Reference to a ComplexType",
+          "not": {
+            "$ref": "#/definitions2/primitiveType"
+          },
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"
+        },
+        "avroUnion": {
+          "title": "Union",
+          "description": "A Union of types",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions2/avroSchema"
+          },
+          "minItems": 1
+        },
+        "avroField": {
+          "title": "Field",
+          "description": "A field within a Record",
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "type": {
+              "$ref": "#/definitions2/types"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "default": {},
+            "order": {
+              "enum": [
+                "ascending",
+                "descending",
+                "ignore"
+              ]
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            }
+          },
+          "required": [
+            "name",
+            "type"
+          ]
+        },
+        "avroRecord": {
+          "title": "Record",
+          "description": "A Record",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "record"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/avroField"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "fields"
+          ]
+        },
+        "avroEnum": {
+          "title": "Enum",
+          "description": "An enumeration",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "enum"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "symbols": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "symbols"
+          ]
+        },
+        "avroArray": {
+          "title": "Array",
+          "description": "An array",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "array"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "items": {
+              "$ref": "#/definitions2/types"
+            }
+          },
+          "required": [
+            "type",
+            "items"
+          ]
+        },
+        "avroMap": {
+          "title": "Map",
+          "description": "A map of values",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "map"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "values": {
+              "$ref": "#/definitions2/types"
+            }
+          },
+          "required": [
+            "type",
+            "values"
+          ]
+        },
+        "avroFixed": {
+          "title": "Fixed",
+          "description": "A fixed sized array of bytes",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "fixed"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions2/name"
+            },
+            "namespace": {
+              "$ref": "#/definitions2/namespace"
+            },
+            "doc": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/name"
+              }
+            },
+            "size": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "size"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "namespace": {
+          "type": "string",
+          "pattern": "^([A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*)*$"
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/avroSchema"
+        }
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

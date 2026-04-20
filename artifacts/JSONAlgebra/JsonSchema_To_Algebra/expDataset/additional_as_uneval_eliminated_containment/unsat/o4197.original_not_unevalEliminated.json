@@ -1,0 +1,1179 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "http://dtls.nl/schemas/dmp-knowledge-model/",
+      "type": "object",
+      "title": "chapter",
+      "description": "JSON file describing a single chapter in the knowledge model for DMP questionnaires",
+      "properties": {
+        "chapterid": {
+          "$ref": "#/definitions3/chapterid"
+        },
+        "namespace": {
+          "$ref": "#/definitions3/namespace"
+        },
+        "formatversion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions3/question"
+              },
+              {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions3/optionquestion"
+                  },
+                  {
+                    "$ref": "#/definitions3/fieldquestion"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "chapterid",
+        "namespace",
+        "formatversion",
+        "questions"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_8"
+      }
+    }
+  ],
+  "definitions3": {
+    "chapterid": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "questionid": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "namespace": {
+      "type": "string"
+    },
+    "expert": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string",
+          "enum": [
+            "individual",
+            "organisation"
+          ],
+          "default": "organisation"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "experts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/expert"
+      }
+    },
+    "questionpointer": {
+      "type": "object",
+      "properties": {
+        "chapterid": {
+          "$ref": "#/definitions3/chapterid"
+        },
+        "questionid": {
+          "$ref": "#/definitions3/questionid"
+        },
+        "namespace": {
+          "$ref": "#/definitions3/namespace"
+        }
+      },
+      "required": [
+        "chapterid",
+        "questionid",
+        "namespace"
+      ],
+      "additionalProperties": false
+    },
+    "dmpbookreference": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "dmpbook"
+          ]
+        },
+        "chapter": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "chapter"
+      ],
+      "additionalProperties": false
+    },
+    "urlreference": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "url"
+          ]
+        },
+        "url": {
+          "type": "string"
+        },
+        "anchor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "weblink"
+      ],
+      "additionalProperties": false
+    },
+    "crossreference": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "xref"
+          ]
+        },
+        "chapterid": {
+          "$ref": "#/definitions3/chapterid"
+        },
+        "questionid": {
+          "$ref": "#/definitions3/questionid"
+        },
+        "namespace": {
+          "$ref": "#/definitions3/namespace"
+        }
+      },
+      "required": [
+        "chapterid",
+        "questionid"
+      ],
+      "additionalProperties": false
+    },
+    "reference": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions3/dmpbookreference"
+        },
+        {
+          "$ref": "#/definitions3/urlreference"
+        },
+        {
+          "$ref": "#/definitions3/crossreference"
+        }
+      ]
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/reference"
+      }
+    },
+    "answerid": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "optionanswer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions3/answerid"
+        },
+        "label": {
+          "type": "string"
+        },
+        "advice": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "optionanswers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/optionanswer"
+      }
+    },
+    "precondition": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "$ref": "#/definitions3/namespace"
+        },
+        "questionid": {
+          "$ref": "#/definitions3/questionid"
+        },
+        "answerid": {
+          "$ref": "#/definitions3/answerid"
+        }
+      },
+      "required": [
+        "questionid"
+      ],
+      "additionalProperties": false
+    },
+    "question": {
+      "type": "object",
+      "properties": {
+        "questionid": {
+          "$ref": "#/definitions3/questionid"
+        },
+        "namespace": {
+          "$ref": "#/definitions3/namespace"
+        },
+        "precondition": {
+          "$ref": "#/definitions3/precondition"
+        },
+        "insertBefore": {
+          "$ref": "#/definitions3/questionpointer"
+        },
+        "references": {
+          "$ref": "#/definitions3/references"
+        },
+        "addReferences": {
+          "$ref": "#/definitions3/references"
+        },
+        "experts": {
+          "$ref": "#/definitions3/experts"
+        },
+        "addExperts": {
+          "$ref": "#/definitions3/experts"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "option",
+            "list",
+            "string",
+            "text"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "answers": {
+          "$ref": "#/definitions3/optionanswers"
+        },
+        "addAnswers": {
+          "$ref": "#/definitions3/optionanswers"
+        }
+      },
+      "required": [
+        "questionid"
+      ],
+      "additionalProperties": false
+    },
+    "optionquestion": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "option"
+          ]
+        },
+        "answers": {
+          "minItems": 1
+        }
+      }
+    },
+    "fieldquestion": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "list",
+            "string",
+            "text"
+          ]
+        },
+        "answers": {
+          "maxItems": 0
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "experts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/expert"
+      }
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "url"
+                  ]
+                },
+                "url": {
+                  "type": "string"
+                },
+                "anchor": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "weblink"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^url$": true,
+                "^anchor$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "urlreference": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "dmpbook"
+                  ]
+                },
+                "chapter": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "chapter"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^chapter$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "questionpointer": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "chapterid": {
+                  "$ref": "#/definitions4/chapterid"
+                },
+                "questionid": {
+                  "$ref": "#/definitions4/questionid"
+                },
+                "namespace": {
+                  "$ref": "#/definitions4/namespace"
+                }
+              },
+              "required": [
+                "chapterid",
+                "questionid",
+                "namespace"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^chapterid$": true,
+                "^questionid$": true,
+                "^namespace$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "expert": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string",
+          "enum": [
+            "individual",
+            "organisation"
+          ],
+          "default": "organisation"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "optionanswer": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/reference"
+      }
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "http://dtls.nl/schemas/dmp-knowledge-model/",
+              "type": "object",
+              "title": "chapter",
+              "description": "JSON file describing a single chapter in the knowledge model for DMP questionnaires",
+              "properties": {
+                "formatversion": {
+                  "type": "integer",
+                  "minimum": 1.0,
+                  "maximum": 1.0
+                },
+                "text": {
+                  "type": "string"
+                },
+                "questions": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions4/question"
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions4/optionquestion"
+                          },
+                          {
+                            "$ref": "#/definitions4/fieldquestion"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "chapterid": {
+                  "$ref": "#/definitions4/chapterid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "$ref": "#/definitions4/namespace"
+                }
+              },
+              "required": [
+                "chapterid",
+                "namespace",
+                "formatversion",
+                "questions"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^formatversion$": true,
+                "^namespace$": true,
+                "^text$": true,
+                "^title$": true,
+                "^chapterid$": true,
+                "^questions$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "questionid": {
+      "type": "integer",
+      "minimum": 1.0
+    },
+    "chapterid": {
+      "type": "integer",
+      "minimum": 1.0,
+      "maximum": 7.0
+    },
+    "optionanswers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/optionanswer"
+      }
+    },
+    "fieldquestion": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "list",
+            "string",
+            "text"
+          ]
+        },
+        "answers": {
+          "maxItems": 0
+        }
+      }
+    },
+    "crossreference": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "reference": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/dmpbookreference"
+        },
+        {
+          "$ref": "#/definitions4/urlreference"
+        },
+        {
+          "$ref": "#/definitions4/crossreference"
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "xref"
+                  ]
+                },
+                "chapterid": {
+                  "$ref": "#/definitions4/chapterid"
+                },
+                "questionid": {
+                  "$ref": "#/definitions4/questionid"
+                },
+                "namespace": {
+                  "$ref": "#/definitions4/namespace"
+                }
+              },
+              "required": [
+                "chapterid",
+                "questionid"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^chapterid$": true,
+                "^questionid$": true,
+                "^namespace$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "question": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "dmpbookreference": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "experts": {
+                  "$ref": "#/definitions4/experts"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "answers": {
+                  "$ref": "#/definitions4/optionanswers"
+                },
+                "references": {
+                  "$ref": "#/definitions4/references"
+                },
+                "addAnswers": {
+                  "$ref": "#/definitions4/optionanswers"
+                },
+                "questionid": {
+                  "$ref": "#/definitions4/questionid"
+                },
+                "precondition": {
+                  "$ref": "#/definitions4/precondition"
+                },
+                "addExperts": {
+                  "$ref": "#/definitions4/experts"
+                },
+                "insertBefore": {
+                  "$ref": "#/definitions4/questionpointer"
+                },
+                "addReferences": {
+                  "$ref": "#/definitions4/references"
+                },
+                "namespace": {
+                  "$ref": "#/definitions4/namespace"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "option",
+                    "list",
+                    "string",
+                    "text"
+                  ]
+                }
+              },
+              "required": [
+                "questionid"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^experts$": true,
+                "^references$": true,
+                "^addExperts$": true,
+                "^addReferences$": true,
+                "^type$": true,
+                "^answers$": true,
+                "^precondition$": true,
+                "^title$": true,
+                "^questionid$": true,
+                "^namespace$": true,
+                "^insertBefore$": true,
+                "^addAnswers$": true,
+                "^text$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions4/answerid"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "advice": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^label$": true,
+                "^advice$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "precondition": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "optionquestion": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "option"
+          ]
+        },
+        "answers": {
+          "minItems": 1
+        }
+      }
+    },
+    "answerid": {
+      "type": "integer",
+      "minimum": 0.0
+    },
+    "namespace": {
+      "type": "string"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "namespace": {
+                  "$ref": "#/definitions4/namespace"
+                },
+                "questionid": {
+                  "$ref": "#/definitions4/questionid"
+                },
+                "answerid": {
+                  "$ref": "#/definitions4/answerid"
+                }
+              },
+              "required": [
+                "questionid"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^namespace$": true,
+                "^questionid$": true,
+                "^answerid$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/answerid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/answerid"
+      }
+    },
+    {
+      "$ref": "#/definitions3/optionanswer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/optionanswer"
+      }
+    },
+    {
+      "$ref": "#/definitions3/questionid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/questionid"
+      }
+    },
+    {
+      "$ref": "#/definitions4/question"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/question"
+      }
+    },
+    {
+      "$ref": "#/definitions4/reference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/reference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/optionquestion"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/optionquestion"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dmpbookreference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dmpbookreference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/experts"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/experts"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/namespace"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/namespace"
+      }
+    },
+    {
+      "$ref": "#/definitions3/optionanswers"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/optionanswers"
+      }
+    },
+    {
+      "$ref": "#/definitions4/fieldquestion"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/fieldquestion"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dmpbookreference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dmpbookreference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/references"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/references"
+      }
+    },
+    {
+      "$ref": "#/definitions4/crossreference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/crossreference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/optionanswer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/optionanswer"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/questionid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/questionid"
+      }
+    },
+    {
+      "$ref": "#/definitions4/chapterid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/chapterid"
+      }
+    },
+    {
+      "$ref": "#/definitions3/experts"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/experts"
+      }
+    },
+    {
+      "$ref": "#/definitions3/optionquestion"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/optionquestion"
+      }
+    },
+    {
+      "$ref": "#/definitions4/urlreference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/urlreference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/questionpointer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/questionpointer"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions3/namespace"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/namespace"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions3/references"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/references"
+      }
+    },
+    {
+      "$ref": "#/definitions4/optionanswers"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/optionanswers"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/chapterid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/chapterid"
+      }
+    },
+    {
+      "$ref": "#/definitions3/precondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/precondition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/urlreference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/urlreference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/questionpointer"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/questionpointer"
+      }
+    },
+    {
+      "$ref": "#/definitions4/expert"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/expert"
+      }
+    },
+    {
+      "$ref": "#/definitions3/fieldquestion"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/fieldquestion"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions3/reference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/reference"
+      }
+    },
+    {
+      "$ref": "#/definitions3/answerid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/answerid"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/expert"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/expert"
+      }
+    },
+    {
+      "$ref": "#/definitions3/crossreference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/crossreference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/precondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/precondition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/question"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/question"
+      }
+    }
+  ]
+}

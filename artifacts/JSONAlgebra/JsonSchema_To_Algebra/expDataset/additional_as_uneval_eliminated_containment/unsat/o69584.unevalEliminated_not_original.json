@@ -1,0 +1,564 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the project",
+            "type": "string"
+          },
+          "description": {
+            "description": "A short description of the project",
+            "type": "string"
+          },
+          "repo": {
+            "description": "The URL of the repo this project is part of",
+            "type": "string"
+          },
+          "documentation": {
+            "description": "Link to the documentation of this project",
+            "type": "string"
+          },
+          "tags": {
+            "description": "Relevant tags for this project",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cluster": {
+            "type": "object",
+            "properties": {
+              "config": {
+                "type": "string",
+                "description": "Path to a .yaml cluster configuration file (relative to the project root)"
+              },
+              "params": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "help": {
+                      "type": "string"
+                    },
+                    "choices": {
+                      "type": "array"
+                    },
+                    "default": {},
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "int",
+                        "float",
+                        "str"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "config"
+            ],
+            "additionalProperties": false
+          },
+          "environment": {
+            "description": "The environment that needs to be set up to run the project",
+            "type": "object",
+            "properties": {
+              "dockerimage": {
+                "description": "URL to a docker image that can be pulled to run the project in",
+                "type": "string"
+              },
+              "dockerfile": {
+                "description": "Path to a Dockerfile to set up an image the project can run in (relative to the project root)",
+                "type": "string"
+              },
+              "requirements": {
+                "description": "Path to a Python requirements.txt file to set up project dependencies (relative to the project root)",
+                "type": "string"
+              },
+              "shell": {
+                "description": "A sequence of shell commands to run to set up the project environment",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "description": "Possible commands to run to start a session",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Name of the command",
+                  "type": "string"
+                },
+                "help": {
+                  "description": "Help string for the command",
+                  "type": "string"
+                },
+                "command": {
+                  "description": "Shell command to run on the cluster",
+                  "type": "string"
+                },
+                "params": {
+                  "type": "array",
+                  "items": {
+                    "description": "Possible parameters in the command",
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "description": "Name of the parameter",
+                        "type": "string"
+                      },
+                      "help": {
+                        "description": "Help string for the parameter",
+                        "type": "string"
+                      },
+                      "choices": {
+                        "description": "Possible values the parameter can take",
+                        "type": "array"
+                      },
+                      "default": {},
+                      "type": {
+                        "description": "Required type for the parameter",
+                        "type": "string",
+                        "enum": [
+                          "int",
+                          "float",
+                          "str"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "config": {
+                  "description": "Configuration options for the command",
+                  "type": "object",
+                  "properties": {
+                    "tmux": {
+                      "description": "If true, the command will be run inside of tmux",
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "name",
+                "command"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "output_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "cluster"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Possible commands to run to start a session",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Name of the command",
+                  "type": "string"
+                },
+                "params": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_6"
+                  }
+                },
+                "config": {
+                  "$ref": "#/definitions4/modern_7"
+                },
+                "command": {
+                  "description": "Shell command to run on the cluster",
+                  "type": "string"
+                },
+                "help": {
+                  "description": "Help string for the command",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "command"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^config$": true,
+                "^params$": true,
+                "^name$": true,
+                "^help$": true,
+                "^command$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Possible parameters in the command",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Name of the parameter",
+                  "type": "string"
+                },
+                "choices": {
+                  "description": "Possible values the parameter can take",
+                  "type": "array"
+                },
+                "help": {
+                  "description": "Help string for the parameter",
+                  "type": "string"
+                },
+                "default": true,
+                "type": {
+                  "description": "Required type for the parameter",
+                  "type": "string",
+                  "enum": [
+                    "int",
+                    "float",
+                    "str"
+                  ]
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^default$": true,
+                "^help$": true,
+                "^choices$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "The name of the project",
+                  "type": "string"
+                },
+                "documentation": {
+                  "description": "Link to the documentation of this project",
+                  "type": "string"
+                },
+                "output_files": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cluster": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "environment": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "repo": {
+                  "description": "The URL of the repo this project is part of",
+                  "type": "string"
+                },
+                "commands": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_5"
+                  }
+                },
+                "description": {
+                  "description": "A short description of the project",
+                  "type": "string"
+                },
+                "tags": {
+                  "description": "Relevant tags for this project",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "cluster"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^environment$": true,
+                "^output_files$": true,
+                "^name$": true,
+                "^cluster$": true,
+                "^tags$": true,
+                "^repo$": true,
+                "^commands$": true,
+                "^documentation$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Configuration options for the command",
+              "type": "object",
+              "properties": {
+                "tmux": {
+                  "description": "If true, the command will be run inside of tmux",
+                  "type": "boolean"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^tmux$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "config": {
+                  "type": "string",
+                  "description": "Path to a .yaml cluster configuration file (relative to the project root)"
+                },
+                "params": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_3"
+                  }
+                }
+              },
+              "required": [
+                "config"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^config$": true,
+                "^params$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "choices": {
+                  "type": "array"
+                },
+                "help": {
+                  "type": "string"
+                },
+                "default": true,
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "int",
+                    "float",
+                    "str"
+                  ]
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^default$": true,
+                "^help$": true,
+                "^choices$": true,
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "The environment that needs to be set up to run the project",
+              "type": "object",
+              "properties": {
+                "dockerimage": {
+                  "description": "URL to a docker image that can be pulled to run the project in",
+                  "type": "string"
+                },
+                "dockerfile": {
+                  "description": "Path to a Dockerfile to set up an image the project can run in (relative to the project root)",
+                  "type": "string"
+                },
+                "requirements": {
+                  "description": "Path to a Python requirements.txt file to set up project dependencies (relative to the project root)",
+                  "type": "string"
+                },
+                "shell": {
+                  "description": "A sequence of shell commands to run to set up the project environment",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^dockerimage$": true,
+                "^dockerfile$": true,
+                "^requirements$": true,
+                "^shell$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

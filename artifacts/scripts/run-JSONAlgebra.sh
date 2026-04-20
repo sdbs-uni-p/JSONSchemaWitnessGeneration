@@ -259,3 +259,13 @@ run_experiment kubernetes/unsat
     cp ${HOME}/results/kubernetes/results.csv ${HOME}/charts/data/kubernetes/results.csv
     rm -r kubernetes
 )
+
+run_experiment additional_as_uneval_eliminated_containment/sat
+run_experiment additional_as_uneval_eliminated_containment/unsat
+run_experiment additional_as_uneval_eliminated_containment/unknown
+
+run_experiment oneOf_as_anyOf_containment/sat
+run_experiment oneOf_as_anyOf_containment/unknown
+
+run_experiment uneval_eliminated_as_additional_containment/sat
+run_experiment uneval_eliminated_as_additional_containment/unknown

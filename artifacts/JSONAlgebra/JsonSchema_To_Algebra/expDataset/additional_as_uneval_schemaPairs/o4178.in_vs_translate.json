@@ -1,0 +1,482 @@
+[
+  {
+    "id": 925,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "levelType": {
+          "description": "Note: A value of \"\" indicates that the commodity is not normally sold/purchased at this station, but is currently temporarily for sale/purchase",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            ""
+          ]
+        }
+      },
+      "id": "https://eddn.edcd.io/schemas/commodity/3#",
+      "properties": {
+        "$schemaRef": {
+          "type": "string"
+        },
+        "header": {
+          "additionalProperties": {},
+          "properties": {
+            "gatewayTimestamp": {
+              "_format": "date-time",
+              "description": "Timestamp upon receipt at the gateway. If present, this property will be overwritten by the gateway; submitters are not intended to populate this property.",
+              "type": "string"
+            },
+            "softwareName": {
+              "type": "string"
+            },
+            "softwareVersion": {
+              "type": "string"
+            },
+            "uploaderID": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "uploaderID",
+            "softwareName",
+            "softwareVersion"
+          ],
+          "type": "object"
+        },
+        "message": {
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "commodities": {
+              "description": "Commodities returned by the Companion API, with illegal commodities omitted",
+              "items": {
+                "additionalProperties": {
+                  "not": {}
+                },
+                "properties": {
+                  "buyPrice": {
+                    "description": "Price to buy from the market",
+                    "type": "integer"
+                  },
+                  "demand": {
+                    "type": "integer"
+                  },
+                  "demandBracket": {
+                    "$ref": "#/definitions2/levelType"
+                  },
+                  "meanPrice": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "description": "Symbolic name as returned by the Companion API",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "sellPrice": {
+                    "description": "Price to sell to the market",
+                    "type": "integer"
+                  },
+                  "statusFlags": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array",
+                    "_uniqueItems": true
+                  },
+                  "stock": {
+                    "type": "integer"
+                  },
+                  "stockBracket": {
+                    "$ref": "#/definitions2/levelType"
+                  }
+                },
+                "required": [
+                  "name",
+                  "meanPrice",
+                  "buyPrice",
+                  "stock",
+                  "stockBracket",
+                  "sellPrice",
+                  "demand",
+                  "demandBracket"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "economies": {
+              "items": {
+                "additionalProperties": {
+                  "not": {}
+                },
+                "properties": {
+                  "name": {
+                    "description": "Economy type as returned by the Companion API",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "proportion": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "proportion"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "horizons": {
+              "description": "Whether the sending Cmdr has a Horizons pass.",
+              "type": "boolean"
+            },
+            "marketId": {
+              "type": "number"
+            },
+            "prohibited": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array",
+              "_uniqueItems": true
+            },
+            "stationName": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "systemName": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "timestamp": {
+              "_format": "date-time",
+              "type": "string"
+            }
+          },
+          "required": [
+            "systemName",
+            "stationName",
+            "marketId",
+            "timestamp",
+            "commodities"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "$schemaRef",
+        "header",
+        "message"
+      ],
+      "type": "object"
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "sellPrice": {
+                      "description": "Price to sell to the market",
+                      "type": "integer"
+                    },
+                    "stock": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "Symbolic name as returned by the Companion API",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "stockBracket": {
+                      "$ref": "#/definitions2/levelType"
+                    },
+                    "buyPrice": {
+                      "description": "Price to buy from the market",
+                      "type": "integer"
+                    },
+                    "demandBracket": {
+                      "$ref": "#/definitions2/levelType"
+                    },
+                    "meanPrice": {
+                      "type": "integer"
+                    },
+                    "statusFlags": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "minItems": 1,
+                      "type": "array",
+                      "_uniqueItems": true
+                    },
+                    "demand": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "meanPrice",
+                    "buyPrice",
+                    "stock",
+                    "stockBracket",
+                    "sellPrice",
+                    "demand",
+                    "demandBracket"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^sellPrice$": {},
+                    "^buyPrice$": {},
+                    "^meanPrice$": {},
+                    "^name$": {},
+                    "^demandBracket$": {},
+                    "^demand$": {},
+                    "^stockBracket$": {},
+                    "^stock$": {},
+                    "^statusFlags$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "definitions2": {
+                    "levelType": {
+                      "description": "Note: A value of \"\" indicates that the commodity is not normally sold/purchased at this station, but is currently temporarily for sale/purchase",
+                      "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        ""
+                      ]
+                    }
+                  },
+                  "id": "https://eddn.edcd.io/schemas/commodity/3#",
+                  "properties": {
+                    "$schemaRef": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    "message": {
+                      "$ref": "#/definitions2/modern_3"
+                    }
+                  },
+                  "required": [
+                    "$schemaRef",
+                    "header",
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^$schemaRef$": {},
+                    "^header$": {},
+                    "^message$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "levelType": {
+          "description": "Note: A value of \"\" indicates that the commodity is not normally sold/purchased at this station, but is currently temporarily for sale/purchase",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            ""
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "gatewayTimestamp": {
+                      "_format": "date-time",
+                      "description": "Timestamp upon receipt at the gateway. If present, this property will be overwritten by the gateway; submitters are not intended to populate this property.",
+                      "type": "string"
+                    },
+                    "softwareName": {
+                      "type": "string"
+                    },
+                    "softwareVersion": {
+                      "type": "string"
+                    },
+                    "uploaderID": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "uploaderID",
+                    "softwareName",
+                    "softwareVersion"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^gatewayTimestamp$": {},
+                    "^softwareName$": {},
+                    "^softwareVersion$": {},
+                    "^uploaderID$": {}
+                  },
+                  "additionalProperties": {}
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "stationName": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "_format": "date-time",
+                      "type": "string"
+                    },
+                    "systemName": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "horizons": {
+                      "description": "Whether the sending Cmdr has a Horizons pass.",
+                      "type": "boolean"
+                    },
+                    "economies": {
+                      "items": {
+                        "$ref": "#/definitions2/modern_4"
+                      },
+                      "type": "array"
+                    },
+                    "commodities": {
+                      "description": "Commodities returned by the Companion API, with illegal commodities omitted",
+                      "items": {
+                        "$ref": "#/definitions2/modern_5"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "prohibited": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "_uniqueItems": true
+                    },
+                    "marketId": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "systemName",
+                    "stationName",
+                    "marketId",
+                    "timestamp",
+                    "commodities"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^prohibited$": {},
+                    "^marketId$": {},
+                    "^commodities$": {},
+                    "^economies$": {},
+                    "^timestamp$": {},
+                    "^systemName$": {},
+                    "^stationName$": {},
+                    "^horizons$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "name": {
+                      "description": "Economy type as returned by the Companion API",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "proportion": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "proportion"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "patternProperties": {
+                    "^name$": {},
+                    "^proportion$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

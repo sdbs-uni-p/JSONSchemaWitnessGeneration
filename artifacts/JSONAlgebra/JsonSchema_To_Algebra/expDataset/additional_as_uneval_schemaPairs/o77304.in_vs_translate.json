@@ -1,0 +1,993 @@
+[
+  {
+    "id": 2316,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "JSON schema for NPM package.json files",
+      "definitions2": {
+        "person": {
+          "description": "A person who has been involved in creating or maintaining this package",
+          "type": [
+            "object",
+            "string"
+          ],
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        },
+        "bundledDependency": {
+          "description": "Array of package names that will be bundled when publishing the package.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependency": {
+          "description": "Dependencies are specified with a simple hash of package name to version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "scriptsInstallAfter": {
+          "description": "Run AFTER the package is installed",
+          "type": "string"
+        },
+        "scriptsPublishAfter": {
+          "description": "Run AFTER the package is published",
+          "type": "string"
+        },
+        "scriptsRestart": {
+          "description": "Run by the 'npm restart' command. Note: 'npm restart' will run the stop and start scripts if no restart script is provided.",
+          "type": "string"
+        },
+        "scriptsStart": {
+          "description": "Run by the 'npm start' command",
+          "type": "string"
+        },
+        "scriptsStop": {
+          "description": "Run by the 'npm stop' command",
+          "type": "string"
+        },
+        "scriptsTest": {
+          "description": "Run by the 'npm test' command",
+          "type": "string"
+        },
+        "scriptsUninstallBefore": {
+          "description": "Run BEFORE the package is uninstalled",
+          "type": "string"
+        },
+        "scriptsVersionBefore": {
+          "description": "Run BEFORE bump the package version",
+          "type": "string"
+        },
+        "coreProperties": {
+          "type": "object",
+          "patternProperties": {
+            "^_": {
+              "description": "Any property starting with _ is valid.",
+              "additionalProperties": {},
+              "additionalItems": true
+            }
+          },
+          "properties": {
+            "name": {
+              "description": "The name of the package.",
+              "type": "string",
+              "maxLength": 214,
+              "minLength": 1,
+              "pattern": "^(?:@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$"
+            },
+            "version": {
+              "description": "Version must be parseable by node-semver, which is bundled with npm as a dependency.",
+              "type": "string"
+            },
+            "description": {
+              "description": "This helps people discover your package, as it's listed in 'npm search'.",
+              "type": "string"
+            },
+            "keywords": {
+              "description": "This helps people discover your package as it's listed in 'npm search'.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "homepage": {
+              "description": "The url to the project homepage.",
+              "type": "string",
+              "format": "uri"
+            },
+            "bugs": {
+              "description": "The url to your project's issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package.",
+              "type": [
+                "object",
+                "string"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "The url to your project's issue tracker.",
+                  "format": "uri"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "The email address to which issues should be reported.",
+                  "format": "email"
+                }
+              }
+            },
+            "license": {
+              "type": "string",
+              "description": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it."
+            },
+            "licenses": {
+              "description": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                }
+              }
+            },
+            "author": {
+              "$ref": "#/definitions2/person"
+            },
+            "contributors": {
+              "description": "A list of people who contributed to this package.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/person"
+              }
+            },
+            "maintainers": {
+              "description": "A list of people who maintains this package.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/person"
+              }
+            },
+            "files": {
+              "description": "The 'files' field is an array of files to include in your project. If you name a folder in the array, then it will also include the files inside that folder.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "main": {
+              "description": "The main field is a module ID that is the primary entry point to your program.",
+              "type": "string"
+            },
+            "bin": {
+              "type": [
+                "string",
+                "object"
+              ],
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "types": {
+              "description": "Set the types property to point to your bundled declaration file",
+              "type": "string"
+            },
+            "typings": {
+              "description": "Note that the \"typings\" field is synonymous with \"types\", and could be used as well.",
+              "type": "string"
+            },
+            "man": {
+              "type": [
+                "array",
+                "string"
+              ],
+              "description": "Specify either a single file or an array of filenames to put in place for the man program to find.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "directories": {
+              "type": "object",
+              "properties": {
+                "bin": {
+                  "description": "If you specify a 'bin' directory, then all the files in that folder will be used as the 'bin' hash.",
+                  "type": "string"
+                },
+                "doc": {
+                  "description": "Put markdown files in here. Eventually, these will be displayed nicely, maybe, someday.",
+                  "type": "string"
+                },
+                "example": {
+                  "description": "Put example scripts in here. Someday, it might be exposed in some clever way.",
+                  "type": "string"
+                },
+                "lib": {
+                  "description": "Tell people where the bulk of your library is. Nothing special is done with the lib folder in any way, but it's useful meta info.",
+                  "type": "string"
+                },
+                "man": {
+                  "description": "A folder that is full of man pages. Sugar to generate a 'man' array by walking the folder.",
+                  "type": "string"
+                },
+                "test": {
+                  "type": "string"
+                }
+              }
+            },
+            "repository": {
+              "description": "Specify the place where your code lives. This is helpful for people who want to contribute.",
+              "type": [
+                "object",
+                "string"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "scripts": {
+              "description": "The 'scripts' member is an object hash of script commands that are run at various times in the lifecycle of your package. The key is the lifecycle event, and the value is the command to run at that point.",
+              "type": "object",
+              "properties": {
+                "prepublish": {
+                  "type": "string",
+                  "description": "Run BEFORE the package is published (Also run on local npm install without any arguments)"
+                },
+                "prepare": {
+                  "type": "string",
+                  "description": "Run both BEFORE the package is packed and published, and on local npm install without any arguments. This is run AFTER prepublish, but BEFORE prepublishOnly"
+                },
+                "prepublishOnly": {
+                  "type": "string",
+                  "description": "Run BEFORE the package is prepared and packed, ONLY on npm publish"
+                },
+                "prepack": {
+                  "type": "string",
+                  "description": "run BEFORE a tarball is packed (on npm pack, npm publish, and when installing git dependencies)"
+                },
+                "postpack": {
+                  "type": "string",
+                  "description": "Run AFTER the tarball has been generated and moved to its final destination."
+                },
+                "publish": {
+                  "$ref": "#/definitions2/scriptsPublishAfter"
+                },
+                "postpublish": {
+                  "$ref": "#/definitions2/scriptsPublishAfter"
+                },
+                "preinstall": {
+                  "type": "string",
+                  "description": "Run BEFORE the package is installed"
+                },
+                "install": {
+                  "$ref": "#/definitions2/scriptsInstallAfter"
+                },
+                "postinstall": {
+                  "$ref": "#/definitions2/scriptsInstallAfter"
+                },
+                "preuninstall": {
+                  "$ref": "#/definitions2/scriptsUninstallBefore"
+                },
+                "uninstall": {
+                  "$ref": "#/definitions2/scriptsUninstallBefore"
+                },
+                "postuninstall": {
+                  "type": "string",
+                  "description": "Run AFTER the package is uninstalled"
+                },
+                "preversion": {
+                  "$ref": "#/definitions2/scriptsVersionBefore"
+                },
+                "version": {
+                  "$ref": "#/definitions2/scriptsVersionBefore"
+                },
+                "postversion": {
+                  "type": "string",
+                  "description": "Run AFTER bump the package version"
+                },
+                "pretest": {
+                  "$ref": "#/definitions2/scriptsTest"
+                },
+                "test": {
+                  "$ref": "#/definitions2/scriptsTest"
+                },
+                "posttest": {
+                  "$ref": "#/definitions2/scriptsTest"
+                },
+                "prestop": {
+                  "$ref": "#/definitions2/scriptsStop"
+                },
+                "stop": {
+                  "$ref": "#/definitions2/scriptsStop"
+                },
+                "poststop": {
+                  "$ref": "#/definitions2/scriptsStop"
+                },
+                "prestart": {
+                  "$ref": "#/definitions2/scriptsStart"
+                },
+                "start": {
+                  "$ref": "#/definitions2/scriptsStart"
+                },
+                "poststart": {
+                  "$ref": "#/definitions2/scriptsStart"
+                },
+                "prerestart": {
+                  "$ref": "#/definitions2/scriptsRestart"
+                },
+                "restart": {
+                  "$ref": "#/definitions2/scriptsRestart"
+                },
+                "postrestart": {
+                  "$ref": "#/definitions2/scriptsRestart"
+                }
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "config": {
+              "description": "A 'config' hash can be used to set configuration parameters used in package scripts that persist across upgrades.",
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "dependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "devDependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "optionalDependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "peerDependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "resolutions": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "engines": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "engineStrict": {
+              "type": "boolean"
+            },
+            "os": {
+              "description": "You can specify which operating systems your module will run on",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cpu": {
+              "description": "If your code only runs on certain cpu architectures, you can specify which ones.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "preferGlobal": {
+              "type": "boolean",
+              "description": "If your package is primarily a command-line application that should be installed globally, then set this value to true to provide a warning if it is installed locally."
+            },
+            "private": {
+              "type": "boolean",
+              "description": "If set to true, then npm will refuse to publish it."
+            },
+            "publishConfig": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "dist": {
+              "type": "object",
+              "properties": {
+                "shasum": {
+                  "type": "string"
+                },
+                "tarball": {
+                  "type": "string"
+                }
+              }
+            },
+            "readme": {
+              "type": "string"
+            },
+            "module": {
+              "description": "An ECMAScript module ID that is the primary entry point to your program.",
+              "type": "string"
+            },
+            "esnext": {
+              "description": "A module ID with untranspiled code that is the primary entry point to your program.",
+              "type": [
+                "string",
+                "object"
+              ],
+              "properties": {
+                "main": {
+                  "type": "string"
+                },
+                "browser": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jspmDefinition": {
+          "properties": {
+            "jspm": {
+              "$ref": "#/definitions2/coreProperties"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions2/coreProperties"
+        },
+        {
+          "$ref": "#/definitions2/jspmDefinition"
+        },
+        {
+          "anyOf": [
+            {
+              "properties": {
+                "bundleDependencies": {
+                  "$ref": "#/definitions2/bundledDependency"
+                }
+              },
+              "not": {
+                "properties": {
+                  "bundledDependencies": {}
+                },
+                "required": [
+                  "bundledDependencies"
+                ]
+              }
+            },
+            {
+              "properties": {
+                "bundledDependencies": {
+                  "$ref": "#/definitions2/bundledDependency"
+                }
+              },
+              "not": {
+                "properties": {
+                  "bundleDependencies": {}
+                },
+                "required": [
+                  "bundleDependencies"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "definitions2": {
+        "person": {
+          "description": "A person who has been involved in creating or maintaining this package",
+          "type": [
+            "object",
+            "string"
+          ],
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        },
+        "bundledDependency": {
+          "description": "Array of package names that will be bundled when publishing the package.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependency": {
+          "description": "Dependencies are specified with a simple hash of package name to version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.",
+          "type": "object",
+          "unevaluatedProperties": {
+            "type": "string"
+          }
+        },
+        "scriptsInstallAfter": {
+          "description": "Run AFTER the package is installed",
+          "type": "string"
+        },
+        "scriptsPublishAfter": {
+          "description": "Run AFTER the package is published",
+          "type": "string"
+        },
+        "scriptsRestart": {
+          "description": "Run by the 'npm restart' command. Note: 'npm restart' will run the stop and start scripts if no restart script is provided.",
+          "type": "string"
+        },
+        "scriptsStart": {
+          "description": "Run by the 'npm start' command",
+          "type": "string"
+        },
+        "scriptsStop": {
+          "description": "Run by the 'npm stop' command",
+          "type": "string"
+        },
+        "scriptsTest": {
+          "description": "Run by the 'npm test' command",
+          "type": "string"
+        },
+        "scriptsUninstallBefore": {
+          "description": "Run BEFORE the package is uninstalled",
+          "type": "string"
+        },
+        "scriptsVersionBefore": {
+          "description": "Run BEFORE bump the package version",
+          "type": "string"
+        },
+        "coreProperties": {
+          "type": "object",
+          "patternProperties": {
+            "^_": {
+              "description": "Any property starting with _ is valid.",
+              "unevaluatedProperties": true,
+              "unevaluatedItems": true
+            }
+          },
+          "properties": {
+            "name": {
+              "description": "The name of the package.",
+              "type": "string",
+              "maxLength": 214,
+              "minLength": 1,
+              "pattern": "^(?:@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$"
+            },
+            "version": {
+              "description": "Version must be parseable by node-semver, which is bundled with npm as a dependency.",
+              "type": "string"
+            },
+            "description": {
+              "description": "This helps people discover your package, as it's listed in 'npm search'.",
+              "type": "string"
+            },
+            "keywords": {
+              "description": "This helps people discover your package as it's listed in 'npm search'.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "homepage": {
+              "description": "The url to the project homepage.",
+              "type": "string",
+              "format": "uri"
+            },
+            "bugs": {
+              "description": "The url to your project's issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package.",
+              "type": [
+                "object",
+                "string"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "The url to your project's issue tracker.",
+                  "format": "uri"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "The email address to which issues should be reported.",
+                  "format": "email"
+                }
+              }
+            },
+            "license": {
+              "type": "string",
+              "description": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it."
+            },
+            "licenses": {
+              "description": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                }
+              }
+            },
+            "author": {
+              "$ref": "#/definitions2/person"
+            },
+            "contributors": {
+              "description": "A list of people who contributed to this package.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/person"
+              }
+            },
+            "maintainers": {
+              "description": "A list of people who maintains this package.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/person"
+              }
+            },
+            "files": {
+              "description": "The 'files' field is an array of files to include in your project. If you name a folder in the array, then it will also include the files inside that folder.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "main": {
+              "description": "The main field is a module ID that is the primary entry point to your program.",
+              "type": "string"
+            },
+            "bin": {
+              "type": [
+                "string",
+                "object"
+              ],
+              "unevaluatedProperties": {
+                "type": "string"
+              }
+            },
+            "types": {
+              "description": "Set the types property to point to your bundled declaration file",
+              "type": "string"
+            },
+            "typings": {
+              "description": "Note that the \"typings\" field is synonymous with \"types\", and could be used as well.",
+              "type": "string"
+            },
+            "man": {
+              "type": [
+                "array",
+                "string"
+              ],
+              "description": "Specify either a single file or an array of filenames to put in place for the man program to find.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "directories": {
+              "type": "object",
+              "properties": {
+                "bin": {
+                  "description": "If you specify a 'bin' directory, then all the files in that folder will be used as the 'bin' hash.",
+                  "type": "string"
+                },
+                "doc": {
+                  "description": "Put markdown files in here. Eventually, these will be displayed nicely, maybe, someday.",
+                  "type": "string"
+                },
+                "example": {
+                  "description": "Put example scripts in here. Someday, it might be exposed in some clever way.",
+                  "type": "string"
+                },
+                "lib": {
+                  "description": "Tell people where the bulk of your library is. Nothing special is done with the lib folder in any way, but it's useful meta info.",
+                  "type": "string"
+                },
+                "man": {
+                  "description": "A folder that is full of man pages. Sugar to generate a 'man' array by walking the folder.",
+                  "type": "string"
+                },
+                "test": {
+                  "type": "string"
+                }
+              }
+            },
+            "repository": {
+              "description": "Specify the place where your code lives. This is helpful for people who want to contribute.",
+              "type": [
+                "object",
+                "string"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "scripts": {
+              "description": "The 'scripts' member is an object hash of script commands that are run at various times in the lifecycle of your package. The key is the lifecycle event, and the value is the command to run at that point.",
+              "type": "object",
+              "properties": {
+                "prepublish": {
+                  "type": "string",
+                  "description": "Run BEFORE the package is published (Also run on local npm install without any arguments)"
+                },
+                "prepare": {
+                  "type": "string",
+                  "description": "Run both BEFORE the package is packed and published, and on local npm install without any arguments. This is run AFTER prepublish, but BEFORE prepublishOnly"
+                },
+                "prepublishOnly": {
+                  "type": "string",
+                  "description": "Run BEFORE the package is prepared and packed, ONLY on npm publish"
+                },
+                "prepack": {
+                  "type": "string",
+                  "description": "run BEFORE a tarball is packed (on npm pack, npm publish, and when installing git dependencies)"
+                },
+                "postpack": {
+                  "type": "string",
+                  "description": "Run AFTER the tarball has been generated and moved to its final destination."
+                },
+                "publish": {
+                  "$ref": "#/definitions2/scriptsPublishAfter"
+                },
+                "postpublish": {
+                  "$ref": "#/definitions2/scriptsPublishAfter"
+                },
+                "preinstall": {
+                  "type": "string",
+                  "description": "Run BEFORE the package is installed"
+                },
+                "install": {
+                  "$ref": "#/definitions2/scriptsInstallAfter"
+                },
+                "postinstall": {
+                  "$ref": "#/definitions2/scriptsInstallAfter"
+                },
+                "preuninstall": {
+                  "$ref": "#/definitions2/scriptsUninstallBefore"
+                },
+                "uninstall": {
+                  "$ref": "#/definitions2/scriptsUninstallBefore"
+                },
+                "postuninstall": {
+                  "type": "string",
+                  "description": "Run AFTER the package is uninstalled"
+                },
+                "preversion": {
+                  "$ref": "#/definitions2/scriptsVersionBefore"
+                },
+                "version": {
+                  "$ref": "#/definitions2/scriptsVersionBefore"
+                },
+                "postversion": {
+                  "type": "string",
+                  "description": "Run AFTER bump the package version"
+                },
+                "pretest": {
+                  "$ref": "#/definitions2/scriptsTest"
+                },
+                "test": {
+                  "$ref": "#/definitions2/scriptsTest"
+                },
+                "posttest": {
+                  "$ref": "#/definitions2/scriptsTest"
+                },
+                "prestop": {
+                  "$ref": "#/definitions2/scriptsStop"
+                },
+                "stop": {
+                  "$ref": "#/definitions2/scriptsStop"
+                },
+                "poststop": {
+                  "$ref": "#/definitions2/scriptsStop"
+                },
+                "prestart": {
+                  "$ref": "#/definitions2/scriptsStart"
+                },
+                "start": {
+                  "$ref": "#/definitions2/scriptsStart"
+                },
+                "poststart": {
+                  "$ref": "#/definitions2/scriptsStart"
+                },
+                "prerestart": {
+                  "$ref": "#/definitions2/scriptsRestart"
+                },
+                "restart": {
+                  "$ref": "#/definitions2/scriptsRestart"
+                },
+                "postrestart": {
+                  "$ref": "#/definitions2/scriptsRestart"
+                }
+              },
+              "unevaluatedProperties": {
+                "type": "string"
+              }
+            },
+            "config": {
+              "description": "A 'config' hash can be used to set configuration parameters used in package scripts that persist across upgrades.",
+              "type": "object",
+              "unevaluatedProperties": true
+            },
+            "dependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "devDependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "optionalDependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "peerDependencies": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "resolutions": {
+              "$ref": "#/definitions2/dependency"
+            },
+            "engines": {
+              "type": "object",
+              "unevaluatedProperties": {
+                "type": "string"
+              }
+            },
+            "engineStrict": {
+              "type": "boolean"
+            },
+            "os": {
+              "description": "You can specify which operating systems your module will run on",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cpu": {
+              "description": "If your code only runs on certain cpu architectures, you can specify which ones.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "preferGlobal": {
+              "type": "boolean",
+              "description": "If your package is primarily a command-line application that should be installed globally, then set this value to true to provide a warning if it is installed locally."
+            },
+            "private": {
+              "type": "boolean",
+              "description": "If set to true, then npm will refuse to publish it."
+            },
+            "publishConfig": {
+              "type": "object",
+              "unevaluatedProperties": true
+            },
+            "dist": {
+              "type": "object",
+              "properties": {
+                "shasum": {
+                  "type": "string"
+                },
+                "tarball": {
+                  "type": "string"
+                }
+              }
+            },
+            "readme": {
+              "type": "string"
+            },
+            "module": {
+              "description": "An ECMAScript module ID that is the primary entry point to your program.",
+              "type": "string"
+            },
+            "esnext": {
+              "description": "A module ID with untranspiled code that is the primary entry point to your program.",
+              "type": [
+                "string",
+                "object"
+              ],
+              "properties": {
+                "main": {
+                  "type": "string"
+                },
+                "browser": {
+                  "type": "string"
+                }
+              },
+              "unevaluatedProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jspmDefinition": {
+          "properties": {
+            "jspm": {
+              "$ref": "#/definitions2/coreProperties"
+            }
+          }
+        }
+      },
+      "title": "JSON schema for NPM package.json files",
+      "allOf": [
+        {
+          "$ref": "#/definitions2/coreProperties"
+        },
+        {
+          "$ref": "#/definitions2/jspmDefinition"
+        },
+        {
+          "anyOf": [
+            {
+              "properties": {
+                "bundleDependencies": {
+                  "$ref": "#/definitions2/bundledDependency"
+                }
+              },
+              "not": {
+                "properties": {
+                  "bundledDependencies": true
+                },
+                "required": [
+                  "bundledDependencies"
+                ]
+              }
+            },
+            {
+              "properties": {
+                "bundledDependencies": {
+                  "$ref": "#/definitions2/bundledDependency"
+                }
+              },
+              "not": {
+                "properties": {
+                  "bundleDependencies": true
+                },
+                "required": [
+                  "bundleDependencies"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

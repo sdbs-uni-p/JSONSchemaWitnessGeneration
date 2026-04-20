@@ -1,0 +1,319 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "description": "A list of mappings from Puli paths to filesystem paths or other Puli paths.",
+      "patternProperties": {
+        "^/(([^/]+/)*[^/]+)?$": {
+          "description": "A mapping from a Puli path to one or more path references.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions3/singleReference"
+            },
+            {
+              "$ref": "#/definitions3/combinedReference"
+            }
+          ]
+        }
+      },
+      "properties": {
+        "_order": {
+          "description": "Overrides the default resolution order. By default, mappings for longer paths (e.g. /a/b) have precedence over mapping for shorter paths (e.g. /a). This can be overridden here.",
+          "type": "object",
+          "patternProperties": {
+            "^/(([^/]+/)*[^/]+)?$": {
+              "description": "Overrides the resolution order for a mapped Puli path. The repository will check the path mappings referred to by the entries of the array in the given order.",
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "description": "Contains the path of a path mapping and the number of references to check of that path mapping.",
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "description": "The Puli path of a mapping in this file.",
+                    "type": "string",
+                    "pattern": "^/(([^/]+/)*[^/]+)?$"
+                  },
+                  "references": {
+                    "description": "The number of references of the mapping to check.",
+                    "type": "integer",
+                    "min": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions3": {
+    "relativePath": {
+      "description": "A filesystem path relative to the base directory of the repository.",
+      "type": "string",
+      "pattern": "^([a-zA-Z][^:]|[^/@a-zA-Z])[^/]*(/[^/]+)*$"
+    },
+    "absolutePath": {
+      "description": "An absolute filesystem path.",
+      "type": "string",
+      "pattern": "^([a-zA-Z]:)?/(([^/]+/)*[^/]+)?$"
+    },
+    "virtualDirectory": {
+      "description": "A directory in the Puli repository that does not correspond to a real filesystem directory.",
+      "type": "null"
+    },
+    "repositoryLink": {
+      "description": "A link to another resource in the Puli repository.",
+      "type": "string",
+      "pattern": "^@/(([^/]+/)*[^/]+)?$"
+    },
+    "singleReference": {
+      "description": "A reference to a single file, directory, link or virtual directory.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/relativePath"
+        },
+        {
+          "$ref": "#/definitions3/absolutePath"
+        },
+        {
+          "$ref": "#/definitions3/repositoryLink"
+        },
+        {
+          "$ref": "#/definitions3/virtualDirectory"
+        }
+      ]
+    },
+    "combinedReference": {
+      "description": "A list of references. The first reference has highest priority. Directory contents are merged.",
+      "type": "array",
+      "minItems": 2,
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions3/singleReference"
+      }
+    }
+  },
+  "definitions4": {
+    "repositoryLink": {
+      "description": "A link to another resource in the Puli repository.",
+      "type": "string",
+      "pattern": "^@/(([^/]+/)*[^/]+)?$"
+    },
+    "absolutePath": {
+      "description": "An absolute filesystem path.",
+      "type": "string",
+      "pattern": "^([a-zA-Z]:)?/(([^/]+/)*[^/]+)?$"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "A list of mappings from Puli paths to filesystem paths or other Puli paths.",
+              "patternProperties": {
+                "^/(([^/]+/)*[^/]+)?$": {
+                  "description": "A mapping from a Puli path to one or more path references.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/singleReference"
+                    },
+                    {
+                      "$ref": "#/definitions4/combinedReference"
+                    }
+                  ]
+                }
+              },
+              "properties": {
+                "_order": {
+                  "description": "Overrides the default resolution order. By default, mappings for longer paths (e.g. /a/b) have precedence over mapping for shorter paths (e.g. /a). This can be overridden here.",
+                  "type": "object",
+                  "patternProperties": {
+                    "^/(([^/]+/)*[^/]+)?$": {
+                      "description": "Overrides the resolution order for a mapped Puli path. The repository will check the path mappings referred to by the entries of the array in the given order.",
+                      "type": "array",
+                      "minItems": 2,
+                      "items": {
+                        "description": "Contains the path of a path mapping and the number of references to check of that path mapping.",
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "description": "The Puli path of a mapping in this file.",
+                            "type": "string",
+                            "pattern": "^/(([^/]+/)*[^/]+)?$"
+                          },
+                          "references": {
+                            "description": "The number of references of the mapping to check.",
+                            "type": "integer",
+                            "min": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^/(([^/]+/)*[^/]+)?$": true,
+                "^_order$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "virtualDirectory": {
+      "description": "A directory in the Puli repository that does not correspond to a real filesystem directory.",
+      "type": "null"
+    },
+    "relativePath": {
+      "description": "A filesystem path relative to the base directory of the repository.",
+      "type": "string",
+      "pattern": "^([a-zA-Z][^:]|[^/@a-zA-Z])[^/]*(/[^/]+)*$"
+    },
+    "combinedReference": {
+      "description": "A list of references. The first reference has highest priority. Directory contents are merged.",
+      "type": "array",
+      "minItems": 2,
+      "_uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions4/singleReference"
+      }
+    },
+    "singleReference": {
+      "description": "A reference to a single file, directory, link or virtual directory.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/relativePath"
+        },
+        {
+          "$ref": "#/definitions4/absolutePath"
+        },
+        {
+          "$ref": "#/definitions4/repositoryLink"
+        },
+        {
+          "$ref": "#/definitions4/virtualDirectory"
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/combinedReference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/combinedReference"
+      }
+    },
+    {
+      "$ref": "#/definitions3/relativePath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/relativePath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/relativePath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/relativePath"
+      }
+    },
+    {
+      "$ref": "#/definitions3/absolutePath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/absolutePath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/combinedReference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/combinedReference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/virtualDirectory"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/virtualDirectory"
+      }
+    },
+    {
+      "$ref": "#/definitions4/singleReference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/singleReference"
+      }
+    },
+    {
+      "$ref": "#/definitions3/repositoryLink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/repositoryLink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/virtualDirectory"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/virtualDirectory"
+      }
+    },
+    {
+      "$ref": "#/definitions4/repositoryLink"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/repositoryLink"
+      }
+    },
+    {
+      "$ref": "#/definitions3/singleReference"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/singleReference"
+      }
+    },
+    {
+      "$ref": "#/definitions4/absolutePath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/absolutePath"
+      }
+    }
+  ]
+}

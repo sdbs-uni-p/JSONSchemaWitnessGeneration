@@ -1,0 +1,982 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/failed_license_scan"
+        },
+        {
+          "$ref": "#/definitions3/successful_license_scan"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Successful automated software copyright license scan",
+          "properties": {},
+          "type": "object"
+        }
+      ],
+      "title": "source_licenses-v2-0-0"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "oneOf": [
+          {
+            "$ref": "#/definitions4/failed_license_scan"
+          },
+          {
+            "$ref": "#/definitions4/successful_license_scan"
+          },
+          {
+            "$ref": "#/definitions4/modern_14"
+          }
+        ],
+        "title": "source_licenses-v2-0-0"
+      }
+    }
+  ],
+  "definitions3": {
+    "failed_license_scan": {
+      "additionalProperties": false,
+      "description": "Failed automated software copyright license scan",
+      "properties": {
+        "_release": {
+          "description": "Unique release id in form of \"ecosystem:package:version\"",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "Name of the schema",
+              "pattern": "^[a-zA-Z0-9_]+$",
+              "type": "string"
+            },
+            "url": {
+              "_format": "uri",
+              "description": "Full URL of the schema",
+              "type": "string"
+            },
+            "version": {
+              "description": "Version of the schema",
+              "pattern": "^[0-9]+-[0-9]+-[0-9]+$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "version"
+          ],
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "error"
+          ],
+          "type": "string"
+        },
+        "summary": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "status",
+        "summary",
+        "details"
+      ],
+      "type": "object"
+    },
+    "file_details": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "result": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "license_count": {
+      "additionalProperties": false,
+      "description": "Detected license with occurrence count",
+      "properties": {
+        "count": {
+          "description": "Combined count of detected variants",
+          "type": "number"
+        },
+        "license_name": {
+          "description": "Common name of the detected license",
+          "type": "string"
+        }
+      },
+      "required": [
+        "count",
+        "license_name"
+      ],
+      "type": "object"
+    },
+    "license_details_pre_3_0": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "description": "Number of occurrences of this variant",
+          "type": "number"
+        },
+        "license_name": {
+          "description": "Common name of the detected license",
+          "type": "string"
+        },
+        "variant_id": {
+          "description": "Specific license variant detected",
+          "type": "string"
+        }
+      },
+      "required": [
+        "count",
+        "license_name",
+        "variant_id"
+      ],
+      "type": "object"
+    },
+    "license_scan_details": {
+      "additionalProperties": true,
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "#/definitions3/file_details"
+          },
+          "type": "array"
+        },
+        "license_stats": {
+          "items": {
+            "$ref": "#/definitions3/license_details_pre_3_0"
+          },
+          "type": "array"
+        },
+        "oslc_stats": {
+          "$ref": "#/definitions3/oslc_stats"
+        }
+      },
+      "type": "object"
+    },
+    "license_scan_summary": {
+      "additionalProperties": false,
+      "properties": {
+        "all_files": {
+          "description": "Total number of files analysed",
+          "type": "number"
+        },
+        "distinct_licenses": {
+          "items": {
+            "$ref": "#/definitions3/license_count"
+          },
+          "type": "array"
+        },
+        "license_files": {
+          "type": "number"
+        },
+        "licensed_files": {
+          "type": "number"
+        },
+        "source_files": {
+          "type": "number"
+        },
+        "sure_licenses": {
+          "description": "Licenses detected with high match confidence",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "distinct_licenses",
+        "sure_licenses"
+      ],
+      "type": "object"
+    },
+    "oslc_stats": {
+      "additionalProperties": true,
+      "properties": {},
+      "type": "object"
+    },
+    "successful_license_scan": {
+      "additionalProperties": false,
+      "description": "Successful automated software copyright license scan",
+      "properties": {
+        "_release": {
+          "description": "Unique release id in form of \"ecosystem:package:version\"",
+          "type": "string"
+        },
+        "details": {
+          "$ref": "#/definitions3/license_scan_details"
+        },
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "Name of the schema",
+              "pattern": "^[a-zA-Z0-9_]+$",
+              "type": "string"
+            },
+            "url": {
+              "_format": "uri",
+              "description": "Full URL of the schema",
+              "type": "string"
+            },
+            "version": {
+              "description": "Version of the schema",
+              "pattern": "^[0-9]+-[0-9]+-[0-9]+$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "version"
+          ],
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "success"
+          ],
+          "type": "string"
+        },
+        "summary": {
+          "$ref": "#/definitions3/license_scan_summary"
+        }
+      },
+      "required": [
+        "status",
+        "summary",
+        "details"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "description": "Name of the schema",
+                  "pattern": "^[a-zA-Z0-9_]+$",
+                  "type": "string"
+                },
+                "url": {
+                  "_format": "uri",
+                  "description": "Full URL of the schema",
+                  "type": "string"
+                },
+                "version": {
+                  "description": "Version of the schema",
+                  "pattern": "^[0-9]+-[0-9]+-[0-9]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "version"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^url$": true,
+                "^version$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "description": "Name of the schema",
+                  "pattern": "^[a-zA-Z0-9_]+$",
+                  "type": "string"
+                },
+                "url": {
+                  "_format": "uri",
+                  "description": "Full URL of the schema",
+                  "type": "string"
+                },
+                "version": {
+                  "description": "Version of the schema",
+                  "pattern": "^[0-9]+-[0-9]+-[0-9]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "version"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^url$": true,
+                "^version$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "oslc_stats": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "files": {
+                  "items": {
+                    "$ref": "#/definitions4/file_details"
+                  },
+                  "type": "array"
+                },
+                "license_stats": {
+                  "items": {
+                    "$ref": "#/definitions4/license_details_pre_3_0"
+                  },
+                  "type": "array"
+                },
+                "oslc_stats": {
+                  "$ref": "#/definitions4/oslc_stats"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^files$": true,
+                "^license_stats$": true,
+                "^oslc_stats$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "file_details": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Detected license with occurrence count",
+              "properties": {
+                "count": {
+                  "description": "Combined count of detected variants",
+                  "type": "number"
+                },
+                "license_name": {
+                  "description": "Common name of the detected license",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "count",
+                "license_name"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^count$": true,
+                "^license_name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "license_count": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "all_files": {
+                  "description": "Total number of files analysed",
+                  "type": "number"
+                },
+                "source_files": {
+                  "type": "number"
+                },
+                "licensed_files": {
+                  "type": "number"
+                },
+                "sure_licenses": {
+                  "description": "Licenses detected with high match confidence",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "license_files": {
+                  "type": "number"
+                },
+                "distinct_licenses": {
+                  "items": {
+                    "$ref": "#/definitions4/license_count"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "distinct_licenses",
+                "sure_licenses"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^all_files$": true,
+                "^licensed_files$": true,
+                "^distinct_licenses$": true,
+                "^source_files$": true,
+                "^license_files$": true,
+                "^sure_licenses$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Failed automated software copyright license scan",
+              "properties": {
+                "schema": {
+                  "$ref": "#/definitions4/modern_10"
+                },
+                "_release": {
+                  "description": "Unique release id in form of \"ecosystem:package:version\"",
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "error"
+                  ],
+                  "type": "string"
+                },
+                "details": {
+                  "$ref": "#/definitions4/modern_11"
+                },
+                "summary": {
+                  "$ref": "#/definitions4/modern_12"
+                }
+              },
+              "required": [
+                "status",
+                "summary",
+                "details"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^schema$": true,
+                "^_release$": true,
+                "^details$": true,
+                "^status$": true,
+                "^summary$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "count": {
+                  "description": "Number of occurrences of this variant",
+                  "type": "number"
+                },
+                "license_name": {
+                  "description": "Common name of the detected license",
+                  "type": "string"
+                },
+                "variant_id": {
+                  "description": "Specific license variant detected",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "count",
+                "license_name",
+                "variant_id"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^count$": true,
+                "^license_name$": true,
+                "^variant_id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "result": {
+                  "items": {
+                    "$ref": "#/definitions4/modern_4"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^path$": true,
+                "^result$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "license_scan_summary": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Successful automated software copyright license scan",
+              "properties": {},
+              "type": "object"
+            },
+            {
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Successful automated software copyright license scan",
+              "properties": {
+                "schema": {
+                  "$ref": "#/definitions4/modern_6"
+                },
+                "_release": {
+                  "description": "Unique release id in form of \"ecosystem:package:version\"",
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "success"
+                  ],
+                  "type": "string"
+                },
+                "details": {
+                  "$ref": "#/definitions4/license_scan_details"
+                },
+                "summary": {
+                  "$ref": "#/definitions4/license_scan_summary"
+                }
+              },
+              "required": [
+                "status",
+                "summary",
+                "details"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^schema$": true,
+                "^_release$": true,
+                "^details$": true,
+                "^status$": true,
+                "^summary$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "license_scan_details": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "failed_license_scan": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "license_details_pre_3_0": {
+      "$ref": "#/definitions4/modern_13"
+    },
+    "successful_license_scan": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {},
+              "type": "object"
+            },
+            {
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/failed_license_scan"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/failed_license_scan"
+      }
+    },
+    {
+      "$ref": "#/definitions4/oslc_stats"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/oslc_stats"
+      }
+    },
+    {
+      "$ref": "#/definitions3/successful_license_scan"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/successful_license_scan"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions3/license_scan_details"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/license_scan_details"
+      }
+    },
+    {
+      "$ref": "#/definitions4/license_scan_summary"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/license_scan_summary"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/license_count"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/license_count"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/file_details"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/file_details"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/oslc_stats"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/oslc_stats"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions3/license_scan_summary"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/license_scan_summary"
+      }
+    },
+    {
+      "$ref": "#/definitions4/license_details_pre_3_0"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/license_details_pre_3_0"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/successful_license_scan"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/successful_license_scan"
+      }
+    },
+    {
+      "$ref": "#/definitions4/license_count"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/license_count"
+      }
+    },
+    {
+      "$ref": "#/definitions3/file_details"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/file_details"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions3/failed_license_scan"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/failed_license_scan"
+      }
+    },
+    {
+      "$ref": "#/definitions3/license_details_pre_3_0"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/license_details_pre_3_0"
+      }
+    },
+    {
+      "$ref": "#/definitions4/license_scan_details"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/license_scan_details"
+      }
+    }
+  ]
+}

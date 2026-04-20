@@ -1,0 +1,127 @@
+{
+  "allOf": [
+    {
+      "properties": {
+        "kdf": {
+          "enum": [
+            "pbkdf2"
+          ],
+          "type": "string"
+        },
+        "kdfparams": {
+          "$ref": "#/definitions4/modern_1"
+        }
+      },
+      "required": [
+        "kdf",
+        "kdfparams"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "properties": {
+          "kdf": {
+            "enum": [
+              "pbkdf2"
+            ],
+            "type": "string"
+          },
+          "kdfparams": {
+            "additionalProperties": false,
+            "properties": {
+              "c": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "dklen": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "prf": {
+                "enum": [
+                  "hmac-sha256"
+                ],
+                "type": "string"
+              },
+              "salt": {
+                "pattern": "^(([0-9]|[a-f]){2}){0,32}$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "c",
+              "dklen",
+              "prf",
+              "salt"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "kdf",
+          "kdfparams"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "c": {
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "dklen": {
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "prf": {
+                  "enum": [
+                    "hmac-sha256"
+                  ],
+                  "type": "string"
+                },
+                "salt": {
+                  "pattern": "^(([0-9]|[a-f]){2}){0,32}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "c",
+                "dklen",
+                "prf",
+                "salt"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^c$": true,
+                "^dklen$": true,
+                "^prf$": true,
+                "^salt$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

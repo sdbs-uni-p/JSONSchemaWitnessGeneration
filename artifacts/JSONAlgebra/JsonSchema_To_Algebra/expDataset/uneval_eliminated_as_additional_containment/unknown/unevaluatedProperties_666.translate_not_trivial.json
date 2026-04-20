@@ -1,0 +1,282 @@
+{
+  "allOf": [
+    {
+      "$id": "metrics_config.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "description": "Configuration for publishing prometheus metrics, supports pushing to CDF timeseries instead",
+      "type": "object",
+      "properties": {
+        "push-gateways": {
+          "type": "array",
+          "description": "List of prometheus push gateway destinations",
+          "items": {
+            "$ref": "#/definitions1/modern_1"
+          }
+        },
+        "cognite": {
+          "$ref": "#/definitions1/modern_2"
+        },
+        "server": {
+          "$ref": "#/definitions1/modern_3"
+        }
+      }
+    },
+    {
+      "not": {
+        "$id": "metrics_config.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Configuration for publishing prometheus metrics, supports pushing to CDF timeseries instead",
+        "type": "object",
+        "properties": {
+          "push-gateways": {
+            "type": "array",
+            "description": "List of prometheus push gateway destinations",
+            "items": {
+              "type": "object",
+              "description": "Configuration for pushing to a prometheus PushGateway",
+              "additionalProperties": false,
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "description": "PushGateway host"
+                },
+                "job-name": {
+                  "type": "string",
+                  "description": "Job name, uniquely identifies this extractor in prometheus"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "PushGateway username"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "PushGateway password"
+                },
+                "clear-after": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Clear metrics after this many seconds when the extractor stops. Default is disabled"
+                },
+                "push-interval": {
+                  "type": "integer",
+                  "description": "Interval in seconds between each push to prometheus",
+                  "default": 30
+                }
+              }
+            }
+          },
+          "cognite": {
+            "type": "object",
+            "description": "Push metrics to CDF timeseries. Requires CDF credentials to be configured",
+            "additionalProperties": false,
+            "required": [
+              "external-id-prefix"
+            ],
+            "properties": {
+              "external-id-prefix": {
+                "type": "string",
+                "description": "Prefix on external id on created metrics"
+              },
+              "asset-name": {
+                "type": "string",
+                "description": "Name of created root asset for the metrics"
+              },
+              "asset-external-id": {
+                "type": "string",
+                "description": "ExternalId of created root asset for the metrics"
+              },
+              "push-interval": {
+                "type": "integer",
+                "description": "Interval in seconds between each push to CDF",
+                "default": 30
+              },
+              "data-set": {
+                "type": "string",
+                "description": "Data set the metrics timeseries created under"
+              }
+            }
+          },
+          "server": {
+            "type": "object",
+            "description": "Configure a port to expose prometheus metrics for scraping",
+            "additionalProperties": false,
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Host to run the prometheus server on",
+                "default": "0.0.0.0"
+              },
+              "port": {
+                "type": "integer",
+                "description": "Local port to expose the prometheus server on",
+                "default": 9000
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Configuration for pushing to a prometheus PushGateway",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "PushGateway username"
+                },
+                "push-interval": {
+                  "type": "integer",
+                  "description": "Interval in seconds between each push to prometheus",
+                  "default": 30
+                },
+                "host": {
+                  "type": "string",
+                  "description": "PushGateway host"
+                },
+                "job-name": {
+                  "type": "string",
+                  "description": "Job name, uniquely identifies this extractor in prometheus"
+                },
+                "clear-after": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ],
+                  "description": "Clear metrics after this many seconds when the extractor stops. Default is disabled"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "PushGateway password"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^clear-after$": true,
+                "^username$": true,
+                "^job-name$": true,
+                "^host$": true,
+                "^password$": true,
+                "^push-interval$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Push metrics to CDF timeseries. Requires CDF credentials to be configured",
+              "required": [
+                "external-id-prefix"
+              ],
+              "properties": {
+                "push-interval": {
+                  "type": "integer",
+                  "description": "Interval in seconds between each push to CDF",
+                  "default": 30
+                },
+                "asset-name": {
+                  "type": "string",
+                  "description": "Name of created root asset for the metrics"
+                },
+                "external-id-prefix": {
+                  "type": "string",
+                  "description": "Prefix on external id on created metrics"
+                },
+                "asset-external-id": {
+                  "type": "string",
+                  "description": "ExternalId of created root asset for the metrics"
+                },
+                "data-set": {
+                  "type": "string",
+                  "description": "Data set the metrics timeseries created under"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^asset-name$": true,
+                "^data-set$": true,
+                "^external-id-prefix$": true,
+                "^push-interval$": true,
+                "^asset-external-id$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Configure a port to expose prometheus metrics for scraping",
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "description": "Host to run the prometheus server on",
+                  "default": "0.0.0.0"
+                },
+                "port": {
+                  "type": "integer",
+                  "description": "Local port to expose the prometheus server on",
+                  "default": 9000
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^host$": true,
+                "^port$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    }
+  ]
+}

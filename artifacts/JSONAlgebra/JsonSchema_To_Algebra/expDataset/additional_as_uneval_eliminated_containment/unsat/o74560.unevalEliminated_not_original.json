@@ -1,0 +1,873 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "additionalProperties": false,
+        "description": "Specifies how Wangscape should convert a set of terrain tiles into corner Wang tilesets.",
+        "properties": {
+          "AlphaCalculatorMode": {
+            "description": "Specifies which type of AlphaCalculator should be used to convert corner weights into alpha values.",
+            "enum": [
+              "Max",
+              "Linear",
+              "TopTwo",
+              "Dither"
+            ],
+            "title": "AlphaCalculatorMode schema",
+            "type": "string"
+          },
+          "AlphaCalculatorTopTwoPower": {
+            "description": "Specifies an exponent to which noise values should be raised before applying TopTwo or related alpha calculators.",
+            "title": "AlphaCalculatorTopTwoPower schema",
+            "type": "number"
+          },
+          "CentralModuleGroups": {
+            "description": "Specifies the locations of JSON files containing module groups to use in the centre of generated tile partitions.",
+            "items": {
+              "additionalProperties": false,
+              "description": "Specifies a terrain and the location of a JSON file containing the module group which should be used for the central weight of corner masks associated with that terrain.",
+              "properties": {
+                "Filename": {
+                  "description": "Specifies the location of the JSON file containing the module group for use in tile centres with this terrain.",
+                  "minLength": 1,
+                  "title": "CentralModuleGroups Filename schema",
+                  "type": "string"
+                },
+                "Terrain": {
+                  "description": "Specifies a terrain by its key in the Terrains property.",
+                  "minLength": 1,
+                  "pattern": "^[0-9a-zA-Z_-]+$",
+                  "title": "CentralModuleGroups terrain schema",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Terrain",
+                "Filename"
+              ],
+              "title": "CentralModuleGroups item schema",
+              "type": "object"
+            },
+            "minItems": 1,
+            "title": "CentralModuleGroups schema",
+            "type": "array",
+            "_uniqueItems": true
+          },
+          "Cliques": {
+            "description": "Specifies terrain type sets for which corner Wang tilesets will be generated.",
+            "items": {
+              "description": "Specifies a set of 2-4 terrain types for which a corner Wang tileset will be generated.",
+              "items": {
+                "description": "Specifies a terrain type by its key in the Terrains property.",
+                "minLength": 1,
+                "pattern": "^[0-9a-zA-Z_-]+$",
+                "title": "Clique item schema",
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 2,
+              "title": "Clique schema",
+              "type": "array",
+              "_uniqueItems": true
+            },
+            "minItems": 1,
+            "title": "Cliques schema",
+            "type": "array",
+            "_uniqueItems": true
+          },
+          "CombinerModuleGroup": {
+            "description": "Specifies the location of the JSON file containing the module group to use to combine border and central module groups into the corner masks used to generate tiles.",
+            "minLength": 1,
+            "title": "CombinerModuleGroup filename schema",
+            "type": "string"
+          },
+          "DebugOutput": {
+            "default": false,
+            "description": "Specifies whether Wangscape should write debug data during tile generation.",
+            "title": "DebugOutput schema",
+            "type": "boolean"
+          },
+          "DebugTileResolution": {
+            "description": "Specifies the resolution of the images written as debug data during tile generation.",
+            "items": {
+              "minimum": 1,
+              "multipleOf": 1,
+              "type": "integer"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "DebugTileResolution schema",
+            "type": "array"
+          },
+          "DefaultModuleGroup": {
+            "description": "Optionally specifies the location of a JSON file containing a default module group to use for tile centres and borders which don't have a module group specified in CentralModuleGroups, LeftBorderModuleGroups, or RightBorderModuleGroups.",
+            "minLength": 1,
+            "title": "DefaultModuleGroup schema",
+            "type": "string"
+          },
+          "LeftBorderModuleGroups": {
+            "description": "Specifies the locations of JSON files containing module groups to use to weight the left side of horizontal borders in tile generation.",
+            "items": {
+              "additionalProperties": false,
+              "description": "Specifies an ordered pair of terrains and the location of a JSON file containing the module group which should be used for borders connecting them.",
+              "properties": {
+                "Filename": {
+                  "description": "Specifies the location of the JSON file containing the module group for use on borders with this pair of terrains.",
+                  "minLength": 1,
+                  "title": "BorderModuleGroup Filename schema",
+                  "type": "string"
+                },
+                "Terrains": {
+                  "description": "Specifies an ordered pair of terrains for which the module group should be used",
+                  "elements": {
+                    "description": "Specifies a terrain by its key in the Terrains property.",
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z_-]+$",
+                    "title": "BorderModuleGroups terrain schema",
+                    "type": "string"
+                  },
+                  "maxLength": 2,
+                  "minLength": 2,
+                  "title": "BorderModuleGroups Terrains schema",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "Terrains",
+                "Filename"
+              ],
+              "title": "BorderModuleGroup item schema",
+              "type": "object"
+            },
+            "minItems": 1,
+            "title": "LeftBorderModuleGroup schema",
+            "type": "array",
+            "_uniqueItems": true
+          },
+          "MetaOutput": {
+            "additionalProperties": false,
+            "description": "Specifies the filenames Wangscape will use to write meta-output.",
+            "properties": {
+              "TerrainHypergraph": {
+                "description": "Specifies the file which will contain the hypergraph of terrains which can appear in the same tile.",
+                "minLength": 1,
+                "title": "Terrain hypergraph filename",
+                "type": "string"
+              },
+              "TileData": {
+                "description": "Specifies the file which will contain individual details about each output tile.",
+                "minLength": 1,
+                "title": "Tile data filename",
+                "type": "string"
+              },
+              "TileGroups": {
+                "description": "Specifies the file which will contain grouped arrays of details for similar tiles.",
+                "minLength": 1,
+                "title": "Tile groups filename",
+                "type": "string"
+              },
+              "TilesetData": {
+                "description": "Specifies the file which will contain details about output tilesets.",
+                "minLength": 1,
+                "title": "Tileset data filename",
+                "type": "string"
+              }
+            },
+            "required": [
+              "TileData",
+              "TilesetData"
+            ],
+            "title": "Meta-output information schema",
+            "type": "object"
+          },
+          "OutputDirectory": {
+            "description": "Specifies the directory where Wangscape should write the output tiles (may be wiped first!)",
+            "minLength": 1,
+            "title": "Output directory schema.",
+            "type": "string"
+          },
+          "Terrains": {
+            "additionalProperties": false,
+            "description": "Specifies the names and textures of Wangscape's input terrain tiles.",
+            "minProperties": 2,
+            "patternProperties": {
+              "^[0-9a-zA-Z_-]+$": {
+                "additionalProperties": false,
+                "description": "Specifies the name and texture of one of Wangscape's input terrain tiles.",
+                "properties": {
+                  "FileName": {
+                    "description": "Specifies the file in which the texture of one of Wangscape's input terrain tiles can be found.",
+                    "minLength": 1,
+                    "title": "File name schema",
+                    "type": "string"
+                  },
+                  "FullName": {
+                    "description": "Specifies the full name of one of Wangscape's input terrain tiles.",
+                    "minLength": 1,
+                    "title": "Full name schema",
+                    "type": "string"
+                  },
+                  "OffsetX": {
+                    "default": 0,
+                    "description": "Specifies the horizontal offset of the terrain tile's texture in the input image, divided by the tile resolution.",
+                    "maximum": 512,
+                    "minimum": 0,
+                    "multipleOf": 1,
+                    "title": "X offset schema",
+                    "type": "integer"
+                  },
+                  "OffsetY": {
+                    "default": 0,
+                    "description": "Specifies the vertical offset of the terrain tile's texture in the input image, divided by the tile resolution.",
+                    "maximum": 512,
+                    "minimum": 0,
+                    "multipleOf": 1,
+                    "title": "Y offset schema",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "FullName",
+                  "FileName"
+                ],
+                "title": "Terrain schema",
+                "type": "object"
+              }
+            },
+            "title": "Terrains schema",
+            "type": "object"
+          },
+          "TileFormat": {
+            "additionalProperties": false,
+            "description": "Specifies the format of Wangscape's input and output tiles.",
+            "properties": {
+              "FileType": {
+                "default": "png",
+                "description": "Specifies the file type of Wangscape's output tiles.",
+                "enum": [
+                  "bmp",
+                  "png",
+                  "tga",
+                  "jpg"
+                ],
+                "title": "File type schema",
+                "type": "string"
+              },
+              "Resolution": {
+                "description": "Specifies the width and height of the square tiles Wangscape will operate on.",
+                "items": {
+                  "maximum": 512,
+                  "minimum": 8,
+                  "multipleOf": 1,
+                  "type": "integer"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "title": "Tile resolution",
+                "type": "array"
+              }
+            },
+            "required": [
+              "Resolution"
+            ],
+            "title": "Tile format schema",
+            "type": "object"
+          },
+          "TopBorderModuleGroups": {
+            "description": "Specifies the locations of JSON files containing module groups to use to weight the top side of vertical borders in tile generation.",
+            "items": {
+              "additionalProperties": false,
+              "description": "Specifies an ordered pair of terrains and the location of a JSON file containing the module group which should be used for borders connecting them.",
+              "properties": {
+                "Filename": {
+                  "description": "Specifies the location of the JSON file containing the module group for use on borders with this pair of terrains.",
+                  "minLength": 1,
+                  "title": "BorderModuleGroup Filename schema",
+                  "type": "string"
+                },
+                "Terrains": {
+                  "description": "Specifies an ordered pair of terrains for which the module group should be used",
+                  "elements": {
+                    "description": "Specifies a terrain by its key in the Terrains property.",
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z_-]+$",
+                    "title": "BorderModuleGroups terrain schema",
+                    "type": "string"
+                  },
+                  "maxLength": 2,
+                  "minLength": 2,
+                  "title": "BorderModuleGroups Terrains schema",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "Terrains",
+                "Filename"
+              ],
+              "title": "BorderModuleGroup item schema",
+              "type": "object"
+            },
+            "minItems": 1,
+            "title": "TopBorderModuleGroup schema",
+            "type": "array",
+            "_uniqueItems": true
+          }
+        },
+        "required": [
+          "TileFormat",
+          "OutputDirectory",
+          "Terrains",
+          "Cliques",
+          "AlphaCalculatorMode",
+          "CombinerModuleGroup"
+        ],
+        "title": "Wangscape options schema",
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies a terrain and the location of a JSON file containing the module group which should be used for the central weight of corner masks associated with that terrain.",
+              "properties": {
+                "Filename": {
+                  "description": "Specifies the location of the JSON file containing the module group for use in tile centres with this terrain.",
+                  "minLength": 1,
+                  "title": "CentralModuleGroups Filename schema",
+                  "type": "string"
+                },
+                "Terrain": {
+                  "description": "Specifies a terrain by its key in the Terrains property.",
+                  "minLength": 1,
+                  "pattern": "^[0-9a-zA-Z_-]+$",
+                  "title": "CentralModuleGroups terrain schema",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Terrain",
+                "Filename"
+              ],
+              "title": "CentralModuleGroups item schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^Filename$": true,
+                "^Terrain$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies an ordered pair of terrains and the location of a JSON file containing the module group which should be used for borders connecting them.",
+              "properties": {
+                "Filename": {
+                  "description": "Specifies the location of the JSON file containing the module group for use on borders with this pair of terrains.",
+                  "minLength": 1,
+                  "title": "BorderModuleGroup Filename schema",
+                  "type": "string"
+                },
+                "Terrains": {
+                  "description": "Specifies an ordered pair of terrains for which the module group should be used",
+                  "elements": {
+                    "description": "Specifies a terrain by its key in the Terrains property.",
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z_-]+$",
+                    "title": "BorderModuleGroups terrain schema",
+                    "type": "string"
+                  },
+                  "maxLength": 2,
+                  "minLength": 2,
+                  "title": "BorderModuleGroups Terrains schema",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "Terrains",
+                "Filename"
+              ],
+              "title": "BorderModuleGroup item schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^Filename$": true,
+                "^Terrains$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies how Wangscape should convert a set of terrain tiles into corner Wang tilesets.",
+              "properties": {
+                "TopBorderModuleGroups": {
+                  "description": "Specifies the locations of JSON files containing module groups to use to weight the top side of vertical borders in tile generation.",
+                  "items": {
+                    "$ref": "#/definitions4/modern_2"
+                  },
+                  "minItems": 1,
+                  "title": "TopBorderModuleGroup schema",
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "CombinerModuleGroup": {
+                  "description": "Specifies the location of the JSON file containing the module group to use to combine border and central module groups into the corner masks used to generate tiles.",
+                  "minLength": 1,
+                  "title": "CombinerModuleGroup filename schema",
+                  "type": "string"
+                },
+                "AlphaCalculatorMode": {
+                  "description": "Specifies which type of AlphaCalculator should be used to convert corner weights into alpha values.",
+                  "enum": [
+                    "Max",
+                    "Linear",
+                    "TopTwo",
+                    "Dither"
+                  ],
+                  "title": "AlphaCalculatorMode schema",
+                  "type": "string"
+                },
+                "AlphaCalculatorTopTwoPower": {
+                  "description": "Specifies an exponent to which noise values should be raised before applying TopTwo or related alpha calculators.",
+                  "title": "AlphaCalculatorTopTwoPower schema",
+                  "type": "number"
+                },
+                "DebugOutput": {
+                  "default": false,
+                  "description": "Specifies whether Wangscape should write debug data during tile generation.",
+                  "title": "DebugOutput schema",
+                  "type": "boolean"
+                },
+                "Terrains": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "Cliques": {
+                  "description": "Specifies terrain type sets for which corner Wang tilesets will be generated.",
+                  "items": {
+                    "description": "Specifies a set of 2-4 terrain types for which a corner Wang tileset will be generated.",
+                    "items": {
+                      "description": "Specifies a terrain type by its key in the Terrains property.",
+                      "minLength": 1,
+                      "pattern": "^[0-9a-zA-Z_-]+$",
+                      "title": "Clique item schema",
+                      "type": "string"
+                    },
+                    "maxItems": 4,
+                    "minItems": 2,
+                    "title": "Clique schema",
+                    "type": "array",
+                    "_uniqueItems": true
+                  },
+                  "minItems": 1,
+                  "title": "Cliques schema",
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "OutputDirectory": {
+                  "description": "Specifies the directory where Wangscape should write the output tiles (may be wiped first!)",
+                  "minLength": 1,
+                  "title": "Output directory schema.",
+                  "type": "string"
+                },
+                "DebugTileResolution": {
+                  "description": "Specifies the resolution of the images written as debug data during tile generation.",
+                  "items": {
+                    "minimum": 1.0,
+                    "multipleOf": 1.0,
+                    "type": "integer"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "title": "DebugTileResolution schema",
+                  "type": "array"
+                },
+                "DefaultModuleGroup": {
+                  "description": "Optionally specifies the location of a JSON file containing a default module group to use for tile centres and borders which don't have a module group specified in CentralModuleGroups, LeftBorderModuleGroups, or RightBorderModuleGroups.",
+                  "minLength": 1,
+                  "title": "DefaultModuleGroup schema",
+                  "type": "string"
+                },
+                "CentralModuleGroups": {
+                  "description": "Specifies the locations of JSON files containing module groups to use in the centre of generated tile partitions.",
+                  "items": {
+                    "$ref": "#/definitions4/modern_5"
+                  },
+                  "minItems": 1,
+                  "title": "CentralModuleGroups schema",
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "LeftBorderModuleGroups": {
+                  "description": "Specifies the locations of JSON files containing module groups to use to weight the left side of horizontal borders in tile generation.",
+                  "items": {
+                    "$ref": "#/definitions4/modern_6"
+                  },
+                  "minItems": 1,
+                  "title": "LeftBorderModuleGroup schema",
+                  "type": "array",
+                  "_uniqueItems": true
+                },
+                "MetaOutput": {
+                  "$ref": "#/definitions4/modern_7"
+                },
+                "TileFormat": {
+                  "$ref": "#/definitions4/modern_8"
+                }
+              },
+              "required": [
+                "TileFormat",
+                "OutputDirectory",
+                "Terrains",
+                "Cliques",
+                "AlphaCalculatorMode",
+                "CombinerModuleGroup"
+              ],
+              "title": "Wangscape options schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^Cliques$": true,
+                "^TopBorderModuleGroups$": true,
+                "^AlphaCalculatorMode$": true,
+                "^TileFormat$": true,
+                "^LeftBorderModuleGroups$": true,
+                "^DebugOutput$": true,
+                "^MetaOutput$": true,
+                "^DefaultModuleGroup$": true,
+                "^CombinerModuleGroup$": true,
+                "^OutputDirectory$": true,
+                "^DebugTileResolution$": true,
+                "^CentralModuleGroups$": true,
+                "^Terrains$": true,
+                "^AlphaCalculatorTopTwoPower$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies the filenames Wangscape will use to write meta-output.",
+              "properties": {
+                "TerrainHypergraph": {
+                  "description": "Specifies the file which will contain the hypergraph of terrains which can appear in the same tile.",
+                  "minLength": 1,
+                  "title": "Terrain hypergraph filename",
+                  "type": "string"
+                },
+                "TileData": {
+                  "description": "Specifies the file which will contain individual details about each output tile.",
+                  "minLength": 1,
+                  "title": "Tile data filename",
+                  "type": "string"
+                },
+                "TileGroups": {
+                  "description": "Specifies the file which will contain grouped arrays of details for similar tiles.",
+                  "minLength": 1,
+                  "title": "Tile groups filename",
+                  "type": "string"
+                },
+                "TilesetData": {
+                  "description": "Specifies the file which will contain details about output tilesets.",
+                  "minLength": 1,
+                  "title": "Tileset data filename",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "TileData",
+                "TilesetData"
+              ],
+              "title": "Meta-output information schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^TerrainHypergraph$": true,
+                "^TileData$": true,
+                "^TileGroups$": true,
+                "^TilesetData$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies an ordered pair of terrains and the location of a JSON file containing the module group which should be used for borders connecting them.",
+              "properties": {
+                "Filename": {
+                  "description": "Specifies the location of the JSON file containing the module group for use on borders with this pair of terrains.",
+                  "minLength": 1,
+                  "title": "BorderModuleGroup Filename schema",
+                  "type": "string"
+                },
+                "Terrains": {
+                  "description": "Specifies an ordered pair of terrains for which the module group should be used",
+                  "elements": {
+                    "description": "Specifies a terrain by its key in the Terrains property.",
+                    "minLength": 1,
+                    "pattern": "^[0-9a-zA-Z_-]+$",
+                    "title": "BorderModuleGroups terrain schema",
+                    "type": "string"
+                  },
+                  "maxLength": 2,
+                  "minLength": 2,
+                  "title": "BorderModuleGroups Terrains schema",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "Terrains",
+                "Filename"
+              ],
+              "title": "BorderModuleGroup item schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^Filename$": true,
+                "^Terrains$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies the format of Wangscape's input and output tiles.",
+              "properties": {
+                "FileType": {
+                  "default": "png",
+                  "description": "Specifies the file type of Wangscape's output tiles.",
+                  "enum": [
+                    "bmp",
+                    "png",
+                    "tga",
+                    "jpg"
+                  ],
+                  "title": "File type schema",
+                  "type": "string"
+                },
+                "Resolution": {
+                  "description": "Specifies the width and height of the square tiles Wangscape will operate on.",
+                  "items": {
+                    "maximum": 512.0,
+                    "minimum": 8.0,
+                    "multipleOf": 1.0,
+                    "type": "integer"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "title": "Tile resolution",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "Resolution"
+              ],
+              "title": "Tile format schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^FileType$": true,
+                "^Resolution$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies the names and textures of Wangscape's input terrain tiles.",
+              "minProperties": 2,
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]+$": {
+                  "$ref": "#/definitions4/modern_4"
+                }
+              },
+              "title": "Terrains schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Specifies the name and texture of one of Wangscape's input terrain tiles.",
+              "properties": {
+                "FileName": {
+                  "description": "Specifies the file in which the texture of one of Wangscape's input terrain tiles can be found.",
+                  "minLength": 1,
+                  "title": "File name schema",
+                  "type": "string"
+                },
+                "FullName": {
+                  "description": "Specifies the full name of one of Wangscape's input terrain tiles.",
+                  "minLength": 1,
+                  "title": "Full name schema",
+                  "type": "string"
+                },
+                "OffsetX": {
+                  "default": 0,
+                  "description": "Specifies the horizontal offset of the terrain tile's texture in the input image, divided by the tile resolution.",
+                  "maximum": 512.0,
+                  "minimum": 0.0,
+                  "multipleOf": 1.0,
+                  "title": "X offset schema",
+                  "type": "integer"
+                },
+                "OffsetY": {
+                  "default": 0,
+                  "description": "Specifies the vertical offset of the terrain tile's texture in the input image, divided by the tile resolution.",
+                  "maximum": 512.0,
+                  "minimum": 0.0,
+                  "multipleOf": 1.0,
+                  "title": "Y offset schema",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "FullName",
+                "FileName"
+              ],
+              "title": "Terrain schema",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^FileName$": true,
+                "^FullName$": true,
+                "^OffsetX$": true,
+                "^OffsetY$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

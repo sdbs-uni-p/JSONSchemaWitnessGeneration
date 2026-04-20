@@ -1,0 +1,1022 @@
+[
+  {
+    "id": 3013,
+    "schema1": {
+      "title": "Zooniverse aggregation json schema",
+      "description": "The aggregation scheme for Zooniverse aggregation results",
+      "version": "0.1",
+      "type": "object",
+      "properties": {
+        " instructions": {
+          "type": "object",
+          "patternProperties": {
+            "init|(T[0-9]+)": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "description": "instructions related to a marking task",
+                  "properties": {
+                    "instruction": {
+                      "type": "string",
+                      "description": "the description of the marking task"
+                    },
+                    "tools": {
+                      "description": "the different tools available to the user for this specific task",
+                      "type": "object",
+                      "patternProperties": {
+                        "[0-9]+": {
+                          "type": "object",
+                          "properties": {
+                            "marking tool": {
+                              "type": "string",
+                              "description": "the specific text shown for each tool"
+                            },
+                            "followup_questions": {
+                              "type": "object",
+                              "description": "possible follow up questions associated with the specific marking tool",
+                              "patternProperties": {
+                                "[0-9]+": {
+                                  "type": "object",
+                                  "properties": {
+                                    "answers": {
+                                      "type": "object",
+                                      "patternProperties": {
+                                        "[0-9]+": {
+                                          "type": "object",
+                                          "properties": {
+                                            "label": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "additionalProperties": {
+                                            "not": {}
+                                          },
+                                          "required": [
+                                            "label"
+                                          ]
+                                        }
+                                      },
+                                      "additionalProperties": {
+                                        "not": {}
+                                      }
+                                    },
+                                    "question": {
+                                      "description": "the text associated with the follow up question",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": {
+                                    "not": {}
+                                  }
+                                }
+                              },
+                              "additionalProperties": {
+                                "not": {}
+                              }
+                            }
+                          },
+                          "additionalProperties": {
+                            "not": {}
+                          }
+                        }
+                      },
+                      "additionalProperties": {
+                        "not": {}
+                      }
+                    }
+                  },
+                  "required": [
+                    "instruction",
+                    "tools"
+                  ],
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "instructions related to a simple classification task",
+                  "properties": {
+                    "instruction": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "type": "object",
+                      "patternProperties": {
+                        "[0-9]+": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": {
+                        "not": {}
+                      }
+                    }
+                  },
+                  "required": [
+                    "instruction",
+                    "answers"
+                  ],
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        " metadata": {}
+      },
+      "patternProperties": {
+        "init|(T[0-9]+)": {
+          "oneOf": [
+            {
+              "type": "array",
+              "description": "classification results",
+              "items": [
+                {
+                  "type": "object",
+                  "description": "mapping from class id to floating value floating value associated with each class ",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "type": "number",
+                      "description": "can be either percentage of people who chose a class or the probability of the class"
+                    }
+                  }
+                },
+                {
+                  "type": "number",
+                  "description": "total number of people who have classified this task/workflow/subject"
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "description": "clustering results",
+              "patternProperties": {
+                "(line)|(point)|(ellipse)|(circle) clusters": {
+                  "type": "object",
+                  "description": "a listing of the clusters for each different shape type",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "type": "object",
+                      "description": "summary values for an individual cluster",
+                      "properties": {
+                        "existence": {
+                          "type": "array",
+                          "description": "probability that the cluster is true/false positive - if either value is missing, it is equal to 0",
+                          "items": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "0": {
+                                  "type": "number",
+                                  "description": "'probability' that the cluster is a false positive"
+                                },
+                                "1": {
+                                  "type": "number",
+                                  "description": "'probability' that the cluster is a true positive"
+                                }
+                              }
+                            },
+                            {
+                              "type": "number",
+                              "description": "number of users who have viewed this subject for this workflow/task, regardless of whether they marked this cluster"
+                            }
+                          ]
+                        },
+                        "center": {
+                          "type": "array",
+                          "description": "center of the cluster",
+                          "items": {
+                            "description": "cluster center - median based - along each dimension",
+                            "type": "number"
+                          }
+                        },
+                        "tool_classification": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "object",
+                              "patternProperties": {
+                                "[0-1]+": {
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "minItems": 2,
+                          "maxItems": 2
+                        },
+                        "followup_questions": {
+                          "description": "responses to follow up questions specific to the marking tool used",
+                          "type": "array",
+                          "items": {
+                            "description": "response to a single follow up question",
+                            "type": "array",
+                            "items": [
+                              {
+                                "type": "object",
+                                "description": "mapping from class id to floating value floating value associated with each class ",
+                                "patternProperties": {
+                                  "[0-9]+": {
+                                    "type": "number",
+                                    "description": "can be either percentage of people who chose a class or the probability of the class"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "number",
+                                "description": "total number of people who have classified this followup question/workflow/subject"
+                              }
+                            ],
+                            "minItems": 2,
+                            "maxItems": 2
+                          }
+                        }
+                      },
+                      "required": [
+                        "existence",
+                        "center",
+                        "tool_classification"
+                      ],
+                      "additionalProperties": {
+                        "not": {}
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                },
+                "(rectangle)|(polygon) clusters": {
+                  "type": "object",
+                  "description": "a listing of the rectangle/polygon clusters - center points are of different type than for line/point ",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "type": "object",
+                      "description": "summary values for an individual cluster",
+                      "properties": {
+                        "existence": {
+                          "type": "array",
+                          "description": "probability that the cluster is true/false positive - if either value is missing, it is equal to 0",
+                          "items": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "0": {
+                                  "type": "number",
+                                  "description": "'probability' that the cluster is a false positive"
+                                },
+                                "1": {
+                                  "type": "number",
+                                  "description": "'probability' that the cluster is a true positive"
+                                }
+                              }
+                            },
+                            {
+                              "type": "number",
+                              "description": "number of users who have viewed this subject for this workflow/task, regardless of whether they marked this cluster"
+                            }
+                          ]
+                        },
+                        "center": {
+                          "type": "array",
+                          "description": "center - given as bounding box",
+                          "items": {
+                            "description": "corner points of bounding box",
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                          }
+                        },
+                        "tool_classification": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "object",
+                              "patternProperties": {
+                                "[0-1]+": {
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "minItems": 2,
+                          "maxItems": 2
+                        },
+                        "followup_questions": {
+                          "description": "responses to follow up questions specific to the marking tool used",
+                          "type": "array",
+                          "items": {
+                            "description": "response to a single follow up question",
+                            "type": "array",
+                            "items": [
+                              {
+                                "type": "object",
+                                "description": "mapping from class id to floating value floating value associated with each class ",
+                                "patternProperties": {
+                                  "[0-9]+": {
+                                    "type": "number",
+                                    "description": "can be either percentage of people who chose a class or the probability of the class"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "number",
+                                "description": "total number of people who have classified this followup question/workflow/subject"
+                              }
+                            ],
+                            "minItems": 2,
+                            "maxItems": 2
+                          }
+                        }
+                      },
+                      "required": [
+                        "existence",
+                        "center",
+                        "tool_classification"
+                      ],
+                      "additionalProperties": {
+                        "not": {}
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        " instructions"
+      ],
+      "additionalProperties": {
+        "not": {}
+      }
+    },
+    "schema2": {
+      "definitions2": {
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "marking tool": {
+                      "type": "string",
+                      "description": "the specific text shown for each tool"
+                    },
+                    "followup_questions": {
+                      "$ref": "#/definitions2/modern_6"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^marking tool$": {},
+                    "^followup_questions$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "possible follow up questions associated with the specific marking tool",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "$ref": "#/definitions2/modern_7"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "instructions related to a simple classification task",
+                  "properties": {
+                    "instruction": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "$ref": "#/definitions2/modern_11"
+                    }
+                  },
+                  "required": [
+                    "instruction",
+                    "answers"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^instruction$": {},
+                    "^answers$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Zooniverse aggregation json schema",
+                  "description": "The aggregation scheme for Zooniverse aggregation results",
+                  "version": "0.1",
+                  "type": "object",
+                  "properties": {
+                    " instructions": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    " metadata": true
+                  },
+                  "patternProperties": {
+                    "init|(T[0-9]+)": {
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "description": "classification results",
+                          "items": [
+                            {
+                              "type": "object",
+                              "description": "mapping from class id to floating value floating value associated with each class ",
+                              "patternProperties": {
+                                "[0-9]+": {
+                                  "type": "number",
+                                  "description": "can be either percentage of people who chose a class or the probability of the class"
+                                }
+                              }
+                            },
+                            {
+                              "type": "number",
+                              "description": "total number of people who have classified this task/workflow/subject"
+                            }
+                          ]
+                        },
+                        {
+                          "$ref": "#/definitions2/modern_12"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    " instructions"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^ instructions$": {},
+                    "^ metadata$": {},
+                    "init|(T[0-9]+)": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "answers": {
+                      "$ref": "#/definitions2/modern_8"
+                    },
+                    "question": {
+                      "description": "the text associated with the follow up question",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^answers$": {},
+                    "^question$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "patternProperties": {
+                    "init|(T[0-9]+)": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/modern_3"
+                        },
+                        {
+                          "$ref": "#/definitions2/modern_10"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "init|(T[0-9]+)": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_12": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "clustering results",
+                  "patternProperties": {
+                    "(line)|(point)|(ellipse)|(circle) clusters": {
+                      "$ref": "#/definitions2/modern_13"
+                    },
+                    "(rectangle)|(polygon) clusters": {
+                      "$ref": "#/definitions2/modern_15"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "(line)|(point)|(ellipse)|(circle) clusters": {},
+                    "(rectangle)|(polygon) clusters": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "$ref": "#/definitions2/modern_9"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^label$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_13": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "a listing of the clusters for each different shape type",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "$ref": "#/definitions2/modern_14"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "instructions related to a marking task",
+                  "properties": {
+                    "instruction": {
+                      "type": "string",
+                      "description": "the description of the marking task"
+                    },
+                    "tools": {
+                      "$ref": "#/definitions2/modern_4"
+                    }
+                  },
+                  "required": [
+                    "instruction",
+                    "tools"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^instruction$": {},
+                    "^tools$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_11": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_14": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "summary values for an individual cluster",
+                  "properties": {
+                    "existence": {
+                      "type": "array",
+                      "description": "probability that the cluster is true/false positive - if either value is missing, it is equal to 0",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "0": {
+                              "type": "number",
+                              "description": "'probability' that the cluster is a false positive"
+                            },
+                            "1": {
+                              "type": "number",
+                              "description": "'probability' that the cluster is a true positive"
+                            }
+                          }
+                        },
+                        {
+                          "type": "number",
+                          "description": "number of users who have viewed this subject for this workflow/task, regardless of whether they marked this cluster"
+                        }
+                      ]
+                    },
+                    "center": {
+                      "type": "array",
+                      "description": "center of the cluster",
+                      "items": {
+                        "description": "cluster center - median based - along each dimension",
+                        "type": "number"
+                      }
+                    },
+                    "tool_classification": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": [
+                        {
+                          "type": "object",
+                          "patternProperties": {
+                            "[0-1]+": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "followup_questions": {
+                      "description": "responses to follow up questions specific to the marking tool used",
+                      "type": "array",
+                      "items": {
+                        "description": "response to a single follow up question",
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                          {
+                            "type": "object",
+                            "description": "mapping from class id to floating value floating value associated with each class ",
+                            "patternProperties": {
+                              "[0-9]+": {
+                                "type": "number",
+                                "description": "can be either percentage of people who chose a class or the probability of the class"
+                              }
+                            }
+                          },
+                          {
+                            "type": "number",
+                            "description": "total number of people who have classified this followup question/workflow/subject"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "existence",
+                    "center",
+                    "tool_classification"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^existence$": {},
+                    "^center$": {},
+                    "^tool_classification$": {},
+                    "^followup_questions$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "the different tools available to the user for this specific task",
+                  "type": "object",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "$ref": "#/definitions2/modern_5"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_16": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "summary values for an individual cluster",
+                  "properties": {
+                    "existence": {
+                      "type": "array",
+                      "description": "probability that the cluster is true/false positive - if either value is missing, it is equal to 0",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "0": {
+                              "type": "number",
+                              "description": "'probability' that the cluster is a false positive"
+                            },
+                            "1": {
+                              "type": "number",
+                              "description": "'probability' that the cluster is a true positive"
+                            }
+                          }
+                        },
+                        {
+                          "type": "number",
+                          "description": "number of users who have viewed this subject for this workflow/task, regardless of whether they marked this cluster"
+                        }
+                      ]
+                    },
+                    "center": {
+                      "type": "array",
+                      "description": "center - given as bounding box",
+                      "items": {
+                        "description": "corner points of bounding box",
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      }
+                    },
+                    "tool_classification": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": [
+                        {
+                          "type": "object",
+                          "patternProperties": {
+                            "[0-1]+": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "followup_questions": {
+                      "description": "responses to follow up questions specific to the marking tool used",
+                      "type": "array",
+                      "items": {
+                        "description": "response to a single follow up question",
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                          {
+                            "type": "object",
+                            "description": "mapping from class id to floating value floating value associated with each class ",
+                            "patternProperties": {
+                              "[0-9]+": {
+                                "type": "number",
+                                "description": "can be either percentage of people who chose a class or the probability of the class"
+                              }
+                            }
+                          },
+                          {
+                            "type": "number",
+                            "description": "total number of people who have classified this followup question/workflow/subject"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "existence",
+                    "center",
+                    "tool_classification"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^existence$": {},
+                    "^center$": {},
+                    "^tool_classification$": {},
+                    "^followup_questions$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_15": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "a listing of the rectangle/polygon clusters - center points are of different type than for line/point ",
+                  "patternProperties": {
+                    "[0-9]+": {
+                      "$ref": "#/definitions2/modern_16"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "[0-9]+": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_1"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

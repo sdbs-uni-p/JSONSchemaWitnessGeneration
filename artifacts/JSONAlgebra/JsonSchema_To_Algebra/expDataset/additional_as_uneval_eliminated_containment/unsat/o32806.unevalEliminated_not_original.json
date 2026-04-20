@@ -1,0 +1,289 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "env": {
+            "$ref": "#/definitions3/identifier"
+          },
+          "log_level": {
+            "type": "string",
+            "enum": [
+              "trace",
+              "debug",
+              "info",
+              "warn",
+              "error",
+              "fatal"
+            ]
+          },
+          "aws": {
+            "type": "object",
+            "properties": {
+              "accountId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "profile": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "region": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "build": {
+            "type": "object",
+            "properties": {
+              "unbundled": {
+                "type": "object",
+                "patternProperties": {
+                  ".+": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "update": {
+            "type": "object",
+            "properties": {}
+          },
+          "registry": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "command"
+            ],
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "argv": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "env": {
+                "type": "object",
+                "patternProperties": {
+                  ".+": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "utils": {
+            "type": "object"
+          },
+          "hooks": {
+            "type": "object",
+            "properties": {
+              "prebuild": {},
+              "prebuildrollup": {},
+              "prebuildinstall": {},
+              "postbuildinstall": {},
+              "postbuildrollup": {},
+              "postbuild": {},
+              "preupdate": {},
+              "postupdate": {},
+              "prepublish": {},
+              "postpublish": {}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "identifier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "pattern": "^[\\w\\d][\\w\\d-]*$"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "registry": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "required": [
+                    "command"
+                  ],
+                  "properties": {
+                    "command": {
+                      "type": "string"
+                    },
+                    "argv": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "env": {
+                      "type": "object",
+                      "patternProperties": {
+                        ".+": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "aws": {
+                  "type": "object",
+                  "properties": {
+                    "accountId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "profile": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "region": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "utils": {
+                  "type": "object"
+                },
+                "build": {
+                  "type": "object",
+                  "properties": {
+                    "unbundled": {
+                      "type": "object",
+                      "patternProperties": {
+                        ".+": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "log_level": {
+                  "type": "string",
+                  "enum": [
+                    "trace",
+                    "debug",
+                    "info",
+                    "warn",
+                    "error",
+                    "fatal"
+                  ]
+                },
+                "hooks": {
+                  "type": "object",
+                  "properties": {
+                    "postbuildrollup": true,
+                    "prebuildinstall": true,
+                    "preupdate": true,
+                    "postpublish": true,
+                    "postbuildinstall": true,
+                    "postbuild": true,
+                    "prepublish": true,
+                    "postupdate": true,
+                    "prebuild": true,
+                    "prebuildrollup": true
+                  }
+                },
+                "update": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "env": {
+                  "$ref": "#/definitions4/identifier"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^aws$": true,
+                "^utils$": true,
+                "^hooks$": true,
+                "^build$": true,
+                "^env$": true,
+                "^log_level$": true,
+                "^update$": true,
+                "^registry$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "identifier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "pattern": "^[\\w\\d][\\w\\d-]*$"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/identifier"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/identifier"
+      }
+    },
+    {
+      "$ref": "#/definitions4/identifier"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/identifier"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

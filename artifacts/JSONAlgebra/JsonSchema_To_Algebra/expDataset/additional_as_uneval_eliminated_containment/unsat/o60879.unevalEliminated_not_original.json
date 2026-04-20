@@ -1,0 +1,156 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "http://mindsnacks.github.io/Zinc/schemas/v1/catalog.json#",
+      "type": "object",
+      "required": [
+        "id",
+        "format"
+      ],
+      "properties": {
+        "bundles": {
+          "$ref": "#/definitions4/modern_1"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1.0
+          }
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "next_version": {
+          "type": "integer"
+        },
+        "format": {
+          "type": "string",
+          "pattern": "1"
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "http://mindsnacks.github.io/Zinc/schemas/v1/catalog.json#",
+        "type": "object",
+        "required": [
+          "id",
+          "format"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "format": {
+            "type": "string",
+            "pattern": "1"
+          },
+          "bundles": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+              ".+": {
+                "type": "object",
+                "properties": {
+                  "distributions": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "patternProperties": {
+                      ".+": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "next_version": {
+            "type": "integer"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                ".+": {
+                  "type": "object",
+                  "properties": {
+                    "distributions": {
+                      "$ref": "#/definitions4/modern_2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".+": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                ".+": {
+                  "type": "integer"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".+": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,401 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "DomainName"
+      ],
+      "properties": {
+        "DomainName": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9\\-]+$"
+        },
+        "AccessPolicies": {
+          "type": "string",
+          "pattern": ".+"
+        },
+        "AdvancedOptions": {
+          "type": "object",
+          "patternProperties": {
+            ".+": {
+              "type": "string",
+              "pattern": ".+"
+            }
+          },
+          "additionalProperties": false
+        },
+        "EBSOptions": {
+          "type": "object",
+          "properties": {
+            "EBSEnabled": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            },
+            "Iops": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "VolumeSize": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "VolumeType": {
+              "type": "string",
+              "enum": [
+                "standard",
+                "gp2",
+                "io1"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "ElasticsearchClusterConfig": {
+          "type": "object",
+          "properties": {
+            "DedicatedMasterCount": {
+              "type": "string",
+              "pattern": "^\\d$"
+            },
+            "DedicatedMasterEnabled": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            },
+            "DedicatedMasterType": {
+              "$ref": "#/definitions3/ElasticseachNodeType"
+            },
+            "InstanceCount": {
+              "type": "string",
+              "pattern": "^\\d$"
+            },
+            "InstanceType": {
+              "$ref": "#/definitions3/ElasticseachNodeType"
+            },
+            "ZoneAwarenessEnabled": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "SnapshotOptions": {
+          "type": "object",
+          "properties": {
+            "AutomatedSnapshotStartHour": {
+              "type": "string",
+              "pattern": "^\\d$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions3": {
+    "ElasticseachNodeType": {
+      "type": "string",
+      "enum": [
+        "m3.medium.elasticsearch",
+        "m3.large.elasticsearch",
+        "m3.xlarge.elasticsearch",
+        "m3.2xlarge.elasticsearch",
+        "t2.micro.elasticsearch",
+        "t2.small.elasticsearch",
+        "t2.medium.elasticsearch",
+        "r3.large.elasticsearch",
+        "r3.xlarge.elasticsearch",
+        "r3.2xlarge.elasticsearch",
+        "r3.4xlarge.elasticsearch",
+        "r3.8xlarge.elasticsearch",
+        "i2.xlarge.elasticsearch",
+        "i2.2xlarge.elasticsearch"
+      ]
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "AutomatedSnapshotStartHour": {
+                  "type": "string",
+                  "pattern": "^\\d$"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^AutomatedSnapshotStartHour$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "DomainName"
+              ],
+              "properties": {
+                "AccessPolicies": {
+                  "type": "string",
+                  "pattern": ".+"
+                },
+                "ElasticsearchClusterConfig": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "AdvancedOptions": {
+                  "$ref": "#/definitions4/modern_3"
+                },
+                "DomainName": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9\\-]+$"
+                },
+                "EBSOptions": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "SnapshotOptions": {
+                  "$ref": "#/definitions4/modern_5"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^EBSOptions$": true,
+                "^AccessPolicies$": true,
+                "^SnapshotOptions$": true,
+                "^DomainName$": true,
+                "^ElasticsearchClusterConfig$": true,
+                "^AdvancedOptions$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "DedicatedMasterType": {
+                  "$ref": "#/definitions4/ElasticseachNodeType"
+                },
+                "DedicatedMasterEnabled": {
+                  "type": "string",
+                  "enum": [
+                    "true",
+                    "false"
+                  ]
+                },
+                "DedicatedMasterCount": {
+                  "type": "string",
+                  "pattern": "^\\d$"
+                },
+                "InstanceCount": {
+                  "type": "string",
+                  "pattern": "^\\d$"
+                },
+                "InstanceType": {
+                  "$ref": "#/definitions4/ElasticseachNodeType"
+                },
+                "ZoneAwarenessEnabled": {
+                  "type": "string",
+                  "enum": [
+                    "true",
+                    "false"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^InstanceType$": true,
+                "^DedicatedMasterCount$": true,
+                "^InstanceCount$": true,
+                "^ZoneAwarenessEnabled$": true,
+                "^DedicatedMasterType$": true,
+                "^DedicatedMasterEnabled$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                ".+": {
+                  "type": "string",
+                  "pattern": ".+"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".+": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ElasticseachNodeType": {
+      "type": "string",
+      "enum": [
+        "m3.medium.elasticsearch",
+        "m3.large.elasticsearch",
+        "m3.xlarge.elasticsearch",
+        "m3.2xlarge.elasticsearch",
+        "t2.micro.elasticsearch",
+        "t2.small.elasticsearch",
+        "t2.medium.elasticsearch",
+        "r3.large.elasticsearch",
+        "r3.xlarge.elasticsearch",
+        "r3.2xlarge.elasticsearch",
+        "r3.4xlarge.elasticsearch",
+        "r3.8xlarge.elasticsearch",
+        "i2.xlarge.elasticsearch",
+        "i2.2xlarge.elasticsearch"
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "EBSEnabled": {
+                  "type": "string",
+                  "enum": [
+                    "true",
+                    "false"
+                  ]
+                },
+                "Iops": {
+                  "type": "string",
+                  "pattern": "^\\d+$"
+                },
+                "VolumeSize": {
+                  "type": "string",
+                  "pattern": "^\\d+$"
+                },
+                "VolumeType": {
+                  "type": "string",
+                  "enum": [
+                    "standard",
+                    "gp2",
+                    "io1"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^EBSEnabled$": true,
+                "^Iops$": true,
+                "^VolumeSize$": true,
+                "^VolumeType$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/ElasticseachNodeType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/ElasticseachNodeType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/ElasticseachNodeType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/ElasticseachNodeType"
+      }
+    }
+  ]
+}

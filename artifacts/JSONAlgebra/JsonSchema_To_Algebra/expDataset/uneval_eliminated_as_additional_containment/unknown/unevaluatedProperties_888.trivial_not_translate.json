@@ -1,0 +1,800 @@
+{
+  "allOf": [
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/_AdaptiveConf_application"
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "anyOf": [
+          {
+            "$ref": "#/definitions1/_AdaptiveConf_application"
+          }
+        ]
+      }
+    }
+  ],
+  "definitions2": {
+    "_AdaptiveAuthorizationControl_": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/_AdaptiveAuthorizationControl_.propertyTypes"
+        }
+      ],
+      "description": "This defines how authorization checking occurs in this application.",
+      "title": "Authorization",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "_AdaptiveAuthorizationControl_.propertyTypes": {
+      "properties": {
+        "checkIntermediateMode": {
+          "description": "Do authorization check when running in mode intermediate. If false, the checks will be bypassed.",
+          "title": "Check Intermediate",
+          "type": "boolean"
+        },
+        "coreAuthorizationCheck": {
+          "description": "This is evaluated for authorization checks when running in core mode. If not specified, access is permitted. Be very careful when specifying this parameter because an error can cause the application to fail.",
+          "title": "Core Check",
+          "type": "string"
+        },
+        "denyIfNotApplicable": {
+          "description": "Specify true to deny access to resources when notApplicable is the final result of other checks.",
+          "title": "Deny If Not Applicable",
+          "type": "boolean"
+        },
+        "initialAuthorizationCheck": {
+          "description": "This is evaluated before authorization handlers are called to determine whether to allow the requested access to the specified resourceId and/or object. A result of permit or deny is the final decision. If this parameter is not specified or the result is notApplicable, active authorization handlers will be processed. Parameter permitIfNotApplicable is used to determine the result when all checks return notApplicable.",
+          "title": "Initial Check",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "_AdaptiveConf_.propertyTypes": {
+      "properties": {
+        "description": {
+          "contentMediaType": "text/plain",
+          "description": "The description of this configuration component.",
+          "title": "Description",
+          "type": "string"
+        },
+        "sourceLocation": {
+          "description": "This is a contextual string added when this configuration object is processed.",
+          "title": "Source Location",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title for this configuration component.",
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "description": "Configuration type.",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "_AdaptiveConf_application": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/_AdaptiveConf_application.propertyTypes"
+        },
+        {
+          "$ref": "#/definitions2/_AdaptiveConf_.propertyTypes"
+        }
+      ],
+      "description": "Adaptive Framework configuration component for type=application. There is only one application conf entry per Adaptive Framework instance.\n\nUse path /afw/_AdaptiveConf_application/current to access this entry at run time.",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "_AdaptiveConf_application.propertyTypes": {
+      "properties": {
+        "_meta_": {},
+        "applicationId": {
+          "description": "This is id of the application. The default applicationId is \"application\". This property can only be specified in the type=application entry of the conf file.",
+          "readOnly": true,
+          "title": "Application Id",
+          "type": "string"
+        },
+        "authorizationControl": {
+          "$ref": "#/definitions2/_AdaptiveAuthorizationControl_",
+          "description": "This defines how authorization checking occurs in this application.",
+          "title": "Authorization",
+          "type": "object"
+        },
+        "confAdaptorId": {
+          "description": "This is the optional adaptorId of the running adaptor that contains configuration related objects. This property can only be specified in the type=application entry of the conf file.\n\nThe runtime /afw/_AdaptiveApplication_/current object will consist of properties from the type=application entry of the conf file plus unique properties from the optional /<confAdaptorId>/_AdaptiveConf_application/<applicationId> object.\n\nAll services defined by _AdaptiveServiceConf_ objects in <confAdaptorId> with startup \"permanent\" or \"immediate\" will be started when the type=application conf entry is processed.",
+          "readOnly": true,
+          "title": "Conf Adaptor",
+          "type": "string"
+        },
+        "defaultAdaptorId": {
+          "description": "This is the adaptorId chosen by default for user interface select components.",
+          "title": "Default Adaptor",
+          "type": "string"
+        },
+        "defaultFlags": {
+          "description": "This is a list of the flagId of default flags that will be set when an execution context (xctx) is created. Flags in this list that are not yet registered will be set as a default when/if they are registered. Each registered flagId is the objectId of an object in /afw/_AdaptiveFlag_/.",
+          "items": {
+            "description": "This is a list of the flagId of default flags that will be set when an execution context (xctx) is created. Flags in this list that are not yet registered will be set as a default when/if they are registered. Each registered flagId is the objectId of an object in /afw/_AdaptiveFlag_/.",
+            "title": "List of default flags to be set when an execution context (xctx) is created.",
+            "type": "string"
+          },
+          "title": "Default Flags",
+          "type": "array"
+        },
+        "defaultModelAdaptorId": {
+          "description": "When presented with multiple model adaptors, this is the default adaptorId to use. This will be the default selected adaptor chosen by user interface components.",
+          "title": "Default Model Adaptor",
+          "type": "string"
+        },
+        "description": {
+          "contentMediaType": "text/plain",
+          "description": "The description of the application.",
+          "title": "Description",
+          "type": "string"
+        },
+        "extensionModulePaths": {
+          "description": "This is a list of modulePaths of extensions to load at startup. If there is already an extension manifest that has the extensionId, use the extensions property instead. This property is most useful for loading the extension manifest of an AFW package.",
+          "items": {
+            "description": "This is a list of modulePaths of extensions to load at startup. If there is already an extension manifest that has the extensionId, use the extensions property instead. This property is most useful for loading the extension manifest of an AFW package.",
+            "title": "List of modulePaths of extensions to load at startup",
+            "type": "string"
+          },
+          "title": "Extension Module Paths",
+          "type": "array"
+        },
+        "extensions": {
+          "description": "This is a list of extensionId of extensions to load at startup. Each extensionId must be the objectId of an object in /afw/_AdaptiveManifest_/.",
+          "items": {
+            "description": "This is a list of extensionId of extensions to load at startup. Each extensionId must be the objectId of an object in /afw/_AdaptiveManifest_/.",
+            "title": "List of extensionIds to load at startup",
+            "type": "string"
+          },
+          "title": "Extensions",
+          "type": "array"
+        },
+        "layoutsAdaptorId": {
+          "description": "This is the adaptorId that locates Adaptive Layout Component objects.",
+          "title": "Layouts Adaptor",
+          "type": "string"
+        },
+        "onApplicationStartupComplete": {
+          "description": "This is an optional script to run after this application has completed startup but before starting to process requests. The script can perform additional startup functions or request that the application terminate. All permanent and immediate services will have been started before the script is called. If the script fails or explicitly returns a value other than 0, the application will terminate.",
+          "title": "Application Startup Complete",
+          "type": "string"
+        },
+        "qualifiedVariables": {
+          "$ref": "#/definitions2/_AdaptiveHybridPropertiesObjects_",
+          "description": "The name of each property in this object corresponds to a qualifier that is available in processing associated with this application. The qualifier can not be an empty string. The properties of these \"qualifier objects\" are hybrid values that are accessible as qualified variables. These variables are evaluated once per execution context (xctx) as they are accessed.\n\nSome qualifiers are restricted.",
+          "title": "Qualified Variables",
+          "type": "object"
+        },
+        "rootFilePaths": {
+          "$ref": "#/definitions2/_AdaptiveRootFilePaths_",
+          "description": "The properties of this object are the root file paths used by open_file().",
+          "title": "Root File Paths",
+          "type": "object"
+        },
+        "title": {
+          "description": "The title of the application. This is used as the title of the Adaptive Framework Web App and is available for use in other places as appropriate.",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "_AdaptiveHybridPropertiesObjects_": {
+      "additionalProperties": {
+        "$ref": "#/definitions2/_AdaptiveHybridProperties_",
+        "description": "Each property is a _AdaptiveHybridProperties_ object.",
+        "type": "object"
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/_AdaptiveHybridPropertiesObjects_.propertyTypes"
+        }
+      ],
+      "description": "The name of each property in this object corresponds to a qualifier that is available in processing associated with this application. The qualifier can not be an empty string. The properties of these \"qualifier objects\" are hybrid values that are accessible as qualified variables. These variables are evaluated once per execution context (xctx) as they are accessed.\n\nSome qualifiers are restricted.",
+      "title": "Qualified Variables",
+      "type": "object"
+    },
+    "_AdaptiveHybridPropertiesObjects_.propertyTypes": {
+      "properties": {},
+      "type": "object"
+    },
+    "_AdaptiveHybridProperties_": {
+      "additionalProperties": {
+        "description": "Each property is a hybrid value.",
+        "type": "string"
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/_AdaptiveHybridProperties_.propertyTypes"
+        }
+      ],
+      "description": "Each property is a hybrid value.",
+      "type": "object"
+    },
+    "_AdaptiveHybridProperties_.propertyTypes": {
+      "properties": {},
+      "type": "object"
+    },
+    "_AdaptiveRootFilePaths_": {
+      "additionalProperties": {
+        "description": "A function open_file path that begins with a slash followed by this property name will access a file in the directory path specified as a value to this property. For example, if this property is 'my': '/temp/my', file_open('mine', '/my/xyz', 'w') will open '/temp/my/xyz' for write in the host file system.",
+        "type": "string"
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions2/_AdaptiveRootFilePaths_.propertyTypes"
+        }
+      ],
+      "description": "The properties of this object are the root file paths used by open_file().",
+      "title": "Root File Paths",
+      "type": "object"
+    },
+    "_AdaptiveRootFilePaths_.propertyTypes": {
+      "properties": {},
+      "type": "object"
+    }
+  },
+  "definitions1": {
+    "_AdaptiveRootFilePaths_": {
+      "additionalProperties": {
+        "description": "A function open_file path that begins with a slash followed by this property name will access a file in the directory path specified as a value to this property. For example, if this property is 'my': '/temp/my', file_open('mine', '/my/xyz', 'w') will open '/temp/my/xyz' for write in the host file system.",
+        "type": "string"
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions1/_AdaptiveRootFilePaths_.propertyTypes"
+        }
+      ],
+      "description": "The properties of this object are the root file paths used by open_file().",
+      "title": "Root File Paths",
+      "type": "object"
+    },
+    "_AdaptiveConf_application.propertyTypes": {
+      "properties": {
+        "defaultFlags": {
+          "description": "This is a list of the flagId of default flags that will be set when an execution context (xctx) is created. Flags in this list that are not yet registered will be set as a default when/if they are registered. Each registered flagId is the objectId of an object in /afw/_AdaptiveFlag_/.",
+          "items": {
+            "description": "This is a list of the flagId of default flags that will be set when an execution context (xctx) is created. Flags in this list that are not yet registered will be set as a default when/if they are registered. Each registered flagId is the objectId of an object in /afw/_AdaptiveFlag_/.",
+            "title": "List of default flags to be set when an execution context (xctx) is created.",
+            "type": "string"
+          },
+          "title": "Default Flags",
+          "type": "array"
+        },
+        "description": {
+          "contentMediaType": "text/plain",
+          "description": "The description of the application.",
+          "title": "Description",
+          "type": "string"
+        },
+        "_meta_": true,
+        "onApplicationStartupComplete": {
+          "description": "This is an optional script to run after this application has completed startup but before starting to process requests. The script can perform additional startup functions or request that the application terminate. All permanent and immediate services will have been started before the script is called. If the script fails or explicitly returns a value other than 0, the application will terminate.",
+          "title": "Application Startup Complete",
+          "type": "string"
+        },
+        "authorizationControl": {
+          "$ref": "#/definitions1/_AdaptiveAuthorizationControl_",
+          "description": "This defines how authorization checking occurs in this application.",
+          "title": "Authorization",
+          "type": "object"
+        },
+        "rootFilePaths": {
+          "$ref": "#/definitions1/_AdaptiveRootFilePaths_",
+          "description": "The properties of this object are the root file paths used by open_file().",
+          "title": "Root File Paths",
+          "type": "object"
+        },
+        "qualifiedVariables": {
+          "$ref": "#/definitions1/_AdaptiveHybridPropertiesObjects_",
+          "description": "The name of each property in this object corresponds to a qualifier that is available in processing associated with this application. The qualifier can not be an empty string. The properties of these \"qualifier objects\" are hybrid values that are accessible as qualified variables. These variables are evaluated once per execution context (xctx) as they are accessed.\n\nSome qualifiers are restricted.",
+          "title": "Qualified Variables",
+          "type": "object"
+        },
+        "extensions": {
+          "description": "This is a list of extensionId of extensions to load at startup. Each extensionId must be the objectId of an object in /afw/_AdaptiveManifest_/.",
+          "items": {
+            "description": "This is a list of extensionId of extensions to load at startup. Each extensionId must be the objectId of an object in /afw/_AdaptiveManifest_/.",
+            "title": "List of extensionIds to load at startup",
+            "type": "string"
+          },
+          "title": "Extensions",
+          "type": "array"
+        },
+        "extensionModulePaths": {
+          "description": "This is a list of modulePaths of extensions to load at startup. If there is already an extension manifest that has the extensionId, use the extensions property instead. This property is most useful for loading the extension manifest of an AFW package.",
+          "items": {
+            "description": "This is a list of modulePaths of extensions to load at startup. If there is already an extension manifest that has the extensionId, use the extensions property instead. This property is most useful for loading the extension manifest of an AFW package.",
+            "title": "List of modulePaths of extensions to load at startup",
+            "type": "string"
+          },
+          "title": "Extension Module Paths",
+          "type": "array"
+        },
+        "defaultModelAdaptorId": {
+          "description": "When presented with multiple model adaptors, this is the default adaptorId to use. This will be the default selected adaptor chosen by user interface components.",
+          "title": "Default Model Adaptor",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the application. This is used as the title of the Adaptive Framework Web App and is available for use in other places as appropriate.",
+          "title": "Title",
+          "type": "string"
+        },
+        "applicationId": {
+          "description": "This is id of the application. The default applicationId is \"application\". This property can only be specified in the type=application entry of the conf file.",
+          "readOnly": true,
+          "title": "Application Id",
+          "type": "string"
+        },
+        "defaultAdaptorId": {
+          "description": "This is the adaptorId chosen by default for user interface select components.",
+          "title": "Default Adaptor",
+          "type": "string"
+        },
+        "confAdaptorId": {
+          "description": "This is the optional adaptorId of the running adaptor that contains configuration related objects. This property can only be specified in the type=application entry of the conf file.\n\nThe runtime /afw/_AdaptiveApplication_/current object will consist of properties from the type=application entry of the conf file plus unique properties from the optional /<confAdaptorId>/_AdaptiveConf_application/<applicationId> object.\n\nAll services defined by _AdaptiveServiceConf_ objects in <confAdaptorId> with startup \"permanent\" or \"immediate\" will be started when the type=application conf entry is processed.",
+          "readOnly": true,
+          "title": "Conf Adaptor",
+          "type": "string"
+        },
+        "layoutsAdaptorId": {
+          "description": "This is the adaptorId that locates Adaptive Layout Component objects.",
+          "title": "Layouts Adaptor",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/_AdaptiveConf_application.propertyTypes"
+                },
+                {
+                  "description": "Adaptive Framework configuration component for type=application. There is only one application conf entry per Adaptive Framework instance.\n\nUse path /afw/_AdaptiveConf_application/current to access this entry at run time."
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^rootFilePaths$": true,
+                "^extensionModulePaths$": true,
+                "^description$": true,
+                "^defaultFlags$": true,
+                "^defaultModelAdaptorId$": true,
+                "^qualifiedVariables$": true,
+                "^onApplicationStartupComplete$": true,
+                "^confAdaptorId$": true,
+                "^applicationId$": true,
+                "^title$": true,
+                "^authorizationControl$": true,
+                "^extensions$": true,
+                "^layoutsAdaptorId$": true,
+                "^defaultAdaptorId$": true,
+                "^_meta_$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/_AdaptiveConf_.propertyTypes"
+                },
+                {
+                  "description": "Adaptive Framework configuration component for type=application. There is only one application conf entry per Adaptive Framework instance.\n\nUse path /afw/_AdaptiveConf_application/current to access this entry at run time."
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^sourceLocation$": true,
+                "^title$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/_AdaptiveConf_application.propertyTypes"
+                    },
+                    {
+                      "$ref": "#/definitions1/_AdaptiveConf_.propertyTypes"
+                    }
+                  ]
+                },
+                {
+                  "description": "Adaptive Framework configuration component for type=application. There is only one application conf entry per Adaptive Framework instance.\n\nUse path /afw/_AdaptiveConf_application/current to access this entry at run time."
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^rootFilePaths$": true,
+                "^description$": true,
+                "^defaultFlags$": true,
+                "^defaultModelAdaptorId$": true,
+                "^onApplicationStartupComplete$": true,
+                "^confAdaptorId$": true,
+                "^applicationId$": true,
+                "^title$": true,
+                "^authorizationControl$": true,
+                "^extensions$": true,
+                "^layoutsAdaptorId$": true,
+                "^extensionModulePaths$": true,
+                "^sourceLocation$": true,
+                "^qualifiedVariables$": true,
+                "^type$": true,
+                "^defaultAdaptorId$": true,
+                "^_meta_$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "_AdaptiveRootFilePaths_.propertyTypes": {
+      "properties": {},
+      "type": "object"
+    },
+    "_AdaptiveAuthorizationControl_": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "_AdaptiveHybridPropertiesObjects_": {
+      "additionalProperties": {
+        "$ref": "#/definitions1/_AdaptiveHybridProperties_",
+        "description": "Each property is a _AdaptiveHybridProperties_ object.",
+        "type": "object"
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions1/_AdaptiveHybridPropertiesObjects_.propertyTypes"
+        }
+      ],
+      "description": "The name of each property in this object corresponds to a qualifier that is available in processing associated with this application. The qualifier can not be an empty string. The properties of these \"qualifier objects\" are hybrid values that are accessible as qualified variables. These variables are evaluated once per execution context (xctx) as they are accessed.\n\nSome qualifiers are restricted.",
+      "title": "Qualified Variables",
+      "type": "object"
+    },
+    "_AdaptiveConf_application": {
+      "$ref": "#/definitions1/modern_2"
+    },
+    "_AdaptiveHybridProperties_.propertyTypes": {
+      "properties": {},
+      "type": "object"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions1/_AdaptiveAuthorizationControl_.propertyTypes"
+                }
+              ],
+              "description": "This defines how authorization checking occurs in this application.",
+              "title": "Authorization",
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^checkIntermediateMode$": true,
+                "^coreAuthorizationCheck$": true,
+                "^denyIfNotApplicable$": true,
+                "^initialAuthorizationCheck$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "_AdaptiveHybridPropertiesObjects_.propertyTypes": {
+      "properties": {},
+      "type": "object"
+    },
+    "_AdaptiveAuthorizationControl_.propertyTypes": {
+      "properties": {
+        "checkIntermediateMode": {
+          "description": "Do authorization check when running in mode intermediate. If false, the checks will be bypassed.",
+          "title": "Check Intermediate",
+          "type": "boolean"
+        },
+        "coreAuthorizationCheck": {
+          "description": "This is evaluated for authorization checks when running in core mode. If not specified, access is permitted. Be very careful when specifying this parameter because an error can cause the application to fail.",
+          "title": "Core Check",
+          "type": "string"
+        },
+        "denyIfNotApplicable": {
+          "description": "Specify true to deny access to resources when notApplicable is the final result of other checks.",
+          "title": "Deny If Not Applicable",
+          "type": "boolean"
+        },
+        "initialAuthorizationCheck": {
+          "description": "This is evaluated before authorization handlers are called to determine whether to allow the requested access to the specified resourceId and/or object. A result of permit or deny is the final decision. If this parameter is not specified or the result is notApplicable, active authorization handlers will be processed. Parameter permitIfNotApplicable is used to determine the result when all checks return notApplicable.",
+          "title": "Initial Check",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "_AdaptiveHybridProperties_": {
+      "additionalProperties": {
+        "description": "Each property is a hybrid value.",
+        "type": "string"
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions1/_AdaptiveHybridProperties_.propertyTypes"
+        }
+      ],
+      "description": "Each property is a hybrid value.",
+      "type": "object"
+    },
+    "_AdaptiveConf_.propertyTypes": {
+      "properties": {
+        "description": {
+          "contentMediaType": "text/plain",
+          "description": "The description of this configuration component.",
+          "title": "Description",
+          "type": "string"
+        },
+        "sourceLocation": {
+          "description": "This is a contextual string added when this configuration object is processed.",
+          "title": "Source Location",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title for this configuration component.",
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "description": "Configuration type.",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions2/_AdaptiveHybridPropertiesObjects_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveHybridPropertiesObjects_"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveConf_application"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveConf_application"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveHybridPropertiesObjects_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveHybridPropertiesObjects_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveHybridProperties_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveHybridProperties_"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveHybridProperties_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveHybridProperties_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveHybridPropertiesObjects_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveHybridPropertiesObjects_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveRootFilePaths_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveRootFilePaths_"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveRootFilePaths_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveRootFilePaths_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveHybridProperties_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveHybridProperties_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveConf_application.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveConf_application.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveConf_application.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveConf_application.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveRootFilePaths_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveRootFilePaths_"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveConf_application"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveConf_application"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveRootFilePaths_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveRootFilePaths_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveAuthorizationControl_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveAuthorizationControl_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveConf_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveConf_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveHybridPropertiesObjects_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveHybridPropertiesObjects_"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveHybridProperties_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveHybridProperties_"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveAuthorizationControl_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveAuthorizationControl_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveConf_.propertyTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveConf_.propertyTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/_AdaptiveAuthorizationControl_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/_AdaptiveAuthorizationControl_"
+      }
+    },
+    {
+      "$ref": "#/definitions1/_AdaptiveAuthorizationControl_"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/_AdaptiveAuthorizationControl_"
+      }
+    }
+  ]
+}

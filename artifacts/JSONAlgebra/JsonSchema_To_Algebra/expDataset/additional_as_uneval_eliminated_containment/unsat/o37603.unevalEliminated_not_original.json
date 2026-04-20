@@ -1,0 +1,2492 @@
+{
+  "allOf": [
+    {
+      "$id": "https://github.com/dsternlicht/RESTool/blob/master/config.schema.json",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$id": "https://github.com/dsternlicht/RESTool/blob/master/config.schema.json",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "description": "The configuration file used for a RESTool application, see https://github.com/dsternlicht/RESTool",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of your app."
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions3/page"
+            }
+          },
+          "baseUrl": {
+            "type": "string",
+            "description": "Base url of the api. This will prefix the url of all the api methods defined for all pages. This is normally the domain plus a base path. For example: \"https://restool-sample-app.herokuapp.com/api\"\n\nNote: If different pages use different base urls this should not be used. Instead, you should explicitly define absolute urls for each method."
+          },
+          "errorMessageDataPath": {
+            "$ref": "#/definitions3/errorMessageDataPath"
+          },
+          "requestHeaders": {
+            "$ref": "#/definitions3/requestHeaders"
+          },
+          "unauthorizedRedirectUrl": {
+            "type": "string",
+            "description": "Path to navigate to when the api returns a 401 (Unauthorized) error. You can use :returnUrl to pass a return location. For example: \"/login/myLoginPage?return=:returnUrl\""
+          },
+          "favicon": {
+            "type": "string",
+            "description": "A URL for you app's favicon."
+          },
+          "customStyles": {
+            "$ref": "#/definitions3/customStyles"
+          },
+          "customLabels": {
+            "$ref": "#/definitions3/customLabels"
+          }
+        },
+        "required": [
+          "name",
+          "pages"
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "useInUrl": {
+                  "type": "boolean",
+                  "description": "If true, a field can be used as a parameter in a PUT url. Otherwise only fields retrieved in the original GET can be used as parameters. It's data will still be added to the PUT request body."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The name of the field / parameter to be sent."
+                },
+                "accept": {
+                  "type": "string",
+                  "description": "An optional setting for file type inputs. When set, the file input's accept property will perform file type filtering when browsing for files."
+                },
+                "dataPath": {
+                  "type": "string",
+                  "description": "Use this field to let RESTool know what is the path of this field in the body of the request."
+                },
+                "optionSource": {
+                  "$ref": "#/definitions4/optionSource",
+                  "description": "Use the optionSource field to load options for a select box from a REST service. If this is used with options, the items from options will be added to the select box before those fetched from the api."
+                },
+                "label": {
+                  "type": "string",
+                  "description": "A label that describes the field. This will act as a label in RESTool's forms."
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "display": {
+                            "type": "string"
+                          },
+                          "value": true
+                        }
+                      }
+                    ]
+                  },
+                  "description": "Add the options field if you chose a select as a type. This field should contain an array of options to be displayed in the select box."
+                },
+                "urlReplaceOnly": {
+                  "type": "boolean",
+                  "description": "If true, a field will only be replaced in the URL and is not appended to the final query string."
+                },
+                "arrayType": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "object"
+                  ],
+                  "description": "For array field type, you should specify another property called arrayType so RESTool will know how to present & send the data in the POST and PUT methods."
+                },
+                "value": {
+                  "description": "Set a default value to the field."
+                },
+                "readonly": {
+                  "type": "boolean"
+                },
+                "placeholder": {
+                  "type": "string",
+                  "description": "Input field placeholder."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "long-text",
+                    "object",
+                    "encode",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "date",
+                    "email",
+                    "color",
+                    "select",
+                    "array",
+                    "file",
+                    "password",
+                    "note",
+                    "hidden"
+                  ],
+                  "description": "Use the type field to define the type of the field."
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "If true, a field will be marked as required on PUT and POST forms."
+                }
+              },
+              "required": [
+                "name",
+                "type"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^urlReplaceOnly$": true,
+                "^required$": true,
+                "^optionSource$": true,
+                "^accept$": true,
+                "^name$": true,
+                "^type$": true,
+                "^placeholder$": true,
+                "^readonly$": true,
+                "^value$": true,
+                "^dataPath$": true,
+                "^arrayType$": true,
+                "^options$": true,
+                "^useInUrl$": true,
+                "^label$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "customAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/put"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "icon": {
+              "type": "string",
+              "description": "You may configure the icon of the action. RESTool uses font-awesome and you may use any icon name you want from their collection."
+            }
+          }
+        }
+      ],
+      "description": "Specifically customActions is a list of PUT or POST method objects. For example this could enable an endpoint like: PUT /users/:id/disable"
+    },
+    "paginationLabels": {
+      "$ref": "#/definitions4/modern_3"
+    },
+    "getSingle": {
+      "$ref": "#/definitions4/method",
+      "description": "This method will be fired once you hit the edit button on an item in order to get a single item's data. By default, if this method hasn't been set, when editing an item, RESTool will take the raw data from the original getAll request."
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "sortBy": {
+                  "type": [
+                    "string",
+                    "array"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "one or more properties to sort the objects by"
+                },
+                "displayPath": {
+                  "type": "string",
+                  "description": "property of the object to take the display value from"
+                },
+                "valuePath": {
+                  "type": "string",
+                  "description": "property of the object to take the option value from"
+                },
+                "dataPath": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "let us know where we should take the data from"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "url to fetch data from"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^displayPath$": true,
+                "^valuePath$": true,
+                "^sortBy$": true,
+                "^dataPath$": true,
+                "^url$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "paginationParams": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "queryParamConfig": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "addItem": {
+                  "type": "string",
+                  "description": "Content of the add button on a page.",
+                  "default": "Add Item"
+                },
+                "editItem": {
+                  "type": "string",
+                  "description": "Title of the edit button on a row or a card.",
+                  "default": "Edit Item"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^addItem$": true,
+                "^editItem$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "displayField": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "customLabels": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "inputField": {
+      "$ref": "#/definitions4/modern_10"
+    },
+    "requestHeaders": {
+      "patternProperties": {
+        "^": {
+          "type": "string"
+        }
+      },
+      "description": "A list of key-value headers you wish to add to every request we're making.\nFor example:\n{ Authentication: 'SECRET_KEY', 'X-USER-ID': 'USER_ID' }"
+    },
+    "buttonLabels": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "urlReplaceOnly": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^value$": true,
+                "^urlReplaceOnly$": true,
+                "^label$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "method": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The url for making the request. The url could be either relative or absolute. If a baseUrl is defined then you should only provide a relative path. For example: /users/:id.\nThe url could contain parameters that will be extracted if needed. For example: \nhttps://website.com/users/:id - note that the parameter name in the url should match the one you're returning in your API."
+        },
+        "actualMethod": {
+          "type": "string",
+          "enum": [
+            "get",
+            "put",
+            "post",
+            "delete",
+            "patch"
+          ]
+        },
+        "requestHeaders": {
+          "$ref": "#/definitions4/requestHeaders"
+        },
+        "queryParams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/inputField"
+          },
+          "description": "An array of query parameters fields that will be added to the request.\nIf your url includes the name of the parameter, it will be used as part of the path rather than as a query parameter. For example if your url is /api/contact/234/address you might make a parameter called contactId then set the url as follows: /api/contact/:contactId/address.\nEach query param item is an object. See input fields."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "post": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/method"
+        },
+        {
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/inputField"
+              }
+            }
+          },
+          "required": [
+            "fields"
+          ]
+        }
+      ],
+      "description": "The post method will be used to create new items in your API resource."
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The property name of the field that contains the value in the API result."
+                },
+                "urlLabel": {
+                  "type": "string",
+                  "description": "Display the url label rather than the entire value."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "url",
+                    "image",
+                    "colorbox",
+                    "boolean"
+                  ],
+                  "description": "This will help RESTool to render the main view.\ntext -  will parse the value as a text\nurl -  will render an anchor element with a clickable link\nimage -  will render an image from the url\ncolorbox -  will render a #RRGGBB hex string as an 80 x 20 pixel colored rectangle, overlaid with the hex color string"
+                },
+                "filterable": {
+                  "type": "boolean",
+                  "description": "Set to true to enable a text control to do simple client-side filtering by values of this field. Can be specified for multiple fields."
+                },
+                "dataPath": {
+                  "type": "string",
+                  "description": ""
+                },
+                "url": {
+                  "type": "string",
+                  "description": "URL for url typed fields"
+                },
+                "truncate": {
+                  "type": "boolean",
+                  "description": "Causes long values to be truncated. By default, truncation is not enabled for fields."
+                },
+                "label": {
+                  "type": "string",
+                  "description": "A label that describes the field. Will be presented as table headers in the main view."
+                }
+              },
+              "required": [
+                "name",
+                "type"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^label$": true,
+                "^type$": true,
+                "^urlLabel$": true,
+                "^filterable$": true,
+                "^dataPath$": true,
+                "^url$": true,
+                "^name$": true,
+                "^truncate$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_16": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "actions": {
+                  "type": "string",
+                  "description": "Header of the action column in tables.",
+                  "default": "Actions"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^actions$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "getAll": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/method"
+        },
+        {
+          "properties": {
+            "dataPath": {
+              "type": "string",
+              "description": "TODO"
+            },
+            "sortBy": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "One or more paths to properties in the result object to sort the list by."
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/displayField"
+              }
+            },
+            "dataTransform": {
+              "description": "Relevant only when using dynamic (js) config. A function to allow manipulation on the response data. Useful for changing/adding data for display purposes."
+            },
+            "pagination": {
+              "$ref": "#/definitions4/pagination"
+            },
+            "display": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "table",
+                    "cards"
+                  ]
+                }
+              },
+              "description": "RESTool allows you to control how to output the data. The display object has a type property that will define how to display the data. RESTool supports two display type: \"table\" and \"cards\"."
+            }
+          },
+          "required": [
+            "display",
+            "fields"
+          ]
+        }
+      ]
+    },
+    "modern_15": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "navBackground": {
+                  "type": "string",
+                  "description": "Navigation menu background color."
+                },
+                "actionButtonBackground": {
+                  "type": "string",
+                  "description": "Action button background color."
+                },
+                "appBackground": {
+                  "type": "string",
+                  "description": "App background color."
+                },
+                "appText": {
+                  "type": "string",
+                  "description": "Root text color."
+                },
+                "navItemActiveBackground": {
+                  "type": "string",
+                  "description": "Active navigation item background color."
+                },
+                "navText": {
+                  "type": "string",
+                  "description": "Navigation menu text color."
+                },
+                "navItemText": {
+                  "type": "string",
+                  "description": "Navigation item text color."
+                },
+                "navItemHoverBackground": {
+                  "type": "string",
+                  "description": "Navigation item background color on hover event."
+                },
+                "actionButtonText": {
+                  "type": "string",
+                  "description": "Action button text  color."
+                },
+                "actionButtonHoverBackground": {
+                  "type": "string",
+                  "description": "Action button background color on hover event."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^navItemHoverBackground$": true,
+                "^actionButtonHoverBackground$": true,
+                "^actionButtonText$": true,
+                "^navBackground$": true,
+                "^navText$": true,
+                "^navItemActiveBackground$": true,
+                "^actionButtonBackground$": true,
+                "^appText$": true,
+                "^navItemText$": true,
+                "^appBackground$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "methods": {
+      "$ref": "#/definitions4/modern_11"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "editItem": {
+                  "type": "string",
+                  "description": "Title of the edit button on a row or a card.",
+                  "default": "Edit"
+                },
+                "closeForm": {
+                  "type": "string",
+                  "description": "Title of the close button in forms.",
+                  "default": "Close"
+                },
+                "addArrayItem": {
+                  "type": "string",
+                  "description": "Title of the add button on arrays inputs in forms.",
+                  "default": "Add Item"
+                },
+                "deleteItem": {
+                  "type": "string",
+                  "description": "Title of the delete button on a row or a card.",
+                  "default": "Delete"
+                },
+                "addItem": {
+                  "type": "string",
+                  "description": "Content of the add button on a page.",
+                  "default": "+ Add Item"
+                },
+                "clearInput": {
+                  "type": "string",
+                  "description": "Title of the clear button on form inputs.",
+                  "default": "Clear"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^clearInput$": true,
+                "^addArrayItem$": true,
+                "^editItem$": true,
+                "^deleteItem$": true,
+                "^closeForm$": true,
+                "^addItem$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "optionSource": {
+      "$ref": "#/definitions4/modern_12"
+    },
+    "errorMessageDataPath": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The path within an error response object to look for an error message. If multiple are provided, each will be tried in order until a message is found."
+    },
+    "page": {
+      "$ref": "#/definitions4/modern_13"
+    },
+    "placeholderLabels": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "formTitles": {
+                  "$ref": "#/definitions4/formTitleLabels"
+                },
+                "placeholders": {
+                  "$ref": "#/definitions4/placeholderLabels"
+                },
+                "buttons": {
+                  "$ref": "#/definitions4/buttonLabels"
+                },
+                "tableColumnHeaders": {
+                  "$ref": "#/definitions4/tableColumnHeaders"
+                },
+                "pagination": {
+                  "$ref": "#/definitions4/paginationLabels"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^formTitles$": true,
+                "^buttons$": true,
+                "^placeholders$": true,
+                "^pagination$": true,
+                "^tableColumnHeaders$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_17": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "source",
+                "type",
+                "params"
+              ],
+              "properties": {
+                "source": {
+                  "enum": [
+                    "query"
+                  ],
+                  "description": "Where the pagination parameters are written to. Only supports query parameters for now."
+                },
+                "type": {
+                  "enum": [
+                    "buttons",
+                    "infinite-scroll"
+                  ],
+                  "description": "Type of pagination. Buttons is the standard one. You can also have a inifite scroll with lazy loading."
+                },
+                "params": {
+                  "$ref": "#/definitions4/paginationParams"
+                },
+                "fields": {
+                  "$ref": "#/definitions4/paginationFields"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^source$": true,
+                "^type$": true,
+                "^params$": true,
+                "^fields$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "number": {
+                  "type": "string",
+                  "description": "Number input placeholder.",
+                  "default": 0
+                },
+                "email": {
+                  "type": "string",
+                  "description": "Email input placeholder.",
+                  "default": "Enter email..."
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Text input placeholder.",
+                  "default": "Enter text..."
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Color input placeholder.",
+                  "default": "Enter color..."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "JSON input placeholder.",
+                  "default": "Enter JSON..."
+                },
+                "array": {
+                  "type": "string",
+                  "description": "JSON array input placeholder.",
+                  "default": "Enter JSON array..."
+                },
+                "date": {
+                  "type": "string",
+                  "description": "Date input placeholder.",
+                  "default": "Enter date..."
+                },
+                "file": {
+                  "type": "string",
+                  "description": "File input placeholder.",
+                  "default": "Select file..."
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password input placeholder.",
+                  "default": "Enter password..."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^file$": true,
+                "^array$": true,
+                "^color$": true,
+                "^date$": true,
+                "^number$": true,
+                "^password$": true,
+                "^text$": true,
+                "^object$": true,
+                "^email$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "dataPath"
+              ],
+              "properties": {
+                "dataPath": {
+                  "type": "string"
+                },
+                "display": {
+                  "type": "boolean"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^dataPath$": true,
+                "^display$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "delete": {
+      "$ref": "#/definitions4/method",
+      "description": "The delete method will be used to delete an existing item in your API resource."
+    },
+    "modern_18": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "page": {
+                  "$ref": "#/definitions4/paginationField"
+                },
+                "total": {
+                  "$ref": "#/definitions4/paginationField"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^page$": true,
+                "^total$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the page. This will be presented in the menu."
+                },
+                "methods": {
+                  "$ref": "#/definitions4/methods"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A short description about the page and its usage."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "A unique identifier for the page. RESTool will use it to navigate between pages."
+                },
+                "requestHeaders": {
+                  "$ref": "#/definitions4/requestHeaders"
+                },
+                "customLabels": {
+                  "$ref": "#/definitions4/customLabels"
+                },
+                "customActions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/customAction"
+                  },
+                  "description": "A list of extra (non RESTful) endpoints available in your RESTful API. Specifically customActions is a list of PUT or POST method objects."
+                }
+              },
+              "required": [
+                "name",
+                "id"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^customActions$": true,
+                "^name$": true,
+                "^customLabels$": true,
+                "^requestHeaders$": true,
+                "^id$": true,
+                "^methods$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "itemsCount": {
+                  "type": "string",
+                  "description": "",
+                  "default": "Showing :currentCountFrom-:currentCountTo out of :totalCount items"
+                },
+                "previousPageTitle": {
+                  "type": "string",
+                  "description": "",
+                  "default": "Previous page"
+                },
+                "nextPageTitle": {
+                  "type": "string",
+                  "description": "",
+                  "default": "Next page"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^itemsCount$": true,
+                "^previousPageTitle$": true,
+                "^nextPageTitle$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "put": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/method"
+        },
+        {
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/inputField"
+              }
+            },
+            "includeOriginalFields": {
+              "type": "boolean",
+              "description": "When set to true, all fields from the original object are merged and sent in the request body. Default is false."
+            }
+          },
+          "required": [
+            "fields"
+          ]
+        }
+      ],
+      "description": "The put method will be used to update an existing item in your API resource."
+    },
+    "customStyles": {
+      "$ref": "#/definitions4/modern_14"
+    },
+    "tableColumnHeaders": {
+      "$ref": "#/definitions4/modern_16"
+    },
+    "formTitleLabels": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "post": {
+                  "$ref": "#/definitions4/post"
+                },
+                "getAll": {
+                  "$ref": "#/definitions4/getAll"
+                },
+                "getSingle": {
+                  "$ref": "#/definitions4/getSingle"
+                },
+                "delete": {
+                  "$ref": "#/definitions4/delete"
+                },
+                "put": {
+                  "$ref": "#/definitions4/put"
+                }
+              },
+              "required": [
+                "getAll"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^getAll$": true,
+                "^delete$": true,
+                "^post$": true,
+                "^put$": true,
+                "^getSingle$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "pagination": {
+      "$ref": "#/definitions4/modern_17"
+    },
+    "paginationFields": {
+      "$ref": "#/definitions4/modern_18"
+    },
+    "modern_14": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "vars": {
+                  "$ref": "#/definitions4/modern_15"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^vars$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "paginationField": {
+      "$ref": "#/definitions4/modern_9"
+    },
+    "modern_19": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "The configuration file used for a RESTool application, see https://github.com/dsternlicht/RESTool",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of your app."
+                },
+                "unauthorizedRedirectUrl": {
+                  "type": "string",
+                  "description": "Path to navigate to when the api returns a 401 (Unauthorized) error. You can use :returnUrl to pass a return location. For example: \"/login/myLoginPage?return=:returnUrl\""
+                },
+                "errorMessageDataPath": {
+                  "$ref": "#/definitions4/errorMessageDataPath"
+                },
+                "pages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/page"
+                  }
+                },
+                "baseUrl": {
+                  "type": "string",
+                  "description": "Base url of the api. This will prefix the url of all the api methods defined for all pages. This is normally the domain plus a base path. For example: \"https://restool-sample-app.herokuapp.com/api\"\n\nNote: If different pages use different base urls this should not be used. Instead, you should explicitly define absolute urls for each method."
+                },
+                "customLabels": {
+                  "$ref": "#/definitions4/customLabels"
+                },
+                "customStyles": {
+                  "$ref": "#/definitions4/customStyles"
+                },
+                "favicon": {
+                  "type": "string",
+                  "description": "A URL for you app's favicon."
+                },
+                "requestHeaders": {
+                  "$ref": "#/definitions4/requestHeaders"
+                }
+              },
+              "required": [
+                "name",
+                "pages"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^unauthorizedRedirectUrl$": true,
+                "^errorMessageDataPath$": true,
+                "^name$": true,
+                "^pages$": true,
+                "^baseUrl$": true,
+                "^customLabels$": true,
+                "^requestHeaders$": true,
+                "^customStyles$": true,
+                "^favicon$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "page"
+              ],
+              "properties": {
+                "page": {
+                  "$ref": "#/definitions4/queryParamConfig",
+                  "description": "The parameter definition of the page number."
+                },
+                "limit": {
+                  "$ref": "#/definitions4/queryParamConfig",
+                  "description": "The parameter definition of the maximum number of items to be returned by the API."
+                },
+                "sortBy": {
+                  "$ref": "#/definitions4/queryParamConfig",
+                  "description": "The parameter definition of the sorting value."
+                },
+                "descending": {
+                  "$ref": "#/definitions4/queryParamConfig",
+                  "description": "The parameter definition of the order in which the API should return items. false by default."
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^page$": true,
+                "^limit$": true,
+                "^sortBy$": true,
+                "^descending$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "errorMessageDataPath": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The path within an error response object to look for an error message. If multiple are provided, each will be tried in order until a message is found."
+    },
+    "customStyles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vars": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "appText": {
+              "type": "string",
+              "description": "Root text color."
+            },
+            "appBackground": {
+              "type": "string",
+              "description": "App background color."
+            },
+            "navBackground": {
+              "type": "string",
+              "description": "Navigation menu background color."
+            },
+            "navText": {
+              "type": "string",
+              "description": "Navigation menu text color."
+            },
+            "navItemText": {
+              "type": "string",
+              "description": "Navigation item text color."
+            },
+            "navItemHoverBackground": {
+              "type": "string",
+              "description": "Navigation item background color on hover event."
+            },
+            "navItemActiveBackground": {
+              "type": "string",
+              "description": "Active navigation item background color."
+            },
+            "actionButtonBackground": {
+              "type": "string",
+              "description": "Action button background color."
+            },
+            "actionButtonHoverBackground": {
+              "type": "string",
+              "description": "Action button background color on hover event."
+            },
+            "actionButtonText": {
+              "type": "string",
+              "description": "Action button text  color."
+            }
+          }
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the page. This will be presented in the menu."
+        },
+        "id": {
+          "type": "string",
+          "description": "A unique identifier for the page. RESTool will use it to navigate between pages."
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description about the page and its usage."
+        },
+        "requestHeaders": {
+          "$ref": "#/definitions3/requestHeaders"
+        },
+        "methods": {
+          "$ref": "#/definitions3/methods"
+        },
+        "customActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/customAction"
+          },
+          "description": "A list of extra (non RESTful) endpoints available in your RESTful API. Specifically customActions is a list of PUT or POST method objects."
+        },
+        "customLabels": {
+          "$ref": "#/definitions3/customLabels"
+        }
+      },
+      "required": [
+        "name",
+        "id"
+      ]
+    },
+    "requestHeaders": {
+      "patternProperties": {
+        "^": {
+          "type": "string"
+        }
+      },
+      "description": "A list of key-value headers you wish to add to every request we're making.\nFor example:\n{ Authentication: 'SECRET_KEY', 'X-USER-ID': 'USER_ID' }"
+    },
+    "methods": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "getAll": {
+          "$ref": "#/definitions3/getAll"
+        },
+        "getSingle": {
+          "$ref": "#/definitions3/getSingle"
+        },
+        "post": {
+          "$ref": "#/definitions3/post"
+        },
+        "put": {
+          "$ref": "#/definitions3/put"
+        },
+        "delete": {
+          "$ref": "#/definitions3/delete"
+        }
+      },
+      "required": [
+        "getAll"
+      ]
+    },
+    "method": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The url for making the request. The url could be either relative or absolute. If a baseUrl is defined then you should only provide a relative path. For example: /users/:id.\nThe url could contain parameters that will be extracted if needed. For example: \nhttps://website.com/users/:id - note that the parameter name in the url should match the one you're returning in your API."
+        },
+        "actualMethod": {
+          "type": "string",
+          "enum": [
+            "get",
+            "put",
+            "post",
+            "delete",
+            "patch"
+          ]
+        },
+        "requestHeaders": {
+          "$ref": "#/definitions3/requestHeaders"
+        },
+        "queryParams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/inputField"
+          },
+          "description": "An array of query parameters fields that will be added to the request.\nIf your url includes the name of the parameter, it will be used as part of the path rather than as a query parameter. For example if your url is /api/contact/234/address you might make a parameter called contactId then set the url as follows: /api/contact/:contactId/address.\nEach query param item is an object. See input fields."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "getAll": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/method"
+        },
+        {
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/displayField"
+              }
+            },
+            "dataPath": {
+              "type": "string",
+              "description": "TODO"
+            },
+            "display": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "table",
+                    "cards"
+                  ]
+                }
+              },
+              "description": "RESTool allows you to control how to output the data. The display object has a type property that will define how to display the data. RESTool supports two display type: \"table\" and \"cards\"."
+            },
+            "sortBy": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "One or more paths to properties in the result object to sort the list by."
+            },
+            "pagination": {
+              "$ref": "#/definitions3/pagination"
+            },
+            "dataTransform": {
+              "description": "Relevant only when using dynamic (js) config. A function to allow manipulation on the response data. Useful for changing/adding data for display purposes."
+            }
+          },
+          "required": [
+            "display",
+            "fields"
+          ]
+        }
+      ]
+    },
+    "getSingle": {
+      "$ref": "#/definitions3/method",
+      "description": "This method will be fired once you hit the edit button on an item in order to get a single item's data. By default, if this method hasn't been set, when editing an item, RESTool will take the raw data from the original getAll request."
+    },
+    "post": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/method"
+        },
+        {
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/inputField"
+              }
+            }
+          },
+          "required": [
+            "fields"
+          ]
+        }
+      ],
+      "description": "The post method will be used to create new items in your API resource."
+    },
+    "put": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/method"
+        },
+        {
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/inputField"
+              }
+            },
+            "includeOriginalFields": {
+              "type": "boolean",
+              "description": "When set to true, all fields from the original object are merged and sent in the request body. Default is false."
+            }
+          },
+          "required": [
+            "fields"
+          ]
+        }
+      ],
+      "description": "The put method will be used to update an existing item in your API resource."
+    },
+    "delete": {
+      "$ref": "#/definitions3/method",
+      "description": "The delete method will be used to delete an existing item in your API resource."
+    },
+    "inputField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the field / parameter to be sent."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "long-text",
+            "object",
+            "encode",
+            "integer",
+            "number",
+            "boolean",
+            "date",
+            "email",
+            "color",
+            "select",
+            "array",
+            "file",
+            "password",
+            "note",
+            "hidden"
+          ],
+          "description": "Use the type field to define the type of the field."
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string",
+          "description": "A label that describes the field. This will act as a label in RESTool's forms."
+        },
+        "dataPath": {
+          "type": "string",
+          "description": "Use this field to let RESTool know what is the path of this field in the body of the request."
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "display": {
+                    "type": "string"
+                  },
+                  "value": {}
+                }
+              }
+            ]
+          },
+          "description": "Add the options field if you chose a select as a type. This field should contain an array of options to be displayed in the select box."
+        },
+        "arrayType": {
+          "type": "string",
+          "enum": [
+            "text",
+            "object"
+          ],
+          "description": "For array field type, you should specify another property called arrayType so RESTool will know how to present & send the data in the POST and PUT methods."
+        },
+        "value": {
+          "description": "Set a default value to the field."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, a field will be marked as required on PUT and POST forms."
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Input field placeholder."
+        },
+        "accept": {
+          "type": "string",
+          "description": "An optional setting for file type inputs. When set, the file input's accept property will perform file type filtering when browsing for files."
+        },
+        "useInUrl": {
+          "type": "boolean",
+          "description": "If true, a field can be used as a parameter in a PUT url. Otherwise only fields retrieved in the original GET can be used as parameters. It's data will still be added to the PUT request body."
+        },
+        "urlReplaceOnly": {
+          "type": "boolean",
+          "description": "If true, a field will only be replaced in the URL and is not appended to the final query string."
+        },
+        "optionSource": {
+          "$ref": "#/definitions3/optionSource",
+          "description": "Use the optionSource field to load options for a select box from a REST service. If this is used with options, the items from options will be added to the select box before those fetched from the api."
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "displayField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The property name of the field that contains the value in the API result."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "url",
+            "image",
+            "colorbox",
+            "boolean"
+          ],
+          "description": "This will help RESTool to render the main view.\ntext -  will parse the value as a text\nurl -  will render an anchor element with a clickable link\nimage -  will render an image from the url\ncolorbox -  will render a #RRGGBB hex string as an 80 x 20 pixel colored rectangle, overlaid with the hex color string"
+        },
+        "label": {
+          "type": "string",
+          "description": "A label that describes the field. Will be presented as table headers in the main view."
+        },
+        "dataPath": {
+          "type": "string",
+          "description": ""
+        },
+        "url": {
+          "type": "string",
+          "description": "URL for url typed fields"
+        },
+        "urlLabel": {
+          "type": "string",
+          "description": "Display the url label rather than the entire value."
+        },
+        "filterable": {
+          "type": "boolean",
+          "description": "Set to true to enable a text control to do simple client-side filtering by values of this field. Can be specified for multiple fields."
+        },
+        "truncate": {
+          "type": "boolean",
+          "description": "Causes long values to be truncated. By default, truncation is not enabled for fields."
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "optionSource": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "url to fetch data from"
+        },
+        "dataPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "let us know where we should take the data from"
+        },
+        "displayPath": {
+          "type": "string",
+          "description": "property of the object to take the display value from"
+        },
+        "valuePath": {
+          "type": "string",
+          "description": "property of the object to take the option value from"
+        },
+        "sortBy": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "one or more properties to sort the objects by"
+        }
+      }
+    },
+    "pagination": {
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "type",
+        "params"
+      ],
+      "properties": {
+        "source": {
+          "enum": [
+            "query"
+          ],
+          "description": "Where the pagination parameters are written to. Only supports query parameters for now."
+        },
+        "type": {
+          "enum": [
+            "buttons",
+            "infinite-scroll"
+          ],
+          "description": "Type of pagination. Buttons is the standard one. You can also have a inifite scroll with lazy loading."
+        },
+        "params": {
+          "$ref": "#/definitions3/paginationParams"
+        },
+        "fields": {
+          "$ref": "#/definitions3/paginationFields"
+        }
+      }
+    },
+    "paginationParams": {
+      "additionalProperties": false,
+      "required": [
+        "page"
+      ],
+      "properties": {
+        "page": {
+          "$ref": "#/definitions3/queryParamConfig",
+          "description": "The parameter definition of the page number."
+        },
+        "limit": {
+          "$ref": "#/definitions3/queryParamConfig",
+          "description": "The parameter definition of the maximum number of items to be returned by the API."
+        },
+        "sortBy": {
+          "$ref": "#/definitions3/queryParamConfig",
+          "description": "The parameter definition of the sorting value."
+        },
+        "descending": {
+          "$ref": "#/definitions3/queryParamConfig",
+          "description": "The parameter definition of the order in which the API should return items. false by default."
+        }
+      }
+    },
+    "paginationFields": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "$ref": "#/definitions3/paginationField"
+        },
+        "total": {
+          "$ref": "#/definitions3/paginationField"
+        }
+      }
+    },
+    "paginationField": {
+      "additionalProperties": false,
+      "required": [
+        "dataPath"
+      ],
+      "properties": {
+        "dataPath": {
+          "type": "string"
+        },
+        "display": {
+          "type": "boolean"
+        }
+      }
+    },
+    "queryParamConfig": {
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "urlReplaceOnly": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "customAction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/put"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "icon": {
+              "type": "string",
+              "description": "You may configure the icon of the action. RESTool uses font-awesome and you may use any icon name you want from their collection."
+            }
+          }
+        }
+      ],
+      "description": "Specifically customActions is a list of PUT or POST method objects. For example this could enable an endpoint like: PUT /users/:id/disable"
+    },
+    "customLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "buttons": {
+          "$ref": "#/definitions3/buttonLabels"
+        },
+        "formTitles": {
+          "$ref": "#/definitions3/formTitleLabels"
+        },
+        "placeholders": {
+          "$ref": "#/definitions3/placeholderLabels"
+        },
+        "tableColumnHeaders": {
+          "$ref": "#/definitions3/tableColumnHeaders"
+        },
+        "pagination": {
+          "$ref": "#/definitions3/paginationLabels"
+        }
+      }
+    },
+    "buttonLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "addItem": {
+          "type": "string",
+          "description": "Content of the add button on a page.",
+          "default": "+ Add Item"
+        },
+        "editItem": {
+          "type": "string",
+          "description": "Title of the edit button on a row or a card.",
+          "default": "Edit"
+        },
+        "deleteItem": {
+          "type": "string",
+          "description": "Title of the delete button on a row or a card.",
+          "default": "Delete"
+        },
+        "clearInput": {
+          "type": "string",
+          "description": "Title of the clear button on form inputs.",
+          "default": "Clear"
+        },
+        "closeForm": {
+          "type": "string",
+          "description": "Title of the close button in forms.",
+          "default": "Close"
+        },
+        "addArrayItem": {
+          "type": "string",
+          "description": "Title of the add button on arrays inputs in forms.",
+          "default": "Add Item"
+        }
+      }
+    },
+    "formTitleLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "addItem": {
+          "type": "string",
+          "description": "Content of the add button on a page.",
+          "default": "Add Item"
+        },
+        "editItem": {
+          "type": "string",
+          "description": "Title of the edit button on a row or a card.",
+          "default": "Edit Item"
+        }
+      }
+    },
+    "placeholderLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "object": {
+          "type": "string",
+          "description": "JSON input placeholder.",
+          "default": "Enter JSON..."
+        },
+        "array": {
+          "type": "string",
+          "description": "JSON array input placeholder.",
+          "default": "Enter JSON array..."
+        },
+        "text": {
+          "type": "string",
+          "description": "Text input placeholder.",
+          "default": "Enter text..."
+        },
+        "number": {
+          "type": "string",
+          "description": "Number input placeholder.",
+          "default": 0
+        },
+        "color": {
+          "type": "string",
+          "description": "Color input placeholder.",
+          "default": "Enter color..."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email input placeholder.",
+          "default": "Enter email..."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password input placeholder.",
+          "default": "Enter password..."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date input placeholder.",
+          "default": "Enter date..."
+        },
+        "file": {
+          "type": "string",
+          "description": "File input placeholder.",
+          "default": "Select file..."
+        }
+      }
+    },
+    "tableColumnHeaders": {
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "type": "string",
+          "description": "Header of the action column in tables.",
+          "default": "Actions"
+        }
+      }
+    },
+    "paginationLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "itemsCount": {
+          "type": "string",
+          "description": "",
+          "default": "Showing :currentCountFrom-:currentCountTo out of :totalCount items"
+        },
+        "previousPageTitle": {
+          "type": "string",
+          "description": "",
+          "default": "Previous page"
+        },
+        "nextPageTitle": {
+          "type": "string",
+          "description": "",
+          "default": "Next page"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/paginationFields"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/paginationFields"
+      }
+    },
+    {
+      "$ref": "#/definitions3/formTitleLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/formTitleLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/paginationLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/paginationLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_18"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_18"
+      }
+    },
+    {
+      "$ref": "#/definitions3/placeholderLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/placeholderLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_16"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_16"
+      }
+    },
+    {
+      "$ref": "#/definitions4/queryParamConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/queryParamConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions3/customStyles"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/customStyles"
+      }
+    },
+    {
+      "$ref": "#/definitions3/page"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/page"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions3/post"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/post"
+      }
+    },
+    {
+      "$ref": "#/definitions3/buttonLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/buttonLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_19"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_19"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tableColumnHeaders"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tableColumnHeaders"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/methods"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/methods"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/paginationParams"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/paginationParams"
+      }
+    },
+    {
+      "$ref": "#/definitions4/customStyles"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/customStyles"
+      }
+    },
+    {
+      "$ref": "#/definitions4/pagination"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/pagination"
+      }
+    },
+    {
+      "$ref": "#/definitions3/displayField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/displayField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/buttonLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/buttonLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/errorMessageDataPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/errorMessageDataPath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/method"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/method"
+      }
+    },
+    {
+      "$ref": "#/definitions3/paginationLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/paginationLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tableColumnHeaders"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tableColumnHeaders"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_14"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_14"
+      }
+    },
+    {
+      "$ref": "#/definitions4/getAll"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/getAll"
+      }
+    },
+    {
+      "$ref": "#/definitions3/delete"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/delete"
+      }
+    },
+    {
+      "$ref": "#/definitions4/put"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/put"
+      }
+    },
+    {
+      "$ref": "#/definitions4/getSingle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/getSingle"
+      }
+    },
+    {
+      "$ref": "#/definitions3/getSingle"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/getSingle"
+      }
+    },
+    {
+      "$ref": "#/definitions4/paginationField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/paginationField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/page"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/page"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/delete"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/delete"
+      }
+    },
+    {
+      "$ref": "#/definitions3/getAll"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/getAll"
+      }
+    },
+    {
+      "$ref": "#/definitions3/inputField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/inputField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/paginationFields"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/paginationFields"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/optionSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/optionSource"
+      }
+    },
+    {
+      "$ref": "#/definitions4/formTitleLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/formTitleLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/requestHeaders"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/requestHeaders"
+      }
+    },
+    {
+      "$ref": "#/definitions4/placeholderLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/placeholderLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions3/pagination"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/pagination"
+      }
+    },
+    {
+      "$ref": "#/definitions3/paginationParams"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/paginationParams"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/customLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/customLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/customAction"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/customAction"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_15"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_15"
+      }
+    },
+    {
+      "$ref": "#/definitions3/methods"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/methods"
+      }
+    },
+    {
+      "$ref": "#/definitions3/put"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/put"
+      }
+    },
+    {
+      "$ref": "#/definitions3/customLabels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/customLabels"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_17"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_17"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions3/paginationField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/paginationField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/inputField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/inputField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/displayField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/displayField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions3/queryParamConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/queryParamConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/post"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/post"
+      }
+    },
+    {
+      "$ref": "#/definitions4/errorMessageDataPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/errorMessageDataPath"
+      }
+    },
+    {
+      "$ref": "#/definitions3/requestHeaders"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/requestHeaders"
+      }
+    },
+    {
+      "$ref": "#/definitions3/customAction"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/customAction"
+      }
+    },
+    {
+      "$ref": "#/definitions3/optionSource"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/optionSource"
+      }
+    },
+    {
+      "$ref": "#/definitions3/method"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/method"
+      }
+    }
+  ]
+}

@@ -1,0 +1,701 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "additionalProperties": false,
+        "properties": {
+          "assets": {
+            "properties": {
+              "uris": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object",
+                "description": "This is a mapping of aliases to HTTP resources. The aliases enumerated here are available during resolution of the marathon.json.mustache file."
+              },
+              "container": {
+                "properties": {
+                  "docker": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "description": "This is a mapping of aliases to Docker images. The aliases enumerated here are available during resolution of marathon.json.mustache file."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "description": "Object that enumerates all of the required package assets."
+          },
+          "images": {
+            "properties": {
+              "icon-small": {
+                "description": "PNG icon URL, preferably 48 by 48 pixels.",
+                "type": "string"
+              },
+              "icon-large": {
+                "description": "PNG icon URL, preferably 256 by 256 pixels.",
+                "type": "string"
+              },
+              "screenshots": {
+                "items": {
+                  "description": "PNG screen URL, preferably 1024 by 1024 pixels.",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "icon-medium": {
+                "description": "PNG icon URL, preferably 128 by 128 pixels.",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "description": "Images used by DC/OS to display the package."
+          },
+          "cli": {
+            "required": [
+              "binaries"
+            ],
+            "properties": {
+              "binaries": {
+                "minProperties": 1,
+                "properties": {
+                  "linux": {
+                    "required": [
+                      "x86-64"
+                    ],
+                    "properties": {
+                      "x86-64": {
+                        "$ref": "#/definitions3/cliInfo"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "type": "object",
+                    "description": "Schema for the Linux CLI."
+                  },
+                  "windows": {
+                    "required": [
+                      "x86-64"
+                    ],
+                    "properties": {
+                      "x86-64": {
+                        "$ref": "#/definitions3/cliInfo"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "type": "object",
+                    "description": "Schema for the Windows CLI."
+                  },
+                  "darwin": {
+                    "required": [
+                      "x86-64"
+                    ],
+                    "properties": {
+                      "x86-64": {
+                        "$ref": "#/definitions3/cliInfo"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "type": "object",
+                    "description": "Schema for the MacOS (darwin) CLI."
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "description": "Enumerates all of the available binaries in this package."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "description": "Object that describes all of the required externally hosted assets for this package."
+          }
+        },
+        "$schema": "http://json-schema.org/draft-04/schema#"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "This is a mapping of aliases to HTTP resources. The aliases enumerated here are available during resolution of the marathon.json.mustache file."
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "docker": {
+                  "$ref": "#/definitions4/modern_7"
+                }
+              },
+              "type": "object",
+              "description": "This is a mapping of aliases to Docker images. The aliases enumerated here are available during resolution of marathon.json.mustache file."
+            },
+            {
+              "patternProperties": {
+                "^docker$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_10": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "minProperties": 1,
+              "properties": {
+                "linux": {
+                  "$ref": "#/definitions4/modern_11"
+                },
+                "windows": {
+                  "$ref": "#/definitions4/modern_12"
+                },
+                "darwin": {
+                  "$ref": "#/definitions4/modern_13"
+                }
+              },
+              "type": "object",
+              "description": "Enumerates all of the available binaries in this package."
+            },
+            {
+              "patternProperties": {
+                "^linux$": true,
+                "^windows$": true,
+                "^darwin$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "url",
+                "kind",
+                "contentHash"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "URL for the binary CLI."
+                },
+                "contentHash": {
+                  "items": {
+                    "$ref": "#/definitions4/hash"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "description": "List of hashes for the binary CLI that are described in the URL property."
+                },
+                "kind": {
+                  "enum": [
+                    "executable",
+                    "zip"
+                  ],
+                  "type": "string",
+                  "description": "The format of the CLI."
+                }
+              },
+              "type": "object",
+              "description": "Schema for adding a supported CLI to your package."
+            },
+            {
+              "patternProperties": {
+                "^url$": true,
+                "^contentHash$": true,
+                "^kind$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "algo",
+                "value"
+              ],
+              "properties": {
+                "algo": {
+                  "enum": [
+                    "sha256"
+                  ],
+                  "type": "string",
+                  "description": "The algorithm used to compute the hash."
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The value of the hash."
+                }
+              },
+              "type": "object",
+              "description": "CLI validation."
+            },
+            {
+              "patternProperties": {
+                "^algo$": true,
+                "^value$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_12": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "x86-64"
+              ],
+              "properties": {
+                "x86-64": {
+                  "$ref": "#/definitions4/cliInfo"
+                }
+              },
+              "type": "object",
+              "description": "Schema for the Windows CLI."
+            },
+            {
+              "patternProperties": {
+                "^x86-64$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "hash": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "icon-small": {
+                  "description": "PNG icon URL, preferably 48 by 48 pixels.",
+                  "type": "string"
+                },
+                "icon-large": {
+                  "description": "PNG icon URL, preferably 256 by 256 pixels.",
+                  "type": "string"
+                },
+                "screenshots": {
+                  "items": {
+                    "description": "PNG screen URL, preferably 1024 by 1024 pixels.",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "icon-medium": {
+                  "description": "PNG icon URL, preferably 128 by 128 pixels.",
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "description": "Images used by DC/OS to display the package."
+            },
+            {
+              "patternProperties": {
+                "^icon-small$": true,
+                "^icon-large$": true,
+                "^screenshots$": true,
+                "^icon-medium$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "binaries"
+              ],
+              "properties": {
+                "binaries": {
+                  "$ref": "#/definitions4/modern_10"
+                }
+              },
+              "type": "object",
+              "description": "Object that describes all of the required externally hosted assets for this package."
+            },
+            {
+              "patternProperties": {
+                "^binaries$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_13": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "x86-64"
+              ],
+              "properties": {
+                "x86-64": {
+                  "$ref": "#/definitions4/cliInfo"
+                }
+              },
+              "type": "object",
+              "description": "Schema for the MacOS (darwin) CLI."
+            },
+            {
+              "patternProperties": {
+                "^x86-64$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "assets": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "images": {
+                  "$ref": "#/definitions4/modern_8"
+                },
+                "cli": {
+                  "$ref": "#/definitions4/modern_9"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^assets$": true,
+                "^images$": true,
+                "^cli$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_11": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "x86-64"
+              ],
+              "properties": {
+                "x86-64": {
+                  "$ref": "#/definitions4/cliInfo"
+                }
+              },
+              "type": "object",
+              "description": "Schema for the Linux CLI."
+            },
+            {
+              "patternProperties": {
+                "^x86-64$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "cliInfo": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "uris": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "container": {
+                  "$ref": "#/definitions4/modern_6"
+                }
+              },
+              "type": "object",
+              "description": "Object that enumerates all of the required package assets."
+            },
+            {
+              "patternProperties": {
+                "^uris$": true,
+                "^container$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "cliInfo": {
+      "required": [
+        "url",
+        "kind",
+        "contentHash"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL for the binary CLI."
+        },
+        "contentHash": {
+          "items": {
+            "$ref": "#/definitions3/hash"
+          },
+          "minItems": 1,
+          "type": "array",
+          "description": "List of hashes for the binary CLI that are described in the URL property."
+        },
+        "kind": {
+          "enum": [
+            "executable",
+            "zip"
+          ],
+          "type": "string",
+          "description": "The format of the CLI."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Schema for adding a supported CLI to your package."
+    },
+    "hash": {
+      "required": [
+        "algo",
+        "value"
+      ],
+      "properties": {
+        "algo": {
+          "enum": [
+            "sha256"
+          ],
+          "type": "string",
+          "description": "The algorithm used to compute the hash."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the hash."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "CLI validation."
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/hash"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/hash"
+      }
+    },
+    {
+      "$ref": "#/definitions4/cliInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/cliInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_10"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_10"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_12"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_12"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_13"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_13"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_11"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_11"
+      }
+    },
+    {
+      "$ref": "#/definitions3/cliInfo"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/cliInfo"
+      }
+    },
+    {
+      "$ref": "#/definitions4/hash"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/hash"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

@@ -1,0 +1,372 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 32767
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "delete",
+            "get",
+            "options",
+            "patch",
+            "post",
+            "put"
+          ]
+        },
+        "access": {
+          "type": "string",
+          "enum": [
+            "public",
+            "authenticated",
+            "group"
+          ]
+        },
+        "endpointTags": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9a-zA-Z_-]{1,255}$": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          },
+          "additionalProperties": false
+        },
+        "experienceGroupIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Fa-f\\d]{24}$"
+          },
+          "maxItems": 1000
+        },
+        "staticReply": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "statusCode": {
+                  "type": "number",
+                  "min": 100,
+                  "max": 599,
+                  "integer": true
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "page",
+                    "redirect"
+                  ]
+                }
+              },
+              "required": [
+                "value",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unauthorizedReply": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "statusCode": {
+                  "type": "number",
+                  "min": 100,
+                  "max": 599,
+                  "integer": true
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "page",
+                    "redirect"
+                  ]
+                }
+              },
+              "required": [
+                "value",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "route",
+        "method"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "delete",
+                    "get",
+                    "options",
+                    "patch",
+                    "post",
+                    "put"
+                  ]
+                },
+                "experienceGroupIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Fa-f\\d]{24}$"
+                  },
+                  "maxItems": 1000
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 32767
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "endpointTags": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "unauthorizedReply": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/modern_3"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "access": {
+                  "type": "string",
+                  "enum": [
+                    "public",
+                    "authenticated",
+                    "group"
+                  ]
+                },
+                "route": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "staticReply": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions4/modern_4"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "route",
+                "method"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^unauthorizedReply$": true,
+                "^route$": true,
+                "^access$": true,
+                "^enabled$": true,
+                "^staticReply$": true,
+                "^endpointTags$": true,
+                "^method$": true,
+                "^description$": true,
+                "^experienceGroupIds$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]{1,255}$": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[0-9a-zA-Z_-]{1,255}$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "statusCode": {
+                  "type": "number",
+                  "min": 100,
+                  "max": 599,
+                  "integer": true
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "page",
+                    "redirect"
+                  ]
+                }
+              },
+              "required": [
+                "value",
+                "type"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^value$": true,
+                "^statusCode$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "statusCode": {
+                  "type": "number",
+                  "min": 100,
+                  "max": 599,
+                  "integer": true
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "page",
+                    "redirect"
+                  ]
+                }
+              },
+              "required": [
+                "value",
+                "type"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^value$": true,
+                "^statusCode$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    }
+  ]
+}

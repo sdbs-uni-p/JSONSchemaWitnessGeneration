@@ -1,0 +1,4753 @@
+{
+  "allOf": [
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "MCM Config",
+      "description": "Defines MCM Config layout",
+      "type": "object",
+      "patternProperties": {
+        "FormIDs": {
+          "$ref": "#/definitions2/FormIDsMap"
+        },
+        "Emitters": {
+          "type": "object",
+          "patternProperties": {
+            "^0x[0-9a-fA-F]{1,2}$|^(key_)": {
+              "$ref": "#/definitions2/EmittersData"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Configure emitter spells"
+        },
+        "^[^\\/:*?\"<>|']+.es[lmp]$": {
+          "$ref": "#/definitions2/ModConfig"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "MCM Config",
+        "description": "Defines MCM Config layout",
+        "type": "object",
+        "patternProperties": {
+          "FormIDs": {
+            "$ref": "#/definitions1/FormIDsMap"
+          },
+          "Emitters": {
+            "type": "object",
+            "patternProperties": {
+              "^0x[0-9a-fA-F]{1,2}$|^(key_)": {
+                "$ref": "#/definitions1/EmittersData"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Configure emitter spells"
+          },
+          "^[^\\/:*?\"<>|']+.es[lmp]$": {
+            "$ref": "#/definitions1/ModConfig"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions2": {
+    "PluginFormID": {
+      "description": "PluginFormID",
+      "type": "string",
+      "$comment": "MyMod.esp|0x31415",
+      "pattern": "^[^\\\\\\/:*?\"<>|]+\\.es[lmp]\\|(0[Xx])[\\dA-Fa-f]{1,8}$"
+    },
+    "form_key": {
+      "type": "string",
+      "pattern": "^key_[\\w\\d]+"
+    },
+    "FormIDsMap": {
+      "type": "object",
+      "description": "A map string->formID for more convenience",
+      "patternProperties": {
+        "^key_[\\w\\d]+": {
+          "$ref": "#/definitions2/FormOrID",
+          "description": "A form to which the key is mapped"
+        }
+      },
+      "additionalProperties": false
+    },
+    "point3": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "point2": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "FormOrID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/PluginFormID"
+        },
+        {
+          "$ref": "#/definitions2/formID"
+        },
+        {
+          "$ref": "#/definitions2/form_key"
+        }
+      ]
+    },
+    "formID": {
+      "description": "Form id of xEdit record",
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{1,8}$"
+    },
+    "ifAutoAimConstSpeed": {
+      "$comment": "RotationTime for ConstSpeed type",
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ConstSpeed"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "rotationTime": {
+            "type": "number",
+            "description": "Time needed to rotate at 180 deg (5, 3.5, 2.5 are nice)",
+            "minimum": 0.5,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "rotationTime"
+        ]
+      }
+    },
+    "ifAutoAimConstAccel": {
+      "$comment": "Acceleration for ConstAccel type",
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ConstAccel"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "acceleration": {
+            "type": "integer",
+            "description": "Acceleration length (5, 10, 50 are nice)",
+            "minimum": 1,
+            "maximum": 300
+          }
+        },
+        "required": [
+          "acceleration"
+        ]
+      }
+    },
+    "ifAutoAimCursor": {
+      "$comment": "Cursor radius for Cursor type",
+      "if": {
+        "properties": {
+          "target": {
+            "const": "Cursor"
+          }
+        },
+        "required": [
+          "target"
+        ]
+      },
+      "then": {
+        "properties": {
+          "cursorAngle": {
+            "type": "integer",
+            "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+            "minimum": 0,
+            "maximum": 90
+          }
+        },
+        "required": [
+          "cursorAngle"
+        ]
+      }
+    },
+    "HomingTypes": {
+      "description": "Type of homing trajectories",
+      "enum": [
+        "ConstSpeed",
+        "ConstAccel"
+      ]
+    },
+    "HomingCasters": {
+      "description": "Who can cast homing version of the projectile (Default: both)",
+      "enum": [
+        "Both",
+        "NPC",
+        "Player"
+      ]
+    },
+    "HomingTargets": {
+      "description": "How to capture target (Default: Nearest)",
+      "enum": [
+        "Cursor",
+        "Nearest",
+        "Hostile"
+      ]
+    },
+    "Homing": {
+      "description": "Configure homing spells",
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "$ref": "#/definitions2/HomingTypes"
+            },
+            "target": {
+              "$ref": "#/definitions2/HomingTargets"
+            },
+            "caster": {
+              "$ref": "#/definitions2/HomingCasters"
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions2/ifAutoAimConstSpeed"
+            },
+            {
+              "$ref": "#/definitions2/ifAutoAimConstAccel"
+            },
+            {
+              "$ref": "#/definitions2/ifAutoAimCursor"
+            }
+          ],
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "ifMulticastAutoAim": {
+      "$comment": "Add target type",
+      "if": {
+        "properties": {
+          "rotation": {
+            "const": "AutoAim"
+          }
+        },
+        "required": [
+          "rotation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "$ref": "#/definitions2/HomingTargets"
+          }
+        },
+        "required": [
+          "target"
+        ]
+      }
+    },
+    "MulticastEmpty": {
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "arrowID"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "spellID"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "weapID"
+            ]
+          }
+        }
+      ],
+      "description": "Fallback to defaults"
+    },
+    "SpellID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/FormOrID"
+        },
+        {
+          "const": "Current"
+        }
+      ],
+      "description": "A spell to cast"
+    },
+    "MulticastSpell": {
+      "allOf": [
+        {
+          "required": [
+            "spellID"
+          ]
+        },
+        {
+          "not": {
+            "required": [
+              "arrowID"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "weapID"
+            ]
+          }
+        }
+      ],
+      "description": "Data for spell projectile"
+    },
+    "ArrowID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/FormOrID"
+        },
+        {
+          "const": "Current"
+        }
+      ],
+      "description": "An arrow to fire"
+    },
+    "WeapID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/FormOrID"
+        },
+        {
+          "const": "Current"
+        }
+      ],
+      "description": "A weap that fires"
+    },
+    "MulticastArrow": {
+      "description": "Data for spell projectile",
+      "allOf": [
+        {
+          "required": [
+            "weapID"
+          ]
+        },
+        {
+          "not": {
+            "required": [
+              "spellID"
+            ]
+          }
+        }
+      ]
+    },
+    "MultiCastShape": {
+      "description": "How to position projectiles (default: Single)",
+      "enum": [
+        "Single",
+        "HorizontalLine",
+        "VerticalLine",
+        "Circle",
+        "HalfCircle",
+        "FillSquare"
+      ]
+    },
+    "MultiCastRotation": {
+      "description": "How to rotate projectiles (default: Parallel)",
+      "enum": [
+        "Parallel",
+        "ToSight",
+        "ToCenter",
+        "FromCenter",
+        "AutoAim"
+      ]
+    },
+    "MultiCastSound": {
+      "description": "How many times play sound for a group (default: Every)",
+      "enum": [
+        "Single",
+        "Every",
+        "None"
+      ]
+    },
+    "Count": {
+      "description": "Number of projectiles to spawn",
+      "type": "integer",
+      "minimum": 1
+    },
+    "NewProjType": {
+      "type": "object",
+      "description": "Should new projectile be new type (homing, emitter etc)",
+      "properties": {
+        "Emitter": {
+          "$ref": "#/definitions2/FormOrID",
+          "description": "Set the projectile to emitter with this key"
+        },
+        "Homing": {
+          "$ref": "#/definitions2/FormOrID",
+          "description": "Set the projectile to homing with this key"
+        },
+        "Follower": {
+          "$ref": "#/definitions2/FormOrID",
+          "description": "Set the projectile to following with this key"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MulticastData": {
+      "type": "object",
+      "description": "Multicast data. Key is 8-digit hex number. Used while searching by bproj.formID or just key",
+      "properties": {
+        "shape": {
+          "$ref": "#/definitions2/MultiCastShape"
+        },
+        "rotation": {
+          "$ref": "#/definitions2/MultiCastRotation"
+        },
+        "sound": {
+          "$ref": "#/definitions2/MultiCastSound"
+        },
+        "count": {
+          "$ref": "#/definitions2/Count"
+        },
+        "NewProjType": {
+          "$ref": "#/definitions2/NewProjType"
+        },
+        "arrowID": {
+          "$ref": "#/definitions2/ArrowID"
+        },
+        "weapID": {
+          "$ref": "#/definitions2/WeapID"
+        },
+        "spellID": {
+          "$ref": "#/definitions2/SpellID"
+        },
+        "spawnData": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "description": "Spawn group data",
+            "properties": {
+              "rotRnd": {
+                "$ref": "#/definitions2/point2",
+                "description": "Max delta for random angles"
+              },
+              "rotDelta": {
+                "$ref": "#/definitions2/point2",
+                "description": "Delta for angles"
+              },
+              "pos": {
+                "$ref": "#/definitions2/point3",
+                "description": "Origin center"
+              },
+              "posRnd": {
+                "$ref": "#/definitions2/point3",
+                "description": "Max delta for random origin"
+              },
+              "rotation": {
+                "$ref": "#/definitions2/MultiCastRotation"
+              },
+              "sound": {
+                "$ref": "#/definitions2/MultiCastSound"
+              },
+              "shape": {
+                "$ref": "#/definitions2/MultiCastShape"
+              },
+              "NewProjType": {
+                "$ref": "#/definitions2/NewProjType"
+              },
+              "count": {
+                "$ref": "#/definitions2/Count"
+              },
+              "normal": {
+                "$ref": "#/definitions2/point3",
+                "description": "Normal of the spawning plane"
+              },
+              "size": {
+                "type": "integer",
+                "description": "Shape size (usually 50--200). If shape is not Single, MUST present",
+                "minimum": 1
+              },
+              "arrowID": {
+                "$ref": "#/definitions2/ArrowID"
+              },
+              "weapID": {
+                "$ref": "#/definitions2/WeapID"
+              },
+              "spellID": {
+                "$ref": "#/definitions2/SpellID"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "normal": true
+                  },
+                  "required": [
+                    "normal"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "xDepends": {
+                      "type": "boolean",
+                      "description": "Is normal depends only on left-right or on up-down too"
+                    }
+                  }
+                }
+              }
+            ],
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/MulticastArrow"
+              },
+              {
+                "$ref": "#/definitions2/MulticastSpell"
+              },
+              {
+                "$ref": "#/definitions2/MulticastEmpty"
+              }
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/definitions2/MulticastArrow"
+        },
+        {
+          "$ref": "#/definitions2/MulticastSpell"
+        }
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions2/ifMulticastAutoAim"
+        },
+        {
+          "$ref": "#/definitions2/ifAutoAimCursor"
+        }
+      ],
+      "required": [
+        "spawnData"
+      ],
+      "additionalProperties": false
+    },
+    "Multicast": {
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "$ref": "#/definitions2/MulticastData"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Configure multicast spells"
+    },
+    "ifEmittersMulticastType": {
+      "$comment": "Key for Multicast emitter",
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Multicast"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+            "description": "ID of the function to call"
+          }
+        },
+        "required": [
+          "key"
+        ]
+      }
+    },
+    "ifEmittersChangeTypeType": {
+      "$comment": "NewProjType to change type",
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ChangeType"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "NewProjType": {
+            "$ref": "#/definitions2/NewProjType"
+          }
+        },
+        "required": [
+          "NewProjType"
+        ]
+      }
+    },
+    "ifEmittersFindTargetType": {
+      "$comment": "Target type",
+      "if": {
+        "properties": {
+          "type": {
+            "const": "FindTarget"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+            "description": "ID of the function to call"
+          }
+        },
+        "required": [
+          "key"
+        ]
+      }
+    },
+    "EmittersData": {
+      "type": "object",
+      "description": "Emitters data. Used while searching by bproj.formID or just key",
+      "properties": {
+        "interval": {
+          "type": "number",
+          "description": "Event fires every this time (sec)",
+          "minimum": 0.1,
+          "maximum": 20
+        },
+        "type": {
+          "enum": [
+            "Multicast",
+            "ChangeType",
+            "FindTarget"
+          ],
+          "description": "A function to call"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions2/ifEmittersMulticastType"
+        },
+        {
+          "$ref": "#/definitions2/ifEmittersChangeTypeType"
+        },
+        {
+          "$ref": "#/definitions2/ifEmittersFindTargetType"
+        }
+      ],
+      "required": [
+        "type",
+        "interval"
+      ],
+      "additionalProperties": false
+    },
+    "Emitters": {
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{1,2}$",
+              "description": "A key for global map"
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "description": "Set emitter type for this projectile"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Configure emitter spells"
+    },
+    "FollowingShape": {
+      "description": "Shape & behavior of Following projectile",
+      "enum": [
+        "Nimbus",
+        "Shield",
+        "Round"
+      ]
+    },
+    "Following": {
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "integer",
+              "description": "A number of projectiles in this shape",
+              "maximum": 8
+            },
+            "index": {
+              "type": "integer",
+              "description": "Index of this projectile in this shape. From 0 to 'size-1'",
+              "maximum": 7
+            },
+            "type": {
+              "$ref": "#/definitions2/FollowingShape"
+            },
+            "caster": {
+              "$ref": "#/definitions2/HomingCasters"
+            }
+          },
+          "required": [
+            "size",
+            "index",
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "Set following type for this projectile"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Configure emitter spells"
+    },
+    "ModConfig": {
+      "type": "object",
+      "description": "Configure projectiles in the mod",
+      "properties": {
+        "Homing": {
+          "$ref": "#/definitions2/Homing"
+        },
+        "Multicast": {
+          "$ref": "#/definitions2/Multicast"
+        },
+        "Emitters": {
+          "$ref": "#/definitions2/Emitters"
+        },
+        "Following": {
+          "$ref": "#/definitions2/Following"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions1": {
+    "ArrowID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/FormOrID"
+        },
+        {
+          "const": "Current"
+        }
+      ],
+      "description": "An arrow to fire"
+    },
+    "Emitters": {
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{1,2}$",
+              "description": "A key for global map"
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "description": "Set emitter type for this projectile"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Configure emitter spells"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Multicast data. Key is 8-digit hex number. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "count": {
+                      "$ref": "#/definitions1/Count"
+                    },
+                    "arrowID": {
+                      "$ref": "#/definitions1/ArrowID"
+                    },
+                    "rotation": {
+                      "$ref": "#/definitions1/MultiCastRotation"
+                    },
+                    "spawnData": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions1/modern_2"
+                      }
+                    },
+                    "sound": {
+                      "$ref": "#/definitions1/MultiCastSound"
+                    },
+                    "shape": {
+                      "$ref": "#/definitions1/MultiCastShape"
+                    },
+                    "weapID": {
+                      "$ref": "#/definitions1/WeapID"
+                    },
+                    "spellID": {
+                      "$ref": "#/definitions1/SpellID"
+                    },
+                    "NewProjType": {
+                      "$ref": "#/definitions1/NewProjType"
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/MulticastArrow"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastSpell"
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Add target type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "rotation": {
+                                  "const": "AutoAim"
+                                }
+                              },
+                              "required": [
+                                "rotation"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "target": {
+                                  "$ref": "#/definitions1/HomingTargets"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "target": {
+                                  "const": "Cursor"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "cursorAngle": {
+                                  "type": "integer",
+                                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                                  "minimum": 0.0,
+                                  "maximum": 90.0
+                                }
+                              },
+                              "required": [
+                                "cursorAngle"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "spawnData"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^NewProjType$": true,
+                "^arrowID$": true,
+                "^count$": true,
+                "^sound$": true,
+                "^cursorAngle$": true,
+                "^spellID$": true,
+                "^rotation$": true,
+                "^spawnData$": true,
+                "^weapID$": true,
+                "^shape$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Multicast data. Key is 8-digit hex number. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "count": {
+                      "$ref": "#/definitions1/Count"
+                    },
+                    "arrowID": {
+                      "$ref": "#/definitions1/ArrowID"
+                    },
+                    "rotation": {
+                      "$ref": "#/definitions1/MultiCastRotation"
+                    },
+                    "spawnData": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions1/modern_2"
+                      }
+                    },
+                    "sound": {
+                      "$ref": "#/definitions1/MultiCastSound"
+                    },
+                    "shape": {
+                      "$ref": "#/definitions1/MultiCastShape"
+                    },
+                    "weapID": {
+                      "$ref": "#/definitions1/WeapID"
+                    },
+                    "spellID": {
+                      "$ref": "#/definitions1/SpellID"
+                    },
+                    "NewProjType": {
+                      "$ref": "#/definitions1/NewProjType"
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/MulticastArrow"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastSpell"
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Add target type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "rotation": {
+                                  "const": "AutoAim"
+                                }
+                              },
+                              "required": [
+                                "rotation"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "target": {
+                                  "$ref": "#/definitions1/HomingTargets"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "target": {
+                                "const": "Cursor"
+                              }
+                            },
+                            "required": [
+                              "target"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "spawnData"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^NewProjType$": true,
+                "^arrowID$": true,
+                "^count$": true,
+                "^sound$": true,
+                "^spellID$": true,
+                "^rotation$": true,
+                "^spawnData$": true,
+                "^weapID$": true,
+                "^shape$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Multicast data. Key is 8-digit hex number. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "count": {
+                      "$ref": "#/definitions1/Count"
+                    },
+                    "arrowID": {
+                      "$ref": "#/definitions1/ArrowID"
+                    },
+                    "rotation": {
+                      "$ref": "#/definitions1/MultiCastRotation"
+                    },
+                    "spawnData": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions1/modern_2"
+                      }
+                    },
+                    "sound": {
+                      "$ref": "#/definitions1/MultiCastSound"
+                    },
+                    "shape": {
+                      "$ref": "#/definitions1/MultiCastShape"
+                    },
+                    "weapID": {
+                      "$ref": "#/definitions1/WeapID"
+                    },
+                    "spellID": {
+                      "$ref": "#/definitions1/SpellID"
+                    },
+                    "NewProjType": {
+                      "$ref": "#/definitions1/NewProjType"
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/MulticastArrow"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastSpell"
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Add target type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "rotation": {
+                                "const": "AutoAim"
+                              }
+                            },
+                            "required": [
+                              "rotation"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "target": {
+                                  "const": "Cursor"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "cursorAngle": {
+                                  "type": "integer",
+                                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                                  "minimum": 0.0,
+                                  "maximum": 90.0
+                                }
+                              },
+                              "required": [
+                                "cursorAngle"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "spawnData"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^NewProjType$": true,
+                "^arrowID$": true,
+                "^count$": true,
+                "^sound$": true,
+                "^cursorAngle$": true,
+                "^spellID$": true,
+                "^rotation$": true,
+                "^spawnData$": true,
+                "^weapID$": true,
+                "^shape$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Multicast data. Key is 8-digit hex number. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "count": {
+                      "$ref": "#/definitions1/Count"
+                    },
+                    "arrowID": {
+                      "$ref": "#/definitions1/ArrowID"
+                    },
+                    "rotation": {
+                      "$ref": "#/definitions1/MultiCastRotation"
+                    },
+                    "spawnData": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions1/modern_2"
+                      }
+                    },
+                    "sound": {
+                      "$ref": "#/definitions1/MultiCastSound"
+                    },
+                    "shape": {
+                      "$ref": "#/definitions1/MultiCastShape"
+                    },
+                    "weapID": {
+                      "$ref": "#/definitions1/WeapID"
+                    },
+                    "spellID": {
+                      "$ref": "#/definitions1/SpellID"
+                    },
+                    "NewProjType": {
+                      "$ref": "#/definitions1/NewProjType"
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/MulticastArrow"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastSpell"
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Add target type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "rotation": {
+                                "const": "AutoAim"
+                              }
+                            },
+                            "required": [
+                              "rotation"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "target": {
+                                "const": "Cursor"
+                              }
+                            },
+                            "required": [
+                              "target"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "spawnData"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^NewProjType$": true,
+                "^arrowID$": true,
+                "^count$": true,
+                "^sound$": true,
+                "^spellID$": true,
+                "^rotation$": true,
+                "^spawnData$": true,
+                "^weapID$": true,
+                "^shape$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "FormOrID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/PluginFormID"
+        },
+        {
+          "$ref": "#/definitions1/formID"
+        },
+        {
+          "$ref": "#/definitions1/form_key"
+        }
+      ]
+    },
+    "Multicast": {
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "$ref": "#/definitions1/MulticastData"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Configure multicast spells"
+    },
+    "ifEmittersChangeTypeType": {
+      "$comment": "NewProjType to change type",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "const": "ChangeType"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "properties": {
+                "NewProjType": {
+                  "$ref": "#/definitions1/NewProjType"
+                }
+              },
+              "required": [
+                "NewProjType"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "const": "ChangeType"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      ]
+    },
+    "MulticastArrow": {
+      "description": "Data for spell projectile",
+      "allOf": [
+        {
+          "required": [
+            "weapID"
+          ]
+        },
+        {
+          "not": {
+            "required": [
+              "spellID"
+            ]
+          }
+        }
+      ]
+    },
+    "MulticastData": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "MultiCastSound": {
+      "description": "How many times play sound for a group (default: Every)",
+      "enum": [
+        "Single",
+        "Every",
+        "None"
+      ]
+    },
+    "MultiCastShape": {
+      "description": "How to position projectiles (default: Single)",
+      "enum": [
+        "Single",
+        "HorizontalLine",
+        "VerticalLine",
+        "Circle",
+        "HalfCircle",
+        "FillSquare"
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "Multicast"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ChangeType"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "NewProjType": {
+                                  "$ref": "#/definitions1/NewProjType"
+                                }
+                              },
+                              "required": [
+                                "NewProjType"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "FindTarget"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^key$": true,
+                "^NewProjType$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "Multicast"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ChangeType"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "NewProjType": {
+                                  "$ref": "#/definitions1/NewProjType"
+                                }
+                              },
+                              "required": [
+                                "NewProjType"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "FindTarget"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^key$": true,
+                "^NewProjType$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "Multicast"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ChangeType"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "FindTarget"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^key$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "Multicast"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ChangeType"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "FindTarget"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^key$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "Multicast"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ChangeType"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "NewProjType": {
+                                  "$ref": "#/definitions1/NewProjType"
+                                }
+                              },
+                              "required": [
+                                "NewProjType"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "FindTarget"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^NewProjType$": true,
+                "^key$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "Multicast"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ChangeType"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "NewProjType": {
+                                  "$ref": "#/definitions1/NewProjType"
+                                }
+                              },
+                              "required": [
+                                "NewProjType"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "FindTarget"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^NewProjType$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "Multicast"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ChangeType"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "FindTarget"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                                  "description": "ID of the function to call"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true,
+                "^key$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Emitters data. Used while searching by bproj.formID or just key"
+                },
+                {
+                  "properties": {
+                    "interval": {
+                      "type": "number",
+                      "description": "Event fires every this time (sec)",
+                      "minimum": 0.1,
+                      "maximum": 20.0
+                    },
+                    "type": {
+                      "enum": [
+                        "Multicast",
+                        "ChangeType",
+                        "FindTarget"
+                      ],
+                      "description": "A function to call"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Key for Multicast emitter"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "Multicast"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "NewProjType to change type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ChangeType"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Target type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "FindTarget"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type",
+                    "interval"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^interval$": true,
+                "^type$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "HomingTypes": {
+      "description": "Type of homing trajectories",
+      "enum": [
+        "ConstSpeed",
+        "ConstAccel"
+      ]
+    },
+    "HomingTargets": {
+      "description": "How to capture target (Default: Nearest)",
+      "enum": [
+        "Cursor",
+        "Nearest",
+        "Hostile"
+      ]
+    },
+    "point2": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "ifEmittersMulticastType": {
+      "$comment": "Key for Multicast emitter",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "const": "Multicast"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                  "description": "ID of the function to call"
+                }
+              },
+              "required": [
+                "key"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "const": "Multicast"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      ]
+    },
+    "PluginFormID": {
+      "description": "PluginFormID",
+      "type": "string",
+      "$comment": "MyMod.esp|0x31415",
+      "pattern": "^[^\\\\\\/:*?\"<>|]+\\.es[lmp]\\|(0[Xx])[\\dA-Fa-f]{1,8}$"
+    },
+    "ifEmittersFindTargetType": {
+      "$comment": "Target type",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "const": "FindTarget"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^0x[0-9a-fA-F]{1,8}$|^(key_)",
+                  "description": "ID of the function to call"
+                }
+              },
+              "required": [
+                "key"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "const": "FindTarget"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Spawn group data"
+                },
+                {
+                  "properties": {
+                    "count": {
+                      "$ref": "#/definitions1/Count"
+                    },
+                    "size": {
+                      "type": "integer",
+                      "description": "Shape size (usually 50--200). If shape is not Single, MUST present",
+                      "minimum": 1.0
+                    },
+                    "arrowID": {
+                      "$ref": "#/definitions1/ArrowID"
+                    },
+                    "pos": {
+                      "$ref": "#/definitions1/point3",
+                      "description": "Origin center"
+                    },
+                    "rotation": {
+                      "$ref": "#/definitions1/MultiCastRotation"
+                    },
+                    "posRnd": {
+                      "$ref": "#/definitions1/point3",
+                      "description": "Max delta for random origin"
+                    },
+                    "sound": {
+                      "$ref": "#/definitions1/MultiCastSound"
+                    },
+                    "shape": {
+                      "$ref": "#/definitions1/MultiCastShape"
+                    },
+                    "rotRnd": {
+                      "$ref": "#/definitions1/point2",
+                      "description": "Max delta for random angles"
+                    },
+                    "weapID": {
+                      "$ref": "#/definitions1/WeapID"
+                    },
+                    "rotDelta": {
+                      "$ref": "#/definitions1/point2",
+                      "description": "Delta for angles"
+                    },
+                    "normal": {
+                      "$ref": "#/definitions1/point3",
+                      "description": "Normal of the spawning plane"
+                    },
+                    "spellID": {
+                      "$ref": "#/definitions1/SpellID"
+                    },
+                    "NewProjType": {
+                      "$ref": "#/definitions1/NewProjType"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "properties": {
+                            "normal": true
+                          },
+                          "required": [
+                            "normal"
+                          ]
+                        },
+                        {
+                          "properties": {
+                            "xDepends": {
+                              "type": "boolean",
+                              "description": "Is normal depends only on left-right or on up-down too"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/MulticastArrow"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastSpell"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastEmpty"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^posRnd$": true,
+                "^NewProjType$": true,
+                "^arrowID$": true,
+                "^rotRnd$": true,
+                "^count$": true,
+                "^sound$": true,
+                "^xDepends$": true,
+                "^normal$": true,
+                "^pos$": true,
+                "^spellID$": true,
+                "^rotDelta$": true,
+                "^weapID$": true,
+                "^shape$": true,
+                "^rotation$": true,
+                "^size$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "description": "Spawn group data"
+                },
+                {
+                  "properties": {
+                    "count": {
+                      "$ref": "#/definitions1/Count"
+                    },
+                    "size": {
+                      "type": "integer",
+                      "description": "Shape size (usually 50--200). If shape is not Single, MUST present",
+                      "minimum": 1.0
+                    },
+                    "arrowID": {
+                      "$ref": "#/definitions1/ArrowID"
+                    },
+                    "pos": {
+                      "$ref": "#/definitions1/point3",
+                      "description": "Origin center"
+                    },
+                    "rotation": {
+                      "$ref": "#/definitions1/MultiCastRotation"
+                    },
+                    "posRnd": {
+                      "$ref": "#/definitions1/point3",
+                      "description": "Max delta for random origin"
+                    },
+                    "sound": {
+                      "$ref": "#/definitions1/MultiCastSound"
+                    },
+                    "shape": {
+                      "$ref": "#/definitions1/MultiCastShape"
+                    },
+                    "rotRnd": {
+                      "$ref": "#/definitions1/point2",
+                      "description": "Max delta for random angles"
+                    },
+                    "weapID": {
+                      "$ref": "#/definitions1/WeapID"
+                    },
+                    "rotDelta": {
+                      "$ref": "#/definitions1/point2",
+                      "description": "Delta for angles"
+                    },
+                    "normal": {
+                      "$ref": "#/definitions1/point3",
+                      "description": "Normal of the spawning plane"
+                    },
+                    "spellID": {
+                      "$ref": "#/definitions1/SpellID"
+                    },
+                    "NewProjType": {
+                      "$ref": "#/definitions1/NewProjType"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "normal": true
+                        },
+                        "required": [
+                          "normal"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions1/MulticastArrow"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastSpell"
+                    },
+                    {
+                      "$ref": "#/definitions1/MulticastEmpty"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^posRnd$": true,
+                "^NewProjType$": true,
+                "^arrowID$": true,
+                "^rotRnd$": true,
+                "^count$": true,
+                "^sound$": true,
+                "^normal$": true,
+                "^pos$": true,
+                "^spellID$": true,
+                "^rotDelta$": true,
+                "^weapID$": true,
+                "^shape$": true,
+                "^rotation$": true,
+                "^size$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Following": {
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "integer",
+              "description": "A number of projectiles in this shape",
+              "maximum": 8.0
+            },
+            "index": {
+              "type": "integer",
+              "description": "Index of this projectile in this shape. From 0 to 'size-1'",
+              "maximum": 7.0
+            },
+            "type": {
+              "$ref": "#/definitions1/FollowingShape"
+            },
+            "caster": {
+              "$ref": "#/definitions1/HomingCasters"
+            }
+          },
+          "required": [
+            "size",
+            "index",
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "Set following type for this projectile"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Configure emitter spells"
+    },
+    "NewProjType": {
+      "type": "object",
+      "description": "Should new projectile be new type (homing, emitter etc)",
+      "properties": {
+        "Emitter": {
+          "$ref": "#/definitions1/FormOrID",
+          "description": "Set the projectile to emitter with this key"
+        },
+        "Homing": {
+          "$ref": "#/definitions1/FormOrID",
+          "description": "Set the projectile to homing with this key"
+        },
+        "Follower": {
+          "$ref": "#/definitions1/FormOrID",
+          "description": "Set the projectile to following with this key"
+        }
+      },
+      "additionalProperties": false
+    },
+    "FollowingShape": {
+      "description": "Shape & behavior of Following projectile",
+      "enum": [
+        "Nimbus",
+        "Shield",
+        "Round"
+      ]
+    },
+    "SpellID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/FormOrID"
+        },
+        {
+          "const": "Current"
+        }
+      ],
+      "description": "A spell to cast"
+    },
+    "MultiCastRotation": {
+      "description": "How to rotate projectiles (default: Parallel)",
+      "enum": [
+        "Parallel",
+        "ToSight",
+        "ToCenter",
+        "FromCenter",
+        "AutoAim"
+      ]
+    },
+    "Count": {
+      "description": "Number of projectiles to spawn",
+      "type": "integer",
+      "minimum": 1.0
+    },
+    "ifAutoAimConstAccel": {
+      "$comment": "Acceleration for ConstAccel type",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "const": "ConstAccel"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "properties": {
+                "acceleration": {
+                  "type": "integer",
+                  "description": "Acceleration length (5, 10, 50 are nice)",
+                  "minimum": 1.0,
+                  "maximum": 300.0
+                }
+              },
+              "required": [
+                "acceleration"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "const": "ConstAccel"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      ]
+    },
+    "Homing": {
+      "description": "Configure homing spells",
+      "type": "object",
+      "patternProperties": {
+        "^0x[0-9a-fA-F]{1,8}$|^(key_)": {
+          "$ref": "#/definitions1/modern_3"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HomingCasters": {
+      "description": "Who can cast homing version of the projectile (Default: both)",
+      "enum": [
+        "Both",
+        "NPC",
+        "Player"
+      ]
+    },
+    "formID": {
+      "description": "Form id of xEdit record",
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{1,8}$"
+    },
+    "point3": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "form_key": {
+      "type": "string",
+      "pattern": "^key_[\\w\\d]+"
+    },
+    "FormIDsMap": {
+      "type": "object",
+      "description": "A map string->formID for more convenience",
+      "patternProperties": {
+        "^key_[\\w\\d]+": {
+          "$ref": "#/definitions1/FormOrID",
+          "description": "A form to which the key is mapped"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ifAutoAimConstSpeed": {
+      "$comment": "RotationTime for ConstSpeed type",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "type": {
+                  "const": "ConstSpeed"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "properties": {
+                "rotationTime": {
+                  "type": "number",
+                  "description": "Time needed to rotate at 180 deg (5, 3.5, 2.5 are nice)",
+                  "minimum": 0.5,
+                  "maximum": 100.0
+                }
+              },
+              "required": [
+                "rotationTime"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "const": "ConstSpeed"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstSpeed"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "rotationTime": {
+                                  "type": "number",
+                                  "description": "Time needed to rotate at 180 deg (5, 3.5, 2.5 are nice)",
+                                  "minimum": 0.5,
+                                  "maximum": 100.0
+                                }
+                              },
+                              "required": [
+                                "rotationTime"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstAccel"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "acceleration": {
+                                  "type": "integer",
+                                  "description": "Acceleration length (5, 10, 50 are nice)",
+                                  "minimum": 1.0,
+                                  "maximum": 300.0
+                                }
+                              },
+                              "required": [
+                                "acceleration"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "target": {
+                                  "const": "Cursor"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "cursorAngle": {
+                                  "type": "integer",
+                                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                                  "minimum": 0.0,
+                                  "maximum": 90.0
+                                }
+                              },
+                              "required": [
+                                "cursorAngle"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^acceleration$": true,
+                "^target$": true,
+                "^caster$": true,
+                "^type$": true,
+                "^cursorAngle$": true,
+                "^rotationTime$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstSpeed"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "rotationTime": {
+                                  "type": "number",
+                                  "description": "Time needed to rotate at 180 deg (5, 3.5, 2.5 are nice)",
+                                  "minimum": 0.5,
+                                  "maximum": 100.0
+                                }
+                              },
+                              "required": [
+                                "rotationTime"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstAccel"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "acceleration": {
+                                  "type": "integer",
+                                  "description": "Acceleration length (5, 10, 50 are nice)",
+                                  "minimum": 1.0,
+                                  "maximum": 300.0
+                                }
+                              },
+                              "required": [
+                                "acceleration"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "target": {
+                                "const": "Cursor"
+                              }
+                            },
+                            "required": [
+                              "target"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^acceleration$": true,
+                "^target$": true,
+                "^caster$": true,
+                "^type$": true,
+                "^rotationTime$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstSpeed"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "rotationTime": {
+                                  "type": "number",
+                                  "description": "Time needed to rotate at 180 deg (5, 3.5, 2.5 are nice)",
+                                  "minimum": 0.5,
+                                  "maximum": 100.0
+                                }
+                              },
+                              "required": [
+                                "rotationTime"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstAccel"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "target": {
+                                  "const": "Cursor"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "cursorAngle": {
+                                  "type": "integer",
+                                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                                  "minimum": 0.0,
+                                  "maximum": 90.0
+                                }
+                              },
+                              "required": [
+                                "cursorAngle"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^caster$": true,
+                "^type$": true,
+                "^cursorAngle$": true,
+                "^rotationTime$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstSpeed"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "rotationTime": {
+                                  "type": "number",
+                                  "description": "Time needed to rotate at 180 deg (5, 3.5, 2.5 are nice)",
+                                  "minimum": 0.5,
+                                  "maximum": 100.0
+                                }
+                              },
+                              "required": [
+                                "rotationTime"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstAccel"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "target": {
+                                "const": "Cursor"
+                              }
+                            },
+                            "required": [
+                              "target"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^target$": true,
+                "^caster$": true,
+                "^rotationTime$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstSpeed"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstAccel"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "acceleration": {
+                                  "type": "integer",
+                                  "description": "Acceleration length (5, 10, 50 are nice)",
+                                  "minimum": 1.0,
+                                  "maximum": 300.0
+                                }
+                              },
+                              "required": [
+                                "acceleration"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "target": {
+                                  "const": "Cursor"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "cursorAngle": {
+                                  "type": "integer",
+                                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                                  "minimum": 0.0,
+                                  "maximum": 90.0
+                                }
+                              },
+                              "required": [
+                                "cursorAngle"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^acceleration$": true,
+                "^target$": true,
+                "^caster$": true,
+                "^type$": true,
+                "^cursorAngle$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstSpeed"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "ConstAccel"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "acceleration": {
+                                  "type": "integer",
+                                  "description": "Acceleration length (5, 10, 50 are nice)",
+                                  "minimum": 1.0,
+                                  "maximum": 300.0
+                                }
+                              },
+                              "required": [
+                                "acceleration"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "target": {
+                                "const": "Cursor"
+                              }
+                            },
+                            "required": [
+                              "target"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^target$": true,
+                "^caster$": true,
+                "^acceleration$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstSpeed"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstAccel"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "target": {
+                                  "const": "Cursor"
+                                }
+                              },
+                              "required": [
+                                "target"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "cursorAngle": {
+                                  "type": "integer",
+                                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                                  "minimum": 0.0,
+                                  "maximum": 90.0
+                                }
+                              },
+                              "required": [
+                                "cursorAngle"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^target$": true,
+                "^caster$": true,
+                "^cursorAngle$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "$ref": "#/definitions1/HomingTypes"
+                    },
+                    "target": {
+                      "$ref": "#/definitions1/HomingTargets"
+                    },
+                    "caster": {
+                      "$ref": "#/definitions1/HomingCasters"
+                    }
+                  }
+                },
+                {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "RotationTime for ConstSpeed type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstSpeed"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Acceleration for ConstAccel type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "type": {
+                                "const": "ConstAccel"
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$comment": "Cursor radius for Cursor type"
+                        },
+                        {
+                          "not": {
+                            "properties": {
+                              "target": {
+                                "const": "Cursor"
+                              }
+                            },
+                            "required": [
+                              "target"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^target$": true,
+                "^caster$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "ModConfig": {
+      "type": "object",
+      "description": "Configure projectiles in the mod",
+      "properties": {
+        "Homing": {
+          "$ref": "#/definitions1/Homing"
+        },
+        "Multicast": {
+          "$ref": "#/definitions1/Multicast"
+        },
+        "Emitters": {
+          "$ref": "#/definitions1/Emitters"
+        },
+        "Following": {
+          "$ref": "#/definitions1/Following"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MulticastSpell": {
+      "allOf": [
+        {
+          "required": [
+            "spellID"
+          ]
+        },
+        {
+          "not": {
+            "required": [
+              "arrowID"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "weapID"
+            ]
+          }
+        }
+      ],
+      "description": "Data for spell projectile"
+    },
+    "MulticastEmpty": {
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "arrowID"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "spellID"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "weapID"
+            ]
+          }
+        }
+      ],
+      "description": "Fallback to defaults"
+    },
+    "WeapID": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions1/FormOrID"
+        },
+        {
+          "const": "Current"
+        }
+      ],
+      "description": "A weap that fires"
+    },
+    "EmittersData": {
+      "$ref": "#/definitions1/modern_4"
+    },
+    "ifMulticastAutoAim": {
+      "$comment": "Add target type",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "rotation": {
+                  "const": "AutoAim"
+                }
+              },
+              "required": [
+                "rotation"
+              ]
+            },
+            {
+              "properties": {
+                "target": {
+                  "$ref": "#/definitions1/HomingTargets"
+                }
+              },
+              "required": [
+                "target"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "rotation": {
+                "const": "AutoAim"
+              }
+            },
+            "required": [
+              "rotation"
+            ]
+          }
+        }
+      ]
+    },
+    "ifAutoAimCursor": {
+      "$comment": "Cursor radius for Cursor type",
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "target": {
+                  "const": "Cursor"
+                }
+              },
+              "required": [
+                "target"
+              ]
+            },
+            {
+              "properties": {
+                "cursorAngle": {
+                  "type": "integer",
+                  "description": "Angle of cone for detecting targets near the cursor (5-15 are nice, 90 is max)",
+                  "minimum": 0.0,
+                  "maximum": 90.0
+                }
+              },
+              "required": [
+                "cursorAngle"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "target": {
+                "const": "Cursor"
+              }
+            },
+            "required": [
+              "target"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/Multicast"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Multicast"
+      }
+    },
+    {
+      "$ref": "#/definitions1/WeapID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/WeapID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MultiCastSound"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MultiCastSound"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifEmittersChangeTypeType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifEmittersChangeTypeType"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ModConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ModConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions2/NewProjType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/NewProjType"
+      }
+    },
+    {
+      "$ref": "#/definitions1/HomingTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/HomingTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifEmittersFindTargetType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifEmittersFindTargetType"
+      }
+    },
+    {
+      "$ref": "#/definitions1/FormOrID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/FormOrID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/NewProjType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/NewProjType"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MultiCastShape"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MultiCastShape"
+      }
+    },
+    {
+      "$ref": "#/definitions1/FormIDsMap"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/FormIDsMap"
+      }
+    },
+    {
+      "$ref": "#/definitions1/SpellID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/SpellID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions2/EmittersData"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/EmittersData"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MulticastSpell"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MulticastSpell"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Emitters"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Emitters"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Emitters"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Emitters"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Following"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Following"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ArrowID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ArrowID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/ModConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/ModConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions2/point2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/point2"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifMulticastAutoAim"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifMulticastAutoAim"
+      }
+    },
+    {
+      "$ref": "#/definitions2/SpellID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/SpellID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MulticastEmpty"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MulticastEmpty"
+      }
+    },
+    {
+      "$ref": "#/definitions1/ArrowID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/ArrowID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/HomingTargets"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/HomingTargets"
+      }
+    },
+    {
+      "$ref": "#/definitions2/formID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/formID"
+      }
+    },
+    {
+      "$ref": "#/definitions2/form_key"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/form_key"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MulticastEmpty"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MulticastEmpty"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifEmittersMulticastType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifEmittersMulticastType"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Count"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Count"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MulticastSpell"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MulticastSpell"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MulticastArrow"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MulticastArrow"
+      }
+    },
+    {
+      "$ref": "#/definitions1/form_key"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/form_key"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MulticastData"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MulticastData"
+      }
+    },
+    {
+      "$ref": "#/definitions2/HomingTargets"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/HomingTargets"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions2/HomingCasters"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/HomingCasters"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MulticastData"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MulticastData"
+      }
+    },
+    {
+      "$ref": "#/definitions2/FollowingShape"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/FollowingShape"
+      }
+    },
+    {
+      "$ref": "#/definitions1/PluginFormID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/PluginFormID"
+      }
+    },
+    {
+      "$ref": "#/definitions2/point3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/point3"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Homing"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Homing"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MultiCastShape"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MultiCastShape"
+      }
+    },
+    {
+      "$ref": "#/definitions1/FollowingShape"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/FollowingShape"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MultiCastSound"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MultiCastSound"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MulticastArrow"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MulticastArrow"
+      }
+    },
+    {
+      "$ref": "#/definitions2/FormOrID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/FormOrID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Following"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Following"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifAutoAimConstSpeed"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifAutoAimConstSpeed"
+      }
+    },
+    {
+      "$ref": "#/definitions2/MultiCastRotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/MultiCastRotation"
+      }
+    },
+    {
+      "$ref": "#/definitions2/FormIDsMap"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/FormIDsMap"
+      }
+    },
+    {
+      "$ref": "#/definitions1/point2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/point2"
+      }
+    },
+    {
+      "$ref": "#/definitions2/PluginFormID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/PluginFormID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/EmittersData"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/EmittersData"
+      }
+    },
+    {
+      "$ref": "#/definitions1/formID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/formID"
+      }
+    },
+    {
+      "$ref": "#/definitions1/point3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/point3"
+      }
+    },
+    {
+      "$ref": "#/definitions1/HomingCasters"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/HomingCasters"
+      }
+    },
+    {
+      "$ref": "#/definitions2/HomingTypes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/HomingTypes"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Count"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Count"
+      }
+    },
+    {
+      "$ref": "#/definitions2/Multicast"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/Multicast"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifAutoAimConstAccel"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifAutoAimConstAccel"
+      }
+    },
+    {
+      "$ref": "#/definitions2/WeapID"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/WeapID"
+      }
+    },
+    {
+      "$ref": "#/definitions2/ifAutoAimCursor"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/ifAutoAimCursor"
+      }
+    },
+    {
+      "$ref": "#/definitions1/Homing"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/Homing"
+      }
+    },
+    {
+      "$ref": "#/definitions1/MultiCastRotation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/MultiCastRotation"
+      }
+    }
+  ]
+}

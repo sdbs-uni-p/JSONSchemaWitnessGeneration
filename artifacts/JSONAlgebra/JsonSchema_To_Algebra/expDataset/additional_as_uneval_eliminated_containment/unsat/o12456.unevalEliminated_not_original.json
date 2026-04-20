@@ -1,0 +1,375 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "description": "Module specification",
+        "type": "object",
+        "required": [
+          "$otSharedSchema",
+          "moduleType",
+          "model",
+          "labwareOffset",
+          "dimensions",
+          "calibrationPoint",
+          "displayName",
+          "quirks",
+          "slotTransforms",
+          "compatibleWith"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "$otSharedSchema": {
+            "type": "string",
+            "description": "The path to a valid Opentrons shared schema relative to the shared-data directory, without its extension. For instance, #/module/schemas/2 is a reference to this schema."
+          },
+          "moduleType": {
+            "enum": [
+              "temperatureModuleType",
+              "magneticModuleType",
+              "thermocyclerModuleType"
+            ],
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "pattern": "^(temperatureModule|magneticModule|thermocyclerModule)V[0-9]+$"
+          },
+          "labwareOffset": {
+            "$ref": "#/definitions3/coordinates"
+          },
+          "dimensions": {
+            "type": "object",
+            "required": [
+              "bareOverallHeight",
+              "overLabwareHeight"
+            ],
+            "properties": {
+              "bareOverallHeight": {
+                "type": "number"
+              },
+              "overLabwareHeight": {
+                "type": "number"
+              },
+              "lidHeight": {
+                "type": "number"
+              }
+            }
+          },
+          "calibrationPoint": {
+            "$ref": "#/definitions3/coordinates"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "quirks": {
+            "type": "array",
+            "description": "List of quirks for a given module",
+            "items": {
+              "type": "string"
+            }
+          },
+          "slotTransforms": {
+            "type": "object",
+            "description": "Per-deckmap sets of per-slot transforms, properties should be ids of decks such as \"ot2_standard\". Transforms for a deck not explicitly listed are the identity.",
+            "patternProperties": {
+              ".*": {
+                "type": "object",
+                "patternProperties:": {
+                  "^([1-9]|10|11)$": {
+                    "type": "object",
+                    "description": "Holds 2-D affine transforms that should be applied to top level keys plus the special property $image for applying to images images. If any top level key has no corresponding entry, it is an identity transform. If the transform applies to an entity specifying a 3D position, it should be applied only to the x and y.",
+                    "patternProperties": {
+                      ".*": {
+                        "type": "object",
+                        "description": "The keys identify transforms that apply to different sections of the module definition. Most will be top level keys of the module def (for instance, \"labwareOffset\") but there may also be additional meta keys for values that are not in the def",
+                        "patternProperties": {
+                          ".*": {
+                            "$ref": "#/definitions3/affineTransform"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "compatibleWith": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "A compatible module model (e.g. temperatureModuleV1)"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "coordinates": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "x",
+                "y"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^x$": true,
+                "^y$": true,
+                "^z$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "affineTransform": {
+      "description": "A 3x3 row-major matrix describing an affine transform to apply to the labwareOffset and calibrationPoint coordinates of the module (in certain circumstances, e.g. per slot)",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Module specification",
+              "type": "object",
+              "required": [
+                "$otSharedSchema",
+                "moduleType",
+                "model",
+                "labwareOffset",
+                "dimensions",
+                "calibrationPoint",
+                "displayName",
+                "quirks",
+                "slotTransforms",
+                "compatibleWith"
+              ],
+              "properties": {
+                "displayName": {
+                  "type": "string"
+                },
+                "compatibleWith": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "A compatible module model (e.g. temperatureModuleV1)"
+                  }
+                },
+                "model": {
+                  "type": "string",
+                  "pattern": "^(temperatureModule|magneticModule|thermocyclerModule)V[0-9]+$"
+                },
+                "labwareOffset": {
+                  "$ref": "#/definitions4/coordinates"
+                },
+                "moduleType": {
+                  "enum": [
+                    "temperatureModuleType",
+                    "magneticModuleType",
+                    "thermocyclerModuleType"
+                  ],
+                  "type": "string"
+                },
+                "quirks": {
+                  "type": "array",
+                  "description": "List of quirks for a given module",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "dimensions": {
+                  "type": "object",
+                  "required": [
+                    "bareOverallHeight",
+                    "overLabwareHeight"
+                  ],
+                  "properties": {
+                    "bareOverallHeight": {
+                      "type": "number"
+                    },
+                    "overLabwareHeight": {
+                      "type": "number"
+                    },
+                    "lidHeight": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "$otSharedSchema": {
+                  "type": "string",
+                  "description": "The path to a valid Opentrons shared schema relative to the shared-data directory, without its extension. For instance, #/module/schemas/2 is a reference to this schema."
+                },
+                "slotTransforms": {
+                  "type": "object",
+                  "description": "Per-deckmap sets of per-slot transforms, properties should be ids of decks such as \"ot2_standard\". Transforms for a deck not explicitly listed are the identity.",
+                  "patternProperties": {
+                    ".*": {
+                      "type": "object",
+                      "patternProperties:": {
+                        "^([1-9]|10|11)$": {
+                          "type": "object",
+                          "description": "Holds 2-D affine transforms that should be applied to top level keys plus the special property $image for applying to images images. If any top level key has no corresponding entry, it is an identity transform. If the transform applies to an entity specifying a 3D position, it should be applied only to the x and y.",
+                          "patternProperties": {
+                            ".*": {
+                              "type": "object",
+                              "description": "The keys identify transforms that apply to different sections of the module definition. Most will be top level keys of the module def (for instance, \"labwareOffset\") but there may also be additional meta keys for values that are not in the def",
+                              "patternProperties": {
+                                ".*": {
+                                  "$ref": "#/definitions4/affineTransform"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "calibrationPoint": {
+                  "$ref": "#/definitions4/coordinates"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^calibrationPoint$": true,
+                "^quirks$": true,
+                "^slotTransforms$": true,
+                "^moduleType$": true,
+                "^labwareOffset$": true,
+                "^compatibleWith$": true,
+                "^displayName$": true,
+                "^dimensions$": true,
+                "^model$": true,
+                "^$otSharedSchema$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "definitions3": {
+    "coordinates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    },
+    "affineTransform": {
+      "description": "A 3x3 row-major matrix describing an affine transform to apply to the labwareOffset and calibrationPoint coordinates of the module (in certain circumstances, e.g. per slot)",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/affineTransform"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/affineTransform"
+      }
+    },
+    {
+      "$ref": "#/definitions4/coordinates"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/coordinates"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/coordinates"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/coordinates"
+      }
+    },
+    {
+      "$ref": "#/definitions3/affineTransform"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/affineTransform"
+      }
+    }
+  ]
+}

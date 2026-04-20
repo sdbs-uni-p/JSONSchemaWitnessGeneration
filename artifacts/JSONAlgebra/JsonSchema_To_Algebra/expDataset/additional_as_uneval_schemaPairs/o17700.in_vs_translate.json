@@ -1,0 +1,1462 @@
+[
+  {
+    "id": 234,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "schema for Sync pings, documentation avaliable in toolkit/components/telemetry/docs/sync-ping.rst",
+      "type": "object",
+      "additionalProperties": {
+        "not": {}
+      },
+      "required": [
+        "version",
+        "syncs",
+        "why",
+        "uid"
+      ],
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "discarded": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "why": {
+          "enum": [
+            "shutdown",
+            "schedule",
+            "idchange"
+          ]
+        },
+        "uid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "deviceID": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "syncs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/payload"
+          }
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions2/event"
+          }
+        }
+      },
+      "definitions2": {
+        "payload": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "required": [
+            "when",
+            "took"
+          ],
+          "properties": {
+            "didLogin": {
+              "type": "boolean"
+            },
+            "when": {
+              "type": "integer"
+            },
+            "devices": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/device"
+              }
+            },
+            "status": {
+              "type": "object",
+              "anyOf": [
+                {
+                  "required": [
+                    "sync"
+                  ]
+                },
+                {
+                  "required": [
+                    "service"
+                  ]
+                }
+              ],
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "sync": {
+                  "type": "string"
+                },
+                "service": {
+                  "type": "string"
+                }
+              }
+            },
+            "why": {
+              "enum": [
+                "startup",
+                "schedule",
+                "score",
+                "user",
+                "tabs"
+              ]
+            },
+            "took": {
+              "type": "integer",
+              "minimum": -1
+            },
+            "failureReason": {
+              "$ref": "#/definitions2/error"
+            },
+            "engines": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions2/engine"
+              }
+            }
+          }
+        },
+        "device": {
+          "required": [
+            "os",
+            "id",
+            "version"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "os": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "engine": {
+          "required": [
+            "name"
+          ],
+          "additionalProperties": {
+            "not": {}
+          },
+          "properties": {
+            "failureReason": {
+              "$ref": "#/definitions2/error"
+            },
+            "name": {
+              "enum": [
+                "addons",
+                "bookmarks",
+                "clients",
+                "forms",
+                "history",
+                "passwords",
+                "prefs",
+                "tabs"
+              ]
+            },
+            "took": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "status": {
+              "type": "string"
+            },
+            "incoming": {
+              "type": "object",
+              "additionalProperties": {
+                "not": {}
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "applied"
+                  ]
+                },
+                {
+                  "required": [
+                    "failed"
+                  ]
+                },
+                {
+                  "required": [
+                    "newFailed"
+                  ]
+                },
+                {
+                  "required": [
+                    "reconciled"
+                  ]
+                }
+              ],
+              "properties": {
+                "applied": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "failed": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "newFailed": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "reconciled": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "outgoing": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions2/outgoingBatch"
+              }
+            },
+            "validation": {
+              "type": "object",
+              "additionalProperties": {
+                "not": {}
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "checked"
+                  ]
+                },
+                {
+                  "required": [
+                    "failureReason"
+                  ]
+                }
+              ],
+              "properties": {
+                "checked": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "failureReason": {
+                  "$ref": "#/definitions2/error"
+                },
+                "took": {
+                  "type": "integer"
+                },
+                "version": {
+                  "type": "integer"
+                },
+                "problems": {
+                  "type": "array",
+                  "minItems": 1,
+                  "$ref": "#/definitions2/validationProblem"
+                }
+              }
+            }
+          }
+        },
+        "outgoingBatch": {
+          "type": "object",
+          "additionalProperties": {
+            "not": {}
+          },
+          "anyOf": [
+            {
+              "required": [
+                "sent"
+              ]
+            },
+            {
+              "required": [
+                "failed"
+              ]
+            }
+          ],
+          "properties": {
+            "sent": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "event": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 6
+        },
+        "error": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/httpError"
+            },
+            {
+              "$ref": "#/definitions2/nsError"
+            },
+            {
+              "$ref": "#/definitions2/shutdownError"
+            },
+            {
+              "$ref": "#/definitions2/authError"
+            },
+            {
+              "$ref": "#/definitions2/otherError"
+            },
+            {
+              "$ref": "#/definitions2/unexpectedError"
+            },
+            {
+              "$ref": "#/definitions2/sqlError"
+            }
+          ]
+        },
+        "httpError": {
+          "required": [
+            "name",
+            "code"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "httperror"
+              ]
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "nsError": {
+          "required": [
+            "name",
+            "code"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "nserror"
+              ]
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "shutdownError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "shutdownerror"
+              ]
+            }
+          }
+        },
+        "authError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "autherror"
+              ]
+            },
+            "from": {
+              "enum": [
+                "tokenserver",
+                "fxaccounts",
+                "hawkclient"
+              ]
+            }
+          }
+        },
+        "otherError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "othererror"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "unexpectedError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "unexpectederror"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "sqlError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "sqlerror"
+              ]
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "validationProblem": {
+          "required": [
+            "name",
+            "count"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "required": [
+                        "applied"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "failed"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "newFailed"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "reconciled"
+                      ]
+                    }
+                  ],
+                  "properties": {
+                    "applied": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    "failed": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    "newFailed": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    "reconciled": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^applied$": {},
+                    "^failed$": {},
+                    "^newFailed$": {},
+                    "^reconciled$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "payload": {
+          "$ref": "#/definitions2/modern_1"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "required": [
+                        "checked"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "failureReason"
+                      ]
+                    }
+                  ],
+                  "properties": {
+                    "failureReason": {
+                      "$ref": "#/definitions2/error"
+                    },
+                    "checked": {
+                      "type": "integer",
+                      "minimum": 0.0
+                    },
+                    "problems": {
+                      "type": "array",
+                      "minItems": 1,
+                      "$ref": "#/definitions2/validationProblem"
+                    },
+                    "took": {
+                      "type": "integer"
+                    },
+                    "version": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^version$": {},
+                    "^checked$": {},
+                    "^took$": {},
+                    "^problems$": {},
+                    "^failureReason$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "required": [
+                        "sync"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "service"
+                      ]
+                    }
+                  ],
+                  "properties": {
+                    "sync": {
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^sync$": {},
+                    "^service$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "httpError": {
+          "required": [
+            "name",
+            "code"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "httperror"
+              ]
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "required": [
+                        "sent"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "failed"
+                      ]
+                    }
+                  ],
+                  "properties": {
+                    "sent": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    "failed": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^sent$": {},
+                    "^failed$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "nsError": {
+          "required": [
+            "name",
+            "code"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "nserror"
+              ]
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "required": [
+                    "name"
+                  ],
+                  "properties": {
+                    "name": {
+                      "enum": [
+                        "addons",
+                        "bookmarks",
+                        "clients",
+                        "forms",
+                        "history",
+                        "passwords",
+                        "prefs",
+                        "tabs"
+                      ]
+                    },
+                    "incoming": {
+                      "$ref": "#/definitions2/modern_6"
+                    },
+                    "failureReason": {
+                      "$ref": "#/definitions2/error"
+                    },
+                    "outgoing": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions2/outgoingBatch"
+                      }
+                    },
+                    "took": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "validation": {
+                      "$ref": "#/definitions2/modern_7"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^outgoing$": {},
+                    "^took$": {},
+                    "^status$": {},
+                    "^name$": {},
+                    "^validation$": {},
+                    "^incoming$": {},
+                    "^failureReason$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "otherError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "othererror"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "outgoingBatch": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "event": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 6
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "when",
+                    "took"
+                  ],
+                  "properties": {
+                    "why": {
+                      "enum": [
+                        "startup",
+                        "schedule",
+                        "score",
+                        "user",
+                        "tabs"
+                      ]
+                    },
+                    "failureReason": {
+                      "$ref": "#/definitions2/error"
+                    },
+                    "didLogin": {
+                      "type": "boolean"
+                    },
+                    "took": {
+                      "type": "integer",
+                      "minimum": -1.0
+                    },
+                    "engines": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions2/engine"
+                      }
+                    },
+                    "status": {
+                      "$ref": "#/definitions2/modern_2"
+                    },
+                    "when": {
+                      "type": "integer"
+                    },
+                    "devices": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/device"
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^took$": {},
+                    "^status$": {},
+                    "^when$": {},
+                    "^why$": {},
+                    "^devices$": {},
+                    "^didLogin$": {},
+                    "^engines$": {},
+                    "^failureReason$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "sqlError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "sqlerror"
+              ]
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "validationProblem": {
+          "required": [
+            "name",
+            "count"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "schema for Sync pings, documentation avaliable in toolkit/components/telemetry/docs/sync-ping.rst",
+                  "type": "object",
+                  "required": [
+                    "version",
+                    "syncs",
+                    "why",
+                    "uid"
+                  ],
+                  "properties": {
+                    "discarded": {
+                      "type": "integer",
+                      "minimum": 1.0
+                    },
+                    "why": {
+                      "enum": [
+                        "shutdown",
+                        "schedule",
+                        "idchange"
+                      ]
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 0.0
+                    },
+                    "deviceID": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$"
+                    },
+                    "events": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions2/event"
+                      }
+                    },
+                    "syncs": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions2/payload"
+                      }
+                    }
+                  },
+                  "definitions2": {
+                    "payload": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "required": [
+                        "when",
+                        "took"
+                      ],
+                      "properties": {
+                        "didLogin": {
+                          "type": "boolean"
+                        },
+                        "when": {
+                          "type": "integer"
+                        },
+                        "devices": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/device"
+                          }
+                        },
+                        "status": {
+                          "type": "object",
+                          "anyOf": [
+                            {
+                              "required": [
+                                "sync"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "service"
+                              ]
+                            }
+                          ],
+                          "unevaluatedProperties": false,
+                          "properties": {
+                            "sync": {
+                              "type": "string"
+                            },
+                            "service": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "why": {
+                          "enum": [
+                            "startup",
+                            "schedule",
+                            "score",
+                            "user",
+                            "tabs"
+                          ]
+                        },
+                        "took": {
+                          "type": "integer",
+                          "minimum": -1
+                        },
+                        "failureReason": {
+                          "$ref": "#/definitions2/error"
+                        },
+                        "engines": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "$ref": "#/definitions2/engine"
+                          }
+                        }
+                      }
+                    },
+                    "device": {
+                      "required": [
+                        "os",
+                        "id",
+                        "version"
+                      ],
+                      "unevaluatedProperties": false,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$"
+                        },
+                        "os": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "engine": {
+                      "required": [
+                        "name"
+                      ],
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "failureReason": {
+                          "$ref": "#/definitions2/error"
+                        },
+                        "name": {
+                          "enum": [
+                            "addons",
+                            "bookmarks",
+                            "clients",
+                            "forms",
+                            "history",
+                            "passwords",
+                            "prefs",
+                            "tabs"
+                          ]
+                        },
+                        "took": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "incoming": {
+                          "type": "object",
+                          "unevaluatedProperties": false,
+                          "anyOf": [
+                            {
+                              "required": [
+                                "applied"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "failed"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "newFailed"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "reconciled"
+                              ]
+                            }
+                          ],
+                          "properties": {
+                            "applied": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "failed": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "newFailed": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "reconciled": {
+                              "type": "integer",
+                              "minimum": 1
+                            }
+                          }
+                        },
+                        "outgoing": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "$ref": "#/definitions2/outgoingBatch"
+                          }
+                        },
+                        "validation": {
+                          "type": "object",
+                          "unevaluatedProperties": false,
+                          "anyOf": [
+                            {
+                              "required": [
+                                "checked"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "failureReason"
+                              ]
+                            }
+                          ],
+                          "properties": {
+                            "checked": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "failureReason": {
+                              "$ref": "#/definitions2/error"
+                            },
+                            "took": {
+                              "type": "integer"
+                            },
+                            "version": {
+                              "type": "integer"
+                            },
+                            "problems": {
+                              "type": "array",
+                              "minItems": 1,
+                              "$ref": "#/definitions2/validationProblem"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "outgoingBatch": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "anyOf": [
+                        {
+                          "required": [
+                            "sent"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "failed"
+                          ]
+                        }
+                      ],
+                      "properties": {
+                        "sent": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "failed": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    "event": {
+                      "type": "array",
+                      "minItems": 4,
+                      "maxItems": 6
+                    },
+                    "error": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/definitions2/httpError"
+                        },
+                        {
+                          "$ref": "#/definitions2/nsError"
+                        },
+                        {
+                          "$ref": "#/definitions2/shutdownError"
+                        },
+                        {
+                          "$ref": "#/definitions2/authError"
+                        },
+                        {
+                          "$ref": "#/definitions2/otherError"
+                        },
+                        {
+                          "$ref": "#/definitions2/unexpectedError"
+                        },
+                        {
+                          "$ref": "#/definitions2/sqlError"
+                        }
+                      ]
+                    },
+                    "httpError": {
+                      "required": [
+                        "name",
+                        "code"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "httperror"
+                          ]
+                        },
+                        "code": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "nsError": {
+                      "required": [
+                        "name",
+                        "code"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "nserror"
+                          ]
+                        },
+                        "code": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "shutdownError": {
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "shutdownerror"
+                          ]
+                        }
+                      }
+                    },
+                    "authError": {
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "autherror"
+                          ]
+                        },
+                        "from": {
+                          "enum": [
+                            "tokenserver",
+                            "fxaccounts",
+                            "hawkclient"
+                          ]
+                        }
+                      }
+                    },
+                    "otherError": {
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "othererror"
+                          ]
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "unexpectedError": {
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "unexpectederror"
+                          ]
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "sqlError": {
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "sqlerror"
+                          ]
+                        },
+                        "code": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "validationProblem": {
+                      "required": [
+                        "name",
+                        "count"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^version$": {},
+                    "^events$": {},
+                    "^deviceID$": {},
+                    "^syncs$": {},
+                    "^why$": {},
+                    "^discarded$": {},
+                    "^uid$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "error": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions2/httpError"
+            },
+            {
+              "$ref": "#/definitions2/nsError"
+            },
+            {
+              "$ref": "#/definitions2/shutdownError"
+            },
+            {
+              "$ref": "#/definitions2/authError"
+            },
+            {
+              "$ref": "#/definitions2/otherError"
+            },
+            {
+              "$ref": "#/definitions2/unexpectedError"
+            },
+            {
+              "$ref": "#/definitions2/sqlError"
+            }
+          ]
+        },
+        "authError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "autherror"
+              ]
+            },
+            "from": {
+              "enum": [
+                "tokenserver",
+                "fxaccounts",
+                "hawkclient"
+              ]
+            }
+          }
+        },
+        "shutdownError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "shutdownerror"
+              ]
+            }
+          }
+        },
+        "device": {
+          "$ref": "#/definitions2/modern_4"
+        },
+        "engine": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "unexpectedError": {
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "enum": [
+                "unexpectederror"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "required": [
+                    "os",
+                    "id",
+                    "version"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "os": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^id$": {},
+                    "^os$": {},
+                    "^version$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_8"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

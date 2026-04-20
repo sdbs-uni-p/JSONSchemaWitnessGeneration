@@ -1,0 +1,190 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "type": "object",
+      "format": "minimal",
+      "properties": {
+        "repositories": {
+          "type": "object",
+          "patternProperties": {
+            "^[^/#]+$": {
+              "type": "object",
+              "format": "minimal_repository"
+            }
+          },
+          "additionalProperties": false
+        },
+        "number_of_repositories": {
+          "format": "positiveInteger"
+        },
+        "number_of_first_timers": {
+          "format": "positiveInteger"
+        },
+        "first_timers": {
+          "type": "object",
+          "patternProperties": {
+            "^[^/#]+$": {
+              "type": "object",
+              "format": "minimal_user"
+            }
+          },
+          "additionalProperties": false
+        },
+        "pull_requests_in_organization": {
+          "type": "object",
+          "patternProperties": {
+            "^[^/#]+/[^/#]+#[012456789]+$": {
+              "type": "object",
+              "format": "minimal_pullrequest"
+            }
+          },
+          "additionalProperties": false
+        },
+        "number_of_pull_requests_in_organization": {
+          "format": "positiveInteger"
+        }
+      },
+      "required": [
+        "repositories",
+        "number_of_pull_requests_in_organization",
+        "pull_requests_in_organization",
+        "first_timers",
+        "number_of_first_timers",
+        "number_of_repositories"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "type": "object",
+        "format": "minimal",
+        "properties": {
+          "number_of_pull_requests_in_organization": {
+            "format": "positiveInteger"
+          },
+          "number_of_repositories": {
+            "format": "positiveInteger"
+          },
+          "first_timers": {
+            "$ref": "#/definitions4/modern_1"
+          },
+          "pull_requests_in_organization": {
+            "$ref": "#/definitions4/modern_2"
+          },
+          "number_of_first_timers": {
+            "format": "positiveInteger"
+          },
+          "repositories": {
+            "$ref": "#/definitions4/modern_3"
+          }
+        },
+        "required": [
+          "repositories",
+          "number_of_pull_requests_in_organization",
+          "pull_requests_in_organization",
+          "first_timers",
+          "number_of_first_timers",
+          "number_of_repositories"
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[^/#]+$": {
+                  "type": "object",
+                  "format": "minimal_user"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[^/#]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[^/#]+/[^/#]+#[012456789]+$": {
+                  "type": "object",
+                  "format": "minimal_pullrequest"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[^/#]+/[^/#]+#[012456789]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[^/#]+$": {
+                  "type": "object",
+                  "format": "minimal_repository"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[^/#]+$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

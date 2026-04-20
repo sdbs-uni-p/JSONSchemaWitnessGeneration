@@ -1,0 +1,327 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "VRT to CVSS v3 Mapping",
+      "description": "Mapping from the Vulnerability Rating Taxonomy to CVSS v3",
+      "type": "object",
+      "required": [
+        "metadata",
+        "content"
+      ],
+      "properties": {
+        "metadata": {
+          "$ref": "#/definitions3/MappingMetadata"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions3/MappingParent"
+              },
+              {
+                "$ref": "#/definitions3/Mapping"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "VRT to CVSS v3 Mapping",
+        "description": "Mapping from the Vulnerability Rating Taxonomy to CVSS v3",
+        "type": "object",
+        "required": [
+          "metadata",
+          "content"
+        ],
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions4/MappingMetadata"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions4/MappingParent"
+                },
+                {
+                  "$ref": "#/definitions4/Mapping"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "MappingMetadata": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "$ref": "#/definitions3/CVSSv3"
+        }
+      },
+      "required": [
+        "default"
+      ]
+    },
+    "VRTid": {
+      "type": "string",
+      "pattern": "^[a-z_]*$"
+    },
+    "CVSSv3": {
+      "type": "string",
+      "pattern": "^AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NLH]/I:[NLH]/A:[NLH]$"
+    },
+    "Mapping": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions3/VRTid"
+        },
+        "cvss_v3": {
+          "$ref": "#/definitions3/CVSSv3"
+        }
+      },
+      "required": [
+        "id",
+        "cvss_v3"
+      ],
+      "additionalProperties": false
+    },
+    "MappingParent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions3/VRTid"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions3/MappingParent"
+              },
+              {
+                "$ref": "#/definitions3/Mapping"
+              }
+            ]
+          }
+        },
+        "cvss_v3": {
+          "$ref": "#/definitions3/CVSSv3"
+        }
+      },
+      "required": [
+        "id",
+        "children"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "definitions4": {
+    "CVSSv3": {
+      "type": "string",
+      "pattern": "^AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NLH]/I:[NLH]/A:[NLH]$"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions4/VRTid"
+                },
+                "cvss_v3": {
+                  "$ref": "#/definitions4/CVSSv3"
+                }
+              },
+              "required": [
+                "id",
+                "cvss_v3"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^cvss_v3$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/definitions4/VRTid"
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions4/MappingParent"
+                      },
+                      {
+                        "$ref": "#/definitions4/Mapping"
+                      }
+                    ]
+                  }
+                },
+                "cvss_v3": {
+                  "$ref": "#/definitions4/CVSSv3"
+                }
+              },
+              "required": [
+                "id",
+                "children"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^children$": true,
+                "^cvss_v3$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Mapping": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "MappingMetadata": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "$ref": "#/definitions4/CVSSv3"
+        }
+      },
+      "required": [
+        "default"
+      ]
+    },
+    "VRTid": {
+      "type": "string",
+      "pattern": "^[a-z_]*$"
+    },
+    "MappingParent": {
+      "$ref": "#/definitions4/modern_2"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/VRTid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/VRTid"
+      }
+    },
+    {
+      "$ref": "#/definitions3/MappingMetadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/MappingMetadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/CVSSv3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/CVSSv3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/MappingParent"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/MappingParent"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/MappingMetadata"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/MappingMetadata"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/VRTid"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/VRTid"
+      }
+    },
+    {
+      "$ref": "#/definitions3/CVSSv3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/CVSSv3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Mapping"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Mapping"
+      }
+    },
+    {
+      "$ref": "#/definitions4/MappingParent"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/MappingParent"
+      }
+    }
+  ]
+}

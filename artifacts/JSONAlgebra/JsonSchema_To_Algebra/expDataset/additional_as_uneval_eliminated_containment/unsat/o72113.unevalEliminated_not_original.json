@@ -1,0 +1,591 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "title": "JSON schema for OraDBPM Package",
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "https://raw.githubusercontent.com/s-oravec/oradb-package/master/oradbpm-package-schema.json",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][\\$#a-z0-9_]*$",
+            "description": "package name"
+          },
+          "version": {
+            "$ref": "#/definitions3/SemverVersion",
+            "description": "package version - must be valid semver version"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "sql",
+              "plsql",
+              "sqlplus"
+            ],
+            "description": "language in which is package implemented"
+          },
+          "description": {
+            "type": "string",
+            "description": "package description"
+          },
+          "license": {
+            "type": "string",
+            "description": "package license"
+          },
+          "author": {
+            "$ref": "#/definitions3/Person",
+            "description": "package author"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "keyword"
+            },
+            "aditionalItems": "false",
+            "minItems": 1,
+            "description": "list of keywords",
+            "_uniqueItems": true
+          },
+          "repository": {
+            "type": "string",
+            "format": "uri",
+            "description": "package git repository uri"
+          },
+          "bugs": {
+            "type": "string",
+            "format": "uri",
+            "description": "package bug & issue tracking page"
+          },
+          "homepage": {
+            "type": "string",
+            "format": "uri",
+            "description": "Package homepage."
+          },
+          "dependencies": {
+            "$ref": "#/definitions3/Dependencies",
+            "description": "Collection of package runtime dependencies declarations."
+          },
+          "devDependencies": {
+            "$ref": "#/definitions3/Dependencies",
+            "description": "Collection of package development dependencies declarations."
+          }
+        },
+        "required": [
+          "name",
+          "version",
+          "language",
+          "description",
+          "license"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "patternProperties": {
+                "^[a-z][\\$#a-z0-9_]*$": {
+                  "$ref": "#/definitions4/Dependency",
+                  "description": "properties of dependencies object are package names"
+                }
+              },
+              "minProperties": 1,
+              "description": "collection of packages and their versionRange declarations"
+            },
+            {
+              "patternProperties": {
+                "^[a-z][\\$#a-z0-9_]*$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Dependencies": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "person's name"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "description": "person's email"
+                }
+              },
+              "required": [
+                "name",
+                "email"
+              ],
+              "description": "person defined as person object"
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^email$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "Person": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/PersonLiteral",
+          "description": "person defined as name <email>"
+        },
+        {
+          "$ref": "#/definitions4/PersonObject",
+          "description": "person defined as person object"
+        }
+      ],
+      "description": "person definition"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "$ref": "#/definitions4/SemverVersionRange",
+                  "description": "Package semver versionRange declaration."
+                },
+                "peer": {
+                  "type": "boolean",
+                  "description": "Dependency should be deployed as peer dependency."
+                }
+              },
+              "required": [
+                "version"
+              ],
+              "description": "Package dependency object."
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^peer$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "SemverVersion": {
+      "type": "string",
+      "format": "semverVersion",
+      "description": "Valid semver version (https://github.com/npm/node-semver)."
+    },
+    "SemverVersionRange": {
+      "type": "string",
+      "format": "semverVersionRange",
+      "description": "Valid semver versionRange (https://github.com/npm/node-semver)."
+    },
+    "Dependency": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/SemverVersionRange",
+          "description": "Package dependency as semver versionRange declaration literal."
+        },
+        {
+          "$ref": "#/definitions4/DependencyObject",
+          "description": "Package dependency object."
+        }
+      ],
+      "description": "Package dependency"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "JSON schema for OraDBPM Package",
+              "description": "https://raw.githubusercontent.com/s-oravec/oradb-package/master/oradbpm-package-schema.json",
+              "type": "object",
+              "properties": {
+                "author": {
+                  "$ref": "#/definitions4/Person",
+                  "description": "package author"
+                },
+                "name": {
+                  "type": "string",
+                  "pattern": "^[a-z][\\$#a-z0-9_]*$",
+                  "description": "package name"
+                },
+                "repository": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "package git repository uri"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "package description"
+                },
+                "license": {
+                  "type": "string",
+                  "description": "package license"
+                },
+                "version": {
+                  "$ref": "#/definitions4/SemverVersion",
+                  "description": "package version - must be valid semver version"
+                },
+                "language": {
+                  "type": "string",
+                  "enum": [
+                    "sql",
+                    "plsql",
+                    "sqlplus"
+                  ],
+                  "description": "language in which is package implemented"
+                },
+                "homepage": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Package homepage."
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "keyword"
+                  },
+                  "aditionalItems": "false",
+                  "minItems": 1,
+                  "description": "list of keywords",
+                  "_uniqueItems": true
+                },
+                "dependencies": {
+                  "$ref": "#/definitions4/Dependencies",
+                  "description": "Collection of package runtime dependencies declarations."
+                },
+                "devDependencies": {
+                  "$ref": "#/definitions4/Dependencies",
+                  "description": "Collection of package development dependencies declarations."
+                },
+                "bugs": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "package bug & issue tracking page"
+                }
+              },
+              "required": [
+                "name",
+                "version",
+                "language",
+                "description",
+                "license"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^keywords$": true,
+                "^homepage$": true,
+                "^author$": true,
+                "^devDependencies$": true,
+                "^repository$": true,
+                "^language$": true,
+                "^license$": true,
+                "^dependencies$": true,
+                "^description$": true,
+                "^name$": true,
+                "^bugs$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "PersonLiteral": {
+      "type": "string",
+      "pattern": "^.+\\<.+@.+\\..+\\>$",
+      "description": "person defined as name <email>"
+    },
+    "PersonObject": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "DependencyObject": {
+      "$ref": "#/definitions4/modern_3"
+    }
+  },
+  "definitions3": {
+    "SemverVersion": {
+      "type": "string",
+      "format": "semverVersion",
+      "description": "Valid semver version (https://github.com/npm/node-semver)."
+    },
+    "SemverVersionRange": {
+      "type": "string",
+      "format": "semverVersionRange",
+      "description": "Valid semver versionRange (https://github.com/npm/node-semver)."
+    },
+    "DependencyObject": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "$ref": "#/definitions3/SemverVersionRange",
+          "description": "Package semver versionRange declaration."
+        },
+        "peer": {
+          "type": "boolean",
+          "description": "Dependency should be deployed as peer dependency."
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "description": "Package dependency object.",
+      "additionalProperties": false
+    },
+    "Dependency": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/SemverVersionRange",
+          "description": "Package dependency as semver versionRange declaration literal."
+        },
+        {
+          "$ref": "#/definitions3/DependencyObject",
+          "description": "Package dependency object."
+        }
+      ],
+      "description": "Package dependency"
+    },
+    "Dependencies": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][\\$#a-z0-9_]*$": {
+          "$ref": "#/definitions3/Dependency",
+          "description": "properties of dependencies object are package names"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false,
+      "description": "collection of packages and their versionRange declarations"
+    },
+    "PersonLiteral": {
+      "type": "string",
+      "pattern": "^.+\\<.+@.+\\..+\\>$",
+      "description": "person defined as name <email>"
+    },
+    "PersonObject": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "person's name"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "person's email"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "description": "person defined as person object",
+      "additionalProperties": false
+    },
+    "Person": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/PersonLiteral",
+          "description": "person defined as name <email>"
+        },
+        {
+          "$ref": "#/definitions3/PersonObject",
+          "description": "person defined as person object"
+        }
+      ],
+      "description": "person definition"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/Dependency"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Dependency"
+      }
+    },
+    {
+      "$ref": "#/definitions4/PersonObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/PersonObject"
+      }
+    },
+    {
+      "$ref": "#/definitions3/SemverVersionRange"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/SemverVersionRange"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Person"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Person"
+      }
+    },
+    {
+      "$ref": "#/definitions3/SemverVersion"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/SemverVersion"
+      }
+    },
+    {
+      "$ref": "#/definitions4/SemverVersionRange"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/SemverVersionRange"
+      }
+    },
+    {
+      "$ref": "#/definitions3/DependencyObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/DependencyObject"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Person"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Person"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/PersonLiteral"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/PersonLiteral"
+      }
+    },
+    {
+      "$ref": "#/definitions4/DependencyObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/DependencyObject"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/SemverVersion"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/SemverVersion"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Dependencies"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Dependencies"
+      }
+    },
+    {
+      "$ref": "#/definitions4/PersonLiteral"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/PersonLiteral"
+      }
+    },
+    {
+      "$ref": "#/definitions3/Dependency"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/Dependency"
+      }
+    },
+    {
+      "$ref": "#/definitions3/PersonObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/PersonObject"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/Dependencies"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/Dependencies"
+      }
+    }
+  ]
+}

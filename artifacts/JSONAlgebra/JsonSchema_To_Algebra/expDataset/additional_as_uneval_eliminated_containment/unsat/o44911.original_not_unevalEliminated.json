@@ -1,0 +1,386 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "description": "log file entry for ingestion by tsd aggregator",
+      "properties": {
+        "context": {
+          "properties": {},
+          "type": "object"
+        },
+        "data": {
+          "$ref": "#/definitions3/data"
+        },
+        "id": {
+          "type": "string"
+        },
+        "level": {
+          "pattern": "^info$",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^aint.metrics$",
+          "type": "string"
+        },
+        "time": {
+          "_format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "time",
+        "name",
+        "level",
+        "data"
+      ],
+      "title": "Query Log",
+      "type": "object"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "log file entry for ingestion by tsd aggregator",
+        "properties": {
+          "name": {
+            "pattern": "^aint.metrics$",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "time": {
+            "_format": "date-time",
+            "type": "string"
+          },
+          "level": {
+            "pattern": "^info$",
+            "type": "string"
+          },
+          "context": {
+            "properties": {},
+            "type": "object"
+          },
+          "data": {
+            "$ref": "#/definitions4/data"
+          }
+        },
+        "required": [
+          "time",
+          "name",
+          "level",
+          "data"
+        ],
+        "title": "Query Log",
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "data": {
+      "properties": {
+        "annotations": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "properties": {
+            "finalTimestamp": {
+              "_format": "date-time",
+              "type": "string"
+            },
+            "initTimestamp": {
+              "_format": "date-time",
+              "type": "string"
+            }
+          },
+          "required": [
+            "initTimestamp",
+            "finalTimestamp"
+          ],
+          "type": "object"
+        },
+        "counters": {
+          "$ref": "#/definitions3/metricsList"
+        },
+        "gauges": {
+          "$ref": "#/definitions3/metricsList"
+        },
+        "timers": {
+          "$ref": "#/definitions3/metricsList"
+        },
+        "version": {
+          "pattern": "^2e$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "annotations",
+        "version"
+      ],
+      "type": "object"
+    },
+    "dataElement": {
+      "properties": {
+        "values": {
+          "items": {
+            "$ref": "#/definitions3/sampleObject"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "type": "object"
+    },
+    "metricsList": {
+      "additionalProperties": {
+        "$ref": "#/definitions3/dataElement"
+      },
+      "type": "object"
+    },
+    "sampleObject": {
+      "properties": {
+        "unit": {
+          "enum": [
+            "nanosecond",
+            "microsecond",
+            "millisecond",
+            "second",
+            "minute",
+            "hour",
+            "day",
+            "week",
+            "bit",
+            "byte",
+            "kilobit",
+            "kilobyte",
+            "megabit",
+            "megabyte",
+            "gigabit",
+            "gigabyte",
+            "terabyte",
+            "petabyte"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "sampleObject": {
+      "properties": {
+        "unit": {
+          "enum": [
+            "nanosecond",
+            "microsecond",
+            "millisecond",
+            "second",
+            "minute",
+            "hour",
+            "day",
+            "week",
+            "bit",
+            "byte",
+            "kilobit",
+            "kilobyte",
+            "megabit",
+            "megabyte",
+            "gigabit",
+            "gigabyte",
+            "terabyte",
+            "petabyte"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "type": "object"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "finalTimestamp": {
+                  "_format": "date-time",
+                  "type": "string"
+                },
+                "initTimestamp": {
+                  "_format": "date-time",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "initTimestamp",
+                "finalTimestamp"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^finalTimestamp$": true,
+                "^initTimestamp$": true
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "data": {
+      "properties": {
+        "gauges": {
+          "$ref": "#/definitions4/metricsList"
+        },
+        "counters": {
+          "$ref": "#/definitions4/metricsList"
+        },
+        "annotations": {
+          "$ref": "#/definitions4/modern_1"
+        },
+        "timers": {
+          "$ref": "#/definitions4/metricsList"
+        },
+        "version": {
+          "pattern": "^2e$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "annotations",
+        "version"
+      ],
+      "type": "object"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "$ref": "#/definitions4/dataElement"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "metricsList": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "dataElement": {
+      "properties": {
+        "values": {
+          "items": {
+            "$ref": "#/definitions4/sampleObject"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/metricsList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/metricsList"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sampleObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sampleObject"
+      }
+    },
+    {
+      "$ref": "#/definitions4/data"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/data"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/dataElement"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/dataElement"
+      }
+    },
+    {
+      "$ref": "#/definitions4/dataElement"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/dataElement"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/data"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/data"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sampleObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sampleObject"
+      }
+    },
+    {
+      "$ref": "#/definitions4/metricsList"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/metricsList"
+      }
+    }
+  ]
+}

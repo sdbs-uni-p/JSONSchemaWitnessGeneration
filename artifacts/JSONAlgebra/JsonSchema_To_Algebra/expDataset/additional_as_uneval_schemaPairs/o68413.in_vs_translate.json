@@ -1,0 +1,133 @@
+[
+  {
+    "id": 1998,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Artifacts to be fetched from Koji builds",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "description": "A specific Koji buid and archives to be fetched",
+        "properties": {
+          "nvr": {
+            "description": "The Name-Version-Release of a Koji build",
+            "type": "string"
+          },
+          "archives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Matcher for archives in Koji build",
+              "properties": {
+                "filename": {
+                  "description": "Match by archive filename - supports glob matching",
+                  "type": "string"
+                },
+                "group_id": {
+                  "description": "Match by archive group_id",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "additionalProperties": {
+          "not": {}
+        },
+        "required": [
+          "nvr"
+        ]
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "A specific Koji buid and archives to be fetched",
+                  "properties": {
+                    "nvr": {
+                      "description": "The Name-Version-Release of a Koji build",
+                      "type": "string"
+                    },
+                    "archives": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_2"
+                      }
+                    }
+                  },
+                  "required": [
+                    "nvr"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^nvr$": {},
+                    "^archives$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "Matcher for archives in Koji build",
+                  "properties": {
+                    "filename": {
+                      "description": "Match by archive filename - supports glob matching",
+                      "type": "string"
+                    },
+                    "group_id": {
+                      "description": "Match by archive group_id",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^filename$": {},
+                    "^group_id$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "title": "Artifacts to be fetched from Koji builds",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/definitions2/modern_1"
+      }
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

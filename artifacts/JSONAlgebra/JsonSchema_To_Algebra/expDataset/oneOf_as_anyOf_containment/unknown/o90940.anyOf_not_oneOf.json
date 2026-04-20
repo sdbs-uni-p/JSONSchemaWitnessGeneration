@@ -1,0 +1,402 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/dataElement"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions3/dataElement"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "definitions4": {
+    "subField": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string",
+          "minLength": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "complexType": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "value2",
+            "value1"
+          ]
+        },
+        "dataSets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "subFields"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "subFields": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions4/subField"
+                }
+              }
+            }
+          }
+        },
+        "subFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/subField"
+          }
+        }
+      },
+      "dependencies": {
+        "dataSets": {
+          "properties": {
+            "type": {
+              "enum": [
+                "value1"
+              ]
+            }
+          }
+        },
+        "subFields": {
+          "properties": {
+            "type": {
+              "enum": [
+                "value2"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "value1"
+              ]
+            }
+          },
+          "required": [
+            "dataSets"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "value2"
+              ]
+            }
+          },
+          "required": [
+            "subFields"
+          ]
+        }
+      ]
+    },
+    "dataElement": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "defaultUsage": {
+          "type": "string"
+        },
+        "usages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/usage"
+          }
+        },
+        "complexType": {
+          "$ref": "#/definitions4/complexType"
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "code",
+            "defaultUsage",
+            "usages",
+            "name"
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "not": {
+                "required": [
+                  "usages"
+                ]
+              }
+            },
+            {
+              "required": [
+                "code",
+                "format",
+                "name"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "type": "object",
+      "required": [
+        "name",
+        "field"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "field": {
+          "$ref": "#/definitions4/dataElement"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions3": {
+    "subField": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string",
+          "minLength": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "complexType": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "value1"
+              ]
+            }
+          },
+          "required": [
+            "dataSets"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "value2"
+              ]
+            }
+          },
+          "required": [
+            "subFields"
+          ]
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "value2",
+            "value1"
+          ]
+        },
+        "dataSets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "subFields"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "subFields": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions3/subField"
+                }
+              }
+            }
+          }
+        },
+        "subFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/subField"
+          }
+        }
+      },
+      "dependencies": {
+        "dataSets": {
+          "properties": {
+            "type": {
+              "enum": [
+                "value1"
+              ]
+            }
+          }
+        },
+        "subFields": {
+          "properties": {
+            "type": {
+              "enum": [
+                "value2"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "dataElement": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": [
+            "code",
+            "defaultUsage",
+            "usages",
+            "name"
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "not": {
+                "required": [
+                  "usages"
+                ]
+              }
+            },
+            {
+              "required": [
+                "code",
+                "format",
+                "name"
+              ]
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "defaultUsage": {
+          "type": "string"
+        },
+        "usages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/usage"
+          }
+        },
+        "complexType": {
+          "$ref": "#/definitions3/complexType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "required": [
+        "name",
+        "field"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "field": {
+          "$ref": "#/definitions3/dataElement"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/dataElement"
+    },
+    {
+      "$ref": "#/definitions4/complexType"
+    },
+    {
+      "$ref": "#/definitions3/complexType"
+    },
+    {
+      "$ref": "#/definitions4/subField"
+    },
+    {
+      "$ref": "#/definitions3/subField"
+    },
+    {
+      "$ref": "#/definitions3/usage"
+    },
+    {
+      "$ref": "#/definitions4/usage"
+    },
+    {
+      "$ref": "#/definitions4/dataElement"
+    }
+  ]
+}

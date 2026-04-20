@@ -1,0 +1,762 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "http://tm.org.mx/edca/extensions/base.json",
+      "title": "Base TM Extension",
+      "description": "Basic extension to implement OCDS in Mexico",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "title": "Version",
+          "description": "Semantic version of the extension",
+          "default": "0.1.0"
+        },
+        "planning": {
+          "$ref": "#/definitions3/planning"
+        },
+        "tender": {
+          "$ref": "#/definitions3/tender"
+        },
+        "award": {
+          "$ref": "#/definitions3/award"
+        },
+        "contract": {
+          "$ref": "#/definitions3/contract"
+        },
+        "implementation": {
+          "$ref": "#/definitions3/implementation"
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_9"
+      }
+    }
+  ],
+  "definitions3": {
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "Audit",
+      "description": "Defines an audit process",
+      "required": [
+        "type",
+        "auditor",
+        "observations",
+        "actions"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Type",
+          "description": "Type of audit process",
+          "default": "external",
+          "enum": [
+            "internal",
+            "external"
+          ]
+        },
+        "auditor": {
+          "type": "object"
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 0,
+          "_uniqueItems": true,
+          "items": {
+            "type": "string"
+          },
+          "title": "Observation(s)",
+          "description": "Observations presented during the audit process",
+          "default": []
+        },
+        "actions": {
+          "type": "array",
+          "minItems": 0,
+          "_uniqueItems": true,
+          "items": {
+            "type": "string"
+          },
+          "title": "Action(s)",
+          "description": "Actions taken during the audit process",
+          "default": []
+        }
+      }
+    },
+    "planning": {
+      "type": "object",
+      "description": "Additional details applicable to the planning phase",
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "multipleYears": {
+              "type": "boolean",
+              "default": false,
+              "description": "Specify if the budget applies for more than 1 administrative year"
+            },
+            "exchangeRate": {
+              "type": "number",
+              "description": "Exchange rate applicable if the contract use any currency different from MXN"
+            }
+          }
+        }
+      }
+    },
+    "tender": {
+      "type": "object",
+      "description": "Additional details applicable to the tender phase",
+      "additionalProperties": false,
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Specify the scope of the tender process",
+          "default": "national",
+          "enum": [
+            "national",
+            "international",
+            "internationalTreaty"
+          ]
+        },
+        "procurementStyle": {
+          "type": "string",
+          "description": "Specify the procurement style of the tender process",
+          "default": "multiple",
+          "enum": [
+            "presence",
+            "electronic",
+            "multiple"
+          ]
+        },
+        "hasSocialWitness": {
+          "type": "boolean",
+          "description": "Specify whether a social witness participate during the tender process or not",
+          "default": "false"
+        },
+        "socialWitness": {
+          "type": "object",
+          "description": "Social witness entity (Organization object)"
+        },
+        "socialWitnessDesignationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "requiringEntity": {
+          "type": "object",
+          "description": "Entity requiring the contract process (Organization object)"
+        },
+        "technicalEntity": {
+          "type": "object",
+          "description": "Entity involved in the technical aspects of the contract process (Organization object)"
+        }
+      }
+    },
+    "award": {
+      "type": "object",
+      "description": "Additional details applicable to the award phase",
+      "additionalProperties": false,
+      "properties": {
+        "complains": {
+          "type": "object",
+          "description": "Details about complains received during the award phase of the contracting process",
+          "additionalProperties": false,
+          "properties": {
+            "accepted": {
+              "type": "integer",
+              "default": 0
+            },
+            "notAccepted": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "description": "Additional details applicable to the contract phase",
+      "additionalProperties": false,
+      "properties": {
+        "administratorEntity": {
+          "type": "object",
+          "description": "Entity with administrative lead during the contract process (Organization object)"
+        },
+        "hasModifications": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specify if the contracting process have been modified/adjusted"
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "description": "Additional details applicable to the implementation phase",
+      "additionalProperties": false,
+      "properties": {
+        "hasAudits": {
+          "type": "boolean",
+          "description": "Specify if audits were performed during the contracting process"
+        },
+        "audits": {
+          "type": "array",
+          "minItems": 0,
+          "default": [],
+          "items": {
+            "$ref": "#/definitions3/audit"
+          }
+        }
+      }
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "multipleYears": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specify if the budget applies for more than 1 administrative year"
+                },
+                "exchangeRate": {
+                  "type": "number",
+                  "description": "Exchange rate applicable if the contract use any currency different from MXN"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^multipleYears$": true,
+                "^exchangeRate$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Additional details applicable to the implementation phase",
+              "properties": {
+                "hasAudits": {
+                  "type": "boolean",
+                  "description": "Specify if audits were performed during the contracting process"
+                },
+                "audits": {
+                  "type": "array",
+                  "minItems": 0,
+                  "default": [],
+                  "items": {
+                    "$ref": "#/definitions4/audit"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^hasAudits$": true,
+                "^audits$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "tender": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Additional details applicable to the tender phase",
+              "properties": {
+                "requiringEntity": {
+                  "type": "object",
+                  "description": "Entity requiring the contract process (Organization object)"
+                },
+                "scope": {
+                  "type": "string",
+                  "description": "Specify the scope of the tender process",
+                  "default": "national",
+                  "enum": [
+                    "national",
+                    "international",
+                    "internationalTreaty"
+                  ]
+                },
+                "technicalEntity": {
+                  "type": "object",
+                  "description": "Entity involved in the technical aspects of the contract process (Organization object)"
+                },
+                "procurementStyle": {
+                  "type": "string",
+                  "description": "Specify the procurement style of the tender process",
+                  "default": "multiple",
+                  "enum": [
+                    "presence",
+                    "electronic",
+                    "multiple"
+                  ]
+                },
+                "socialWitness": {
+                  "type": "object",
+                  "description": "Social witness entity (Organization object)"
+                },
+                "hasSocialWitness": {
+                  "type": "boolean",
+                  "description": "Specify whether a social witness participate during the tender process or not",
+                  "default": "false"
+                },
+                "socialWitnessDesignationDate": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^requiringEntity$": true,
+                "^technicalEntity$": true,
+                "^hasSocialWitness$": true,
+                "^scope$": true,
+                "^socialWitnessDesignationDate$": true,
+                "^socialWitness$": true,
+                "^procurementStyle$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Additional details applicable to the award phase",
+              "properties": {
+                "complains": {
+                  "$ref": "#/definitions4/modern_3"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^complains$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "planning": {
+      "$ref": "#/definitions4/modern_4"
+    },
+    "modern_9": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "id": "http://tm.org.mx/edca/extensions/base.json",
+              "title": "Base TM Extension",
+              "description": "Basic extension to implement OCDS in Mexico",
+              "type": "object",
+              "required": [
+                "version"
+              ],
+              "properties": {
+                "tender": {
+                  "$ref": "#/definitions4/tender"
+                },
+                "award": {
+                  "$ref": "#/definitions4/award"
+                },
+                "implementation": {
+                  "$ref": "#/definitions4/implementation"
+                },
+                "contract": {
+                  "$ref": "#/definitions4/contract"
+                },
+                "planning": {
+                  "$ref": "#/definitions4/planning"
+                },
+                "version": {
+                  "type": "string",
+                  "title": "Version",
+                  "description": "Semantic version of the extension",
+                  "default": "0.1.0"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^version$": true,
+                "^tender$": true,
+                "^implementation$": true,
+                "^award$": true,
+                "^planning$": true,
+                "^contract$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Details about complains received during the award phase of the contracting process",
+              "properties": {
+                "accepted": {
+                  "type": "integer",
+                  "default": 0
+                },
+                "notAccepted": {
+                  "type": "integer",
+                  "default": 0
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^accepted$": true,
+                "^notAccepted$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "audit": {
+      "$ref": "#/definitions4/modern_7"
+    },
+    "contract": {
+      "$ref": "#/definitions4/modern_8"
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Additional details applicable to the planning phase",
+              "properties": {
+                "budget": {
+                  "$ref": "#/definitions4/modern_5"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^budget$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "award": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "title": "Audit",
+              "description": "Defines an audit process",
+              "required": [
+                "type",
+                "auditor",
+                "observations",
+                "actions"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "title": "Type",
+                  "description": "Type of audit process",
+                  "default": "external",
+                  "enum": [
+                    "internal",
+                    "external"
+                  ]
+                },
+                "auditor": {
+                  "type": "object"
+                },
+                "observations": {
+                  "type": "array",
+                  "minItems": 0,
+                  "_uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Observation(s)",
+                  "description": "Observations presented during the audit process",
+                  "default": []
+                },
+                "actions": {
+                  "type": "array",
+                  "minItems": 0,
+                  "_uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Action(s)",
+                  "description": "Actions taken during the audit process",
+                  "default": []
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^type$": true,
+                "^auditor$": true,
+                "^observations$": true,
+                "^actions$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "implementation": {
+      "$ref": "#/definitions4/modern_6"
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Additional details applicable to the contract phase",
+              "properties": {
+                "administratorEntity": {
+                  "type": "object",
+                  "description": "Entity with administrative lead during the contract process (Organization object)"
+                },
+                "hasModifications": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specify if the contracting process have been modified/adjusted"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^administratorEntity$": true,
+                "^hasModifications$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/planning"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/planning"
+      }
+    },
+    {
+      "$ref": "#/definitions4/audit"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/audit"
+      }
+    },
+    {
+      "$ref": "#/definitions4/contract"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/contract"
+      }
+    },
+    {
+      "$ref": "#/definitions3/audit"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/audit"
+      }
+    },
+    {
+      "$ref": "#/definitions3/planning"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/planning"
+      }
+    },
+    {
+      "$ref": "#/definitions3/implementation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/implementation"
+      }
+    },
+    {
+      "$ref": "#/definitions3/tender"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/tender"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions3/award"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/award"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions3/contract"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/contract"
+      }
+    },
+    {
+      "$ref": "#/definitions4/implementation"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/implementation"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_9"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_9"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/award"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/award"
+      }
+    },
+    {
+      "$ref": "#/definitions4/tender"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/tender"
+      }
+    }
+  ]
+}

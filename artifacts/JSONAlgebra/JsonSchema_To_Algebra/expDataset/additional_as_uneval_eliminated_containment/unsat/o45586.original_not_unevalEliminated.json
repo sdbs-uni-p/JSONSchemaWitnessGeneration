@@ -1,0 +1,917 @@
+{
+  "allOf": [
+    {
+      "properties": {
+        "clientLabels": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "_uniqueItems": true
+        },
+        "clusterName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "connectionStrategy": {
+          "properties": {
+            "asyncStart": {
+              "default": false,
+              "type": "boolean"
+            },
+            "connectionRetry": {
+              "properties": {
+                "clusterConnectTimeoutMillis": {
+                  "type": "number"
+                },
+                "initialBackoffMillis": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "jitter": {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "maxBackoffMillis": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "multiplier": {
+                  "minimum": 1,
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "reconnectMode": {
+              "enum": [
+                "on",
+                "off",
+                "async"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "import": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "instanceName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "listeners": {
+          "items": {
+            "$ref": "#/definitions3/listenerConfig"
+          },
+          "type": "array"
+        },
+        "loadBalancer": {
+          "properties": {
+            "type": {
+              "enum": [
+                "roundRobin",
+                "random"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "nearCaches": {
+          "items": {
+            "properties": {
+              "evictionMaxSize": {
+                "$ref": "#/definitions3/positiveInteger",
+                "default": "maximum safe integer"
+              },
+              "evictionPolicy": {
+                "default": "none",
+                "enum": [
+                  "none",
+                  "lru",
+                  "lfu",
+                  "random"
+                ]
+              },
+              "evictionSamplingCount": {
+                "$ref": "#/definitions3/positiveInteger",
+                "default": 8
+              },
+              "evictionSamplingPoolSize": {
+                "$ref": "#/definitions3/positiveInteger",
+                "default": 16
+              },
+              "inMemoryFormat": {
+                "default": "binary",
+                "enum": [
+                  "object",
+                  "binary"
+                ]
+              },
+              "invalidateOnChange": {
+                "default": true,
+                "type": "boolean"
+              },
+              "maxIdleSeconds": {
+                "default": 0,
+                "minimum": 0,
+                "type": "number"
+              },
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "timeToLiveSeconds": {
+                "default": 0,
+                "minimum": 0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "network": {
+          "properties": {
+            "clusterMembers": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "_uniqueItems": true
+            },
+            "connectionTimeout": {
+              "default": 5000,
+              "minimum": 1000,
+              "type": "number"
+            },
+            "hazelcastCloud": {
+              "properties": {
+                "discoveryToken": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "enabled": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "smartRouting": {
+              "default": true,
+              "type": "boolean"
+            },
+            "ssl": {
+              "properties": {
+                "enabled": {
+                  "default": false,
+                  "type": "boolean"
+                },
+                "factory": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions3/importPath"
+                    },
+                    {
+                      "properties": {
+                        "properties": {
+                          "$ref": "#/definitions3/propertiesObject"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "sslOptions": {
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "properties": {
+                          "$ref": "#/definitions3/propertiesObject"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "properties": {
+          "$ref": "#/definitions3/propertiesObject"
+        },
+        "reliableTopics": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "overloadPolicy": {
+                "default": "block",
+                "enum": [
+                  "discard_oldest",
+                  "discard_newest",
+                  "block",
+                  "error"
+                ]
+              },
+              "readBatchSize": {
+                "$ref": "#/definitions3/positiveInteger",
+                "default": 25
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "serialization": {
+          "properties": {
+            "dataSerializableFactories": {
+              "$ref": "#/definitions3/factoryConfigArray"
+            },
+            "defaultNumberType": {
+              "default": "double",
+              "enum": [
+                "integer",
+                "float",
+                "double"
+              ]
+            },
+            "globalSerializer": {
+              "$ref": "#/definitions3/importPath"
+            },
+            "isBigEndian": {
+              "default": false,
+              "type": "boolean"
+            },
+            "jsonStringDeserializationPolicy": {
+              "default": "eager",
+              "enum": [
+                "eager",
+                "no_deserialization"
+              ]
+            },
+            "portableFactories": {
+              "$ref": "#/definitions3/factoryConfigArray"
+            },
+            "portableVersion": {
+              "$ref": "#/definitions3/positiveInteger"
+            },
+            "serializers": {
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions3/importPath"
+                  },
+                  {
+                    "properties": {
+                      "typeId": {
+                        "$ref": "#/definitions3/positiveInteger"
+                      }
+                    },
+                    "required": [
+                      "typeId"
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "title": "Hazelcast Node.js Client Configuration",
+      "type": "object"
+    },
+    {
+      "not": {
+        "properties": {
+          "network": {
+            "properties": {
+              "smartRouting": {
+                "default": true,
+                "type": "boolean"
+              },
+              "ssl": {
+                "properties": {
+                  "enabled": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "factory": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions4/importPath"
+                      },
+                      {
+                        "properties": {
+                          "properties": {
+                            "$ref": "#/definitions4/propertiesObject"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "sslOptions": {
+                    "anyOf": [
+                      {
+                        "properties": {
+                          "properties": {
+                            "$ref": "#/definitions4/propertiesObject"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              },
+              "hazelcastCloud": {
+                "properties": {
+                  "discoveryToken": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "enabled": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              },
+              "clusterMembers": {
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array",
+                "_uniqueItems": true
+              },
+              "connectionTimeout": {
+                "default": 5000,
+                "minimum": 1000.0,
+                "type": "number"
+              }
+            },
+            "type": "object"
+          },
+          "reliableTopics": {
+            "items": {
+              "$ref": "#/definitions4/modern_2"
+            },
+            "type": "array"
+          },
+          "listeners": {
+            "items": {
+              "$ref": "#/definitions4/listenerConfig"
+            },
+            "type": "array"
+          },
+          "nearCaches": {
+            "items": {
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "evictionSamplingPoolSize": {
+                  "$ref": "#/definitions4/positiveInteger",
+                  "default": 16
+                },
+                "timeToLiveSeconds": {
+                  "default": 0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                "maxIdleSeconds": {
+                  "default": 0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                "evictionSamplingCount": {
+                  "$ref": "#/definitions4/positiveInteger",
+                  "default": 8
+                },
+                "invalidateOnChange": {
+                  "default": true,
+                  "type": "boolean"
+                },
+                "evictionMaxSize": {
+                  "$ref": "#/definitions4/positiveInteger",
+                  "default": "maximum safe integer"
+                },
+                "inMemoryFormat": {
+                  "default": "binary",
+                  "enum": [
+                    "object",
+                    "binary"
+                  ]
+                },
+                "evictionPolicy": {
+                  "default": "none",
+                  "enum": [
+                    "none",
+                    "lru",
+                    "lfu",
+                    "random"
+                  ]
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "clientLabels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "_uniqueItems": true
+          },
+          "serialization": {
+            "properties": {
+              "dataSerializableFactories": {
+                "$ref": "#/definitions4/factoryConfigArray"
+              },
+              "globalSerializer": {
+                "$ref": "#/definitions4/importPath"
+              },
+              "serializers": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions4/importPath"
+                    },
+                    {
+                      "properties": {
+                        "typeId": {
+                          "$ref": "#/definitions4/positiveInteger"
+                        }
+                      },
+                      "required": [
+                        "typeId"
+                      ]
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              "jsonStringDeserializationPolicy": {
+                "default": "eager",
+                "enum": [
+                  "eager",
+                  "no_deserialization"
+                ]
+              },
+              "portableVersion": {
+                "$ref": "#/definitions4/positiveInteger"
+              },
+              "isBigEndian": {
+                "default": false,
+                "type": "boolean"
+              },
+              "portableFactories": {
+                "$ref": "#/definitions4/factoryConfigArray"
+              },
+              "defaultNumberType": {
+                "default": "double",
+                "enum": [
+                  "integer",
+                  "float",
+                  "double"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "import": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "properties": {
+            "$ref": "#/definitions4/propertiesObject"
+          },
+          "loadBalancer": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "roundRobin",
+                  "random"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "connectionStrategy": {
+            "properties": {
+              "asyncStart": {
+                "default": false,
+                "type": "boolean"
+              },
+              "connectionRetry": {
+                "properties": {
+                  "jitter": {
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  "clusterConnectTimeoutMillis": {
+                    "type": "number"
+                  },
+                  "initialBackoffMillis": {
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  "maxBackoffMillis": {
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  "multiplier": {
+                    "minimum": 1.0,
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              },
+              "reconnectMode": {
+                "enum": [
+                  "on",
+                  "off",
+                  "async"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "clusterName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "instanceName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "title": "Hazelcast Node.js Client Configuration",
+        "type": "object"
+      }
+    }
+  ],
+  "definitions3": {
+    "factoryConfig": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/importPath"
+        },
+        {
+          "properties": {
+            "factoryId": {
+              "$ref": "#/definitions3/positiveInteger"
+            }
+          }
+        }
+      ]
+    },
+    "factoryConfigArray": {
+      "items": {
+        "$ref": "#/definitions3/factoryConfig"
+      },
+      "type": "array"
+    },
+    "importPath": {
+      "properties": {
+        "exportedName": {
+          "type": "string"
+        },
+        "path": {
+          "format": "uri-reference",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "listenerConfig": {
+      "allOf": [
+        {
+          "$ref": "#/definitions3/importPath"
+        },
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "lifecycle",
+                "membership"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "positiveInteger": {
+      "minimum": 0,
+      "multipleOf": 1,
+      "type": "number"
+    },
+    "propertiesObject": {
+      "additionalProperties": {
+        "type": [
+          "number",
+          "string",
+          "boolean"
+        ]
+      },
+      "propertyNames": {
+        "pattern": "^[^ ]*$"
+      },
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "propertiesObject": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "factoryConfigArray": {
+      "items": {
+        "$ref": "#/definitions4/factoryConfig"
+      },
+      "type": "array"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "propertyNames": {
+                "pattern": "^[^ ]*$"
+              },
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": [
+                  "number",
+                  "string",
+                  "boolean"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "overloadPolicy": {
+                  "default": "block",
+                  "enum": [
+                    "discard_oldest",
+                    "discard_newest",
+                    "block",
+                    "error"
+                  ]
+                },
+                "readBatchSize": {
+                  "$ref": "#/definitions4/positiveInteger",
+                  "default": 25
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^overloadPolicy$": true,
+                "^readBatchSize$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "positiveInteger": {
+      "minimum": 0.0,
+      "multipleOf": 1.0,
+      "type": "number"
+    },
+    "importPath": {
+      "properties": {
+        "exportedName": {
+          "type": "string"
+        },
+        "path": {
+          "format": "uri-reference",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "listenerConfig": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/importPath"
+        },
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "lifecycle",
+                "membership"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "factoryConfig": {
+      "allOf": [
+        {
+          "$ref": "#/definitions4/importPath"
+        },
+        {
+          "properties": {
+            "factoryId": {
+              "$ref": "#/definitions4/positiveInteger"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/factoryConfigArray"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/factoryConfigArray"
+      }
+    },
+    {
+      "$ref": "#/definitions4/factoryConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/factoryConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions3/listenerConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/listenerConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions4/importPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/importPath"
+      }
+    },
+    {
+      "$ref": "#/definitions3/positiveInteger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/positiveInteger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/propertiesObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/propertiesObject"
+      }
+    },
+    {
+      "$ref": "#/definitions3/importPath"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/importPath"
+      }
+    },
+    {
+      "$ref": "#/definitions4/propertiesObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/propertiesObject"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/factoryConfigArray"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/factoryConfigArray"
+      }
+    },
+    {
+      "$ref": "#/definitions4/positiveInteger"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/positiveInteger"
+      }
+    },
+    {
+      "$ref": "#/definitions4/listenerConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/listenerConfig"
+      }
+    },
+    {
+      "$ref": "#/definitions3/factoryConfig"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/factoryConfig"
+      }
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Admin Query",
+      "description": "Description of an administrator SQL query.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "description"
+      ],
+      "properties": {
+        "description": {
+          "description": "Brief one-line description of the query.",
+          "type": "string"
+        },
+        "resultFormats": {
+          "description": "Custom formats for result columns.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "pre"
+            ]
+          }
+        },
+        "params": {
+          "description": "Parameters for the query.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "description"
+            ],
+            "properties": {
+              "name": {
+                "description": "Name of the parameter. Must match a $name in the SQL.",
+                "type": "string"
+              },
+              "description": {
+                "description": "Brief one-line description of the parameter.",
+                "type": "string"
+              },
+              "default": {
+                "description": "Default value.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Admin Query",
+              "description": "Description of an administrator SQL query.",
+              "type": "object",
+              "required": [
+                "description"
+              ],
+              "properties": {
+                "description": {
+                  "description": "Brief one-line description of the query.",
+                  "type": "string"
+                },
+                "resultFormats": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "params": {
+                  "description": "Parameters for the query.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_3"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^resultFormats$": true,
+                "^params$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Custom formats for result columns.",
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string",
+                "enum": [
+                  "pre"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "name",
+                "description"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name of the parameter. Must match a $name in the SQL.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Brief one-line description of the parameter.",
+                  "type": "string"
+                },
+                "default": {
+                  "description": "Default value.",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^name$": true,
+                "^description$": true,
+                "^default$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

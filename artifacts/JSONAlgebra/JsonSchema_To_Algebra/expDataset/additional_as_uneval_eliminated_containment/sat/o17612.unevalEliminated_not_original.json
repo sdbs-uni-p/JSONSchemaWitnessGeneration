@@ -1,0 +1,164 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "date": {
+          "description": "Date property description",
+          "format": "date-time",
+          "type": "string"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions4/MySubObject"
+          },
+          "type": "array"
+        },
+        "sub1": {
+          "$ref": "#/definitions4/MySubObject"
+        },
+        "sub2": {
+          "$ref": "#/definitions4/modern_2"
+        }
+      },
+      "required": [
+        "date",
+        "list",
+        "sub1",
+        "sub2"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "date": {
+            "description": "Date property description",
+            "format": "date-time",
+            "type": "string"
+          },
+          "list": {
+            "items": {
+              "$ref": "#/definitions3/MySubObject"
+            },
+            "type": "array"
+          },
+          "sub1": {
+            "$ref": "#/definitions3/MySubObject"
+          },
+          "sub2": {
+            "$ref": "#/definitions3/MySubObject",
+            "additionalProperties": false,
+            "description": "Property-level description"
+          }
+        },
+        "required": [
+          "date",
+          "list",
+          "sub1",
+          "sub2"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Type-level description",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^value$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions4/MySubObject",
+              "description": "Property-level description"
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "MySubObject": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "definitions3": {
+    "MySubObject": {
+      "additionalProperties": true,
+      "description": "Type-level description",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/MySubObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/MySubObject"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/MySubObject"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/MySubObject"
+      }
+    }
+  ]
+}

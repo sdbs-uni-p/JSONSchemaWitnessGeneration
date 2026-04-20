@@ -1,0 +1,313 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "CSV migration",
+        "description": "CSV migration configuration",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": {
+          "allOf": [
+            {
+              "$ref": "#/definitions3/migrationField"
+            }
+          ]
+        },
+        "required": [
+          "id",
+          "created",
+          "modified"
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "checkRequiredFalseAndUniqueFalse": {
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "enum": [
+            false
+          ]
+        },
+        "unique": {
+          "type": "boolean",
+          "enum": [
+            false
+          ]
+        }
+      }
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "Migration field",
+              "description": "Representation of a single field from migrations.csv",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "title": "Field name",
+                  "description": "Database field name",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "non-searchable": {
+                  "title": "Searchable flag",
+                  "description": "Defines whether or not the field is searchable",
+                  "type": "boolean",
+                  "default": false
+                },
+                "unique": {
+                  "title": "Unique flag",
+                  "description": "Defines whether or not the field is contains unique value",
+                  "type": "boolean",
+                  "default": false
+                },
+                "type": {
+                  "title": "Field type",
+                  "description": "Database field type (think: field handlers)",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "required": {
+                  "title": "Required flag",
+                  "description": "Defines whether or not the field is required",
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "required": [
+                "name",
+                "type"
+              ],
+              "oneOf": [
+                {
+                  "$ref": "#/definitions4/checkRequiredFalseAndUniqueFalse"
+                },
+                {
+                  "$ref": "#/definitions4/checkRequiredFalseAndUniqueAny"
+                }
+              ]
+            },
+            {
+              "patternProperties": {
+                "^required$": true,
+                "^name$": true,
+                "^type$": true,
+                "^unique$": true,
+                "^non-searchable$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "CSV migration",
+              "description": "CSV migration configuration",
+              "type": "object",
+              "properties": {},
+              "required": [
+                "id",
+                "created",
+                "modified"
+              ]
+            },
+            {
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions4/migrationField"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "checkRequiredFalseAndUniqueAny": {
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
+        "unique": {
+          "type": "boolean",
+          "enum": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    "migrationField": {
+      "$ref": "#/definitions4/modern_1"
+    }
+  },
+  "definitions3": {
+    "checkRequiredFalseAndUniqueFalse": {
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "enum": [
+            false
+          ]
+        },
+        "unique": {
+          "type": "boolean",
+          "enum": [
+            false
+          ]
+        }
+      }
+    },
+    "checkRequiredFalseAndUniqueAny": {
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
+        "unique": {
+          "type": "boolean",
+          "enum": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    "migrationField": {
+      "title": "Migration field",
+      "description": "Representation of a single field from migrations.csv",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Field name",
+          "description": "Database field name",
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "title": "Field type",
+          "description": "Database field type (think: field handlers)",
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "title": "Required flag",
+          "description": "Defines whether or not the field is required",
+          "type": "boolean",
+          "default": false
+        },
+        "non-searchable": {
+          "title": "Searchable flag",
+          "description": "Defines whether or not the field is searchable",
+          "type": "boolean",
+          "default": false
+        },
+        "unique": {
+          "title": "Unique flag",
+          "description": "Defines whether or not the field is contains unique value",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type"
+      ],
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/checkRequiredFalseAndUniqueFalse"
+        },
+        {
+          "$ref": "#/definitions3/checkRequiredFalseAndUniqueAny"
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/migrationField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/migrationField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/migrationField"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/migrationField"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/checkRequiredFalseAndUniqueAny"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/checkRequiredFalseAndUniqueAny"
+      }
+    },
+    {
+      "$ref": "#/definitions3/checkRequiredFalseAndUniqueFalse"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/checkRequiredFalseAndUniqueFalse"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/checkRequiredFalseAndUniqueFalse"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/checkRequiredFalseAndUniqueFalse"
+      }
+    },
+    {
+      "$ref": "#/definitions3/checkRequiredFalseAndUniqueAny"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/checkRequiredFalseAndUniqueAny"
+      }
+    }
+  ]
+}

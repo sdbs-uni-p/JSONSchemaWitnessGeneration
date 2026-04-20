@@ -1,0 +1,367 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/allowLogin"
+          },
+          {
+            "$ref": "#/definitions3/injectRoles"
+          }
+        ]
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions4/allowLogin"
+            },
+            {
+              "$ref": "#/definitions4/injectRoles"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "definitions3": {
+    "wildCardCondition": {
+      "type": "object",
+      "properties": {
+        "attribute": {
+          "type": "string",
+          "description": "the SAML attribute to run the wildcard against"
+        },
+        "wildCard": {
+          "type": "string",
+          "description": "the wildcard, with * supported"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "attribute",
+        "wildCard"
+      ]
+    },
+    "alwaysCondition": {
+      "type": "boolean"
+    },
+    "notCondition": {
+      "type": "object",
+      "properties": {
+        "not": {
+          "$ref": "#/definitions3/condition"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "not"
+      ]
+    },
+    "condition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/wildCardCondition"
+        },
+        {
+          "$ref": "#/definitions3/notCondition"
+        },
+        {
+          "$ref": "#/definitions3/alwaysCondition"
+        }
+      ]
+    },
+    "injectRoles": {
+      "type": "object",
+      "properties": {
+        "injectRoles": {
+          "type": "object",
+          "properties": {
+            "condition": {
+              "$ref": "#/definitions3/condition"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "condition",
+            "roles"
+          ]
+        }
+      },
+      "required": [
+        "injectRoles"
+      ]
+    },
+    "allowLogin": {
+      "type": "object",
+      "properties": {
+        "allowLogin": {
+          "type": "object",
+          "properties": {
+            "condition": {
+              "$ref": "#/definitions3/condition"
+            }
+          },
+          "required": [
+            "condition"
+          ]
+        }
+      },
+      "required": [
+        "allowLogin"
+      ]
+    }
+  },
+  "definitions4": {
+    "wildCardCondition": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "attribute": {
+                  "type": "string",
+                  "description": "the SAML attribute to run the wildcard against"
+                },
+                "wildCard": {
+                  "type": "string",
+                  "description": "the wildcard, with * supported"
+                }
+              },
+              "required": [
+                "attribute",
+                "wildCard"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^attribute$": true,
+                "^wildCard$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "not": {
+                  "$ref": "#/definitions4/condition"
+                }
+              },
+              "required": [
+                "not"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^not$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "alwaysCondition": {
+      "type": "boolean"
+    },
+    "notCondition": {
+      "$ref": "#/definitions4/modern_2"
+    },
+    "condition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/wildCardCondition"
+        },
+        {
+          "$ref": "#/definitions4/notCondition"
+        },
+        {
+          "$ref": "#/definitions4/alwaysCondition"
+        }
+      ]
+    },
+    "injectRoles": {
+      "type": "object",
+      "properties": {
+        "injectRoles": {
+          "type": "object",
+          "properties": {
+            "condition": {
+              "$ref": "#/definitions4/condition"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "condition",
+            "roles"
+          ]
+        }
+      },
+      "required": [
+        "injectRoles"
+      ]
+    },
+    "allowLogin": {
+      "type": "object",
+      "properties": {
+        "allowLogin": {
+          "type": "object",
+          "properties": {
+            "condition": {
+              "$ref": "#/definitions4/condition"
+            }
+          },
+          "required": [
+            "condition"
+          ]
+        }
+      },
+      "required": [
+        "allowLogin"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/wildCardCondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/wildCardCondition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/alwaysCondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/alwaysCondition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/allowLogin"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/allowLogin"
+      }
+    },
+    {
+      "$ref": "#/definitions4/condition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/condition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/allowLogin"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/allowLogin"
+      }
+    },
+    {
+      "$ref": "#/definitions3/notCondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/notCondition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/condition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/condition"
+      }
+    },
+    {
+      "$ref": "#/definitions3/wildCardCondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/wildCardCondition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/notCondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/notCondition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/alwaysCondition"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/alwaysCondition"
+      }
+    },
+    {
+      "$ref": "#/definitions4/injectRoles"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/injectRoles"
+      }
+    },
+    {
+      "$ref": "#/definitions3/injectRoles"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/injectRoles"
+      }
+    }
+  ]
+}

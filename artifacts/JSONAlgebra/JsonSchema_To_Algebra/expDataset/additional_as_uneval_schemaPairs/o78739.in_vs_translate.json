@@ -1,0 +1,587 @@
+[
+  {
+    "id": 2348,
+    "schema1": {
+      "$schema": "http://json-schema.org/draft-06/schema#",
+      "title": "Recommended Sequence",
+      "description": "A sequence of semesters corresponding to a given program as recommended by Concordia University",
+      "type": "object",
+      "properties": {
+        "sequenceInfo": {
+          "description": "Auxiliary info related to the sequence",
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "string",
+              "pattern": "\\w+"
+            },
+            "option": {
+              "type": "string",
+              "pattern": "\\w+"
+            },
+            "entryType": {
+              "type": "string",
+              "pattern": "\\w+"
+            }
+          },
+          "required": [
+            "program",
+            "option",
+            "entryType"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "sourceUrl": {
+          "description": "A visitable web url from which the contents of the sequence were inferred",
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "minTotalCredits": {
+          "description": "The minimum number of credits needed in order to graduate from the program which this sequence is based upon",
+          "type": "string",
+          "pattern": "^\\d+$"
+        },
+        "yearList": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fall": {
+                "$ref": "#/definitions2/semester"
+              },
+              "winter": {
+                "$ref": "#/definitions2/semester"
+              },
+              "summer": {
+                "$ref": "#/definitions2/semester"
+              }
+            },
+            "required": [
+              "fall",
+              "winter",
+              "summer"
+            ],
+            "additionalProperties": {
+              "not": {}
+            }
+          },
+          "minItems": 3
+        }
+      },
+      "required": [
+        "sequenceInfo",
+        "sourceUrl",
+        "minTotalCredits",
+        "yearList"
+      ],
+      "additionalProperties": {
+        "not": {}
+      },
+      "definitions2": {
+        "semester": {
+          "type": "object",
+          "properties": {
+            "courseList": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions2/regularCourse"
+                  },
+                  {
+                    "$ref": "#/definitions2/electiveCourse"
+                  },
+                  {
+                    "$ref": "#/definitions2/orList"
+                  }
+                ]
+              }
+            },
+            "isWorkTerm": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          "required": [
+            "courseList",
+            "isWorkTerm"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "orList": {
+          "description": "A list of courses where the student can choose any one of them to add to take in the current semester",
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/regularCourse"
+              },
+              {
+                "$ref": "#/definitions2/electiveCourse"
+              }
+            ]
+          },
+          "minItems": 2
+        },
+        "regularCourse": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "pattern": "^\\w{4}\\s{1}\\d{3}$"
+            },
+            "isElective": {
+              "type": "string",
+              "pattern": "^false$"
+            },
+            "electiveType": {
+              "type": "string",
+              "pattern": "^$"
+            }
+          },
+          "required": [
+            "code",
+            "isElective",
+            "electiveType"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "electiveCourse": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "pattern": "^$"
+            },
+            "isElective": {
+              "type": "string",
+              "pattern": "^true$"
+            },
+            "electiveType": {
+              "type": "string",
+              "enum": [
+                "Science",
+                "Program",
+                "General"
+              ]
+            }
+          },
+          "required": [
+            "code",
+            "isElective",
+            "electiveType"
+          ],
+          "additionalProperties": {
+            "not": {}
+          }
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-06/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "fall": {
+                      "$ref": "#/definitions2/semester"
+                    },
+                    "winter": {
+                      "$ref": "#/definitions2/semester"
+                    },
+                    "summer": {
+                      "$ref": "#/definitions2/semester"
+                    }
+                  },
+                  "required": [
+                    "fall",
+                    "winter",
+                    "summer"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^fall$": {},
+                    "^winter$": {},
+                    "^summer$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "orList": {
+          "description": "A list of courses where the student can choose any one of them to add to take in the current semester",
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions2/regularCourse"
+              },
+              {
+                "$ref": "#/definitions2/electiveCourse"
+              }
+            ]
+          },
+          "minItems": 2
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "courseList": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/regularCourse"
+                          },
+                          {
+                            "$ref": "#/definitions2/electiveCourse"
+                          },
+                          {
+                            "$ref": "#/definitions2/orList"
+                          }
+                        ]
+                      }
+                    },
+                    "isWorkTerm": {
+                      "type": "string",
+                      "enum": [
+                        "true",
+                        "false"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "courseList",
+                    "isWorkTerm"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^courseList$": {},
+                    "^isWorkTerm$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "pattern": "^\\w{4}\\s{1}\\d{3}$"
+                    },
+                    "isElective": {
+                      "type": "string",
+                      "pattern": "^false$"
+                    },
+                    "electiveType": {
+                      "type": "string",
+                      "pattern": "^$"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "isElective",
+                    "electiveType"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^code$": {},
+                    "^isElective$": {},
+                    "^electiveType$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "regularCourse": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "pattern": "^$"
+                    },
+                    "isElective": {
+                      "type": "string",
+                      "pattern": "^true$"
+                    },
+                    "electiveType": {
+                      "type": "string",
+                      "enum": [
+                        "Science",
+                        "Program",
+                        "General"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "isElective",
+                    "electiveType"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^code$": {},
+                    "^isElective$": {},
+                    "^electiveType$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "electiveCourse": {
+          "$ref": "#/definitions2/modern_3"
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Recommended Sequence",
+                  "description": "A sequence of semesters corresponding to a given program as recommended by Concordia University",
+                  "type": "object",
+                  "properties": {
+                    "sequenceInfo": {
+                      "$ref": "#/definitions2/modern_5"
+                    },
+                    "sourceUrl": {
+                      "description": "A visitable web url from which the contents of the sequence were inferred",
+                      "type": "string",
+                      "pattern": "^https?://"
+                    },
+                    "minTotalCredits": {
+                      "description": "The minimum number of credits needed in order to graduate from the program which this sequence is based upon",
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    },
+                    "yearList": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/modern_6"
+                      },
+                      "minItems": 3
+                    }
+                  },
+                  "required": [
+                    "sequenceInfo",
+                    "sourceUrl",
+                    "minTotalCredits",
+                    "yearList"
+                  ],
+                  "definitions2": {
+                    "semester": {
+                      "type": "object",
+                      "properties": {
+                        "courseList": {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "$ref": "#/definitions2/regularCourse"
+                              },
+                              {
+                                "$ref": "#/definitions2/electiveCourse"
+                              },
+                              {
+                                "$ref": "#/definitions2/orList"
+                              }
+                            ]
+                          }
+                        },
+                        "isWorkTerm": {
+                          "type": "string",
+                          "enum": [
+                            "true",
+                            "false"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "courseList",
+                        "isWorkTerm"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "orList": {
+                      "description": "A list of courses where the student can choose any one of them to add to take in the current semester",
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions2/regularCourse"
+                          },
+                          {
+                            "$ref": "#/definitions2/electiveCourse"
+                          }
+                        ]
+                      },
+                      "minItems": 2
+                    },
+                    "regularCourse": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "pattern": "^\\w{4}\\s{1}\\d{3}$"
+                        },
+                        "isElective": {
+                          "type": "string",
+                          "pattern": "^false$"
+                        },
+                        "electiveType": {
+                          "type": "string",
+                          "pattern": "^$"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "isElective",
+                        "electiveType"
+                      ],
+                      "unevaluatedProperties": false
+                    },
+                    "electiveCourse": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "pattern": "^$"
+                        },
+                        "isElective": {
+                          "type": "string",
+                          "pattern": "^true$"
+                        },
+                        "electiveType": {
+                          "type": "string",
+                          "enum": [
+                            "Science",
+                            "Program",
+                            "General"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "isElective",
+                        "electiveType"
+                      ],
+                      "unevaluatedProperties": false
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^sequenceInfo$": {},
+                    "^sourceUrl$": {},
+                    "^minTotalCredits$": {},
+                    "^yearList$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Auxiliary info related to the sequence",
+                  "type": "object",
+                  "properties": {
+                    "program": {
+                      "type": "string",
+                      "pattern": "\\w+"
+                    },
+                    "option": {
+                      "type": "string",
+                      "pattern": "\\w+"
+                    },
+                    "entryType": {
+                      "type": "string",
+                      "pattern": "\\w+"
+                    }
+                  },
+                  "required": [
+                    "program",
+                    "option",
+                    "entryType"
+                  ]
+                },
+                {
+                  "patternProperties": {
+                    "^program$": {},
+                    "^option$": {},
+                    "^entryType$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "semester": {
+          "$ref": "#/definitions2/modern_1"
+        }
+      },
+      "$ref": "#/definitions2/modern_4"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

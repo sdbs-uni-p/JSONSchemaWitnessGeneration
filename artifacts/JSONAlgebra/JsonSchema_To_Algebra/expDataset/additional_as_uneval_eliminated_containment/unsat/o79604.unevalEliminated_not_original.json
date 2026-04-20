@@ -1,0 +1,317 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "additionalProperties": false,
+        "description": "the status of a previously launched upload",
+        "properties": {
+          "id": {
+            "description": "id of the upload operation",
+            "type": "integer"
+          },
+          "results": {
+            "$ref": "#/definitions3/crudOutcomes"
+          },
+          "started": {
+            "_format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "Queued",
+              "Underway",
+              "Complete",
+              "Error"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "started",
+          "status",
+          "results"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "crudOutcomes": {
+      "items": {
+        "$ref": "#/definitions4/crudOutcome"
+      },
+      "type": "array"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "failed": {
+                  "description": "how many objects in the set have so far been unsuccessfully [operation]",
+                  "type": "integer"
+                },
+                "failureDetails": {
+                  "items": {
+                    "$ref": "#/definitions4/failureDetail"
+                  },
+                  "type": "array"
+                },
+                "operation": {
+                  "enum": [
+                    "Created",
+                    "Updated",
+                    "Closed"
+                  ]
+                },
+                "succeeded": {
+                  "description": "how many objects in the set have so far been successfully [operation]",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "operation",
+                "succeeded",
+                "failed"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^failed$": true,
+                "^failureDetails$": true,
+                "^operation$": true,
+                "^succeeded$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "crudOutcome": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "details of why a single object failed the crud operation (create or whatever)",
+              "properties": {
+                "code": {
+                  "description": "A code, e.g. on a job or job ad, that uniquely identifies the object",
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^code$": true,
+                "^message$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "the status of a previously launched upload",
+              "properties": {
+                "id": {
+                  "description": "id of the upload operation",
+                  "type": "integer"
+                },
+                "results": {
+                  "$ref": "#/definitions4/crudOutcomes"
+                },
+                "started": {
+                  "_format": "date-time",
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "Queued",
+                    "Underway",
+                    "Complete",
+                    "Error"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "started",
+                "status",
+                "results"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^id$": true,
+                "^results$": true,
+                "^started$": true,
+                "^status$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "failureDetail": {
+      "$ref": "#/definitions4/modern_2"
+    }
+  },
+  "definitions3": {
+    "crudOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "failed": {
+          "description": "how many objects in the set have so far been unsuccessfully [operation]",
+          "type": "integer"
+        },
+        "failureDetails": {
+          "items": {
+            "$ref": "#/definitions3/failureDetail"
+          },
+          "type": "array"
+        },
+        "operation": {
+          "enum": [
+            "Created",
+            "Updated",
+            "Closed"
+          ]
+        },
+        "succeeded": {
+          "description": "how many objects in the set have so far been successfully [operation]",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operation",
+        "succeeded",
+        "failed"
+      ],
+      "type": "object"
+    },
+    "crudOutcomes": {
+      "items": {
+        "$ref": "#/definitions3/crudOutcome"
+      },
+      "type": "array"
+    },
+    "failureDetail": {
+      "additionalProperties": false,
+      "description": "details of why a single object failed the crud operation (create or whatever)",
+      "properties": {
+        "code": {
+          "description": "A code, e.g. on a job or job ad, that uniquely identifies the object",
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/crudOutcomes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/crudOutcomes"
+      }
+    },
+    {
+      "$ref": "#/definitions3/crudOutcome"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/crudOutcome"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions3/failureDetail"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/failureDetail"
+      }
+    },
+    {
+      "$ref": "#/definitions4/crudOutcomes"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/crudOutcomes"
+      }
+    },
+    {
+      "$ref": "#/definitions4/failureDetail"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/failureDetail"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/crudOutcome"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/crudOutcome"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

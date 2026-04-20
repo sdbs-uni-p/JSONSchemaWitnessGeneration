@@ -1,0 +1,550 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "GeoJSON object",
+      "description": "Schema for a GeoJSON object",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/geometry"
+        },
+        {
+          "$ref": "#/definitions4/geometryCollection"
+        },
+        {
+          "$ref": "#/definitions4/feature"
+        },
+        {
+          "$ref": "#/definitions4/featureCollection"
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "GeoJSON object",
+        "description": "Schema for a GeoJSON object",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/geometry"
+          },
+          {
+            "$ref": "#/definitions3/geometryCollection"
+          },
+          {
+            "$ref": "#/definitions3/feature"
+          },
+          {
+            "$ref": "#/definitions3/featureCollection"
+          }
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "geometry": {
+      "title": "geometry",
+      "description": "One geometry as defined by GeoJSON",
+      "type": "object",
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "definitions4": {
+        "position": {
+          "description": "A single position",
+          "type": "array",
+          "minItems": 2,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        },
+        "positionArray": {
+          "description": "An array of positions",
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/definitions4/geometry/definitions4/position"
+          }
+        },
+        "lineString": {
+          "description": "An array of two or more positions",
+          "allOf": [
+            {
+              "$ref": "#/definitions4/geometry/definitions4/positionArray"
+            },
+            {
+              "minItems": 2
+            }
+          ]
+        },
+        "linearRing": {
+          "description": "An array of four positions where the first equals the last",
+          "allOf": [
+            {
+              "$ref": "#/definitions4/geometry/definitions4/positionArray"
+            },
+            {
+              "minItems": 4
+            }
+          ]
+        },
+        "polygon": {
+          "description": "An array of linear rings",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/geometry/definitions4/linearRing"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "title": "Point",
+          "properties": {
+            "type": {
+              "enum": [
+                "Point"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions4/geometry/definitions4/position"
+            }
+          }
+        },
+        {
+          "title": "MultiPoint",
+          "properties": {
+            "type": {
+              "enum": [
+                "MultiPoint"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions4/geometry/definitions4/positionArray"
+            }
+          }
+        },
+        {
+          "title": "LineString",
+          "properties": {
+            "type": {
+              "enum": [
+                "LineString"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions4/geometry/definitions4/lineString"
+            }
+          }
+        },
+        {
+          "title": "MultiLineString",
+          "properties": {
+            "type": {
+              "enum": [
+                "MultiLineString"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/geometry/definitions4/lineString"
+              }
+            }
+          }
+        },
+        {
+          "title": "Polygon",
+          "properties": {
+            "type": {
+              "enum": [
+                "Polygon"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions4/geometry/definitions4/polygon"
+            }
+          }
+        },
+        {
+          "title": "MultiPolygon",
+          "properties": {
+            "type": {
+              "enum": [
+                "MultiPolygon"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions4/geometry/definitions4/polygon"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "geometryCollection": {
+      "title": "GeometryCollection",
+      "description": "A collection of geometry objects",
+      "required": [
+        "geometries"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "GeometryCollection"
+          ]
+        },
+        "geometries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/geometry"
+          }
+        }
+      }
+    },
+    "feature": {
+      "title": "Feature",
+      "description": "A Geo JSON feature object",
+      "required": [
+        "geometry",
+        "properties"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "Feature"
+          ]
+        },
+        "geometry": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions4/geometry"
+            }
+          ]
+        },
+        "properties": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "featureCollection": {
+      "title": "FeatureCollection",
+      "description": "A Geo JSON feature collection",
+      "required": [
+        "features"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "FeatureCollection"
+          ]
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/feature"
+          }
+        }
+      }
+    }
+  },
+  "definitions3": {
+    "geometry": {
+      "title": "geometry",
+      "description": "One geometry as defined by GeoJSON",
+      "type": "object",
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "oneOf": [
+        {
+          "title": "Point",
+          "properties": {
+            "type": {
+              "enum": [
+                "Point"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions3/geometry/definitions3/position"
+            }
+          }
+        },
+        {
+          "title": "MultiPoint",
+          "properties": {
+            "type": {
+              "enum": [
+                "MultiPoint"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions3/geometry/definitions3/positionArray"
+            }
+          }
+        },
+        {
+          "title": "LineString",
+          "properties": {
+            "type": {
+              "enum": [
+                "LineString"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions3/geometry/definitions3/lineString"
+            }
+          }
+        },
+        {
+          "title": "MultiLineString",
+          "properties": {
+            "type": {
+              "enum": [
+                "MultiLineString"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/geometry/definitions3/lineString"
+              }
+            }
+          }
+        },
+        {
+          "title": "Polygon",
+          "properties": {
+            "type": {
+              "enum": [
+                "Polygon"
+              ]
+            },
+            "coordinates": {
+              "$ref": "#/definitions3/geometry/definitions3/polygon"
+            }
+          }
+        },
+        {
+          "title": "MultiPolygon",
+          "properties": {
+            "type": {
+              "enum": [
+                "MultiPolygon"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions3/geometry/definitions3/polygon"
+              }
+            }
+          }
+        }
+      ],
+      "definitions3": {
+        "position": {
+          "description": "A single position",
+          "type": "array",
+          "minItems": 2,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        },
+        "positionArray": {
+          "description": "An array of positions",
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/definitions3/geometry/definitions3/position"
+          }
+        },
+        "lineString": {
+          "description": "An array of two or more positions",
+          "allOf": [
+            {
+              "$ref": "#/definitions3/geometry/definitions3/positionArray"
+            },
+            {
+              "minItems": 2
+            }
+          ]
+        },
+        "linearRing": {
+          "description": "An array of four positions where the first equals the last",
+          "allOf": [
+            {
+              "$ref": "#/definitions3/geometry/definitions3/positionArray"
+            },
+            {
+              "minItems": 4
+            }
+          ]
+        },
+        "polygon": {
+          "description": "An array of linear rings",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/geometry/definitions3/linearRing"
+          }
+        }
+      }
+    },
+    "geometryCollection": {
+      "title": "GeometryCollection",
+      "description": "A collection of geometry objects",
+      "required": [
+        "geometries"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "GeometryCollection"
+          ]
+        },
+        "geometries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/geometry"
+          }
+        }
+      }
+    },
+    "feature": {
+      "title": "Feature",
+      "description": "A Geo JSON feature object",
+      "required": [
+        "geometry",
+        "properties"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "Feature"
+          ]
+        },
+        "geometry": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions3/geometry"
+            }
+          ]
+        },
+        "properties": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "featureCollection": {
+      "title": "FeatureCollection",
+      "description": "A Geo JSON feature collection",
+      "required": [
+        "features"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "FeatureCollection"
+          ]
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/feature"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/geometry/definitions4/polygon"
+    },
+    {
+      "$ref": "#/definitions3/geometry/definitions3/positionArray"
+    },
+    {
+      "$ref": "#/definitions4/geometry/definitions4/lineString"
+    },
+    {
+      "$ref": "#/definitions3/featureCollection"
+    },
+    {
+      "$ref": "#/definitions3/geometry/definitions3/polygon"
+    },
+    {
+      "$ref": "#/definitions3/geometry/definitions3/position"
+    },
+    {
+      "$ref": "#/definitions4/featureCollection"
+    },
+    {
+      "$ref": "#/definitions3/geometryCollection"
+    },
+    {
+      "$ref": "#/definitions4/geometry"
+    },
+    {
+      "$ref": "#/definitions3/feature"
+    },
+    {
+      "$ref": "#/definitions3/geometry/definitions3/lineString"
+    },
+    {
+      "$ref": "#/definitions3/geometry/definitions3/linearRing"
+    },
+    {
+      "$ref": "#/definitions3/geometry"
+    },
+    {
+      "$ref": "#/definitions4/geometry/definitions4/position"
+    },
+    {
+      "$ref": "#/definitions4/feature"
+    },
+    {
+      "$ref": "#/definitions4/geometryCollection"
+    },
+    {
+      "$ref": "#/definitions4/geometry/definitions4/linearRing"
+    },
+    {
+      "$ref": "#/definitions4/geometry/definitions4/positionArray"
+    }
+  ]
+}

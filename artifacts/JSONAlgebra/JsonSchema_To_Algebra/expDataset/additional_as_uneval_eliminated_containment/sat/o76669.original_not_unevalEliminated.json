@@ -1,0 +1,697 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "title": "JSON schema for React Cosmos configs",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "rootDir": {
+          "description": "The root directory that all others paths in this config are relative to. Usually the root of your repo. If omitted, rootDir is equal to the directory containing your Cosmos config. When you don't use a Cosmos config, rootDir defaults to the current working directory.",
+          "type": "string",
+          "minLength": 1
+        },
+        "exportPath": {
+          "description": "Where to generate static exports on disk. [default: \"cosmos-export\"]",
+          "type": "string",
+          "minLength": 1
+        },
+        "staticPath": {
+          "description": "Dir path to serve static assets from.",
+          "type": "string",
+          "minLength": 1
+        },
+        "publicUrl": {
+          "description": "Base URL for static assets. [default: \"/\"]",
+          "type": "string"
+        },
+        "fixturesDir": {
+          "description": "Name for directories that contain fixtures (eg. __fixtures__/example.jsx). [default: \"__fixtures__\"]",
+          "type": "string",
+          "minLength": 1
+        },
+        "fixtureFileSuffix": {
+          "description": "Suffix for fixture files (eg. example.fixture.jsx). [default: \"fixture\"]",
+          "type": "string",
+          "minLength": 1
+        },
+        "watchDirs": {
+          "description": "Directories where the Cosmos server watches for fixture files changes while running. [default: [\".\"]]",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "_uniqueItems": true
+        },
+        "userDepsFilePath": {
+          "description": "Where to generate a file that contains a map to all fixtures and other Cosmos-related user modules. Only used in setups where Cosmos can't piggyback on the user's build (eg. React Native setups). [default: \"cosmos.userdeps.js\"]",
+          "type": "string",
+          "minLength": 1
+        },
+        "hostname": {
+          "description": "Dev server hostname. Set to null to accept connections with any hostname. [default: null]",
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "port": {
+          "description": "Dev server port. [default: 5000]",
+          "type": "number"
+        },
+        "https": {
+          "description": "Server will be served over HTTPS",
+          "type": "boolean"
+        },
+        "httpsOptions": {
+          "description": "Additional options for HTTPS server",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "certPath": {
+              "description": "Path of a certificate file",
+              "type": "string"
+            },
+            "keyPath": {
+              "description": "Path of a certificate's key file",
+              "type": "string"
+            }
+          }
+        },
+        "httpProxy": {
+          "description": "Proxy some URLs to a different HTTP server (eg. an API backend dev server). Similar to devServer.proxy in webpack config.",
+          "type": "object",
+          "additionalProperties": true,
+          "patternProperties": {
+            ".*": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "description": "Advanced HTTP proxy config.",
+                  "additionalProperties": true,
+                  "required": [
+                    "target"
+                  ],
+                  "properties": {
+                    "target": {
+                      "type": "string"
+                    },
+                    "secure": {
+                      "type": "boolean"
+                    },
+                    "pathRewrite": {
+                      "type": "object",
+                      "patternProperties": {
+                        ".*": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "logLevel": {
+                      "type": "string",
+                      "enum": [
+                        "error",
+                        "debug",
+                        "info",
+                        "warn",
+                        "silent"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "globalImports": {
+          "description": "Modules to be imported before loading components. Stuff like reset.css, polyfills, etc.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "_uniqueItems": true
+        },
+        "dom": {
+          "description": "DOM-related options",
+          "type": "object",
+          "properties": {
+            "containerQuerySelector": {
+              "description": "Document selector for existing element to use as component parent (eg. #root). A blank container element is created from scratch if no selector is provided. [default: null]",
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          }
+        },
+        "webpack": {
+          "description": "Webpack-related options",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "configPath": {
+              "description": "Path to an existing webpack config, which Cosmos will reuse to build your code. Set to null to disable this behavior. [default \"webpack.config.js\"]",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "overridePath": {
+              "description": "Path to a user module that customizes the webpack config used by Cosmos. Set to null to disable this behavior. [default \"webpack.override.js\"]",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "hotReload": {
+              "description": "Enable webpack's Hot Module Replacement. [default: true]",
+              "type": "boolean"
+            }
+          }
+        },
+        "ui": {
+          "description": "UI plugin options",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "responsivePreview": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "devices": {
+                  "description": "List of device viewports",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
+                      "width",
+                      "height"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "width": {
+                        "type": "number",
+                        "minimum": 1
+                      },
+                      "height": {
+                        "type": "number",
+                        "minimum": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "UI plugin options",
+              "type": "object",
+              "properties": {
+                "responsivePreview": {
+                  "$ref": "#/definitions4/modern_6"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^responsivePreview$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "devices": {
+                  "description": "List of device viewports",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions4/modern_7"
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^devices$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "title": "JSON schema for React Cosmos configs",
+              "type": "object",
+              "properties": {
+                "globalImports": {
+                  "description": "Modules to be imported before loading components. Stuff like reset.css, polyfills, etc.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "_uniqueItems": true
+                },
+                "staticPath": {
+                  "description": "Dir path to serve static assets from.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "httpProxy": {
+                  "$ref": "#/definitions4/modern_2"
+                },
+                "hostname": {
+                  "description": "Dev server hostname. Set to null to accept connections with any hostname. [default: null]",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "dom": {
+                  "description": "DOM-related options",
+                  "type": "object",
+                  "properties": {
+                    "containerQuerySelector": {
+                      "description": "Document selector for existing element to use as component parent (eg. #root). A blank container element is created from scratch if no selector is provided. [default: null]",
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "minLength": 1
+                    }
+                  }
+                },
+                "https": {
+                  "description": "Server will be served over HTTPS",
+                  "type": "boolean"
+                },
+                "userDepsFilePath": {
+                  "description": "Where to generate a file that contains a map to all fixtures and other Cosmos-related user modules. Only used in setups where Cosmos can't piggyback on the user's build (eg. React Native setups). [default: \"cosmos.userdeps.js\"]",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "exportPath": {
+                  "description": "Where to generate static exports on disk. [default: \"cosmos-export\"]",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "watchDirs": {
+                  "description": "Directories where the Cosmos server watches for fixture files changes while running. [default: [\".\"]]",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "_uniqueItems": true
+                },
+                "$schema": {
+                  "type": "string"
+                },
+                "rootDir": {
+                  "description": "The root directory that all others paths in this config are relative to. Usually the root of your repo. If omitted, rootDir is equal to the directory containing your Cosmos config. When you don't use a Cosmos config, rootDir defaults to the current working directory.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "fixtureFileSuffix": {
+                  "description": "Suffix for fixture files (eg. example.fixture.jsx). [default: \"fixture\"]",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "webpack": {
+                  "$ref": "#/definitions4/modern_4"
+                },
+                "port": {
+                  "description": "Dev server port. [default: 5000]",
+                  "type": "number"
+                },
+                "fixturesDir": {
+                  "description": "Name for directories that contain fixtures (eg. __fixtures__/example.jsx). [default: \"__fixtures__\"]",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ui": {
+                  "$ref": "#/definitions4/modern_5"
+                },
+                "publicUrl": {
+                  "description": "Base URL for static assets. [default: \"/\"]",
+                  "type": "string"
+                },
+                "httpsOptions": {
+                  "$ref": "#/definitions4/modern_8"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^fixtureFileSuffix$": true,
+                "^globalImports$": true,
+                "^httpProxy$": true,
+                "^hostname$": true,
+                "^fixturesDir$": true,
+                "^webpack$": true,
+                "^https$": true,
+                "^staticPath$": true,
+                "^httpsOptions$": true,
+                "^exportPath$": true,
+                "^dom$": true,
+                "^ui$": true,
+                "^watchDirs$": true,
+                "^userDepsFilePath$": true,
+                "^$schema$": true,
+                "^port$": true,
+                "^publicUrl$": true,
+                "^rootDir$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "required": [
+                "label",
+                "width",
+                "height"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "width": {
+                  "type": "number",
+                  "minimum": 1.0
+                },
+                "height": {
+                  "type": "number",
+                  "minimum": 1.0
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^label$": true,
+                "^width$": true,
+                "^height$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Proxy some URLs to a different HTTP server (eg. an API backend dev server). Similar to devServer.proxy in webpack config.",
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/definitions4/modern_3"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                ".*": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_8": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Additional options for HTTPS server",
+              "type": "object",
+              "properties": {
+                "certPath": {
+                  "description": "Path of a certificate file",
+                  "type": "string"
+                },
+                "keyPath": {
+                  "description": "Path of a certificate's key file",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^certPath$": true,
+                "^keyPath$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Advanced HTTP proxy config.",
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "secure": {
+                  "type": "boolean"
+                },
+                "pathRewrite": {
+                  "type": "object",
+                  "patternProperties": {
+                    ".*": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "logLevel": {
+                  "type": "string",
+                  "enum": [
+                    "error",
+                    "debug",
+                    "info",
+                    "warn",
+                    "silent"
+                  ]
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^target$": true,
+                "^secure$": true,
+                "^pathRewrite$": true,
+                "^logLevel$": true
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Webpack-related options",
+              "type": "object",
+              "properties": {
+                "configPath": {
+                  "description": "Path to an existing webpack config, which Cosmos will reuse to build your code. Set to null to disable this behavior. [default \"webpack.config.js\"]",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "overridePath": {
+                  "description": "Path to a user module that customizes the webpack config used by Cosmos. Set to null to disable this behavior. [default \"webpack.override.js\"]",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "hotReload": {
+                  "description": "Enable webpack's Hot Module Replacement. [default: true]",
+                  "type": "boolean"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^configPath$": true,
+                "^overridePath$": true,
+                "^hotReload$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_8"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_8"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    }
+  ]
+}

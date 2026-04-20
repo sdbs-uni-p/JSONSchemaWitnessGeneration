@@ -1,0 +1,201 @@
+{
+  "allOf": [
+    {
+      "$id": "metrics_config.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "description": "Configuration for prometheus metrics destinations.",
+      "properties": {
+        "server": {
+          "$ref": "#/definitions1/modern_1"
+        },
+        "push-gateways": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "A list of push gateway destinations to push metrics to",
+          "items": {
+            "$ref": "#/definitions1/modern_2"
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "$id": "metrics_config.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "description": "Configuration for prometheus metrics destinations.",
+        "properties": {
+          "server": {
+            "type": "object",
+            "description": "Configuration for a prometheus scrape server.",
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Host name for the server.",
+                "examples": [
+                  "localhost"
+                ]
+              },
+              "port": {
+                "type": "integer",
+                "description": "Port to host the prometheus scrape server on"
+              }
+            },
+            "required": [
+              "host",
+              "port"
+            ],
+            "additionalProperties": false
+          },
+          "push-gateways": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "A list of push gateway destinations to push metrics to",
+            "items": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "description": "URI of the pushgateway host",
+                  "examples": [
+                    "http://localhost:9091"
+                  ]
+                },
+                "job": {
+                  "type": "string",
+                  "description": "Name of the job"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "Username for basic authentication"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password for basic authentication"
+                },
+                "push-interval": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": "Interval in seconds between each push to the gateway"
+                }
+              },
+              "required": [
+                "host",
+                "job"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Configuration for a prometheus scrape server.",
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "description": "Host name for the server.",
+                  "examples": [
+                    "localhost"
+                  ]
+                },
+                "port": {
+                  "type": "integer",
+                  "description": "Port to host the prometheus scrape server on"
+                }
+              },
+              "required": [
+                "host",
+                "port"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^host$": true,
+                "^port$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "Username for basic authentication"
+                },
+                "push-interval": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": "Interval in seconds between each push to the gateway"
+                },
+                "host": {
+                  "type": "string",
+                  "description": "URI of the pushgateway host",
+                  "examples": [
+                    "http://localhost:9091"
+                  ]
+                },
+                "job": {
+                  "type": "string",
+                  "description": "Name of the job"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Password for basic authentication"
+                }
+              },
+              "required": [
+                "host",
+                "job"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^username$": true,
+                "^host$": true,
+                "^password$": true,
+                "^push-interval$": true,
+                "^job$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    }
+  ]
+}

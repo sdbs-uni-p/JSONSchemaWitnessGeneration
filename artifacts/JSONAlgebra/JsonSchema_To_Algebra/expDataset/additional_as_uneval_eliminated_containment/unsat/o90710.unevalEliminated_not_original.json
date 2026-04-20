@@ -1,0 +1,150 @@
+{
+  "allOf": [
+    {
+      "properties": {
+        "kafka-manager": {
+          "$ref": "#/definitions4/modern_1"
+        },
+        "service": {
+          "description": "DC/OS service configuration properties",
+          "properties": {
+            "name": {
+              "default": "kafka-manager",
+              "description": "The name of the kafka-manager service instance.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    {
+      "not": {
+        "properties": {
+          "kafka-manager": {
+            "additionalProperties": false,
+            "description": "Kafka-manager configuration properties",
+            "properties": {
+              "application_secret": {
+                "description": "The application secret key is used to secure cryptographics functions",
+                "type": "string"
+              },
+              "cpus": {
+                "default": 1.0,
+                "description": "CPU shares to allocate",
+                "minimum": 0.1,
+                "type": "number"
+              },
+              "instances": {
+                "default": 1,
+                "description": "Number of desired instances",
+                "type": "integer"
+              },
+              "mem": {
+                "default": 1024.0,
+                "description": "Memory to allocate",
+                "minimum": 1024.0,
+                "type": "number"
+              },
+              "zk": {
+                "default": "zk-1.zk:2181,zk-2.zk:2181,zk-3.zk:2181,zk-4.zk:2181,zk-5.zk:2181",
+                "description": "Zookeeper URL for Kafka-manager",
+                "type": "string"
+              }
+            },
+            "required": [
+              "cpus",
+              "mem",
+              "instances",
+              "zk",
+              "application_secret"
+            ],
+            "type": "object"
+          },
+          "service": {
+            "description": "DC/OS service configuration properties",
+            "properties": {
+              "name": {
+                "default": "kafka-manager",
+                "description": "The name of the kafka-manager service instance.",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  ],
+  "definitions4": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Kafka-manager configuration properties",
+              "properties": {
+                "zk": {
+                  "default": "zk-1.zk:2181,zk-2.zk:2181,zk-3.zk:2181,zk-4.zk:2181,zk-5.zk:2181",
+                  "description": "Zookeeper URL for Kafka-manager",
+                  "type": "string"
+                },
+                "instances": {
+                  "default": 1,
+                  "description": "Number of desired instances",
+                  "type": "integer"
+                },
+                "application_secret": {
+                  "description": "The application secret key is used to secure cryptographics functions",
+                  "type": "string"
+                },
+                "mem": {
+                  "default": 1024.0,
+                  "description": "Memory to allocate",
+                  "minimum": 1024.0,
+                  "type": "number"
+                },
+                "cpus": {
+                  "default": 1.0,
+                  "description": "CPU shares to allocate",
+                  "minimum": 0.1,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "cpus",
+                "mem",
+                "instances",
+                "zk",
+                "application_secret"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^cpus$": true,
+                "^instances$": true,
+                "^mem$": true,
+                "^application_secret$": true,
+                "^zk$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}

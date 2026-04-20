@@ -1,0 +1,466 @@
+{
+  "allOf": [
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "https://raw.githubusercontent.com/oamg/convert2rhel/main/schemas/assessment-schema-1.1.json",
+      "title": "Convert2rhel Assessment Schema",
+      "description": "Convert2rhel analyzes the system to determine suitability for conversions before it actually starts to convert the system.  This schema defines the format that would be used.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[A-Z0-9_]+$": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "messages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/action_message"
+                  }
+                },
+                "result": {
+                  "$ref": "#/definitions2/action_result"
+                }
+              }
+            }
+          }
+        },
+        "format_version": {
+          "description": "Constant value that tells us the format of this file.",
+          "const": "1.1"
+        },
+        "status": {
+          "description": "The highest severity between messages and results from actions.",
+          "type": "string",
+          "enum": [
+            "SUCCESS",
+            "INFO",
+            "WARNING",
+            "SKIP",
+            "OVERRIDABLE",
+            "ERROR"
+          ]
+        }
+      },
+      "required": [
+        "actions",
+        "format_version",
+        "status"
+      ]
+    },
+    {
+      "not": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://raw.githubusercontent.com/oamg/convert2rhel/main/schemas/assessment-schema-1.1.json",
+        "title": "Convert2rhel Assessment Schema",
+        "description": "Convert2rhel analyzes the system to determine suitability for conversions before it actually starts to convert the system.  This schema defines the format that would be used.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+              "^[A-Z0-9_]+$": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions1/action_message"
+                    }
+                  },
+                  "result": {
+                    "$ref": "#/definitions1/action_result"
+                  }
+                }
+              }
+            }
+          },
+          "format_version": {
+            "description": "Constant value that tells us the format of this file.",
+            "const": "1.1"
+          },
+          "status": {
+            "description": "The highest severity between messages and results from actions.",
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "INFO",
+              "WARNING",
+              "SKIP",
+              "OVERRIDABLE",
+              "ERROR"
+            ]
+          }
+        },
+        "required": [
+          "actions",
+          "format_version",
+          "status"
+        ]
+      }
+    }
+  ],
+  "definitions2": {
+    "result_levels": {
+      "description": "The severity of the result",
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "SKIP",
+        "OVERRIDABLE",
+        "ERROR"
+      ]
+    },
+    "message_levels": {
+      "description": "The severity of the message",
+      "type": "string",
+      "enum": [
+        "INFO",
+        "WARNING"
+      ]
+    },
+    "base_action_message": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Short, one line summary of the message.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Longer description of the purpose of this message.",
+          "type": "string"
+        },
+        "diagnosis": {
+          "description": "How this message applies to this particular system. For instance, 'This system has convert2rhel-1.0 but convert2hel-2.2 is the latest.'",
+          "type": "string"
+        },
+        "id": {
+          "description": "Identifier for this message. The combination of the action_result's id and this message id will be unique.",
+          "type": "string",
+          "pattern": "^[A-Z0-9_]+$"
+        },
+        "remediation": {
+          "description": "Steps the user may take to fix this issue.",
+          "type": "string"
+        },
+        "variables": {
+          "description": "Information about this particular system that may be used to template the diagnosis and remediation fields.",
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z0-9_]+$": {}
+          }
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "diagnosis",
+        "id",
+        "remediation",
+        "variables"
+      ]
+    },
+    "action_message": {
+      "description": "Informational message from a particular convert2rhel check.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions2/base_action_message"
+        }
+      ],
+      "properties": {
+        "level": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions2/message_levels"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "level"
+      ]
+    },
+    "action_result": {
+      "description": "Message relaying the result from a particular convert2rhel check.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions2/base_action_message"
+        }
+      ],
+      "properties": {
+        "level": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions2/result_levels"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "level"
+      ]
+    }
+  },
+  "definitions1": {
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Message relaying the result from a particular convert2rhel check.",
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/base_action_message"
+                }
+              ],
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/result_levels"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "level"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^level$": true,
+                "^variables$": true,
+                "^id$": true,
+                "^remediation$": true,
+                "^diagnosis$": true,
+                "^title$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "action_result": {
+      "$ref": "#/definitions1/modern_2"
+    },
+    "result_levels": {
+      "description": "The severity of the result",
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "SKIP",
+        "OVERRIDABLE",
+        "ERROR"
+      ]
+    },
+    "base_action_message": {
+      "type": "object",
+      "properties": {
+        "diagnosis": {
+          "description": "How this message applies to this particular system. For instance, 'This system has convert2rhel-1.0 but convert2hel-2.2 is the latest.'",
+          "type": "string"
+        },
+        "description": {
+          "description": "Longer description of the purpose of this message.",
+          "type": "string"
+        },
+        "remediation": {
+          "description": "Steps the user may take to fix this issue.",
+          "type": "string"
+        },
+        "variables": {
+          "description": "Information about this particular system that may be used to template the diagnosis and remediation fields.",
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z0-9_]+$": true
+          }
+        },
+        "id": {
+          "description": "Identifier for this message. The combination of the action_result's id and this message id will be unique.",
+          "type": "string",
+          "pattern": "^[A-Z0-9_]+$"
+        },
+        "title": {
+          "description": "Short, one line summary of the message.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "diagnosis",
+        "id",
+        "remediation",
+        "variables"
+      ]
+    },
+    "message_levels": {
+      "description": "The severity of the message",
+      "type": "string",
+      "enum": [
+        "INFO",
+        "WARNING"
+      ]
+    },
+    "action_message": {
+      "$ref": "#/definitions1/modern_1"
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "Informational message from a particular convert2rhel check.",
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions1/base_action_message"
+                }
+              ],
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions1/message_levels"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "level"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^level$": true,
+                "^variables$": true,
+                "^id$": true,
+                "^remediation$": true,
+                "^diagnosis$": true,
+                "^title$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions2/result_levels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/result_levels"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/action_message"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/action_message"
+      }
+    },
+    {
+      "$ref": "#/definitions2/action_message"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/action_message"
+      }
+    },
+    {
+      "$ref": "#/definitions1/message_levels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/message_levels"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions2/base_action_message"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/base_action_message"
+      }
+    },
+    {
+      "$ref": "#/definitions2/message_levels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/message_levels"
+      }
+    },
+    {
+      "$ref": "#/definitions2/action_result"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions2/action_result"
+      }
+    },
+    {
+      "$ref": "#/definitions1/result_levels"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/result_levels"
+      }
+    },
+    {
+      "$ref": "#/definitions1/action_result"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/action_result"
+      }
+    },
+    {
+      "$ref": "#/definitions1/base_action_message"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/base_action_message"
+      }
+    }
+  ]
+}

@@ -1,0 +1,434 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "A schema for Umbraco's package.manifest files.",
+      "type": "object",
+      "properties": {
+        "javascript": {
+          "description": "A list of Javascript files with full path to load for your property editor",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "_uniqueItems": true
+        },
+        "css": {
+          "description": "A list of CSS files with full path to load for your property editor",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "_uniqueItems": true
+        },
+        "propertyEditors": {
+          "description": "Returns an array of editor objects, each object specifies an editor to make available to data types as an editor component. These editors are primarily property editors for content, media and members, but can also be made available as a macro parameter editor.",
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions4/editors"
+              },
+              {
+                "$ref": "#/definitions4/preValues"
+              }
+            ]
+          },
+          "minItems": 1
+        },
+        "parameterEditors": {
+          "description": "Returns an array of editor objects, each object specifies an editor to make available to macro parameters as an editor component. These editors work solely as parameter editors, and will not show up on the property editors list.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/editors"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A schema for Umbraco's package.manifest files.",
+        "type": "object",
+        "properties": {
+          "javascript": {
+            "description": "A list of Javascript files with full path to load for your property editor",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "_uniqueItems": true
+          },
+          "css": {
+            "description": "A list of CSS files with full path to load for your property editor",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "_uniqueItems": true
+          },
+          "propertyEditors": {
+            "description": "Returns an array of editor objects, each object specifies an editor to make available to data types as an editor component. These editors are primarily property editors for content, media and members, but can also be made available as a macro parameter editor.",
+            "type": "array",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions3/editors"
+                },
+                {
+                  "$ref": "#/definitions3/preValues"
+                }
+              ]
+            },
+            "minItems": 1
+          },
+          "parameterEditors": {
+            "description": "Returns an array of editor objects, each object specifies an editor to make available to macro parameters as an editor component. These editors work solely as parameter editors, and will not show up on the property editors list.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions3/editors"
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "definitions4": {
+    "preValues": {
+      "type": "object",
+      "properties": {
+        "prevalues": {
+          "description": "This is an object that stores an array of prevalue fields or options to configure yout property editor",
+          "type": "object",
+          "properties": {
+            "fields": {
+              "$ref": "#/definitions4/fields"
+            }
+          }
+        }
+      }
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "description": "This describes details about the editor",
+              "type": "object",
+              "properties": {
+                "isReadOnly": {
+                  "description": "If set to true this makes the property editor read only",
+                  "type": "boolean",
+                  "default": false
+                },
+                "valueType": {
+                  "description": "This is the type of data you want your property editor to save to Umbraco",
+                  "type": "string",
+                  "enum": [
+                    "STRING",
+                    "JSON",
+                    "DATETIME",
+                    "TEXT",
+                    "INT"
+                  ]
+                },
+                "hideLabel": {
+                  "description": "If set to true this hides the label for the property editor when used in Umbraco on a document type",
+                  "type": "boolean"
+                },
+                "validation": {
+                  "description": "Object describing required validators on the editor",
+                  "type": "object"
+                },
+                "view": {
+                  "description": "This is the full path to the HTML view for your property editor",
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^view$": true,
+                "^valueType$": true,
+                "^isReadOnly$": true,
+                "^hideLabel$": true,
+                "^validation$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "editor": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "fields": {
+      "description": "This is the collection of prevalue fields",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "A more detailed description for the user",
+            "type": "string"
+          },
+          "label": {
+            "description": "The user friendly label for the prevalue",
+            "type": "string"
+          },
+          "key": {
+            "description": "A unique key for the prevalue field",
+            "type": "string",
+            "minLength": 1
+          },
+          "validation": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "view": {
+            "description": "The type of editor to use for this prevalue field",
+            "type": "string"
+          }
+        },
+        "minProperties": 1
+      },
+      "minItems": 1
+    },
+    "editors": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The friendly name of the property editor, shown in the Umbraco backoffice",
+          "type": "string"
+        },
+        "isParameterEditor": {
+          "description": "Enables the property editor as a macro parameter editor can be true/false",
+          "type": "boolean",
+          "default": false
+        },
+        "defaultConfig": {
+          "description": "Provides a collection of default configuration values, in cases the property editor is not configured or is used a parameter editor, which doesnt allow configuration. The object is a key/value collection and must match the prevalue fields keys.",
+          "type": "object",
+          "minProperties": 1
+        },
+        "alias": {
+          "description": "This must be a unique alias to your property editor",
+          "type": "string"
+        },
+        "editor": {
+          "$ref": "#/definitions4/editor"
+        }
+      },
+      "required": [
+        "name",
+        "alias",
+        "editor"
+      ]
+    }
+  },
+  "definitions3": {
+    "editor": {
+      "description": "This describes details about the editor",
+      "type": "object",
+      "properties": {
+        "view": {
+          "description": "This is the full path to the HTML view for your property editor",
+          "type": "string"
+        },
+        "hideLabel": {
+          "description": "If set to true this hides the label for the property editor when used in Umbraco on a document type",
+          "type": "boolean"
+        },
+        "valueType": {
+          "description": "This is the type of data you want your property editor to save to Umbraco",
+          "type": "string",
+          "enum": [
+            "STRING",
+            "JSON",
+            "DATETIME",
+            "TEXT",
+            "INT"
+          ]
+        },
+        "validation": {
+          "description": "Object describing required validators on the editor",
+          "type": "object"
+        },
+        "isReadOnly": {
+          "description": "If set to true this makes the property editor read only",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "editors": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "description": "This must be a unique alias to your property editor",
+          "type": "string"
+        },
+        "defaultConfig": {
+          "description": "Provides a collection of default configuration values, in cases the property editor is not configured or is used a parameter editor, which doesnt allow configuration. The object is a key/value collection and must match the prevalue fields keys.",
+          "type": "object",
+          "minProperties": 1
+        },
+        "editor": {
+          "$ref": "#/definitions3/editor"
+        },
+        "isParameterEditor": {
+          "description": "Enables the property editor as a macro parameter editor can be true/false",
+          "type": "boolean",
+          "default": false
+        },
+        "name": {
+          "description": "The friendly name of the property editor, shown in the Umbraco backoffice",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "alias",
+        "editor"
+      ]
+    },
+    "preValues": {
+      "type": "object",
+      "properties": {
+        "prevalues": {
+          "description": "This is an object that stores an array of prevalue fields or options to configure yout property editor",
+          "type": "object",
+          "properties": {
+            "fields": {
+              "$ref": "#/definitions3/fields"
+            }
+          }
+        }
+      }
+    },
+    "fields": {
+      "description": "This is the collection of prevalue fields",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "A unique key for the prevalue field",
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "description": "The user friendly label for the prevalue",
+            "type": "string"
+          },
+          "description": {
+            "description": "A more detailed description for the user",
+            "type": "string"
+          },
+          "view": {
+            "description": "The type of editor to use for this prevalue field",
+            "type": "string"
+          },
+          "validation": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "minProperties": 1
+      },
+      "minItems": 1
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/editors"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/editors"
+      }
+    },
+    {
+      "$ref": "#/definitions3/preValues"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/preValues"
+      }
+    },
+    {
+      "$ref": "#/definitions4/fields"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/fields"
+      }
+    },
+    {
+      "$ref": "#/definitions3/fields"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/fields"
+      }
+    },
+    {
+      "$ref": "#/definitions4/preValues"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/preValues"
+      }
+    },
+    {
+      "$ref": "#/definitions3/editor"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/editor"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions4/editor"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/editor"
+      }
+    },
+    {
+      "$ref": "#/definitions4/editors"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/editors"
+      }
+    }
+  ]
+}

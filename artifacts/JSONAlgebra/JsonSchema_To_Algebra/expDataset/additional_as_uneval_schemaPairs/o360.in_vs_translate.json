@@ -1,0 +1,4221 @@
+[
+  {
+    "id": 758,
+    "schema1": {
+      "id": "http://datafactories.schema.management.azure.com/schemas/2015-09-01/Microsoft.DataFactory.Table.json",
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Microsoft.Azure.Management.DataFactories.Models.Table",
+      "description": "A table defines the schema of the data as well as its storage.",
+      "type": "object",
+      "required": [
+        "name",
+        "properties"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the table.",
+          "type": "string",
+          "maxLength": 260,
+          "pattern": "^[A-Za-z0-9_][^<>*#.%&:\\\\+?/]*$"
+        },
+        "properties": {
+          "description": "Table properties.",
+          "$ref": "#/definitions2/tablePropertiesTypes"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {},
+      "definitions2": {
+        "dataElement": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DataElement",
+          "description": "Data element defines the semantics of each column of a table.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Name of the data element.",
+              "type": "string"
+            },
+            "description": {
+              "description": "Description of the data element.",
+              "type": "string"
+            },
+            "culture": {
+              "description": "Culture of the data element.",
+              "type": "string"
+            },
+            "format": {
+              "description": "Format of the data element.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Type of the data element.",
+              "type": "string",
+              "enum": [
+                "String",
+                "Int16",
+                "Int32",
+                "Int64",
+                "Single",
+                "Double",
+                "Decimal",
+                "Guid",
+                "Boolean",
+                "Enum",
+                "Datetime",
+                "DateTimeOffset",
+                "Timespan",
+                "Byte[]"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "partitionValue": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.PartitionValue",
+          "description": "The value of a partition.",
+          "type": "object",
+          "properties": {}
+        },
+        "dateTimePartitionValue": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DateTimePartitionValue",
+          "description": "The date/time value of a partition.",
+          "type": "object",
+          "properties": {
+            "date": {
+              "description": "Name of variable containing date.",
+              "type": "string"
+            },
+            "format": {
+              "description": "Format string for the Date value.",
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "DateTime"
+              ]
+            }
+          }
+        },
+        "partitionValueTypes": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/partitionValue"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/dateTimePartitionValue"
+                }
+              ]
+            }
+          ]
+        },
+        "partition": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.Partition",
+          "description": "The partition definition.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Name of the partition.",
+              "type": "string"
+            },
+            "value": {
+              "description": "Value of the partition.",
+              "$ref": "#/definitions2/partitionValueTypes"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "storageFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.StorageFormat",
+          "description": "The format definition of a storage.",
+          "type": "object",
+          "properties": {
+            "serializer": {
+              "description": "Serializer.",
+              "type": "string"
+            },
+            "deserializer": {
+              "description": "Deserializer.",
+              "type": "string"
+            }
+          }
+        },
+        "textFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.TextFormat",
+          "description": "Text format.",
+          "type": "object",
+          "properties": {
+            "columnDelimiter": {
+              "description": "The column delimiter.",
+              "type": "string"
+            },
+            "rowDelimiter": {
+              "description": "The row delimiter.",
+              "type": "string"
+            },
+            "escapeChar": {
+              "description": "The escape character.",
+              "type": "string"
+            },
+            "quoteChar": {
+              "description": "The quote character.",
+              "type": "string"
+            },
+            "nullValue": {
+              "description": "The null value string.",
+              "type": "string"
+            },
+            "encodingName": {
+              "description": "The code page name of the preferred encoding. If miss, the default value is \u201cutf-8\u201d, unless BOM denotes another Unicode encoding. Refer to the \u201cName\u201d column of the table in the following link to set supported values: https://msdn.microsoft.com/library/system.text.encoding.aspx.",
+              "type": "string"
+            },
+            "treatEmptyAsNull": {
+              "description": "Treat empty column values in the text file as null. The default value is true.",
+              "type": "boolean"
+            },
+            "skipLineCount": {
+              "description": "The number of lines/rows to be skipped when parsing text files. The default value is 0.",
+              "type": "integer"
+            },
+            "firstRowAsHeader": {
+              "description": "When used as input, treat the first row of data as headers. When used as output, write the headers into the output as the first row of data. The default value is false.",
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "TextFormat"
+              ]
+            }
+          }
+        },
+        "storageFormatTypes": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/storageFormat"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/textFormat"
+                },
+                {
+                  "$ref": "#/definitions2/avroFormat"
+                },
+                {
+                  "$ref": "#/definitions2/jsonFormat"
+                },
+                {
+                  "$ref": "#/definitions2/orcFormat"
+                },
+                {
+                  "$ref": "#/definitions2/parquetFormat"
+                }
+              ]
+            }
+          ]
+        },
+        "jsonFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.JsonFormat",
+          "description": "The data stored in JSON format.",
+          "type": "object",
+          "properties": {
+            "filePattern": {
+              "description": "File pattern of JSON. To be more specific, the way of separating a collection of JSON objects. The default value is 'setOfObjects'. It is case-sensitive.",
+              "$ref": "#/definitions2/jsonFormatFilePattern"
+            },
+            "nestingSeparator": {
+              "description": "The character used to separate nesting levels. Default value is '.' (dot).",
+              "type": "string"
+            },
+            "encodingName": {
+              "description": "The code page name of the preferred encoding. If not provided, the default value is 'utf-8', unless the byte order mark (BOM) denotes another Unicode encoding. The full list of supported values can be found in the 'Name' column of the table of encodings in the following reference: https://msdn.microsoft.com/library/system.text.encoding.aspx#Anchor_5.",
+              "type": "string"
+            },
+            "jsonNodeReference": {
+              "description": "The JSONPath of the JSON array element to be flattened. Reference: http://goessner.net/articles/JsonPath/.",
+              "type": "string"
+            },
+            "jsonPathDefinition": {
+              "description": "The definition of the relative JSONPath in the original JSON objects for the targeted column in the converted row when converting JSON objects to rows. Example: { \"Column1\": \"$.Column1Path\"}. The JSONPath of the root items must start with a \"$\" character and all the other items in the flattened array defined by JsonNodeReference must not.",
+              "type": "object"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "JsonFormat"
+              ]
+            }
+          }
+        },
+        "jsonFormatFilePattern": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.JsonFormatFilePattern",
+          "description": "JSON format file pattern. A property of JsonFormat",
+          "type": "string",
+          "enum": [
+            "setOfObjects",
+            "arrayOfObjects"
+          ]
+        },
+        "avroFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AvroFormat",
+          "description": "Avro format.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AvroFormat"
+              ]
+            }
+          }
+        },
+        "orcFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.OrcFormat",
+          "description": "Optimized row columnar (ORC) format.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "OrcFormat"
+              ]
+            }
+          }
+        },
+        "parquetFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ParquetFormat",
+          "description": "Parquet format.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ParquetFormat"
+              ]
+            }
+          }
+        },
+        "compressionTypes": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/compression"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/bzip2Compression"
+                },
+                {
+                  "$ref": "#/definitions2/deflateCompression"
+                },
+                {
+                  "$ref": "#/definitions2/gzipCompression"
+                },
+                {
+                  "$ref": "#/definitions2/zipdeflateCompression"
+                }
+              ]
+            }
+          ]
+        },
+        "compression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.Compression",
+          "description": "The compression method used on a table.",
+          "type": "object"
+        },
+        "bzip2Compression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.BZip2Compression",
+          "description": "The BZip2 compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "BZip2"
+              ]
+            }
+          }
+        },
+        "deflateCompression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DeflateCompression",
+          "description": "The Deflate compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Deflate"
+              ]
+            },
+            "level": {
+              "description": "The Deflate compression method used on a table.",
+              "$ref": "#/definitions2/compressionLevel"
+            }
+          }
+        },
+        "gzipCompression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.GZipCompression",
+          "description": "The GZip compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "GZip"
+              ]
+            },
+            "level": {
+              "description": "The GZip compression method used on a table.",
+              "$ref": "#/definitions2/compressionLevel"
+            }
+          }
+        },
+        "zipdeflateCompression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ZipDeflateCompression",
+          "description": "The ZipDeflate compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ZipDeflate"
+              ]
+            },
+            "level": {
+              "description": "The ZipDeflate compression method used on a table.",
+              "$ref": "#/definitions2/compressionLevel"
+            }
+          }
+        },
+        "compressionLevel": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.CompressionLevel",
+          "description": "All available compression levels.",
+          "type": "string",
+          "enum": [
+            "Optimal",
+            "Fastest"
+          ]
+        },
+        "azureBlobDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureBlobLocation",
+          "description": "The Azure blob storage.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureBlob"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "properties": {
+                "folderPath": {
+                  "description": "The path of the Azure blob storage.",
+                  "type": "string"
+                },
+                "tableRootLocation": {
+                  "description": "The root of blob path.",
+                  "type": "string"
+                },
+                "fileName": {
+                  "description": "The name of the Azure blob.",
+                  "type": "string"
+                },
+                "partitionedBy": {
+                  "description": "The partitions to be used by the path.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/partition"
+                  }
+                },
+                "format": {
+                  "description": "The format of the Azure blob storage.",
+                  "$ref": "#/definitions2/storageFormatTypes"
+                },
+                "compression": {
+                  "description": "The data compression method used for the blob storage.",
+                  "$ref": "#/definitions2/compressionTypes"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "azureTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableDataset",
+          "description": "The Azure table storage.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureTable"
+              ]
+            },
+            "typeProperties": {
+              "required": [
+                "tableName"
+              ],
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "properties": {
+                "tableName": {
+                  "description": "The table name of the Azure table storage.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "azureSqlTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSqlTableDataset",
+          "description": "The Azure SQL Server database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureSqlTable"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "required": [
+                "tableName"
+              ],
+              "properties": {
+                "tableName": {
+                  "description": "The table name of the Azure SQL database.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "azureSqlDataWarehouseTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSqlDataWarehouseTableDataset",
+          "description": "The Azure SQL data warehouse dataset.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureSqlDWTable"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "required": [
+                "tableName"
+              ],
+              "properties": {
+                "tableName": {
+                  "description": "The table name of the Azure SQL data warehouse dataset.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "documentDbCollectionDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionDataset",
+          "description": "Document Database Collection location.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "DocumentDbCollection"
+              ]
+            },
+            "typeProperties": {
+              "properties": {
+                "collectionName": {
+                  "description": "Document Database collection name.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "azureDataLakeStoreDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreDataset",
+          "description": "Azure Data Lake Store dataset.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureDataLakeStore"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this data set type.",
+              "type": "object",
+              "required": [
+                "folderPath"
+              ],
+              "properties": {
+                "folderPath": {
+                  "description": "Path to the folder in the Azure Data Lake Store.",
+                  "type": "string"
+                },
+                "fileName": {
+                  "description": "The name of the file in the Azure Data Lake Store.",
+                  "type": "string"
+                },
+                "format": {
+                  "description": "The format of the Data Lake Store.",
+                  "$ref": "#/definitions2/storageFormatTypes"
+                },
+                "compression": {
+                  "description": "The data compression method used for the item(s) in the Azure Data Lake Store.",
+                  "$ref": "#/definitions2/compressionTypes"
+                },
+                "partitionedBy": {
+                  "description": "Specify a dynamic path and filename for time series data.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/partition"
+                  }
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "sqlServerTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.SqlServerTableDataset",
+          "description": "The on-premises SQL Server database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "SqlServerTable"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "required": [
+                "tableName"
+              ],
+              "properties": {
+                "tableName": {
+                  "description": "The table name of the on-premises SQL database.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "fileShareDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.FileShareDataset",
+          "description": "An on-premises file system.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "FileShare"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "properties": {
+                "folderPath": {
+                  "description": "The name of the file folder.",
+                  "type": "string"
+                },
+                "fileName": {
+                  "description": "The name of the file.",
+                  "type": "string"
+                },
+                "partitionedBy": {
+                  "description": "The partitions to be used by the path.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/partition"
+                  }
+                },
+                "format": {
+                  "description": "The format of the file.",
+                  "$ref": "#/definitions2/storageFormatTypes"
+                },
+                "fileFilter": {
+                  "description": "Files sets filter by wildcard.",
+                  "type": "string"
+                },
+                "compression": {
+                  "description": "The data compression method used on files.",
+                  "$ref": "#/definitions2/compressionTypes"
+                },
+                "useBinaryTransfer": {
+                  "description": "If true, data representation during transmission from FTP server is in Binary mode. If false, data representation during transmission from FTP server is in ASCII mode. Default value is true. Can only be used when the accociated Linked Service is a FtpServer Linked Service.",
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "relationalTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.RelationalTableDataset",
+          "description": "Relational Table location.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "RelationalTable"
+              ]
+            },
+            "typeProperties": {
+              "properties": {
+                "tableName": {
+                  "description": "The table name.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "onPremisesCassandraTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.OnPremisesCassandraTableDataset",
+          "description": "A table in a Cassandra database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "CassandraTable"
+              ]
+            },
+            "typeProperties": {
+              "properties": {
+                "tableName": {
+                  "description": "The table name of the Cassandra database.",
+                  "type": "string"
+                },
+                "keyspace": {
+                  "description": "The keyspace of the Cassandra database.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "mongoDbCollectionDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.MongoDbCollectionDataset",
+          "description": "A collection in a MongoDB database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "MongoDbCollection"
+              ]
+            },
+            "typeProperties": {
+              "required": [
+                "collectionName"
+              ],
+              "properties": {
+                "collectionName": {
+                  "description": "Name of the collection in the MongoDB database.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "azureSearchIndexDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexDataset",
+          "description": "The Azure Search Index.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureSearchIndex"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this dataset type.",
+              "type": "object",
+              "required": [
+                "indexName"
+              ],
+              "properties": {
+                "indexName": {
+                  "description": "The name of the Azure Search Index.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "oracleTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.OracleTableDataset",
+          "description": "The on-premises Oracle database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "OracleTable"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "required": [
+                "tableName"
+              ],
+              "properties": {
+                "tableName": {
+                  "description": "The table name of the on-premises Oracle database.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "customDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.CustomDataset",
+          "description": "Custom location.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "CustomDataset"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object"
+            }
+          }
+        },
+        "oDataResourceDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ODataResourceDataset",
+          "description": "Open Data Protocol (OData) Resource Dataset.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ODataResource"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this dataset type.",
+              "type": "object",
+              "properties": {
+                "path": {
+                  "description": "OData resource path.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "webTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.WebTableDataset",
+          "description": "HTML table in a web page.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "WebTable"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this dataset type.",
+              "type": "object",
+              "required": [
+                "index"
+              ],
+              "properties": {
+                "index": {
+                  "description": "The zero-based index of the table in web page.",
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "path": {
+                  "description": "The relative URL to the web page from the linked service URL.",
+                  "type": "string"
+                },
+                "partitionedBy": {
+                  "description": "The partitions to be used by the path.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/partition"
+                  }
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "httpDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.HttpDataset",
+          "description": "A file in an HTTP web server.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Http"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this dataset type.",
+              "type": "object",
+              "properties": {
+                "relativeUrl": {
+                  "description": "The relative URL based on the URL in the HttpLinkedService refers to an HTTP file",
+                  "type": "string"
+                },
+                "requestMethod": {
+                  "description": "The HTTP method for the HTTP request.",
+                  "type": "string"
+                },
+                "requestBody": {
+                  "description": "The body for the HTTP request.",
+                  "type": "string"
+                },
+                "additionalHeaders": {
+                  "description": "The headers for the HTTP Request. e.g. request-header-name-1:request-header-value-1\r\n...\r\nrequest-header-name-n:request-header-value-n",
+                  "type": "string"
+                },
+                "partitionedBy": {
+                  "description": "The partitions to be used by the path.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions2/partition"
+                  }
+                },
+                "format": {
+                  "description": "The format of the file.",
+                  "$ref": "#/definitions2/storageFormatTypes"
+                },
+                "compression": {
+                  "description": "The data compression method used on files.",
+                  "$ref": "#/definitions2/compressionTypes"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "amazonS3Dataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AmazonS3Dataset",
+          "description": "A single Amazon Simple Storage Service (S3) object or a set of S3 objects.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AmazonS3"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object",
+              "required": [
+                "bucketName"
+              ],
+              "properties": {
+                "bucketName": {
+                  "description": "The name of the Amazon S3 bucket.",
+                  "type": "string"
+                },
+                "key": {
+                  "description": "The key of the Amazon S3 object.",
+                  "type": "string"
+                },
+                "prefix": {
+                  "description": "The prefix filter for the S3 object(s) name.",
+                  "type": "string"
+                },
+                "version": {
+                  "description": "The version for the S3 object.",
+                  "type": "string"
+                },
+                "format": {
+                  "description": "The format of the Amazon S3 object(s).",
+                  "$ref": "#/definitions2/storageFormatTypes"
+                },
+                "compression": {
+                  "description": "The data compression method used for the Amazon S3 object(s).",
+                  "$ref": "#/definitions2/compressionTypes"
+                }
+              },
+              "additionalProperties": {
+                "not": {}
+              }
+            }
+          }
+        },
+        "availability": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.Availability",
+          "description": "The scheduler definition.",
+          "type": "object",
+          "required": [
+            "frequency",
+            "interval"
+          ],
+          "properties": {
+            "frequency": {
+              "description": "Frequency in terms of minute, hour, day, etc.",
+              "type": "string",
+              "enum": [
+                "Minute",
+                "Hour",
+                "Day",
+                "Week",
+                "Month"
+              ]
+            },
+            "interval": {
+              "description": "The interval of running the scheduler.",
+              "type": "integer"
+            },
+            "anchorDateTime": {
+              "description": "The date used as a reference point for calculating slice start and end dates.",
+              "$ref": "#/definitions2/UTC"
+            },
+            "offset": {
+              "description": "The offset relative to the anchor time.",
+              "type": "string",
+              "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+            },
+            "style": {
+              "description": "The scheduler style.",
+              "type": "string",
+              "enum": [
+                "NotSpecified",
+                "StartOfInterval",
+                "EndOfInterval"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "validationPolicy": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ValidationPolicy",
+          "description": "Validation policy.",
+          "type": "object",
+          "properties": {
+            "minimumRows": {
+              "description": "Minimum rows.",
+              "type": "integer"
+            },
+            "minimumSizeMB": {
+              "description": "Minimum size in MB.",
+              "type": "number"
+            },
+            "validationPriorityOrder": {
+              "description": "Validation priority order.  Choose from OldestFirst or NewestFirst.",
+              "type": "string",
+              "enum": [
+                "OldestFirst",
+                "NewestFirst"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "latencyPolicy": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.LatencyPolicy",
+          "description": "Latency policy.",
+          "type": "object",
+          "properties": {
+            "latencyLength": {
+              "description": "Latency length.",
+              "type": "string",
+              "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "externalDataPolicy": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ExternalDataPolicy",
+          "description": "External data policy.",
+          "type": "object",
+          "properties": {
+            "dataDelay": {
+              "description": "Data delay.",
+              "type": "string",
+              "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+            },
+            "retryInterval": {
+              "description": "Retry interval.",
+              "type": "string",
+              "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+            },
+            "retryTimeout": {
+              "description": "Specifies the timeout for the activity to run. If there is value specified, it takes the value of TimeSpan.FromMilliseconds(-1) which means indefinite timeout.",
+              "type": "string",
+              "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+            },
+            "maximumRetry": {
+              "description": "Maximum retry.",
+              "type": "integer"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "policy": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.Policy",
+          "description": "Policy of a table.",
+          "type": "object",
+          "properties": {
+            "validation": {
+              "description": "Validation policy.",
+              "$ref": "#/definitions2/validationPolicy"
+            },
+            "latency": {
+              "description": "Latency policy.",
+              "$ref": "#/definitions2/latencyPolicy"
+            },
+            "externalData": {
+              "description": "External data policy.",
+              "$ref": "#/definitions2/externalDataPolicy"
+            }
+          },
+          "additionalProperties": {
+            "not": {}
+          }
+        },
+        "tableProperties": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.TableProperties",
+          "description": "Table properties.",
+          "type": "object",
+          "properties": {
+            "description": {
+              "description": "Table description.",
+              "type": "string"
+            },
+            "structure": {
+              "description": "Columns that define the structure of the table.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/dataElement"
+              }
+            },
+            "availability": {
+              "description": "Scheduler of the table.",
+              "$ref": "#/definitions2/availability"
+            },
+            "policy": {
+              "description": "Policy applied to the table.",
+              "$ref": "#/definitions2/policy"
+            },
+            "external": {
+              "description": "If set to true, the table is an external data set.",
+              "type": "boolean"
+            },
+            "linkedServiceName": {
+              "description": "The referenced data linkedService name.",
+              "type": "string"
+            }
+          }
+        },
+        "tablePropertiesTypes": {
+          "type": "object",
+          "required": [
+            "availability",
+            "linkedServiceName",
+            "type",
+            "typeProperties"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/tableProperties"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/azureBlobDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureSqlTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureSqlDataWarehouseTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/documentDbCollectionDataset"
+                },
+                {
+                  "$ref": "#/definitions2/sqlServerTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/fileShareDataset"
+                },
+                {
+                  "$ref": "#/definitions2/oracleTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/relationalTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureSearchIndexDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureDataLakeStoreDataset"
+                },
+                {
+                  "$ref": "#/definitions2/oDataResourceDataset"
+                },
+                {
+                  "$ref": "#/definitions2/webTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/httpDataset"
+                },
+                {
+                  "$ref": "#/definitions2/onPremisesCassandraTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/mongoDbCollectionDataset"
+                },
+                {
+                  "$ref": "#/definitions2/amazonS3Dataset"
+                },
+                {
+                  "$ref": "#/definitions2/customDataset"
+                }
+              ]
+            }
+          ]
+        },
+        "UTC": {
+          "type": "string",
+          "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-([012]\\d|3[01])(T((([01]\\d|2[0123]):[0-5]\\d)|(24:00))(:(([0-5]\\d)|60)(\\.\\d{1,}){0,1}){0,1}){0,1}((Z)|([+-]((([01]\\d|2[0123]):[0-5]\\d)|(24:00)))){0,1}){0,1}){0,1}$"
+        }
+      }
+    },
+    "schema2": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "definitions2": {
+        "modern_6": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "required": [
+                    "tableName"
+                  ],
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name of the Azure SQL database.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "partitionValueTypes": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/partitionValue"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/dateTimePartitionValue"
+                }
+              ]
+            }
+          ]
+        },
+        "storageFormatTypes": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/storageFormat"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/textFormat"
+                },
+                {
+                  "$ref": "#/definitions2/avroFormat"
+                },
+                {
+                  "$ref": "#/definitions2/jsonFormat"
+                },
+                {
+                  "$ref": "#/definitions2/orcFormat"
+                },
+                {
+                  "$ref": "#/definitions2/parquetFormat"
+                }
+              ]
+            }
+          ]
+        },
+        "azureBlobDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureBlobLocation",
+          "description": "The Azure blob storage.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureBlob"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_3"
+            }
+          }
+        },
+        "dataElement": {
+          "$ref": "#/definitions2/modern_5"
+        },
+        "modern_14": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this dataset type.",
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "description": "OData resource path.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^path$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "orcFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.OrcFormat",
+          "description": "Optimized row columnar (ORC) format.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "OrcFormat"
+              ]
+            }
+          }
+        },
+        "modern_21": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this data set type.",
+                  "type": "object",
+                  "required": [
+                    "folderPath"
+                  ],
+                  "properties": {
+                    "format": {
+                      "description": "The format of the Data Lake Store.",
+                      "$ref": "#/definitions2/storageFormatTypes"
+                    },
+                    "partitionedBy": {
+                      "description": "Specify a dynamic path and filename for time series data.",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/partition"
+                      }
+                    },
+                    "compression": {
+                      "description": "The data compression method used for the item(s) in the Azure Data Lake Store.",
+                      "$ref": "#/definitions2/compressionTypes"
+                    },
+                    "fileName": {
+                      "description": "The name of the file in the Azure Data Lake Store.",
+                      "type": "string"
+                    },
+                    "folderPath": {
+                      "description": "Path to the folder in the Azure Data Lake Store.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^format$": {},
+                    "^folderPath$": {},
+                    "^compression$": {},
+                    "^fileName$": {},
+                    "^partitionedBy$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_5": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.DataElement",
+                  "description": "Data element defines the semantics of each column of a table.",
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "description": "Format of the data element.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Name of the data element.",
+                      "type": "string"
+                    },
+                    "description": {
+                      "description": "Description of the data element.",
+                      "type": "string"
+                    },
+                    "culture": {
+                      "description": "Culture of the data element.",
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "Type of the data element.",
+                      "type": "string",
+                      "enum": [
+                        "String",
+                        "Int16",
+                        "Int32",
+                        "Int64",
+                        "Single",
+                        "Double",
+                        "Decimal",
+                        "Guid",
+                        "Boolean",
+                        "Enum",
+                        "Datetime",
+                        "DateTimeOffset",
+                        "Timespan",
+                        "Byte[]"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^description$": {},
+                    "^format$": {},
+                    "^name$": {},
+                    "^type$": {},
+                    "^culture$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_10": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.Availability",
+                  "description": "The scheduler definition.",
+                  "type": "object",
+                  "required": [
+                    "frequency",
+                    "interval"
+                  ],
+                  "properties": {
+                    "anchorDateTime": {
+                      "description": "The date used as a reference point for calculating slice start and end dates.",
+                      "$ref": "#/definitions2/UTC"
+                    },
+                    "style": {
+                      "description": "The scheduler style.",
+                      "type": "string",
+                      "enum": [
+                        "NotSpecified",
+                        "StartOfInterval",
+                        "EndOfInterval"
+                      ]
+                    },
+                    "interval": {
+                      "description": "The interval of running the scheduler.",
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "description": "The offset relative to the anchor time.",
+                      "type": "string",
+                      "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                    },
+                    "frequency": {
+                      "description": "Frequency in terms of minute, hour, day, etc.",
+                      "type": "string",
+                      "enum": [
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Week",
+                        "Month"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^style$": {},
+                    "^frequency$": {},
+                    "^anchorDateTime$": {},
+                    "^offset$": {},
+                    "^interval$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "azureSqlDataWarehouseTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSqlDataWarehouseTableDataset",
+          "description": "The Azure SQL data warehouse dataset.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureSqlDWTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_1"
+            }
+          }
+        },
+        "modern_16": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "required": [
+                    "collectionName"
+                  ],
+                  "properties": {
+                    "collectionName": {
+                      "description": "Name of the collection in the MongoDB database.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^collectionName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "avroFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AvroFormat",
+          "description": "Avro format.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AvroFormat"
+              ]
+            }
+          }
+        },
+        "modern_15": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "required": [
+                    "tableName"
+                  ],
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name of the Azure table storage.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_1": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "required": [
+                    "tableName"
+                  ],
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name of the Azure SQL data warehouse dataset.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "azureSqlTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSqlTableDataset",
+          "description": "The Azure SQL Server database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureSqlTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_6"
+            }
+          }
+        },
+        "latencyPolicy": {
+          "$ref": "#/definitions2/modern_7"
+        },
+        "parquetFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ParquetFormat",
+          "description": "Parquet format.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ParquetFormat"
+              ]
+            }
+          }
+        },
+        "UTC": {
+          "type": "string",
+          "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-([012]\\d|3[01])(T((([01]\\d|2[0123]):[0-5]\\d)|(24:00))(:(([0-5]\\d)|60)(\\.\\d{1,}){0,1}){0,1}){0,1}((Z)|([+-]((([01]\\d|2[0123]):[0-5]\\d)|(24:00)))){0,1}){0,1}){0,1}$"
+        },
+        "httpDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.HttpDataset",
+          "description": "A file in an HTTP web server.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Http"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_8"
+            }
+          }
+        },
+        "compression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.Compression",
+          "description": "The compression method used on a table.",
+          "type": "object"
+        },
+        "azureSearchIndexDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexDataset",
+          "description": "The Azure Search Index.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureSearchIndex"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_9"
+            }
+          }
+        },
+        "partition": {
+          "$ref": "#/definitions2/modern_2"
+        },
+        "modern_7": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.LatencyPolicy",
+                  "description": "Latency policy.",
+                  "type": "object",
+                  "properties": {
+                    "latencyLength": {
+                      "description": "Latency length.",
+                      "type": "string",
+                      "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^latencyLength$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "zipdeflateCompression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ZipDeflateCompression",
+          "description": "The ZipDeflate compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ZipDeflate"
+              ]
+            },
+            "level": {
+              "description": "The ZipDeflate compression method used on a table.",
+              "$ref": "#/definitions2/compressionLevel"
+            }
+          }
+        },
+        "availability": {
+          "$ref": "#/definitions2/modern_10"
+        },
+        "partitionValue": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.PartitionValue",
+          "description": "The value of a partition.",
+          "type": "object",
+          "properties": {}
+        },
+        "onPremisesCassandraTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.OnPremisesCassandraTableDataset",
+          "description": "A table in a Cassandra database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "CassandraTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_11"
+            }
+          }
+        },
+        "modern_20": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "deflateCompression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DeflateCompression",
+          "description": "The Deflate compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Deflate"
+              ]
+            },
+            "level": {
+              "description": "The Deflate compression method used on a table.",
+              "$ref": "#/definitions2/compressionLevel"
+            }
+          }
+        },
+        "modern_23": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "description": "The format of the file.",
+                      "$ref": "#/definitions2/storageFormatTypes"
+                    },
+                    "fileFilter": {
+                      "description": "Files sets filter by wildcard.",
+                      "type": "string"
+                    },
+                    "partitionedBy": {
+                      "description": "The partitions to be used by the path.",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/partition"
+                      }
+                    },
+                    "compression": {
+                      "description": "The data compression method used on files.",
+                      "$ref": "#/definitions2/compressionTypes"
+                    },
+                    "useBinaryTransfer": {
+                      "description": "If true, data representation during transmission from FTP server is in Binary mode. If false, data representation during transmission from FTP server is in ASCII mode. Default value is true. Can only be used when the accociated Linked Service is a FtpServer Linked Service.",
+                      "type": "boolean"
+                    },
+                    "fileName": {
+                      "description": "The name of the file.",
+                      "type": "string"
+                    },
+                    "folderPath": {
+                      "description": "The name of the file folder.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^format$": {},
+                    "^compression$": {},
+                    "^useBinaryTransfer$": {},
+                    "^fileName$": {},
+                    "^partitionedBy$": {},
+                    "^folderPath$": {},
+                    "^fileFilter$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "amazonS3Dataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AmazonS3Dataset",
+          "description": "A single Amazon Simple Storage Service (S3) object or a set of S3 objects.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AmazonS3"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_12"
+            }
+          }
+        },
+        "modern_17": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.ExternalDataPolicy",
+                  "description": "External data policy.",
+                  "type": "object",
+                  "properties": {
+                    "dataDelay": {
+                      "description": "Data delay.",
+                      "type": "string",
+                      "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                    },
+                    "retryInterval": {
+                      "description": "Retry interval.",
+                      "type": "string",
+                      "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                    },
+                    "retryTimeout": {
+                      "description": "Specifies the timeout for the activity to run. If there is value specified, it takes the value of TimeSpan.FromMilliseconds(-1) which means indefinite timeout.",
+                      "type": "string",
+                      "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                    },
+                    "maximumRetry": {
+                      "description": "Maximum retry.",
+                      "type": "integer"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^dataDelay$": {},
+                    "^retryInterval$": {},
+                    "^retryTimeout$": {},
+                    "^maximumRetry$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "textFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.TextFormat",
+          "description": "Text format.",
+          "type": "object",
+          "properties": {
+            "quoteChar": {
+              "description": "The quote character.",
+              "type": "string"
+            },
+            "rowDelimiter": {
+              "description": "The row delimiter.",
+              "type": "string"
+            },
+            "nullValue": {
+              "description": "The null value string.",
+              "type": "string"
+            },
+            "encodingName": {
+              "description": "The code page name of the preferred encoding. If miss, the default value is \u201cutf-8\u201d, unless BOM denotes another Unicode encoding. Refer to the \u201cName\u201d column of the table in the following link to set supported values: https://msdn.microsoft.com/library/system.text.encoding.aspx.",
+              "type": "string"
+            },
+            "treatEmptyAsNull": {
+              "description": "Treat empty column values in the text file as null. The default value is true.",
+              "type": "boolean"
+            },
+            "escapeChar": {
+              "description": "The escape character.",
+              "type": "string"
+            },
+            "skipLineCount": {
+              "description": "The number of lines/rows to be skipped when parsing text files. The default value is 0.",
+              "type": "integer"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "TextFormat"
+              ]
+            },
+            "columnDelimiter": {
+              "description": "The column delimiter.",
+              "type": "string"
+            },
+            "firstRowAsHeader": {
+              "description": "When used as input, treat the first row of data as headers. When used as output, write the headers into the output as the first row of data. The default value is false.",
+              "type": "boolean"
+            }
+          }
+        },
+        "validationPolicy": {
+          "$ref": "#/definitions2/modern_13"
+        },
+        "modern_2": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.Partition",
+                  "description": "The partition definition.",
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "description": "Name of the partition.",
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "Value of the partition.",
+                      "$ref": "#/definitions2/partitionValueTypes"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^name$": {},
+                    "^value$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "oDataResourceDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.ODataResourceDataset",
+          "description": "Open Data Protocol (OData) Resource Dataset.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ODataResource"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_14"
+            }
+          }
+        },
+        "azureTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableDataset",
+          "description": "The Azure table storage.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_15"
+            }
+          }
+        },
+        "compressionLevel": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.CompressionLevel",
+          "description": "All available compression levels.",
+          "type": "string",
+          "enum": [
+            "Optimal",
+            "Fastest"
+          ]
+        },
+        "tableProperties": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.TableProperties",
+          "description": "Table properties.",
+          "type": "object",
+          "properties": {
+            "description": {
+              "description": "Table description.",
+              "type": "string"
+            },
+            "linkedServiceName": {
+              "description": "The referenced data linkedService name.",
+              "type": "string"
+            },
+            "availability": {
+              "description": "Scheduler of the table.",
+              "$ref": "#/definitions2/availability"
+            },
+            "policy": {
+              "description": "Policy applied to the table.",
+              "$ref": "#/definitions2/policy"
+            },
+            "structure": {
+              "description": "Columns that define the structure of the table.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions2/dataElement"
+              }
+            },
+            "external": {
+              "description": "If set to true, the table is an external data set.",
+              "type": "boolean"
+            }
+          }
+        },
+        "mongoDbCollectionDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.MongoDbCollectionDataset",
+          "description": "A collection in a MongoDB database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "MongoDbCollection"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_16"
+            }
+          }
+        },
+        "modern_12": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "required": [
+                    "bucketName"
+                  ],
+                  "properties": {
+                    "format": {
+                      "description": "The format of the Amazon S3 object(s).",
+                      "$ref": "#/definitions2/storageFormatTypes"
+                    },
+                    "prefix": {
+                      "description": "The prefix filter for the S3 object(s) name.",
+                      "type": "string"
+                    },
+                    "compression": {
+                      "description": "The data compression method used for the Amazon S3 object(s).",
+                      "$ref": "#/definitions2/compressionTypes"
+                    },
+                    "key": {
+                      "description": "The key of the Amazon S3 object.",
+                      "type": "string"
+                    },
+                    "version": {
+                      "description": "The version for the S3 object.",
+                      "type": "string"
+                    },
+                    "bucketName": {
+                      "description": "The name of the Amazon S3 bucket.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^version$": {},
+                    "^format$": {},
+                    "^compression$": {},
+                    "^bucketName$": {},
+                    "^key$": {},
+                    "^prefix$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gzipCompression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.GZipCompression",
+          "description": "The GZip compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "GZip"
+              ]
+            },
+            "level": {
+              "description": "The GZip compression method used on a table.",
+              "$ref": "#/definitions2/compressionLevel"
+            }
+          }
+        },
+        "externalDataPolicy": {
+          "$ref": "#/definitions2/modern_17"
+        },
+        "webTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.WebTableDataset",
+          "description": "HTML table in a web page.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "WebTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_18"
+            }
+          }
+        },
+        "bzip2Compression": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.BZip2Compression",
+          "description": "The BZip2 compression method used on a table.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "BZip2"
+              ]
+            }
+          }
+        },
+        "jsonFormatFilePattern": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.JsonFormatFilePattern",
+          "description": "JSON format file pattern. A property of JsonFormat",
+          "type": "string",
+          "enum": [
+            "setOfObjects",
+            "arrayOfObjects"
+          ]
+        },
+        "modern_8": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this dataset type.",
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "description": "The format of the file.",
+                      "$ref": "#/definitions2/storageFormatTypes"
+                    },
+                    "additionalHeaders": {
+                      "description": "The headers for the HTTP Request. e.g. request-header-name-1:request-header-value-1\r\n...\r\nrequest-header-name-n:request-header-value-n",
+                      "type": "string"
+                    },
+                    "partitionedBy": {
+                      "description": "The partitions to be used by the path.",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/partition"
+                      }
+                    },
+                    "compression": {
+                      "description": "The data compression method used on files.",
+                      "$ref": "#/definitions2/compressionTypes"
+                    },
+                    "relativeUrl": {
+                      "description": "The relative URL based on the URL in the HttpLinkedService refers to an HTTP file",
+                      "type": "string"
+                    },
+                    "requestBody": {
+                      "description": "The body for the HTTP request.",
+                      "type": "string"
+                    },
+                    "requestMethod": {
+                      "description": "The HTTP method for the HTTP request.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^requestMethod$": {},
+                    "^format$": {},
+                    "^partitionedBy$": {},
+                    "^requestBody$": {},
+                    "^relativeUrl$": {},
+                    "^additionalHeaders$": {},
+                    "^compression$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "oracleTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.OracleTableDataset",
+          "description": "The on-premises Oracle database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "OracleTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_4"
+            }
+          }
+        },
+        "modern_24": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.Policy",
+                  "description": "Policy of a table.",
+                  "type": "object",
+                  "properties": {
+                    "validation": {
+                      "description": "Validation policy.",
+                      "$ref": "#/definitions2/validationPolicy"
+                    },
+                    "latency": {
+                      "description": "Latency policy.",
+                      "$ref": "#/definitions2/latencyPolicy"
+                    },
+                    "externalData": {
+                      "description": "External data policy.",
+                      "$ref": "#/definitions2/externalDataPolicy"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^validation$": {},
+                    "^latency$": {},
+                    "^externalData$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "customDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.CustomDataset",
+          "description": "Custom location.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "CustomDataset"
+              ]
+            },
+            "typeProperties": {
+              "description": "Properties specific to this table type.",
+              "type": "object"
+            }
+          }
+        },
+        "modern_9": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this dataset type.",
+                  "type": "object",
+                  "required": [
+                    "indexName"
+                  ],
+                  "properties": {
+                    "indexName": {
+                      "description": "The name of the Azure Search Index.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^indexName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_18": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this dataset type.",
+                  "type": "object",
+                  "required": [
+                    "index"
+                  ],
+                  "properties": {
+                    "index": {
+                      "description": "The zero-based index of the table in web page.",
+                      "type": "integer",
+                      "minimum": 0.0
+                    },
+                    "path": {
+                      "description": "The relative URL to the web page from the linked service URL.",
+                      "type": "string"
+                    },
+                    "partitionedBy": {
+                      "description": "The partitions to be used by the path.",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/partition"
+                      }
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^index$": {},
+                    "^path$": {},
+                    "^partitionedBy$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_13": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.ValidationPolicy",
+                  "description": "Validation policy.",
+                  "type": "object",
+                  "properties": {
+                    "minimumRows": {
+                      "description": "Minimum rows.",
+                      "type": "integer"
+                    },
+                    "minimumSizeMB": {
+                      "description": "Minimum size in MB.",
+                      "type": "number"
+                    },
+                    "validationPriorityOrder": {
+                      "description": "Validation priority order.  Choose from OldestFirst or NewestFirst.",
+                      "type": "string",
+                      "enum": [
+                        "OldestFirst",
+                        "NewestFirst"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^minimumRows$": {},
+                    "^minimumSizeMB$": {},
+                    "^validationPriorityOrder$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "compressionTypes": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/compression"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/bzip2Compression"
+                },
+                {
+                  "$ref": "#/definitions2/deflateCompression"
+                },
+                {
+                  "$ref": "#/definitions2/gzipCompression"
+                },
+                {
+                  "$ref": "#/definitions2/zipdeflateCompression"
+                }
+              ]
+            }
+          ]
+        },
+        "sqlServerTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.SqlServerTableDataset",
+          "description": "The on-premises SQL Server database.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "SqlServerTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_19"
+            }
+          }
+        },
+        "relationalTableDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.RelationalTableDataset",
+          "description": "Relational Table location.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "RelationalTable"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_20"
+            }
+          }
+        },
+        "tablePropertiesTypes": {
+          "type": "object",
+          "required": [
+            "availability",
+            "linkedServiceName",
+            "type",
+            "typeProperties"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions2/tableProperties"
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions2/azureBlobDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureSqlTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureSqlDataWarehouseTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/documentDbCollectionDataset"
+                },
+                {
+                  "$ref": "#/definitions2/sqlServerTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/fileShareDataset"
+                },
+                {
+                  "$ref": "#/definitions2/oracleTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/relationalTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureSearchIndexDataset"
+                },
+                {
+                  "$ref": "#/definitions2/azureDataLakeStoreDataset"
+                },
+                {
+                  "$ref": "#/definitions2/oDataResourceDataset"
+                },
+                {
+                  "$ref": "#/definitions2/webTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/httpDataset"
+                },
+                {
+                  "$ref": "#/definitions2/onPremisesCassandraTableDataset"
+                },
+                {
+                  "$ref": "#/definitions2/mongoDbCollectionDataset"
+                },
+                {
+                  "$ref": "#/definitions2/amazonS3Dataset"
+                },
+                {
+                  "$ref": "#/definitions2/customDataset"
+                }
+              ]
+            }
+          ]
+        },
+        "modern_3": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "description": "The format of the Azure blob storage.",
+                      "$ref": "#/definitions2/storageFormatTypes"
+                    },
+                    "partitionedBy": {
+                      "description": "The partitions to be used by the path.",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions2/partition"
+                      }
+                    },
+                    "compression": {
+                      "description": "The data compression method used for the blob storage.",
+                      "$ref": "#/definitions2/compressionTypes"
+                    },
+                    "fileName": {
+                      "description": "The name of the Azure blob.",
+                      "type": "string"
+                    },
+                    "folderPath": {
+                      "description": "The path of the Azure blob storage.",
+                      "type": "string"
+                    },
+                    "tableRootLocation": {
+                      "description": "The root of blob path.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableRootLocation$": {},
+                    "^format$": {},
+                    "^folderPath$": {},
+                    "^compression$": {},
+                    "^fileName$": {},
+                    "^partitionedBy$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "azureDataLakeStoreDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreDataset",
+          "description": "Azure Data Lake Store dataset.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "AzureDataLakeStore"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_21"
+            }
+          }
+        },
+        "modern_22": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "collectionName": {
+                      "description": "Document Database collection name.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^collectionName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "jsonFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.JsonFormat",
+          "description": "The data stored in JSON format.",
+          "type": "object",
+          "properties": {
+            "jsonNodeReference": {
+              "description": "The JSONPath of the JSON array element to be flattened. Reference: http://goessner.net/articles/JsonPath/.",
+              "type": "string"
+            },
+            "jsonPathDefinition": {
+              "description": "The definition of the relative JSONPath in the original JSON objects for the targeted column in the converted row when converting JSON objects to rows. Example: { \"Column1\": \"$.Column1Path\"}. The JSONPath of the root items must start with a \"$\" character and all the other items in the flattened array defined by JsonNodeReference must not.",
+              "type": "object"
+            },
+            "nestingSeparator": {
+              "description": "The character used to separate nesting levels. Default value is '.' (dot).",
+              "type": "string"
+            },
+            "encodingName": {
+              "description": "The code page name of the preferred encoding. If not provided, the default value is 'utf-8', unless the byte order mark (BOM) denotes another Unicode encoding. The full list of supported values can be found in the 'Name' column of the table of encodings in the following reference: https://msdn.microsoft.com/library/system.text.encoding.aspx#Anchor_5.",
+              "type": "string"
+            },
+            "filePattern": {
+              "description": "File pattern of JSON. To be more specific, the way of separating a collection of JSON objects. The default value is 'setOfObjects'. It is case-sensitive.",
+              "$ref": "#/definitions2/jsonFormatFilePattern"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "JsonFormat"
+              ]
+            }
+          }
+        },
+        "dateTimePartitionValue": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DateTimePartitionValue",
+          "description": "The date/time value of a partition.",
+          "type": "object",
+          "properties": {
+            "date": {
+              "description": "Name of variable containing date.",
+              "type": "string"
+            },
+            "format": {
+              "description": "Format string for the Date value.",
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "DateTime"
+              ]
+            }
+          }
+        },
+        "storageFormat": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.StorageFormat",
+          "description": "The format definition of a storage.",
+          "type": "object",
+          "properties": {
+            "serializer": {
+              "description": "Serializer.",
+              "type": "string"
+            },
+            "deserializer": {
+              "description": "Deserializer.",
+              "type": "string"
+            }
+          }
+        },
+        "documentDbCollectionDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionDataset",
+          "description": "Document Database Collection location.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "DocumentDbCollection"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_22"
+            }
+          }
+        },
+        "modern_11": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name of the Cassandra database.",
+                      "type": "string"
+                    },
+                    "keyspace": {
+                      "description": "The keyspace of the Cassandra database.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {},
+                    "^keyspace$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "fileShareDataset": {
+          "title": "Microsoft.Azure.Management.DataFactories.Models.FileShareDataset",
+          "description": "An on-premises file system.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "FileShare"
+              ]
+            },
+            "typeProperties": {
+              "$ref": "#/definitions2/modern_23"
+            }
+          }
+        },
+        "policy": {
+          "$ref": "#/definitions2/modern_24"
+        },
+        "modern_25": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "id": "http://datafactories.schema.management.azure.com/schemas/2015-09-01/Microsoft.DataFactory.Table.json",
+                  "title": "Microsoft.Azure.Management.DataFactories.Models.Table",
+                  "description": "A table defines the schema of the data as well as its storage.",
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "properties"
+                  ],
+                  "properties": {
+                    "name": {
+                      "description": "Name of the table.",
+                      "type": "string",
+                      "maxLength": 260,
+                      "pattern": "^[A-Za-z0-9_][^<>*#.%&:\\\\+?/]*$"
+                    },
+                    "properties": {
+                      "description": "Table properties.",
+                      "$ref": "#/definitions2/tablePropertiesTypes"
+                    },
+                    "$schema": {
+                      "type": "string"
+                    }
+                  },
+                  "definitions2": {
+                    "dataElement": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.DataElement",
+                      "description": "Data element defines the semantics of each column of a table.",
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "description": "Name of the data element.",
+                          "type": "string"
+                        },
+                        "description": {
+                          "description": "Description of the data element.",
+                          "type": "string"
+                        },
+                        "culture": {
+                          "description": "Culture of the data element.",
+                          "type": "string"
+                        },
+                        "format": {
+                          "description": "Format of the data element.",
+                          "type": "string"
+                        },
+                        "type": {
+                          "description": "Type of the data element.",
+                          "type": "string",
+                          "enum": [
+                            "String",
+                            "Int16",
+                            "Int32",
+                            "Int64",
+                            "Single",
+                            "Double",
+                            "Decimal",
+                            "Guid",
+                            "Boolean",
+                            "Enum",
+                            "Datetime",
+                            "DateTimeOffset",
+                            "Timespan",
+                            "Byte[]"
+                          ]
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "partitionValue": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.PartitionValue",
+                      "description": "The value of a partition.",
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "dateTimePartitionValue": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.DateTimePartitionValue",
+                      "description": "The date/time value of a partition.",
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "description": "Name of variable containing date.",
+                          "type": "string"
+                        },
+                        "format": {
+                          "description": "Format string for the Date value.",
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "DateTime"
+                          ]
+                        }
+                      }
+                    },
+                    "partitionValueTypes": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions2/partitionValue"
+                        },
+                        {
+                          "oneOf": [
+                            {
+                              "$ref": "#/definitions2/dateTimePartitionValue"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "partition": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.Partition",
+                      "description": "The partition definition.",
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "description": "Name of the partition.",
+                          "type": "string"
+                        },
+                        "value": {
+                          "description": "Value of the partition.",
+                          "$ref": "#/definitions2/partitionValueTypes"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "storageFormat": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.StorageFormat",
+                      "description": "The format definition of a storage.",
+                      "type": "object",
+                      "properties": {
+                        "serializer": {
+                          "description": "Serializer.",
+                          "type": "string"
+                        },
+                        "deserializer": {
+                          "description": "Deserializer.",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "textFormat": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.TextFormat",
+                      "description": "Text format.",
+                      "type": "object",
+                      "properties": {
+                        "columnDelimiter": {
+                          "description": "The column delimiter.",
+                          "type": "string"
+                        },
+                        "rowDelimiter": {
+                          "description": "The row delimiter.",
+                          "type": "string"
+                        },
+                        "escapeChar": {
+                          "description": "The escape character.",
+                          "type": "string"
+                        },
+                        "quoteChar": {
+                          "description": "The quote character.",
+                          "type": "string"
+                        },
+                        "nullValue": {
+                          "description": "The null value string.",
+                          "type": "string"
+                        },
+                        "encodingName": {
+                          "description": "The code page name of the preferred encoding. If miss, the default value is \u201cutf-8\u201d, unless BOM denotes another Unicode encoding. Refer to the \u201cName\u201d column of the table in the following link to set supported values: https://msdn.microsoft.com/library/system.text.encoding.aspx.",
+                          "type": "string"
+                        },
+                        "treatEmptyAsNull": {
+                          "description": "Treat empty column values in the text file as null. The default value is true.",
+                          "type": "boolean"
+                        },
+                        "skipLineCount": {
+                          "description": "The number of lines/rows to be skipped when parsing text files. The default value is 0.",
+                          "type": "integer"
+                        },
+                        "firstRowAsHeader": {
+                          "description": "When used as input, treat the first row of data as headers. When used as output, write the headers into the output as the first row of data. The default value is false.",
+                          "type": "boolean"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "TextFormat"
+                          ]
+                        }
+                      }
+                    },
+                    "storageFormatTypes": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions2/storageFormat"
+                        },
+                        {
+                          "oneOf": [
+                            {
+                              "$ref": "#/definitions2/textFormat"
+                            },
+                            {
+                              "$ref": "#/definitions2/avroFormat"
+                            },
+                            {
+                              "$ref": "#/definitions2/jsonFormat"
+                            },
+                            {
+                              "$ref": "#/definitions2/orcFormat"
+                            },
+                            {
+                              "$ref": "#/definitions2/parquetFormat"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "jsonFormat": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.JsonFormat",
+                      "description": "The data stored in JSON format.",
+                      "type": "object",
+                      "properties": {
+                        "filePattern": {
+                          "description": "File pattern of JSON. To be more specific, the way of separating a collection of JSON objects. The default value is 'setOfObjects'. It is case-sensitive.",
+                          "$ref": "#/definitions2/jsonFormatFilePattern"
+                        },
+                        "nestingSeparator": {
+                          "description": "The character used to separate nesting levels. Default value is '.' (dot).",
+                          "type": "string"
+                        },
+                        "encodingName": {
+                          "description": "The code page name of the preferred encoding. If not provided, the default value is 'utf-8', unless the byte order mark (BOM) denotes another Unicode encoding. The full list of supported values can be found in the 'Name' column of the table of encodings in the following reference: https://msdn.microsoft.com/library/system.text.encoding.aspx#Anchor_5.",
+                          "type": "string"
+                        },
+                        "jsonNodeReference": {
+                          "description": "The JSONPath of the JSON array element to be flattened. Reference: http://goessner.net/articles/JsonPath/.",
+                          "type": "string"
+                        },
+                        "jsonPathDefinition": {
+                          "description": "The definition of the relative JSONPath in the original JSON objects for the targeted column in the converted row when converting JSON objects to rows. Example: { \"Column1\": \"$.Column1Path\"}. The JSONPath of the root items must start with a \"$\" character and all the other items in the flattened array defined by JsonNodeReference must not.",
+                          "type": "object"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "JsonFormat"
+                          ]
+                        }
+                      }
+                    },
+                    "jsonFormatFilePattern": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.JsonFormatFilePattern",
+                      "description": "JSON format file pattern. A property of JsonFormat",
+                      "type": "string",
+                      "enum": [
+                        "setOfObjects",
+                        "arrayOfObjects"
+                      ]
+                    },
+                    "avroFormat": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AvroFormat",
+                      "description": "Avro format.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AvroFormat"
+                          ]
+                        }
+                      }
+                    },
+                    "orcFormat": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.OrcFormat",
+                      "description": "Optimized row columnar (ORC) format.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "OrcFormat"
+                          ]
+                        }
+                      }
+                    },
+                    "parquetFormat": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.ParquetFormat",
+                      "description": "Parquet format.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ParquetFormat"
+                          ]
+                        }
+                      }
+                    },
+                    "compressionTypes": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions2/compression"
+                        },
+                        {
+                          "oneOf": [
+                            {
+                              "$ref": "#/definitions2/bzip2Compression"
+                            },
+                            {
+                              "$ref": "#/definitions2/deflateCompression"
+                            },
+                            {
+                              "$ref": "#/definitions2/gzipCompression"
+                            },
+                            {
+                              "$ref": "#/definitions2/zipdeflateCompression"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "compression": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.Compression",
+                      "description": "The compression method used on a table.",
+                      "type": "object"
+                    },
+                    "bzip2Compression": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.BZip2Compression",
+                      "description": "The BZip2 compression method used on a table.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "BZip2"
+                          ]
+                        }
+                      }
+                    },
+                    "deflateCompression": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.DeflateCompression",
+                      "description": "The Deflate compression method used on a table.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "Deflate"
+                          ]
+                        },
+                        "level": {
+                          "description": "The Deflate compression method used on a table.",
+                          "$ref": "#/definitions2/compressionLevel"
+                        }
+                      }
+                    },
+                    "gzipCompression": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.GZipCompression",
+                      "description": "The GZip compression method used on a table.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "GZip"
+                          ]
+                        },
+                        "level": {
+                          "description": "The GZip compression method used on a table.",
+                          "$ref": "#/definitions2/compressionLevel"
+                        }
+                      }
+                    },
+                    "zipdeflateCompression": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.ZipDeflateCompression",
+                      "description": "The ZipDeflate compression method used on a table.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ZipDeflate"
+                          ]
+                        },
+                        "level": {
+                          "description": "The ZipDeflate compression method used on a table.",
+                          "$ref": "#/definitions2/compressionLevel"
+                        }
+                      }
+                    },
+                    "compressionLevel": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.CompressionLevel",
+                      "description": "All available compression levels.",
+                      "type": "string",
+                      "enum": [
+                        "Optimal",
+                        "Fastest"
+                      ]
+                    },
+                    "azureBlobDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureBlobLocation",
+                      "description": "The Azure blob storage.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AzureBlob"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "properties": {
+                            "folderPath": {
+                              "description": "The path of the Azure blob storage.",
+                              "type": "string"
+                            },
+                            "tableRootLocation": {
+                              "description": "The root of blob path.",
+                              "type": "string"
+                            },
+                            "fileName": {
+                              "description": "The name of the Azure blob.",
+                              "type": "string"
+                            },
+                            "partitionedBy": {
+                              "description": "The partitions to be used by the path.",
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/definitions2/partition"
+                              }
+                            },
+                            "format": {
+                              "description": "The format of the Azure blob storage.",
+                              "$ref": "#/definitions2/storageFormatTypes"
+                            },
+                            "compression": {
+                              "description": "The data compression method used for the blob storage.",
+                              "$ref": "#/definitions2/compressionTypes"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "azureTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureTableDataset",
+                      "description": "The Azure table storage.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AzureTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "required": [
+                            "tableName"
+                          ],
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name of the Azure table storage.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "azureSqlTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSqlTableDataset",
+                      "description": "The Azure SQL Server database.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AzureSqlTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "required": [
+                            "tableName"
+                          ],
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name of the Azure SQL database.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "azureSqlDataWarehouseTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSqlDataWarehouseTableDataset",
+                      "description": "The Azure SQL data warehouse dataset.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AzureSqlDWTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "required": [
+                            "tableName"
+                          ],
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name of the Azure SQL data warehouse dataset.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "documentDbCollectionDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.DocumentDbCollectionDataset",
+                      "description": "Document Database Collection location.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "DocumentDbCollection"
+                          ]
+                        },
+                        "typeProperties": {
+                          "properties": {
+                            "collectionName": {
+                              "description": "Document Database collection name.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "azureDataLakeStoreDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureDataLakeStoreDataset",
+                      "description": "Azure Data Lake Store dataset.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AzureDataLakeStore"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this data set type.",
+                          "type": "object",
+                          "required": [
+                            "folderPath"
+                          ],
+                          "properties": {
+                            "folderPath": {
+                              "description": "Path to the folder in the Azure Data Lake Store.",
+                              "type": "string"
+                            },
+                            "fileName": {
+                              "description": "The name of the file in the Azure Data Lake Store.",
+                              "type": "string"
+                            },
+                            "format": {
+                              "description": "The format of the Data Lake Store.",
+                              "$ref": "#/definitions2/storageFormatTypes"
+                            },
+                            "compression": {
+                              "description": "The data compression method used for the item(s) in the Azure Data Lake Store.",
+                              "$ref": "#/definitions2/compressionTypes"
+                            },
+                            "partitionedBy": {
+                              "description": "Specify a dynamic path and filename for time series data.",
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/definitions2/partition"
+                              }
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "sqlServerTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.SqlServerTableDataset",
+                      "description": "The on-premises SQL Server database.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "SqlServerTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "required": [
+                            "tableName"
+                          ],
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name of the on-premises SQL database.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "fileShareDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.FileShareDataset",
+                      "description": "An on-premises file system.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "FileShare"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "properties": {
+                            "folderPath": {
+                              "description": "The name of the file folder.",
+                              "type": "string"
+                            },
+                            "fileName": {
+                              "description": "The name of the file.",
+                              "type": "string"
+                            },
+                            "partitionedBy": {
+                              "description": "The partitions to be used by the path.",
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/definitions2/partition"
+                              }
+                            },
+                            "format": {
+                              "description": "The format of the file.",
+                              "$ref": "#/definitions2/storageFormatTypes"
+                            },
+                            "fileFilter": {
+                              "description": "Files sets filter by wildcard.",
+                              "type": "string"
+                            },
+                            "compression": {
+                              "description": "The data compression method used on files.",
+                              "$ref": "#/definitions2/compressionTypes"
+                            },
+                            "useBinaryTransfer": {
+                              "description": "If true, data representation during transmission from FTP server is in Binary mode. If false, data representation during transmission from FTP server is in ASCII mode. Default value is true. Can only be used when the accociated Linked Service is a FtpServer Linked Service.",
+                              "type": "boolean"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "relationalTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.RelationalTableDataset",
+                      "description": "Relational Table location.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "RelationalTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "onPremisesCassandraTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.OnPremisesCassandraTableDataset",
+                      "description": "A table in a Cassandra database.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "CassandraTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name of the Cassandra database.",
+                              "type": "string"
+                            },
+                            "keyspace": {
+                              "description": "The keyspace of the Cassandra database.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "mongoDbCollectionDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.MongoDbCollectionDataset",
+                      "description": "A collection in a MongoDB database.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "MongoDbCollection"
+                          ]
+                        },
+                        "typeProperties": {
+                          "required": [
+                            "collectionName"
+                          ],
+                          "properties": {
+                            "collectionName": {
+                              "description": "Name of the collection in the MongoDB database.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "azureSearchIndexDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AzureSearchIndexDataset",
+                      "description": "The Azure Search Index.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AzureSearchIndex"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this dataset type.",
+                          "type": "object",
+                          "required": [
+                            "indexName"
+                          ],
+                          "properties": {
+                            "indexName": {
+                              "description": "The name of the Azure Search Index.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "oracleTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.OracleTableDataset",
+                      "description": "The on-premises Oracle database.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "OracleTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "required": [
+                            "tableName"
+                          ],
+                          "properties": {
+                            "tableName": {
+                              "description": "The table name of the on-premises Oracle database.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "customDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.CustomDataset",
+                      "description": "Custom location.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "CustomDataset"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "oDataResourceDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.ODataResourceDataset",
+                      "description": "Open Data Protocol (OData) Resource Dataset.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "ODataResource"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this dataset type.",
+                          "type": "object",
+                          "properties": {
+                            "path": {
+                              "description": "OData resource path.",
+                              "type": "string"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "webTableDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.WebTableDataset",
+                      "description": "HTML table in a web page.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "WebTable"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this dataset type.",
+                          "type": "object",
+                          "required": [
+                            "index"
+                          ],
+                          "properties": {
+                            "index": {
+                              "description": "The zero-based index of the table in web page.",
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "path": {
+                              "description": "The relative URL to the web page from the linked service URL.",
+                              "type": "string"
+                            },
+                            "partitionedBy": {
+                              "description": "The partitions to be used by the path.",
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/definitions2/partition"
+                              }
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "httpDataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.HttpDataset",
+                      "description": "A file in an HTTP web server.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "Http"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this dataset type.",
+                          "type": "object",
+                          "properties": {
+                            "relativeUrl": {
+                              "description": "The relative URL based on the URL in the HttpLinkedService refers to an HTTP file",
+                              "type": "string"
+                            },
+                            "requestMethod": {
+                              "description": "The HTTP method for the HTTP request.",
+                              "type": "string"
+                            },
+                            "requestBody": {
+                              "description": "The body for the HTTP request.",
+                              "type": "string"
+                            },
+                            "additionalHeaders": {
+                              "description": "The headers for the HTTP Request. e.g. request-header-name-1:request-header-value-1\r\n...\r\nrequest-header-name-n:request-header-value-n",
+                              "type": "string"
+                            },
+                            "partitionedBy": {
+                              "description": "The partitions to be used by the path.",
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/definitions2/partition"
+                              }
+                            },
+                            "format": {
+                              "description": "The format of the file.",
+                              "$ref": "#/definitions2/storageFormatTypes"
+                            },
+                            "compression": {
+                              "description": "The data compression method used on files.",
+                              "$ref": "#/definitions2/compressionTypes"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "amazonS3Dataset": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.AmazonS3Dataset",
+                      "description": "A single Amazon Simple Storage Service (S3) object or a set of S3 objects.",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "AmazonS3"
+                          ]
+                        },
+                        "typeProperties": {
+                          "description": "Properties specific to this table type.",
+                          "type": "object",
+                          "required": [
+                            "bucketName"
+                          ],
+                          "properties": {
+                            "bucketName": {
+                              "description": "The name of the Amazon S3 bucket.",
+                              "type": "string"
+                            },
+                            "key": {
+                              "description": "The key of the Amazon S3 object.",
+                              "type": "string"
+                            },
+                            "prefix": {
+                              "description": "The prefix filter for the S3 object(s) name.",
+                              "type": "string"
+                            },
+                            "version": {
+                              "description": "The version for the S3 object.",
+                              "type": "string"
+                            },
+                            "format": {
+                              "description": "The format of the Amazon S3 object(s).",
+                              "$ref": "#/definitions2/storageFormatTypes"
+                            },
+                            "compression": {
+                              "description": "The data compression method used for the Amazon S3 object(s).",
+                              "$ref": "#/definitions2/compressionTypes"
+                            }
+                          },
+                          "unevaluatedProperties": false
+                        }
+                      }
+                    },
+                    "availability": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.Availability",
+                      "description": "The scheduler definition.",
+                      "type": "object",
+                      "required": [
+                        "frequency",
+                        "interval"
+                      ],
+                      "properties": {
+                        "frequency": {
+                          "description": "Frequency in terms of minute, hour, day, etc.",
+                          "type": "string",
+                          "enum": [
+                            "Minute",
+                            "Hour",
+                            "Day",
+                            "Week",
+                            "Month"
+                          ]
+                        },
+                        "interval": {
+                          "description": "The interval of running the scheduler.",
+                          "type": "integer"
+                        },
+                        "anchorDateTime": {
+                          "description": "The date used as a reference point for calculating slice start and end dates.",
+                          "$ref": "#/definitions2/UTC"
+                        },
+                        "offset": {
+                          "description": "The offset relative to the anchor time.",
+                          "type": "string",
+                          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                        },
+                        "style": {
+                          "description": "The scheduler style.",
+                          "type": "string",
+                          "enum": [
+                            "NotSpecified",
+                            "StartOfInterval",
+                            "EndOfInterval"
+                          ]
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "validationPolicy": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.ValidationPolicy",
+                      "description": "Validation policy.",
+                      "type": "object",
+                      "properties": {
+                        "minimumRows": {
+                          "description": "Minimum rows.",
+                          "type": "integer"
+                        },
+                        "minimumSizeMB": {
+                          "description": "Minimum size in MB.",
+                          "type": "number"
+                        },
+                        "validationPriorityOrder": {
+                          "description": "Validation priority order.  Choose from OldestFirst or NewestFirst.",
+                          "type": "string",
+                          "enum": [
+                            "OldestFirst",
+                            "NewestFirst"
+                          ]
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "latencyPolicy": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.LatencyPolicy",
+                      "description": "Latency policy.",
+                      "type": "object",
+                      "properties": {
+                        "latencyLength": {
+                          "description": "Latency length.",
+                          "type": "string",
+                          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "externalDataPolicy": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.ExternalDataPolicy",
+                      "description": "External data policy.",
+                      "type": "object",
+                      "properties": {
+                        "dataDelay": {
+                          "description": "Data delay.",
+                          "type": "string",
+                          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                        },
+                        "retryInterval": {
+                          "description": "Retry interval.",
+                          "type": "string",
+                          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                        },
+                        "retryTimeout": {
+                          "description": "Specifies the timeout for the activity to run. If there is value specified, it takes the value of TimeSpan.FromMilliseconds(-1) which means indefinite timeout.",
+                          "type": "string",
+                          "pattern": "((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))"
+                        },
+                        "maximumRetry": {
+                          "description": "Maximum retry.",
+                          "type": "integer"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "policy": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.Policy",
+                      "description": "Policy of a table.",
+                      "type": "object",
+                      "properties": {
+                        "validation": {
+                          "description": "Validation policy.",
+                          "$ref": "#/definitions2/validationPolicy"
+                        },
+                        "latency": {
+                          "description": "Latency policy.",
+                          "$ref": "#/definitions2/latencyPolicy"
+                        },
+                        "externalData": {
+                          "description": "External data policy.",
+                          "$ref": "#/definitions2/externalDataPolicy"
+                        }
+                      },
+                      "unevaluatedProperties": false
+                    },
+                    "tableProperties": {
+                      "title": "Microsoft.Azure.Management.DataFactories.Models.TableProperties",
+                      "description": "Table properties.",
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "description": "Table description.",
+                          "type": "string"
+                        },
+                        "structure": {
+                          "description": "Columns that define the structure of the table.",
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions2/dataElement"
+                          }
+                        },
+                        "availability": {
+                          "description": "Scheduler of the table.",
+                          "$ref": "#/definitions2/availability"
+                        },
+                        "policy": {
+                          "description": "Policy applied to the table.",
+                          "$ref": "#/definitions2/policy"
+                        },
+                        "external": {
+                          "description": "If set to true, the table is an external data set.",
+                          "type": "boolean"
+                        },
+                        "linkedServiceName": {
+                          "description": "The referenced data linkedService name.",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "tablePropertiesTypes": {
+                      "type": "object",
+                      "required": [
+                        "availability",
+                        "linkedServiceName",
+                        "type",
+                        "typeProperties"
+                      ],
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions2/tableProperties"
+                        },
+                        {
+                          "oneOf": [
+                            {
+                              "$ref": "#/definitions2/azureBlobDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/azureTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/azureSqlTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/azureSqlDataWarehouseTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/documentDbCollectionDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/sqlServerTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/fileShareDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/oracleTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/relationalTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/azureSearchIndexDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/azureDataLakeStoreDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/oDataResourceDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/webTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/httpDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/onPremisesCassandraTableDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/mongoDbCollectionDataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/amazonS3Dataset"
+                            },
+                            {
+                              "$ref": "#/definitions2/customDataset"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "UTC": {
+                      "type": "string",
+                      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-([012]\\d|3[01])(T((([01]\\d|2[0123]):[0-5]\\d)|(24:00))(:(([0-5]\\d)|60)(\\.\\d{1,}){0,1}){0,1}){0,1}((Z)|([+-]((([01]\\d|2[0123]):[0-5]\\d)|(24:00)))){0,1}){0,1}){0,1}$"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^name$": {},
+                    "^properties$": {},
+                    "^$schema$": {}
+                  },
+                  "additionalProperties": {}
+                }
+              ]
+            }
+          ]
+        },
+        "modern_19": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "required": [
+                    "tableName"
+                  ],
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name of the on-premises SQL database.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "modern_4": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "description": "Properties specific to this table type.",
+                  "type": "object",
+                  "required": [
+                    "tableName"
+                  ],
+                  "properties": {
+                    "tableName": {
+                      "description": "The table name of the on-premises Oracle database.",
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "patternProperties": {
+                    "^tableName$": {}
+                  },
+                  "additionalProperties": {
+                    "not": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "$ref": "#/definitions2/modern_25"
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

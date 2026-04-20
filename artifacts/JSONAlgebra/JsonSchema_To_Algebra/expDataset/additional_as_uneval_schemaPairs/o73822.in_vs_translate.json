@@ -1,0 +1,580 @@
+[
+  {
+    "id": 2170,
+    "schema1": {
+      "definitions2": {
+        "types::BoundingBox": {
+          "properties": {
+            "depth": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            },
+            "topLeft": {
+              "$ref": "#/definitions2/types::Vector3"
+            },
+            "width": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "topLeft",
+            "width",
+            "height",
+            "depth"
+          ],
+          "type": "object"
+        },
+        "types::DataLayer": {
+          "allOf": [
+            {
+              "properties": {
+                "category": {
+                  "enum": [
+                    "color",
+                    "segmentation"
+                  ]
+                },
+                "elementClass": {
+                  "enum": [
+                    "uint8",
+                    "uint16",
+                    "uint24",
+                    "uint32",
+                    "uint64",
+                    "float",
+                    "double",
+                    "int8",
+                    "int16",
+                    "int32",
+                    "int64"
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "category",
+                "elementClass"
+              ],
+              "title": "DataLayerBasic",
+              "type": "object"
+            },
+            {
+              "anyOf": [
+                {
+                  "properties": {
+                    "category": {
+                      "const": "color"
+                    }
+                  },
+                  "required": [
+                    "category"
+                  ],
+                  "title": "DataLayerColor",
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "category": {
+                      "const": "segmentation"
+                    },
+                    "largestSegmentId": {
+                      "minimum": 1,
+                      "type": "number"
+                    },
+                    "mappings": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "category",
+                    "largestSegmentId"
+                  ],
+                  "title": "DataLayerSegmentation",
+                  "type": "object"
+                }
+              ],
+              "title": "DataLayerCategories"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/types::DataLayerWKWPartial"
+                },
+                {
+                  "$ref": "#/definitions2/types::DataLayerKnossosPartial"
+                }
+              ],
+              "title": "DataLayerFormats"
+            }
+          ],
+          "title": "DataLayer"
+        },
+        "types::DataLayerKnossosPartial": {
+          "properties": {
+            "dataFormat": {
+              "const": "knossos"
+            },
+            "sections": {
+              "items": {
+                "properties": {
+                  "boundingBox": {
+                    "$ref": "#/definitions2/types::BoundingBox"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "resolutions": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "name",
+                  "resolutions",
+                  "boundingBox"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "dataFormat",
+            "sections"
+          ],
+          "title": "DataLayerKnossos",
+          "type": "object"
+        },
+        "types::DataLayerWKWPartial": {
+          "properties": {
+            "boundingBox": {
+              "$ref": "#/definitions2/types::BoundingBox"
+            },
+            "dataFormat": {
+              "const": "wkw"
+            },
+            "wkwResolutions": {
+              "items": {
+                "properties": {
+                  "cubeLength": {
+                    "type": "number"
+                  },
+                  "resolution": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "$ref": "#/definitions2/types::Vector3"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "resolution",
+                  "cubeLength"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "dataFormat",
+            "boundingBox",
+            "wkwResolutions"
+          ],
+          "title": "DataLayerWKW",
+          "type": "object"
+        },
+        "types::DatasourceConfiguration": {
+          "properties": {
+            "dataLayers": {
+              "items": {
+                "$ref": "#/definitions2/types::DataLayer"
+              },
+              "type": "array"
+            },
+            "id": {
+              "additionalProperties": {
+                "not": {}
+              },
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "team": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "team"
+              ],
+              "type": "object"
+            },
+            "scale": {
+              "items": {
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "dataLayers",
+            "scale"
+          ],
+          "type": "object"
+        },
+        "types::LayerUserConfiguration": {
+          "additionalProperties": {
+            "properties": {
+              "alpha": {
+                "type": "number"
+              },
+              "brightness": {
+                "type": "number"
+              },
+              "color": {
+                "$ref": "#/definitions2/types::Vector3"
+              },
+              "contrast": {
+                "type": "number"
+              },
+              "intensityRange": {
+                "$ref": "#/definitions2/types::Vector2"
+              },
+              "isDisabled": {
+                "type": "boolean"
+              },
+              "isInverted": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "types::Vector2": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "types::Vector3": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        }
+      }
+    },
+    "schema2": {
+      "definitions2": {
+        "types::BoundingBox": {
+          "properties": {
+            "depth": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            },
+            "topLeft": {
+              "$ref": "#/definitions2/types::Vector3"
+            },
+            "width": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "topLeft",
+            "width",
+            "height",
+            "depth"
+          ],
+          "type": "object"
+        },
+        "types::DataLayer": {
+          "allOf": [
+            {
+              "properties": {
+                "category": {
+                  "enum": [
+                    "color",
+                    "segmentation"
+                  ]
+                },
+                "elementClass": {
+                  "enum": [
+                    "uint8",
+                    "uint16",
+                    "uint24",
+                    "uint32",
+                    "uint64",
+                    "float",
+                    "double",
+                    "int8",
+                    "int16",
+                    "int32",
+                    "int64"
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "category",
+                "elementClass"
+              ],
+              "title": "DataLayerBasic",
+              "type": "object"
+            },
+            {
+              "anyOf": [
+                {
+                  "properties": {
+                    "category": {
+                      "const": "color"
+                    }
+                  },
+                  "required": [
+                    "category"
+                  ],
+                  "title": "DataLayerColor",
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "category": {
+                      "const": "segmentation"
+                    },
+                    "largestSegmentId": {
+                      "minimum": 1,
+                      "type": "number"
+                    },
+                    "mappings": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "category",
+                    "largestSegmentId"
+                  ],
+                  "title": "DataLayerSegmentation",
+                  "type": "object"
+                }
+              ],
+              "title": "DataLayerCategories"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions2/types::DataLayerWKWPartial"
+                },
+                {
+                  "$ref": "#/definitions2/types::DataLayerKnossosPartial"
+                }
+              ],
+              "title": "DataLayerFormats"
+            }
+          ],
+          "title": "DataLayer"
+        },
+        "types::DataLayerKnossosPartial": {
+          "properties": {
+            "dataFormat": {
+              "const": "knossos"
+            },
+            "sections": {
+              "items": {
+                "properties": {
+                  "boundingBox": {
+                    "$ref": "#/definitions2/types::BoundingBox"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "resolutions": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "name",
+                  "resolutions",
+                  "boundingBox"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "dataFormat",
+            "sections"
+          ],
+          "title": "DataLayerKnossos",
+          "type": "object"
+        },
+        "types::DataLayerWKWPartial": {
+          "properties": {
+            "boundingBox": {
+              "$ref": "#/definitions2/types::BoundingBox"
+            },
+            "dataFormat": {
+              "const": "wkw"
+            },
+            "wkwResolutions": {
+              "items": {
+                "properties": {
+                  "cubeLength": {
+                    "type": "number"
+                  },
+                  "resolution": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "$ref": "#/definitions2/types::Vector3"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "resolution",
+                  "cubeLength"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "dataFormat",
+            "boundingBox",
+            "wkwResolutions"
+          ],
+          "title": "DataLayerWKW",
+          "type": "object"
+        },
+        "types::DatasourceConfiguration": {
+          "properties": {
+            "dataLayers": {
+              "items": {
+                "$ref": "#/definitions2/types::DataLayer"
+              },
+              "type": "array"
+            },
+            "id": {
+              "unevaluatedProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "team": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "team"
+              ],
+              "type": "object"
+            },
+            "scale": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "id",
+            "dataLayers",
+            "scale"
+          ],
+          "type": "object"
+        },
+        "types::LayerUserConfiguration": {
+          "unevaluatedProperties": {
+            "properties": {
+              "alpha": {
+                "type": "number"
+              },
+              "brightness": {
+                "type": "number"
+              },
+              "color": {
+                "$ref": "#/definitions2/types::Vector3"
+              },
+              "contrast": {
+                "type": "number"
+              },
+              "intensityRange": {
+                "$ref": "#/definitions2/types::Vector2"
+              },
+              "isDisabled": {
+                "type": "boolean"
+              },
+              "isInverted": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "types::Vector2": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "types::Vector3": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        }
+      }
+    },
+    "tests": {
+      "s1SubsetEqOfs2": true,
+      "s2SubsetEqOfs1": false
+    }
+  }
+]

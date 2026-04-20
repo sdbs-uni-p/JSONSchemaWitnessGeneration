@@ -1,0 +1,447 @@
+{
+  "allOf": [
+    {
+      "$id": "mqtt_config.schema.json",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$id": "mqtt_config.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "description": "Push data to MQTT. This is intended to be used with the MQTT-CDF Bridge application.",
+        "additionalProperties": false,
+        "required": [
+          "host",
+          "port"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "TCP Broker URL"
+          },
+          "port": {
+            "type": [
+              "string",
+              "integer"
+            ],
+            "description": "TCP Broker port"
+          },
+          "username": {
+            "type": "string",
+            "description": "MQTT broker username"
+          },
+          "password": {
+            "type": "string",
+            "description": "MQTT broker password"
+          },
+          "use-tls": {
+            "type": "boolean",
+            "description": "`true` to enable TLS to the broker"
+          },
+          "client-id": {
+            "type": "string",
+            "description": "MQTT client id. Should be unique for a given broker",
+            "default": "cognite-opcua-extractor"
+          },
+          "data-set-id": {
+            "type": "integer",
+            "description": "Data set to use for new objects. Existing objects will not be updated"
+          },
+          "asset-topic": {
+            "type": "string",
+            "description": "Topic to publish assets on",
+            "default": "cognite/opcua/assets"
+          },
+          "ts-topic": {
+            "type": "string",
+            "description": "Topic to publish timeseries on",
+            "default": "cognite/opcua/assets"
+          },
+          "event-topic": {
+            "type": "string",
+            "description": "Topic to publish events on",
+            "default": "cognite/opcua/assets"
+          },
+          "datapoint-topic": {
+            "type": "string",
+            "description": "Topic to publish datapoints on",
+            "default": "cognite/opcua/assets"
+          },
+          "raw-topic": {
+            "type": "string",
+            "description": "Topic to publish raw rows on",
+            "default": "cognite/opcua/assets"
+          },
+          "relationships-topic": {
+            "type": "string",
+            "description": "Topic to publish relationships on",
+            "default": "cognite/opcua/assets"
+          },
+          "local-state": {
+            "type": "string",
+            "description": "Set to enable storing a list of created assets/timeseries to local litedb. Requires `state-storage.location` to be set. If this is left empty, metadata will have to be read each time the extractor restarts."
+          },
+          "invalidate-before": {
+            "type": "integer",
+            "description": "Timestamp in ms since epoch to invalidate stored mqtt states. On extractor restart, assets/timeseries created before this will be re-created in CDF. They will not be deleted or updated."
+          },
+          "debug": {
+            "type": "boolean",
+            "description": "If `true`, data will not be pushed to mqtt"
+          },
+          "skip-metadata": {
+            "type": "boolean",
+            "description": "Do not push any metadata at all. If this is true, plan timeseries without metadata will be created, like when using `raw-metadata`, and datapoints will be pushed. Nothing will be written to raw and no assets will be created. Events will be created, but without asset context"
+          },
+          "raw-metadata": {
+            "type": "object",
+            "description": "Store assets/timeseries metadata and relationships in raw. Assets will not be created at all, timeseries will be created with just `externalId`, `isStep`, and `isString`. Both timeseries and assets will be persisted in their entirity to CDF Raw. Datapoints are not affected, events will be created but without being contextualized to assets. The externalId of the source node is added to metadata if applicable",
+            "additionalProperties": false,
+            "required": [
+              "database"
+            ],
+            "properties": {
+              "database": {
+                "type": "string",
+                "description": "Raw database"
+              },
+              "assets-table": {
+                "type": "string",
+                "description": "Raw table to use for assets"
+              },
+              "timeseries-table": {
+                "type": "string",
+                "description": "Raw table to use for timeseries"
+              },
+              "relationships-table": {
+                "type": "string",
+                "description": "Raw table to use for relationships"
+              }
+            }
+          },
+          "metadata-mapping": {
+            "type": "object",
+            "description": "Map metadata to asset/timeseries attributes. This lets you assign properties in OPC-UA directly to fields like `description` and `unit` in CDF",
+            "examples": [
+              {
+                "timeseries": {
+                  "EngineeringUnits": "unit",
+                  "EURange": "description"
+                },
+                "assets": {
+                  "Name": "name"
+                }
+              }
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "assets": {
+                "type": "object",
+                "description": "Map metadata for assets",
+                "patternProperties": {
+                  ".*": {
+                    "type": "string",
+                    "enum": [
+                      "description",
+                      "name",
+                      "parentId"
+                    ]
+                  }
+                }
+              },
+              "timeseries": {
+                "type": "object",
+                "description": "Map metadata for timeseries",
+                "patternProperties": {
+                  ".*": {
+                    "type": "string",
+                    "enum": [
+                      "description",
+                      "name",
+                      "parentId",
+                      "unit"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "non-finite-replacement": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Replace all instances of NaN or Infinity with this floating point number"
+          }
+        }
+      }
+    }
+  ],
+  "definitions1": {
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Push data to MQTT. This is intended to be used with the MQTT-CDF Bridge application.",
+              "required": [
+                "host",
+                "port"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "MQTT broker username"
+                },
+                "raw-topic": {
+                  "type": "string",
+                  "description": "Topic to publish raw rows on",
+                  "default": "cognite/opcua/assets"
+                },
+                "host": {
+                  "type": "string",
+                  "description": "TCP Broker URL"
+                },
+                "skip-metadata": {
+                  "type": "boolean",
+                  "description": "Do not push any metadata at all. If this is true, plan timeseries without metadata will be created, like when using `raw-metadata`, and datapoints will be pushed. Nothing will be written to raw and no assets will be created. Events will be created, but without asset context"
+                },
+                "local-state": {
+                  "type": "string",
+                  "description": "Set to enable storing a list of created assets/timeseries to local litedb. Requires `state-storage.location` to be set. If this is left empty, metadata will have to be read each time the extractor restarts."
+                },
+                "client-id": {
+                  "type": "string",
+                  "description": "MQTT client id. Should be unique for a given broker",
+                  "default": "cognite-opcua-extractor"
+                },
+                "debug": {
+                  "type": "boolean",
+                  "description": "If `true`, data will not be pushed to mqtt"
+                },
+                "use-tls": {
+                  "type": "boolean",
+                  "description": "`true` to enable TLS to the broker"
+                },
+                "port": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "TCP Broker port"
+                },
+                "event-topic": {
+                  "type": "string",
+                  "description": "Topic to publish events on",
+                  "default": "cognite/opcua/assets"
+                },
+                "raw-metadata": {
+                  "$ref": "#/definitions1/modern_2"
+                },
+                "datapoint-topic": {
+                  "type": "string",
+                  "description": "Topic to publish datapoints on",
+                  "default": "cognite/opcua/assets"
+                },
+                "metadata-mapping": {
+                  "$ref": "#/definitions1/modern_3"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "MQTT broker password"
+                },
+                "asset-topic": {
+                  "type": "string",
+                  "description": "Topic to publish assets on",
+                  "default": "cognite/opcua/assets"
+                },
+                "data-set-id": {
+                  "type": "integer",
+                  "description": "Data set to use for new objects. Existing objects will not be updated"
+                },
+                "ts-topic": {
+                  "type": "string",
+                  "description": "Topic to publish timeseries on",
+                  "default": "cognite/opcua/assets"
+                },
+                "non-finite-replacement": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Replace all instances of NaN or Infinity with this floating point number"
+                },
+                "invalidate-before": {
+                  "type": "integer",
+                  "description": "Timestamp in ms since epoch to invalidate stored mqtt states. On extractor restart, assets/timeseries created before this will be re-created in CDF. They will not be deleted or updated."
+                },
+                "relationships-topic": {
+                  "type": "string",
+                  "description": "Topic to publish relationships on",
+                  "default": "cognite/opcua/assets"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^username$": true,
+                "^use-tls$": true,
+                "^skip-metadata$": true,
+                "^password$": true,
+                "^client-id$": true,
+                "^ts-topic$": true,
+                "^raw-metadata$": true,
+                "^local-state$": true,
+                "^metadata-mapping$": true,
+                "^invalidate-before$": true,
+                "^debug$": true,
+                "^port$": true,
+                "^data-set-id$": true,
+                "^raw-topic$": true,
+                "^relationships-topic$": true,
+                "^host$": true,
+                "^non-finite-replacement$": true,
+                "^datapoint-topic$": true,
+                "^event-topic$": true,
+                "^asset-topic$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Store assets/timeseries metadata and relationships in raw. Assets will not be created at all, timeseries will be created with just `externalId`, `isStep`, and `isString`. Both timeseries and assets will be persisted in their entirity to CDF Raw. Datapoints are not affected, events will be created but without being contextualized to assets. The externalId of the source node is added to metadata if applicable",
+              "required": [
+                "database"
+              ],
+              "properties": {
+                "database": {
+                  "type": "string",
+                  "description": "Raw database"
+                },
+                "assets-table": {
+                  "type": "string",
+                  "description": "Raw table to use for assets"
+                },
+                "timeseries-table": {
+                  "type": "string",
+                  "description": "Raw table to use for timeseries"
+                },
+                "relationships-table": {
+                  "type": "string",
+                  "description": "Raw table to use for relationships"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^database$": true,
+                "^assets-table$": true,
+                "^timeseries-table$": true,
+                "^relationships-table$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "description": "Map metadata to asset/timeseries attributes. This lets you assign properties in OPC-UA directly to fields like `description` and `unit` in CDF",
+              "examples": [
+                {
+                  "timeseries": {
+                    "EngineeringUnits": "unit",
+                    "EURange": "description"
+                  },
+                  "assets": {
+                    "Name": "name"
+                  }
+                }
+              ],
+              "properties": {
+                "assets": {
+                  "type": "object",
+                  "description": "Map metadata for assets",
+                  "patternProperties": {
+                    ".*": {
+                      "type": "string",
+                      "enum": [
+                        "description",
+                        "name",
+                        "parentId"
+                      ]
+                    }
+                  }
+                },
+                "timeseries": {
+                  "type": "object",
+                  "description": "Map metadata for timeseries",
+                  "patternProperties": {
+                    ".*": {
+                      "type": "string",
+                      "enum": [
+                        "description",
+                        "name",
+                        "parentId",
+                        "unit"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^assets$": true,
+                "^timeseries$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions1/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_1"
+      }
+    },
+    {
+      "$ref": "#/definitions1/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions1/modern_3"
+      }
+    }
+  ]
+}

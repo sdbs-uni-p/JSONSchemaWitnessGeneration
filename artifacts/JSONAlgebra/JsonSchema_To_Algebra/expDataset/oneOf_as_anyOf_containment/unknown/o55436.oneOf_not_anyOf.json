@@ -1,0 +1,810 @@
+{
+  "allOf": [
+    {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Rule",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priority": {
+          "type": "number",
+          "default": 0
+        },
+        "destination": {
+          "type": "string"
+        },
+        "match": {
+          "$ref": "#/definitions3/match"
+        },
+        "route": {
+          "$ref": "#/definitions3/route"
+        },
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions3/delayAction"
+              },
+              {
+                "$ref": "#/definitions3/abortAction"
+              },
+              {
+                "$ref": "#/definitions3/traceAction"
+              }
+            ]
+          }
+        }
+      },
+      "additionalFields": false,
+      "required": [
+        "destination"
+      ],
+      "oneOf": [
+        {
+          "title": "Route rule",
+          "required": [
+            "route"
+          ]
+        },
+        {
+          "title": "Action rule",
+          "required": [
+            "actions"
+          ]
+        }
+      ]
+    },
+    {
+      "not": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Rule",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "priority": {
+            "type": "number",
+            "default": 0
+          },
+          "destination": {
+            "type": "string"
+          },
+          "match": {
+            "$ref": "#/definitions4/match"
+          },
+          "route": {
+            "$ref": "#/definitions4/route"
+          },
+          "actions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions4/delayAction"
+                },
+                {
+                  "$ref": "#/definitions4/abortAction"
+                },
+                {
+                  "$ref": "#/definitions4/traceAction"
+                }
+              ]
+            }
+          }
+        },
+        "additionalFields": false,
+        "required": [
+          "destination"
+        ],
+        "anyOf": [
+          {
+            "title": "Route rule",
+            "required": [
+              "route"
+            ]
+          },
+          {
+            "title": "Action rule",
+            "required": [
+              "actions"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "definitions3": {
+    "tags": {
+      "title": "Tags",
+      "description": "An array of one or more unique service tags.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "_uniqueItems": true,
+      "minItems": 1
+    },
+    "source": {
+      "title": "Source",
+      "description": "Microservice where request originated from",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/definitions3/tags"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "headers": {
+      "title": "Headers",
+      "description": "Header key/value pairs",
+      "type": "object",
+      "additionalProperties": {
+        "title": "Header",
+        "type": "string"
+      },
+      "minProperties": 1
+    },
+    "uri": {
+      "title": "URI",
+      "description": "Backend URI definition",
+      "path": {
+        "type": "string"
+      },
+      "prefix": {
+        "type": "string"
+      },
+      "prefix_rewrite": {
+        "type": "string"
+      }
+    },
+    "match": {
+      "title": "Match",
+      "description": "Conditions that must be true to apply the action or routing",
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/definitions3/source"
+        },
+        "headers": {
+          "$ref": "#/definitions3/headers"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "basicBackend": {
+      "title": "Basic Backend",
+      "description": "Basic backend to route to",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Service name",
+          "description": "The service name",
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/definitions3/tags"
+        }
+      },
+      "required": [
+        "tags"
+      ],
+      "additionalProperties": false
+    },
+    "backend": {
+      "title": "Backend",
+      "description": "Backend to route to",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Service name",
+          "description": "The service name",
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/definitions3/tags"
+        },
+        "weight": {
+          "title": "Traffic weight",
+          "description": "Percentage of traffic to route to this backend.",
+          "type": "number",
+          "maximum": 1,
+          "default": 1,
+          "exclusiveMinimum": 0
+        },
+        "resilience": {
+          "type": "object",
+          "properties": {
+            "max_connections": {
+              "description": "Maximum number of connections to a backend.  Defaults to 1024.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "max_pending_requests": {
+              "description": "Maximum number of pending requests to a backend.  Defaults to 1024.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "max_requests": {
+              "description": "Maximum number of requests to a backend.  Defaults to 1024",
+              "type": "integer",
+              "minimum": 0
+            },
+            "sleep_window": {
+              "description": "Minimum time the circuit will be closed.  Defaults to 30s",
+              "type": "number",
+              "minimum": 0
+            },
+            "consecutive_errors": {
+              "description": "Number of 5XX errors before circuit is opened.  Defaults to 5",
+              "type": "integer",
+              "minimum": 0
+            },
+            "detection_interval": {
+              "description": "Interval for checking state of hystrix circuit.  Defaults to 10s.",
+              "type": "number",
+              "minimum": 0
+            },
+            "max_requests_per_connection": {
+              "description": "Maximum number of requests per connection to an backend.",
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "lb_type": {
+          "enum": [
+            "round_robin",
+            "least_request",
+            "random"
+          ]
+        }
+      },
+      "required": [
+        "tags"
+      ],
+      "additionalProperties": false
+    },
+    "route": {
+      "type": "object",
+      "properties": {
+        "backends": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions3/backend"
+          }
+        },
+        "http_req_timeout": {
+          "description": "Timeout for a HTTP request. Includes retries as well. Unit is in floating point seconds. Default 15.0s",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "http_req_retries": {
+          "description": "Number of retries for a given request. The interval between retries will be determined automatically (25ms+). Actual number of retries attempted depends on the http_req_timeout",
+          "type": "integer",
+          "minimum": 0
+        },
+        "uri": {
+          "$ref": "#/definitions3/uri"
+        }
+      },
+      "required": [
+        "backends"
+      ],
+      "additionalProperties": false
+    },
+    "probability": {
+      "title": "Probability",
+      "description": "Probability of executing action",
+      "type": "number",
+      "maximum": 1,
+      "default": 1,
+      "exclusiveMinimum": 0
+    },
+    "action": {
+      "title": "Action",
+      "description": "Action to apply to matching requests",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action"
+      ]
+    },
+    "delayAction": {
+      "title": "Delay",
+      "description": "Conditionally delay the request",
+      "properties": {
+        "action": {
+          "enum": [
+            "delay"
+          ]
+        },
+        "probability": {
+          "$ref": "#/definitions3/probability"
+        },
+        "tags": {
+          "$ref": "#/definitions3/tags"
+        },
+        "duration": {
+          "type": "number",
+          "description": "Duration of delay in seconds",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/definitions3/action"
+        }
+      ]
+    },
+    "abortAction": {
+      "title": "Abort",
+      "description": "Conditionally abort the request",
+      "properties": {
+        "action": {
+          "enum": [
+            "abort"
+          ]
+        },
+        "probability": {
+          "$ref": "#/definitions3/probability"
+        },
+        "tags": {
+          "$ref": "#/definitions3/tags"
+        },
+        "return_code": {
+          "type": "number",
+          "description": "Return code",
+          "minimum": -5,
+          "maximum": 599
+        }
+      },
+      "required": [
+        "return_code"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/definitions3/action"
+        }
+      ]
+    },
+    "traceAction": {
+      "title": "Trace",
+      "description": "Trace request",
+      "properties": {
+        "action": {
+          "enum": [
+            "trace"
+          ]
+        },
+        "tags": {
+          "$ref": "#/definitions3/tags"
+        },
+        "log_key": {
+          "type": "string",
+          "default": "trace"
+        },
+        "log_value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/definitions3/action"
+        }
+      ]
+    }
+  },
+  "definitions4": {
+    "tags": {
+      "title": "Tags",
+      "description": "An array of one or more unique service tags.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "_uniqueItems": true,
+      "minItems": 1
+    },
+    "source": {
+      "title": "Source",
+      "description": "Microservice where request originated from",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/definitions4/tags"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "headers": {
+      "title": "Headers",
+      "description": "Header key/value pairs",
+      "type": "object",
+      "additionalProperties": {
+        "title": "Header",
+        "type": "string"
+      },
+      "minProperties": 1
+    },
+    "uri": {
+      "title": "URI",
+      "description": "Backend URI definition",
+      "path": {
+        "type": "string"
+      },
+      "prefix": {
+        "type": "string"
+      },
+      "prefix_rewrite": {
+        "type": "string"
+      }
+    },
+    "match": {
+      "title": "Match",
+      "description": "Conditions that must be true to apply the action or routing",
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/definitions4/source"
+        },
+        "headers": {
+          "$ref": "#/definitions4/headers"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "basicBackend": {
+      "title": "Basic Backend",
+      "description": "Basic backend to route to",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Service name",
+          "description": "The service name",
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/definitions4/tags"
+        }
+      },
+      "required": [
+        "tags"
+      ],
+      "additionalProperties": false
+    },
+    "backend": {
+      "title": "Backend",
+      "description": "Backend to route to",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Service name",
+          "description": "The service name",
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/definitions4/tags"
+        },
+        "weight": {
+          "title": "Traffic weight",
+          "description": "Percentage of traffic to route to this backend.",
+          "type": "number",
+          "maximum": 1,
+          "default": 1,
+          "exclusiveMinimum": 0
+        },
+        "resilience": {
+          "type": "object",
+          "properties": {
+            "max_connections": {
+              "description": "Maximum number of connections to a backend.  Defaults to 1024.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "max_pending_requests": {
+              "description": "Maximum number of pending requests to a backend.  Defaults to 1024.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "max_requests": {
+              "description": "Maximum number of requests to a backend.  Defaults to 1024",
+              "type": "integer",
+              "minimum": 0
+            },
+            "sleep_window": {
+              "description": "Minimum time the circuit will be closed.  Defaults to 30s",
+              "type": "number",
+              "minimum": 0
+            },
+            "consecutive_errors": {
+              "description": "Number of 5XX errors before circuit is opened.  Defaults to 5",
+              "type": "integer",
+              "minimum": 0
+            },
+            "detection_interval": {
+              "description": "Interval for checking state of hystrix circuit.  Defaults to 10s.",
+              "type": "number",
+              "minimum": 0
+            },
+            "max_requests_per_connection": {
+              "description": "Maximum number of requests per connection to an backend.",
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "lb_type": {
+          "enum": [
+            "round_robin",
+            "least_request",
+            "random"
+          ]
+        }
+      },
+      "required": [
+        "tags"
+      ],
+      "additionalProperties": false
+    },
+    "route": {
+      "type": "object",
+      "properties": {
+        "backends": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions4/backend"
+          }
+        },
+        "http_req_timeout": {
+          "description": "Timeout for a HTTP request. Includes retries as well. Unit is in floating point seconds. Default 15.0s",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "http_req_retries": {
+          "description": "Number of retries for a given request. The interval between retries will be determined automatically (25ms+). Actual number of retries attempted depends on the http_req_timeout",
+          "type": "integer",
+          "minimum": 0
+        },
+        "uri": {
+          "$ref": "#/definitions4/uri"
+        }
+      },
+      "required": [
+        "backends"
+      ],
+      "additionalProperties": false
+    },
+    "probability": {
+      "title": "Probability",
+      "description": "Probability of executing action",
+      "type": "number",
+      "maximum": 1,
+      "default": 1,
+      "exclusiveMinimum": 0
+    },
+    "action": {
+      "title": "Action",
+      "description": "Action to apply to matching requests",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action"
+      ]
+    },
+    "delayAction": {
+      "title": "Delay",
+      "description": "Conditionally delay the request",
+      "properties": {
+        "action": {
+          "enum": [
+            "delay"
+          ]
+        },
+        "probability": {
+          "$ref": "#/definitions4/probability"
+        },
+        "tags": {
+          "$ref": "#/definitions4/tags"
+        },
+        "duration": {
+          "type": "number",
+          "description": "Duration of delay in seconds",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "duration"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/definitions4/action"
+        }
+      ]
+    },
+    "abortAction": {
+      "title": "Abort",
+      "description": "Conditionally abort the request",
+      "properties": {
+        "action": {
+          "enum": [
+            "abort"
+          ]
+        },
+        "probability": {
+          "$ref": "#/definitions4/probability"
+        },
+        "tags": {
+          "$ref": "#/definitions4/tags"
+        },
+        "return_code": {
+          "type": "number",
+          "description": "Return code",
+          "minimum": -5,
+          "maximum": 599
+        }
+      },
+      "required": [
+        "return_code"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/definitions4/action"
+        }
+      ]
+    },
+    "traceAction": {
+      "title": "Trace",
+      "description": "Trace request",
+      "properties": {
+        "action": {
+          "enum": [
+            "trace"
+          ]
+        },
+        "tags": {
+          "$ref": "#/definitions4/tags"
+        },
+        "log_key": {
+          "type": "string",
+          "default": "trace"
+        },
+        "log_value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/definitions4/action"
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/headers"
+    },
+    {
+      "$ref": "#/definitions4/match"
+    },
+    {
+      "$ref": "#/definitions3/headers"
+    },
+    {
+      "$ref": "#/definitions4/source"
+    },
+    {
+      "$ref": "#/definitions4/uri"
+    },
+    {
+      "$ref": "#/definitions3/delayAction"
+    },
+    {
+      "$ref": "#/definitions4/abortAction"
+    },
+    {
+      "$ref": "#/definitions3/route"
+    },
+    {
+      "$ref": "#/definitions4/delayAction"
+    },
+    {
+      "$ref": "#/definitions4/action"
+    },
+    {
+      "$ref": "#/definitions3/uri"
+    },
+    {
+      "$ref": "#/definitions3/abortAction"
+    },
+    {
+      "$ref": "#/definitions3/match"
+    },
+    {
+      "$ref": "#/definitions3/tags"
+    },
+    {
+      "$ref": "#/definitions3/probability"
+    },
+    {
+      "$ref": "#/definitions4/probability"
+    },
+    {
+      "$ref": "#/definitions4/traceAction"
+    },
+    {
+      "$ref": "#/definitions3/source"
+    },
+    {
+      "$ref": "#/definitions3/backend"
+    },
+    {
+      "$ref": "#/definitions3/traceAction"
+    },
+    {
+      "$ref": "#/definitions4/route"
+    },
+    {
+      "$ref": "#/definitions3/action"
+    },
+    {
+      "$ref": "#/definitions4/tags"
+    },
+    {
+      "$ref": "#/definitions4/backend"
+    }
+  ]
+}

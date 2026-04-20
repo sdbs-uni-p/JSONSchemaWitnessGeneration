@@ -1,0 +1,1616 @@
+{
+  "allOf": [
+    {
+      "description": "JSON schema for PVS GUIs",
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/pvs.request"
+        },
+        {
+          "$ref": "#/definitions4/pvs.response"
+        }
+      ]
+    },
+    {
+      "not": {
+        "description": "JSON schema for PVS GUIs",
+        "oneOf": [
+          {
+            "$ref": "#/definitions3/pvs.request"
+          },
+          {
+            "$ref": "#/definitions3/pvs.response"
+          }
+        ]
+      }
+    }
+  ],
+  "definitions4": {
+    "pvs.request": {
+      "description": "This is an XML-RPC request, not really JSON",
+      "type": "array",
+      "items": [
+        {
+          "$ref": "#/definitions4/pvs-json-request"
+        },
+        {
+          "schema": {
+            "format": "uri"
+          }
+        }
+      ]
+    },
+    "pvs-json-request": {
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "method"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "description": "JSON-RPC version",
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "description": "A unique ID",
+          "type": "string"
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/list-methods-request"
+        },
+        {
+          "$ref": "#/definitions4/list-client-methods-request"
+        },
+        {
+          "$ref": "#/definitions4/help-request"
+        },
+        {
+          "$ref": "#/definitions4/change-context-request"
+        },
+        {
+          "$ref": "#/definitions4/parse-request"
+        },
+        {
+          "$ref": "#/definitions4/typecheck-request"
+        },
+        {
+          "$ref": "#/definitions4/prove-formula-request"
+        },
+        {
+          "$ref": "#/definitions4/proof-command-request"
+        },
+        {
+          "$ref": "#/definitions4/names-info-request"
+        },
+        {
+          "$ref": "#/definitions4/find-declaration-request"
+        },
+        {
+          "$ref": "#/definitions4/lisp-request"
+        }
+      ]
+    },
+    "pvs.response": {
+      "description": "The response to a pvs.request",
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "id"
+      ],
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/pvs-error"
+        },
+        {
+          "$ref": "#/definitions4/pvs-result"
+        }
+      ]
+    },
+    "pvs-error": {
+      "description": "An error response",
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "id",
+        "error"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            },
+            "data": {}
+          }
+        }
+      }
+    },
+    "pvs-result": {
+      "description": "An error response",
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "id",
+        "error"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "anyOf": [
+            {
+              "$ref": "#/definitions4/list-methods-result"
+            },
+            {
+              "$ref": "#/definitions4/list-client-methods-result"
+            },
+            {
+              "$ref": "#/definitions4/help-result"
+            },
+            {
+              "$ref": "#/definitions4/change-context-result"
+            },
+            {
+              "$ref": "#/definitions4/parse-result"
+            },
+            {
+              "$ref": "#/definitions4/typecheck-result"
+            },
+            {
+              "$ref": "#/definitions4/prove-formula-result"
+            },
+            {
+              "$ref": "#/definitions4/proof-command-result"
+            },
+            {
+              "$ref": "#/definitions4/names-info-result"
+            },
+            {
+              "$ref": "#/definitions4/find-declaration-result"
+            },
+            {
+              "$ref": "#/definitions4/lisp-result"
+            }
+          ]
+        }
+      }
+    },
+    "list-methods-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "list-methods"
+          ]
+        }
+      }
+    },
+    "list-methods-result": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/string-array-result"
+        }
+      ]
+    },
+    "list-client-methods-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "list-client-methods"
+          ]
+        }
+      }
+    },
+    "list-client-methods-result": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/string-array-result"
+        }
+      ]
+    },
+    "help-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "help"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "help-result": {
+      "type": "object"
+    },
+    "change-context-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "change-context"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      }
+    },
+    "change-context-result": {
+      "type": "string"
+    },
+    "parse-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "parse"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      }
+    },
+    "parse-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "decls": {
+            "type": "array",
+            "description": "an array of declarations in the given theory",
+            "items": {
+              "type": "object",
+              "anyOf": [
+                {
+                  "$ref": "#/definitions4/importing-decl"
+                },
+                {
+                  "$ref": "#/definitions4/typed-decl"
+                },
+                {
+                  "$ref": "#/definitions4/formula-decl"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "typecheck-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "typecheck"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      }
+    },
+    "typecheck-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "decls": {
+            "type": "array",
+            "description": "an array of declarations in the given theory",
+            "items": {
+              "type": "object",
+              "anyOf": [
+                {
+                  "$ref": "#/definitions4/importing-decl"
+                },
+                {
+                  "$ref": "#/definitions4/typed-decl"
+                },
+                {
+                  "$ref": "#/definitions4/formula-decl"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "importing-decl": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "importing"
+          ]
+        },
+        "importing": {
+          "type": "string"
+        },
+        "place": {
+          "$ref": "#/definitions4/place"
+        }
+      }
+    },
+    "typed-decl": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "module",
+            "type",
+            "expr",
+            "datatype",
+            "library",
+            "judgement",
+            "conversion",
+            "auto-rewrite"
+          ]
+        },
+        "type": {
+          "type": "string"
+        },
+        "place": {
+          "$ref": "#/definitions4/place"
+        }
+      }
+    },
+    "formula-decl": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "formula"
+          ]
+        },
+        "place": {
+          "$ref": "#/definitions4/place"
+        }
+      }
+    },
+    "find-declaration-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "find-declaration"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "find-declaration-response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions4/declaration-info"
+      }
+    },
+    "declaration-info": {
+      "type": "object",
+      "properties": {
+        "declname": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "place": {
+          "$ref": "#/definitions4/place"
+        },
+        "decl-ppstring": {
+          "type": "string"
+        }
+      }
+    },
+    "prove-formula-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "prove-formula"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "prove-formula-result": {
+      "type": "object"
+    },
+    "proof-command-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "proof-command"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "proof-command-result": {
+      "type": "object"
+    },
+    "proofstate": {
+      "type": "object",
+      "required": [
+        "current-goal",
+        "tree-delta"
+      ],
+      "properties": {
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions4/proofstate-node"
+          }
+        },
+        "current-goal": {
+          "type": "string"
+        },
+        "tree-delta": {
+          "type": "string"
+        }
+      }
+    },
+    "proofstate-node": {
+      "type": "object",
+      "required": [
+        "label",
+        "sequent"
+      ],
+      "properties": {
+        "commentary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "action": {
+          "type": "string"
+        },
+        "num-subgoals": {
+          "type": "integer"
+        },
+        "label": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "sequent": {
+          "type": "object",
+          "properties": {
+            "antecedents": {
+              "$ref": "#/definitions4/s-formulas"
+            },
+            "succedents": {
+              "$ref": "#/definitions4/s-formulas"
+            },
+            "hidden-antecedents": {
+              "$ref": "#/definitions4/s-formulas"
+            },
+            "hidden-succedents": {
+              "$ref": "#/definitions4/s-formulas"
+            }
+          }
+        }
+      }
+    },
+    "s-formulas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "labels",
+          "changed",
+          "formula"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "formula": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "names-info-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "names-info"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "names-info-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "place": {
+            "$ref": "#/definitions4/place"
+          },
+          "decl": {
+            "type": "string"
+          },
+          "decl-file": {
+            "type": "string"
+          },
+          "decl-place": {
+            "$ref": "#/definitions4/place"
+          }
+        }
+      }
+    },
+    "find-declaration-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "declname": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "theoryid": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "place": {
+            "$ref": "#/definitions4/place"
+          },
+          "decl-ppstring": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lisp-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "lisp"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "lisp-result": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions4/string-result"
+        }
+      ]
+    },
+    "string-result": {
+      "type": "string"
+    },
+    "string-array-result": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "place": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "integer"
+      }
+    }
+  },
+  "definitions3": {
+    "pvs.request": {
+      "description": "This is an XML-RPC request, not really JSON",
+      "type": "array",
+      "items": [
+        {
+          "$ref": "#/definitions3/pvs-json-request"
+        },
+        {
+          "schema": {
+            "format": "uri"
+          }
+        }
+      ]
+    },
+    "pvs-json-request": {
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "method"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "description": "JSON-RPC version",
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "description": "A unique ID",
+          "type": "string"
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/list-methods-request"
+        },
+        {
+          "$ref": "#/definitions3/list-client-methods-request"
+        },
+        {
+          "$ref": "#/definitions3/help-request"
+        },
+        {
+          "$ref": "#/definitions3/change-context-request"
+        },
+        {
+          "$ref": "#/definitions3/parse-request"
+        },
+        {
+          "$ref": "#/definitions3/typecheck-request"
+        },
+        {
+          "$ref": "#/definitions3/prove-formula-request"
+        },
+        {
+          "$ref": "#/definitions3/proof-command-request"
+        },
+        {
+          "$ref": "#/definitions3/names-info-request"
+        },
+        {
+          "$ref": "#/definitions3/find-declaration-request"
+        },
+        {
+          "$ref": "#/definitions3/lisp-request"
+        }
+      ]
+    },
+    "pvs.response": {
+      "description": "The response to a pvs.request",
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "id"
+      ],
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/pvs-error"
+        },
+        {
+          "$ref": "#/definitions3/pvs-result"
+        }
+      ]
+    },
+    "pvs-error": {
+      "description": "An error response",
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "id",
+        "error"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            },
+            "data": {}
+          }
+        }
+      }
+    },
+    "pvs-result": {
+      "description": "An error response",
+      "type": "object",
+      "required": [
+        "jsonrpc",
+        "id",
+        "error"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "anyOf": [
+            {
+              "$ref": "#/definitions3/list-methods-result"
+            },
+            {
+              "$ref": "#/definitions3/list-client-methods-result"
+            },
+            {
+              "$ref": "#/definitions3/help-result"
+            },
+            {
+              "$ref": "#/definitions3/change-context-result"
+            },
+            {
+              "$ref": "#/definitions3/parse-result"
+            },
+            {
+              "$ref": "#/definitions3/typecheck-result"
+            },
+            {
+              "$ref": "#/definitions3/prove-formula-result"
+            },
+            {
+              "$ref": "#/definitions3/proof-command-result"
+            },
+            {
+              "$ref": "#/definitions3/names-info-result"
+            },
+            {
+              "$ref": "#/definitions3/find-declaration-result"
+            },
+            {
+              "$ref": "#/definitions3/lisp-result"
+            }
+          ]
+        }
+      }
+    },
+    "list-methods-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "list-methods"
+          ]
+        }
+      }
+    },
+    "list-methods-result": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/string-array-result"
+        }
+      ]
+    },
+    "list-client-methods-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "list-client-methods"
+          ]
+        }
+      }
+    },
+    "list-client-methods-result": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/string-array-result"
+        }
+      ]
+    },
+    "help-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "help"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "help-result": {
+      "type": "object"
+    },
+    "change-context-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "change-context"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      }
+    },
+    "change-context-result": {
+      "type": "string"
+    },
+    "parse-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "parse"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      }
+    },
+    "parse-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "decls": {
+            "type": "array",
+            "description": "an array of declarations in the given theory",
+            "items": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/importing-decl"
+                },
+                {
+                  "$ref": "#/definitions3/typed-decl"
+                },
+                {
+                  "$ref": "#/definitions3/formula-decl"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "typecheck-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "typecheck"
+          ]
+        },
+        "params": {
+          "type": "string"
+        }
+      }
+    },
+    "typecheck-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "decls": {
+            "type": "array",
+            "description": "an array of declarations in the given theory",
+            "items": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions3/importing-decl"
+                },
+                {
+                  "$ref": "#/definitions3/typed-decl"
+                },
+                {
+                  "$ref": "#/definitions3/formula-decl"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "importing-decl": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "importing"
+          ]
+        },
+        "importing": {
+          "type": "string"
+        },
+        "place": {
+          "$ref": "#/definitions3/place"
+        }
+      }
+    },
+    "typed-decl": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "module",
+            "type",
+            "expr",
+            "datatype",
+            "library",
+            "judgement",
+            "conversion",
+            "auto-rewrite"
+          ]
+        },
+        "type": {
+          "type": "string"
+        },
+        "place": {
+          "$ref": "#/definitions3/place"
+        }
+      }
+    },
+    "formula-decl": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "formula"
+          ]
+        },
+        "place": {
+          "$ref": "#/definitions3/place"
+        }
+      }
+    },
+    "find-declaration-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "find-declaration"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "find-declaration-response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions3/declaration-info"
+      }
+    },
+    "declaration-info": {
+      "type": "object",
+      "properties": {
+        "declname": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "place": {
+          "$ref": "#/definitions3/place"
+        },
+        "decl-ppstring": {
+          "type": "string"
+        }
+      }
+    },
+    "prove-formula-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "prove-formula"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "prove-formula-result": {
+      "type": "object"
+    },
+    "proof-command-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "proof-command"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "proof-command-result": {
+      "type": "object"
+    },
+    "proofstate": {
+      "type": "object",
+      "required": [
+        "current-goal",
+        "tree-delta"
+      ],
+      "properties": {
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions3/proofstate-node"
+          }
+        },
+        "current-goal": {
+          "type": "string"
+        },
+        "tree-delta": {
+          "type": "string"
+        }
+      }
+    },
+    "proofstate-node": {
+      "type": "object",
+      "required": [
+        "label",
+        "sequent"
+      ],
+      "properties": {
+        "commentary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "action": {
+          "type": "string"
+        },
+        "num-subgoals": {
+          "type": "integer"
+        },
+        "label": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "sequent": {
+          "type": "object",
+          "properties": {
+            "antecedents": {
+              "$ref": "#/definitions3/s-formulas"
+            },
+            "succedents": {
+              "$ref": "#/definitions3/s-formulas"
+            },
+            "hidden-antecedents": {
+              "$ref": "#/definitions3/s-formulas"
+            },
+            "hidden-succedents": {
+              "$ref": "#/definitions3/s-formulas"
+            }
+          }
+        }
+      }
+    },
+    "s-formulas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "labels",
+          "changed",
+          "formula"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "formula": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "names-info-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "names-info"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "names-info-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "place": {
+            "$ref": "#/definitions3/place"
+          },
+          "decl": {
+            "type": "string"
+          },
+          "decl-file": {
+            "type": "string"
+          },
+          "decl-place": {
+            "$ref": "#/definitions3/place"
+          }
+        }
+      }
+    },
+    "find-declaration-result": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "declname": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "theoryid": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "place": {
+            "$ref": "#/definitions3/place"
+          },
+          "decl-ppstring": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lisp-request": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "lisp"
+          ]
+        },
+        "params": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "lisp-result": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions3/string-result"
+        }
+      ]
+    },
+    "string-result": {
+      "type": "string"
+    },
+    "string-array-result": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "place": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "integer"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions4/parse-result"
+    },
+    {
+      "$ref": "#/definitions3/list-methods-request"
+    },
+    {
+      "$ref": "#/definitions4/string-result"
+    },
+    {
+      "$ref": "#/definitions4/change-context-result"
+    },
+    {
+      "$ref": "#/definitions3/place"
+    },
+    {
+      "$ref": "#/definitions4/pvs-json-request"
+    },
+    {
+      "$ref": "#/definitions3/names-info-result"
+    },
+    {
+      "$ref": "#/definitions4/pvs-error"
+    },
+    {
+      "$ref": "#/definitions3/string-array-result"
+    },
+    {
+      "$ref": "#/definitions4/names-info-request"
+    },
+    {
+      "$ref": "#/definitions3/change-context-request"
+    },
+    {
+      "$ref": "#/definitions3/proofstate-node"
+    },
+    {
+      "$ref": "#/definitions3/pvs.response"
+    },
+    {
+      "$ref": "#/definitions4/find-declaration-request"
+    },
+    {
+      "$ref": "#/definitions4/list-methods-result"
+    },
+    {
+      "$ref": "#/definitions4/help-result"
+    },
+    {
+      "$ref": "#/definitions3/pvs-error"
+    },
+    {
+      "$ref": "#/definitions3/list-client-methods-result"
+    },
+    {
+      "$ref": "#/definitions4/list-methods-request"
+    },
+    {
+      "$ref": "#/definitions4/help-request"
+    },
+    {
+      "$ref": "#/definitions4/change-context-request"
+    },
+    {
+      "$ref": "#/definitions3/string-result"
+    },
+    {
+      "$ref": "#/definitions4/parse-request"
+    },
+    {
+      "$ref": "#/definitions3/proof-command-result"
+    },
+    {
+      "$ref": "#/definitions4/string-array-result"
+    },
+    {
+      "$ref": "#/definitions4/typecheck-request"
+    },
+    {
+      "$ref": "#/definitions4/proofstate-node"
+    },
+    {
+      "$ref": "#/definitions3/prove-formula-result"
+    },
+    {
+      "$ref": "#/definitions3/list-methods-result"
+    },
+    {
+      "$ref": "#/definitions3/prove-formula-request"
+    },
+    {
+      "$ref": "#/definitions3/parse-result"
+    },
+    {
+      "$ref": "#/definitions4/proof-command-result"
+    },
+    {
+      "$ref": "#/definitions4/pvs.request"
+    },
+    {
+      "$ref": "#/definitions3/lisp-result"
+    },
+    {
+      "$ref": "#/definitions3/pvs.request"
+    },
+    {
+      "$ref": "#/definitions4/place"
+    },
+    {
+      "$ref": "#/definitions3/help-result"
+    },
+    {
+      "$ref": "#/definitions4/list-client-methods-request"
+    },
+    {
+      "$ref": "#/definitions4/proof-command-request"
+    },
+    {
+      "$ref": "#/definitions4/pvs-result"
+    },
+    {
+      "$ref": "#/definitions3/list-client-methods-request"
+    },
+    {
+      "$ref": "#/definitions3/pvs-json-request"
+    },
+    {
+      "$ref": "#/definitions3/typecheck-request"
+    },
+    {
+      "$ref": "#/definitions4/importing-decl"
+    },
+    {
+      "$ref": "#/definitions3/proof-command-request"
+    },
+    {
+      "$ref": "#/definitions4/typecheck-result"
+    },
+    {
+      "$ref": "#/definitions4/s-formulas"
+    },
+    {
+      "$ref": "#/definitions3/typed-decl"
+    },
+    {
+      "$ref": "#/definitions3/pvs-result"
+    },
+    {
+      "$ref": "#/definitions4/declaration-info"
+    },
+    {
+      "$ref": "#/definitions4/prove-formula-request"
+    },
+    {
+      "$ref": "#/definitions4/prove-formula-result"
+    },
+    {
+      "$ref": "#/definitions3/parse-request"
+    },
+    {
+      "$ref": "#/definitions3/help-request"
+    },
+    {
+      "$ref": "#/definitions4/find-declaration-result"
+    },
+    {
+      "$ref": "#/definitions3/names-info-request"
+    },
+    {
+      "$ref": "#/definitions3/s-formulas"
+    },
+    {
+      "$ref": "#/definitions3/importing-decl"
+    },
+    {
+      "$ref": "#/definitions3/find-declaration-result"
+    },
+    {
+      "$ref": "#/definitions4/lisp-request"
+    },
+    {
+      "$ref": "#/definitions3/declaration-info"
+    },
+    {
+      "$ref": "#/definitions4/formula-decl"
+    },
+    {
+      "$ref": "#/definitions4/pvs.response"
+    },
+    {
+      "$ref": "#/definitions3/change-context-result"
+    },
+    {
+      "$ref": "#/definitions3/formula-decl"
+    },
+    {
+      "$ref": "#/definitions4/names-info-result"
+    },
+    {
+      "$ref": "#/definitions4/lisp-result"
+    },
+    {
+      "$ref": "#/definitions3/lisp-request"
+    },
+    {
+      "$ref": "#/definitions3/find-declaration-request"
+    },
+    {
+      "$ref": "#/definitions4/typed-decl"
+    },
+    {
+      "$ref": "#/definitions4/list-client-methods-result"
+    },
+    {
+      "$ref": "#/definitions3/typecheck-result"
+    }
+  ]
+}

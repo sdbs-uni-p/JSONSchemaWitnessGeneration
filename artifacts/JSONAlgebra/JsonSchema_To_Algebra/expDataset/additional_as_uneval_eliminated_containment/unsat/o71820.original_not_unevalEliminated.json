@@ -1,0 +1,667 @@
+{
+  "allOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "plans": {
+          "items": {
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "pool"
+                ]
+              },
+              {
+                "required": [
+                  "virtualServer"
+                ]
+              }
+            ],
+            "properties": {
+              "description": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "pool": {
+                "$ref": "#/definitions3/poolType"
+              },
+              "virtualServer": {
+                "$ref": "#/definitions3/virtualServerType"
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ]
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "plans"
+      ],
+      "type": "object"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    }
+  ],
+  "definitions3": {
+    "healthMonitorType": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "interval": {
+              "maximum": 86400,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "recv": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "send": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "timeout": {
+              "maximum": 86400,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "type": {
+              "enum": [
+                "http",
+                "tcp"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "type"
+          ]
+        }
+      ],
+      "type": "object"
+    },
+    "policyType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "poolType": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "balance"
+          ]
+        },
+        {
+          "required": [
+            "healthMonitors"
+          ]
+        }
+      ],
+      "properties": {
+        "balance": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "healthMonitors": {
+          "additionalItems": false,
+          "items": {
+            "$ref": "#/definitions3/healthMonitorType"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "profileType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "sslProfileType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "virtualServerType": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "profiles"
+          ]
+        },
+        {
+          "required": [
+            "policies"
+          ]
+        },
+        {
+          "required": [
+            "sslProfiles"
+          ]
+        }
+      ],
+      "properties": {
+        "policies": {
+          "items": {
+            "$ref": "#/definitions3/policyType"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "profiles": {
+          "items": {
+            "$ref": "#/definitions3/profileType"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sslProfiles": {
+          "items": {
+            "$ref": "#/definitions3/sslProfileType"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "definitions4": {
+    "modern_5": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "profiles"
+                  ]
+                },
+                {
+                  "required": [
+                    "policies"
+                  ]
+                },
+                {
+                  "required": [
+                    "sslProfiles"
+                  ]
+                }
+              ],
+              "properties": {
+                "policies": {
+                  "items": {
+                    "$ref": "#/definitions4/policyType"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "profiles": {
+                  "items": {
+                    "$ref": "#/definitions4/profileType"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "sslProfiles": {
+                  "items": {
+                    "$ref": "#/definitions4/sslProfileType"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^policies$": true,
+                "^profiles$": true,
+                "^sslProfiles$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_6": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "plans": {
+                  "items": {
+                    "$ref": "#/definitions4/modern_7"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "plans"
+              ],
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^plans$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_1": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "balance"
+                  ]
+                },
+                {
+                  "required": [
+                    "healthMonitors"
+                  ]
+                }
+              ],
+              "properties": {
+                "balance": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "healthMonitors": {
+                  "$ref": "#/definitions4/modern_2"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "patternProperties": {
+                "^balance$": true,
+                "^healthMonitors$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "poolType": {
+      "$ref": "#/definitions4/modern_1"
+    },
+    "modern_7": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "pool"
+                  ]
+                },
+                {
+                  "required": [
+                    "virtualServer"
+                  ]
+                }
+              ],
+              "properties": {
+                "description": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "pool": {
+                  "$ref": "#/definitions4/poolType"
+                },
+                "virtualServer": {
+                  "$ref": "#/definitions4/virtualServerType"
+                }
+              },
+              "required": [
+                "name",
+                "description"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^description$": true,
+                "^name$": true,
+                "^pool$": true,
+                "^virtualServer$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_2": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "items": {
+                "$ref": "#/definitions4/healthMonitorType"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  true,
+                  false
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "healthMonitorType": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions4/modern_3"
+        },
+        {
+          "$ref": "#/definitions4/modern_4"
+        }
+      ],
+      "type": "object"
+    },
+    "profileType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "policyType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "virtualServerType": {
+      "$ref": "#/definitions4/modern_5"
+    },
+    "sslProfileType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "modern_3": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^name$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "modern_4": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "interval": {
+                  "maximum": 86400.0,
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "recv": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "http",
+                    "tcp"
+                  ],
+                  "type": "string"
+                },
+                "timeout": {
+                  "maximum": 86400.0,
+                  "minimum": 1.0,
+                  "type": "integer"
+                },
+                "send": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "type"
+              ]
+            },
+            {
+              "patternProperties": {
+                "^timeout$": true,
+                "^send$": true,
+                "^name$": true,
+                "^type$": true,
+                "^interval$": true,
+                "^recv$": true
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/definitions3/profileType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/profileType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_6"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_6"
+      }
+    },
+    {
+      "$ref": "#/definitions3/virtualServerType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/virtualServerType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/sslProfileType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/sslProfileType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/sslProfileType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/sslProfileType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_2"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_2"
+      }
+    },
+    {
+      "$ref": "#/definitions4/policyType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/policyType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/policyType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/policyType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_7"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_7"
+      }
+    },
+    {
+      "$ref": "#/definitions4/poolType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/poolType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/poolType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/poolType"
+      }
+    },
+    {
+      "$ref": "#/definitions3/healthMonitorType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions3/healthMonitorType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_5"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_5"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_4"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_4"
+      }
+    },
+    {
+      "$ref": "#/definitions4/virtualServerType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/virtualServerType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/profileType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/profileType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/healthMonitorType"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/healthMonitorType"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_3"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_3"
+      }
+    },
+    {
+      "$ref": "#/definitions4/modern_1"
+    },
+    {
+      "not": {
+        "$ref": "#/definitions4/modern_1"
+      }
+    }
+  ]
+}
