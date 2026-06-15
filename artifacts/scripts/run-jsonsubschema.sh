@@ -47,14 +47,13 @@ run_experiment() {
       echo "Dataset ${input} not found."
       return
     fi
-    # if 2nd parameter is set and has value True, set flag -t
-    if [ ! -z "${2}" ] && [ "${2}" == "True" ]; then
-        testsuite="-t"
+
+    if [[ "${1}" == "test_suite_containment/schemaPairs" ]]; then
+        json_files=$(find ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} -name "*.json" -not -path "*/originalWithConst/*")
     else
-        testsuite=""
+        json_files=$(find ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} -name "*.json")
     fi
 
-    json_files=$(find ${HOME}/JSONAlgebra/JsonSchema_To_Algebra/expDataset/${1} -name "*.json")
     output_dir=${HOME}/results/${1//\//-}
     parts_dir=${HOME}/results/${1//\//-}/jsonsubschema-parts
     mkdir -p ${parts_dir}
@@ -62,7 +61,7 @@ run_experiment() {
     outdir=${OUTDIR}/${1//\//-}/
     mkdir -p ${outdir}
     parallel -j ${threads} --bar python3 -u ${HOME}/scripts/run-jsonsubschema_journal.py -i {} \
-            -o ${parts_dir}/jsonsubschema_results_{#}.csv ${testsuite} ${timeout} ::: $json_files
+            -o ${parts_dir}/jsonsubschema_results_{#}.csv ${timeout} ::: $json_files
 
     # Merge csv files
     header_written=false
@@ -87,7 +86,7 @@ fi
 
 run_experiment trickyschemas_schemaPairs
 run_experiment allOf_containment_schemaPairs
-run_experiment test_suite_containment/schemaPairs True
+run_experiment test_suite_containment/schemaPairs
 run_experiment schemastore_containment_schemaPairs
 run_experiment issta_schemaPairs
 run_experiment additional_as_uneval_schemaPairs
