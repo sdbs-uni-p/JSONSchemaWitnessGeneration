@@ -76,7 +76,7 @@ RUN git clone https://github.com/jimblackler/jsongenerator/ \
 
 # Clone jsonsubschema and checkout the version we used
 RUN git clone https://github.com/IBM/jsonsubschema/ \
-    && (cd jsonsubschema && git checkout 9413abe5bce2f1f94622e2ed756eaa2747f6479a)
+    && (cd jsonsubschema && git checkout de914706be6f6415e0b5ede375eeb8705972c8cc)
 
 # Add artifacts directory (from host) to home directory
 ADD --chown=repro:repro artifacts/ /home/repro
@@ -103,8 +103,8 @@ WORKDIR /home/repro/jsongenerator
 RUN gradle build
 
 # Build jsonsubschema
-WORKDIR /home/repro/jsonsubschema
-RUN python3.9 setup.py install --user
+# WORKDIR /home/repro/jsonsubschema
+# RUN python3.9 setup.py install --user
 
 WORKDIR /home/repro
 ENTRYPOINT python3 -m http.server -d /home/repro/metaschema_cache 80 & exec bash
