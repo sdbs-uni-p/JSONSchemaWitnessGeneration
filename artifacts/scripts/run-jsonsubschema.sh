@@ -56,12 +56,13 @@ run_experiment() {
 
     output_dir=${HOME}/results/${1//\//-}
     parts_dir=${HOME}/results/${1//\//-}/jsonsubschema-parts
+    error_parts_dir=${HOME}/results/${1//\//-}/jsonsubschema-error-parts
     mkdir -p ${parts_dir}
+    mkdir -p ${error_parts_dir}
 
     outdir=${OUTDIR}/${1//\//-}/
     mkdir -p ${outdir}
-    parallel -j ${threads} --bar python3 -u ${HOME}/scripts/run-jsonsubschema_journal.py -i {} \
-            -o ${parts_dir}/jsonsubschema_results_{#}.csv ${timeout} ::: $json_files
+    parallel -j ${threads} --bar python3 -u ${HOME}/scripts/run-jsonsubschema_journal.py -i {} -o ${parts_dir}/jsonsubschema_results_{#}.csv --error-log ${error_parts_dir}/jsonsubschema_errors_{#}.csv ${timeout} ::: $json_files
 
     # Merge csv files
     header_written=false
@@ -74,7 +75,18 @@ run_experiment() {
       fi
     done
 
+    header_written=false
+    for file in ${error_parts_dir}/*.csv; do
+      if [[ $header_written = false ]]; then
+        cat "$file" > ${output_dir}/jsonsubschema_error_log.csv
+        header_written=true
+      else
+        tail -n +2 "$file" >> ${output_dir}/jsonsubschema_error_log.csv
+      fi
+    done
+
     rm -r ${parts_dir}
+    rm -r ${error_parts_dir}
 }
 
 # If specified, run experiments only on the given input dataset. Otherwise run experiments on all default datasets
@@ -84,7 +96,7 @@ if [ -n "$input" ];
     exit 0
 fi
 
-run_experiment trickyschemas_schemaPairs
+# run_experiment trickyschemas_schemaPairs
 run_experiment allOf_containment_schemaPairs
 run_experiment test_suite_containment/schemaPairs
 run_experiment schemastore_containment_schemaPairs
